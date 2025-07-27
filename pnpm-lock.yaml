@@ -84,6 +84,9 @@ importers:
       locize-cli:
         specifier: ^10.2.0
         version: 10.2.0(encoding@0.1.13)
+      prettier:
+        specifier: ^3.6.2
+        version: 3.6.2
       typescript:
         specifier: ~5.8.3
         version: 5.8.3
@@ -1437,6 +1440,11 @@ packages:
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
+
+  prettier@3.6.2:
+    resolution: {integrity: sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==}
+    engines: {node: '>=14'}
+    hasBin: true
 
   process.argv@0.6.1:
     resolution: {integrity: sha512-WQOWF/VB0pTJu7c3ko0y5w6HWDQf6Wm3ppvKDI7ET4OSYBDOvcliBRM1HFIHHkJPNa/1bYTzmUinjF8492oaBg==}
@@ -3059,6 +3067,8 @@ snapshots:
       source-map-js: 1.2.1
 
   prelude-ls@1.2.1: {}
+
+  prettier@3.6.2: {}
 
   process.argv@0.6.1:
     dependencies:

@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write . --config ./.prettierrc",
+    "clean": "pnpm run format && pnpm run lint",
     "preview": "vite preview",
     "downloadEn": "pnpm exec locize download --project-id=4050ee26-7a52-476f-8ffa-0ceae5415c22 --language=en --ver=latest --clean=true --path=./src/@types/locales",
     "interface": "pnpm exec i18next-resources-for-ts interface -i ./src/@types/locales -o ./src/@types/resources.d.ts",
@@ -40,8 +42,10 @@
     "globals": "^16.3.0",
     "i18next-resources-for-ts": "^1.6.0",
     "locize-cli": "^10.2.0",
+    "prettier": "^3.6.2",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
     "vite": "^7.0.4"
-  }
+  },
+  "packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184"
 }
