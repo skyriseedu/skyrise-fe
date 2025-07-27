@@ -1,9 +1,9 @@
-import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
-import LanguageDetector from "i18next-browser-languageDetector";
-import LocizeBackend from "i18next-locize-backend";
-import LastUsed from "locize-lastused";
-import { locizePlugin } from "locize";
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languageDetector';
+import LocizeBackend from 'i18next-locize-backend';
+import LastUsed from 'locize-lastused';
+import { locizePlugin } from 'locize';
 
 const isDev = import.meta.env.DEV;
 
@@ -37,7 +37,7 @@ i18n
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
     debug: isDev, // Enable logging for development
-    fallbackLng: "en", // Default language
+    fallbackLng: 'en', // Default language
     backend: locizeOptions,
     locizeLastUsed: locizeOptions,
     saveMissing: isDev, // you should not use saveMissing in production

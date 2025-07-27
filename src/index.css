@@ -1,17 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Fustat:wght@200..800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --color-primary: #DE585A;
-  --color-secondary: #FFE8E9;
-  --color-bg: #FFFFFF;
+  --color-primary: #de585a;
+  --color-secondary: #ffe8e9;
+  --color-bg: #ffffff;
   --color-text-primary: #323438;
   --color-text-secondary: #848588;
-  
+
   --font-family-fustat: 'Fustat', system-ui, -apple-system, sans-serif;
   --font-family-roboto: 'Roboto', system-ui, -apple-system, sans-serif;
-  
+
   /* Font sizes - Fustat (Headers) */
   --font-size-h1: 1.5rem; /* 24px */
   --font-size-h2: 1.25rem; /* 20px */
@@ -19,14 +19,14 @@
   --font-size-h4: 0.875rem; /* 14px */
   --font-size-h5: 0.875rem; /* 14px */
   --font-size-h6: 0.75rem; /* 12px */
-  
+
   /* Font sizes - Roboto (Body) */
   --font-size-body-1: 1.25rem; /* 20px */
   --font-size-body-2: 1rem; /* 16px */
   --font-size-body-3: 1rem; /* 16px */
   --font-size-body-4: 0.875rem; /* 14px */
   --font-size-body-5: 0.75rem; /* 12px */
-  
+
   --line-height-tight: 1.2;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
@@ -41,15 +41,37 @@
 }
 
 @layer utilities {
-  .text-h1 { font-size: var(--font-size-h1); }
-  .text-h2 { font-size: var(--font-size-h2); }
-  .text-h3 { font-size: var(--font-size-h3); }
-  .text-h4 { font-size: var(--font-size-h4); }
-  .text-h5 { font-size: var(--font-size-h5); }
-  .text-h6 { font-size: var(--font-size-h6); }
-  .text-body-1 { font-size: var(--font-size-body-1); }
-  .text-body-2 { font-size: var(--font-size-body-2); }
-  .text-body-3 { font-size: var(--font-size-body-3); }
-  .text-body-4 { font-size: var(--font-size-body-4); }
-  .text-body-5 { font-size: var(--font-size-body-5); }
+  .text-h1 {
+    font-size: var(--font-size-h1);
+  }
+  .text-h2 {
+    font-size: var(--font-size-h2);
+  }
+  .text-h3 {
+    font-size: var(--font-size-h3);
+  }
+  .text-h4 {
+    font-size: var(--font-size-h4);
+  }
+  .text-h5 {
+    font-size: var(--font-size-h5);
+  }
+  .text-h6 {
+    font-size: var(--font-size-h6);
+  }
+  .text-body-1 {
+    font-size: var(--font-size-body-1);
+  }
+  .text-body-2 {
+    font-size: var(--font-size-body-2);
+  }
+  .text-body-3 {
+    font-size: var(--font-size-body-3);
+  }
+  .text-body-4 {
+    font-size: var(--font-size-body-4);
+  }
+  .text-body-5 {
+    font-size: var(--font-size-body-5);
+  }
 }
