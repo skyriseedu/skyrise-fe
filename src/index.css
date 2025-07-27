@@ -12,6 +12,8 @@
   --font-family-fustat: 'Fustat', system-ui, -apple-system, sans-serif;
   --font-family-roboto: 'Roboto', system-ui, -apple-system, sans-serif;
 
+  --border-radius: 0.625rem; /* 10px */
+
   /* Font sizes - Fustat (Headers) */
   --font-size-h1: 1.5rem; /* 24px */
   --font-size-h2: 1.25rem; /* 20px */
