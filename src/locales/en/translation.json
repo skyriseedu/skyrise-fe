@@ -1,0 +1,17 @@
+{
+  "welcome": "Welcome",
+  "hello": "Hello {{name}}",
+  "nav": {
+    "home": "Home",
+    "explore": "Explore",
+    "aboutUs": "About Us",
+    "universitiesConsultants": "Universities & Consultants",
+    "services": "Services",
+    "consultation": "Consultation",
+    "admissionProcessSupport": "Admission Process Support",
+    "visa": "Visa",
+    "accommodationAirportPickup": "Accommodation & Airport Pick-up",
+    "preUniversity": "Pre-University",
+    "blogs": "Blogs"
+  }
+}

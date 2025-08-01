@@ -1,46 +1,37 @@
-import i18n from 'i18next';
+import i18nModule from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languageDetector';
-import LocizeBackend from 'i18next-locize-backend';
-import LastUsed from 'locize-lastused';
-import { locizePlugin } from 'locize';
+import LanguageDetector from 'i18next-browser-languagedetector';
+import enTranslation from './locales/en/translation.json';
+import myTranslation from './locales/my/translation.json';
 
 const isDev = import.meta.env.DEV;
 
-const locizeOptions = {
-  projectId: import.meta.env.VITE_LOCIZE_PROJECTID,
-  apiKey: import.meta.env.VITE_LOCIZE_APIKEY, // YOU should not expose your apps API key to production!!!
-  version: import.meta.env.VITE_LOCIZE_VERSION,
+const resources = {
+  en: {
+    translation: enTranslation,
+  },
+  my: {
+    translation: myTranslation,
+  },
 };
 
-if (isDev) {
-  // locize-lastused
-  // sets a timestamp of last access on every translation segment on locize
-  // -> safely remove the ones not being touched for weeks/months
-  // https://github.com/locize/locize-lastused
-  i18n.use(LastUsed);
-}
+const i18n = i18nModule as any;
 
 i18n
-  // i18next-locize-backend
-  // loads translations from your project, saves new keys to it (saveMissing: true)
-  // https://github.com/locize/i18next-locize-backend
-  .use(LocizeBackend)
   // detect user language
   // learn more: https://github.com/i18next/i18next-browser-languageDetector
   .use(LanguageDetector)
-  // Bind i18next to React
+  // pass the i18n instance to react-i18next.
   .use(initReactI18next)
-  // InContext Editor of locize
-  .use(locizePlugin)
   // init i18next
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
-    debug: isDev, // Enable logging for development
-    fallbackLng: 'en', // Default language
-    backend: locizeOptions,
-    locizeLastUsed: locizeOptions,
-    saveMissing: isDev, // you should not use saveMissing in production
+    debug: isDev,
+    fallbackLng: 'en',
+    resources,
+    interpolation: {
+      escapeValue: false,
+    },
   });
 
 export default i18n;
