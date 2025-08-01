@@ -1,10 +1,20 @@
 interface Resources {
-  //example usage
   translation: {
-    clickLogos: 'Click on the logos to learn more!';
-    counter_one: 'Changed language just once';
-    counter_other: 'Changed language already {{count}} times';
-    editCode: 'Edit <1>src/App.tsx</1> and save to test HMR.';
+    welcome: string;
+    hello: string;
+    nav: {
+      home: string;
+      explore: string;
+      aboutUs: string;
+      universitiesConsultants: string;
+      services: string;
+      consultation: string;
+      admissionProcessSupport: string;
+      visa: string;
+      accommodationAirportPickup: string;
+      preUniversity: string;
+      blogs: string;
+    };
   };
 }
 
