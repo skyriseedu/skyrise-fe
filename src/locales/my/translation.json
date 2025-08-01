@@ -1,0 +1,17 @@
+{
+  "welcome": "ကြိုဆိုပါတယ်",
+  "hello": "မင်္ဂလာပါ {{name}}",
+  "nav": {
+    "home": "ပင်မစာမျက်နှာ",
+    "explore": "ရှာဖွေမည်",
+    "aboutUs": "ကျွန်ုပ်တို့အကြောင်း",
+    "universitiesConsultants": "တက္ကသိုလ်များနှင့် အတိုင်ပင်ခံများ",
+    "services": "ဝန်ဆောင်မှုများ",
+    "consultation": "အကြံဉာဏ်တောင်းခံခြင်း",
+    "admissionProcessSupport": "ဝင်ခွင့်လုပ်ငန်းစဉ် ပံ့ပိုးမှု",
+    "visa": "ဗီဇာ",
+    "accommodationAirportPickup": "နေရာထိုင်ခင်းနှင့် လေဆိပ်ကြိုဆိုရေး",
+    "preUniversity": "တက္ကသိုလ်ကြိုတန်း",
+    "blogs": "ဘလော့ဂ်များ"
+  }
+}
