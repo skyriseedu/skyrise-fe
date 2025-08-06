@@ -3,7 +3,7 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-primary: #de585a;
+  --color-primary: #de585b;
   --color-secondary: #ffe8e9;
   --color-bg: #ffffff;
   --color-text-primary: #323438;
@@ -75,5 +75,14 @@
   }
   .text-body-5 {
     font-size: var(--font-size-body-5);
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }
 }
