@@ -67,10 +67,10 @@ const WhyChooseUs: React.FC<WhyChooseUsProps> = ({
             key={reason.number}
             className={`relative p-3 sm:p-4 md:p-8 text-center rounded-[var(--border-radius)] ${reason.backgroundColor || ''}`}
           >
-            <h3 className={`text-[24px] sm:text-[24px] md:text-[48px] font-semibold mb-2 md:mb-4 ${reason.textColor}`}>
+            <h3 className={`text-[24px] sm:text-[24px] md:text-[40px] font-semibold mb-2 md:mb-4 ${reason.textColor}`}>
               {reason.number}
             </h3>
-            <p className={`text-font-size-body-4] sm:text-body-5 md:text-body-3 font-semibold leading-tight break-words ${reason.textColor}`}>
+            <p className={`text-body-4 font-semibold leading-tight break-words ${reason.textColor}`}>
               {reason.title}
             </p>
           </div>

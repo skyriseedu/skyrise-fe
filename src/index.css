@@ -46,46 +46,57 @@
   .text-h1 {
     font-size: var(--font-size-h1);
     font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
   }
   .text-h2 {
     font-size: var(--font-size-h2);
     font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
   }
   .text-h3 {
     font-size: var(--font-size-h3);
     font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
   }
   .text-h4 {
-    font-size: var(--font-size-h4);
+    font-size: var(--font-size-h4); 
     font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
   }
   .text-h5 {
     font-size: var(--font-size-h5);
     font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
   }
   .text-h6 {
     font-size: var(--font-size-h6);
     font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
   }
   .text-body-1 {
-    font-size: var(--font-size-body-1);
+    font-size: var(--font-size-body-1); /* 20px */
     font-family: var(--font-family-roboto);
+    line-height: var(--line-height-normal);
   }
   .text-body-2 {
     font-size: var(--font-size-body-2);
     font-family: var(--font-family-roboto);
+    line-height: var(--line-height-normal);
   }
   .text-body-3 {
-    font-size: var(--font-size-body-3);
+    font-size: var(--font-size-body-3); /* 16px */
     font-family: var(--font-family-roboto);
+    line-height: var(--line-height-normal);
   }
   .text-body-4 {
-    font-size: var(--font-size-body-4);
+    font-size: var(--font-size-body-4); /* 14px */
     font-family: var(--font-family-roboto);
+    line-height: var(--line-height-normal);
   }
   .text-body-5 {
     font-size: var(--font-size-body-5);
     font-family: var(--font-family-roboto);
+    line-height: var(--line-height-normal);
   }
 
   .scrollbar-hide::-webkit-scrollbar {
