@@ -30,7 +30,7 @@ const AdmissionStepCard = ({ number, title }: AdmissionStepCardProps) => {
           className="absolute inset-0 w-full h-full"
           style={{ objectFit: 'fill' }}
         />
-        <span className="relative z-10 text-white text-body-5 sm:text-body-4 md:text-body-2 lg:text-body-1 font-medium px-2 sm:px-4 md:px-6 text-center leading-tight whitespace-pre-line" style={{ fontFamily: 'var(--font-family-fustat)' }}>
+        <span className="relative z-10 text-white text-body-5 sm:text-body-4 md:text-body-2 lg:text-body-1 font-medium px-2 sm:px-4 md:px-6 text-center leading-tight whitespace-pre-line">
           {title}
         </span>
       </div>
