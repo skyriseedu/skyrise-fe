@@ -76,4 +76,10 @@
   .text-body-5 {
     font-size: var(--font-size-body-5);
   }
+  .font-fustat {
+    font-family: var(--font-family-fustat);
+  }
+  .font-roboto {
+    font-family: var(--font-family-roboto);
+  }
 }
