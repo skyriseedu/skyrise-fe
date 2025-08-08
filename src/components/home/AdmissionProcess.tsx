@@ -17,7 +17,7 @@ export const AdmissionProcess = () => {
   return (
     <section className="bg-bg py-16 px-4">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-h1 md:text-h1 font-bold text-center mb-12 text-text-primary">
+        <h2 className="text-h1 font-bold text-center mb-12 text-text-primary">
           Admission Process
         </h2>
 

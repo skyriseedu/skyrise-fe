@@ -28,7 +28,7 @@ const AdmissionStepCard = ({ number, title }: AdmissionStepCardProps) => {
           alt="rectangle" 
           className="absolute inset-0 w-full h-full object-fill"
         />
-        <span className="relative z-10 text-white sm:text-body-5 lg:text-body-2 font-medium px-2 sm:px-4 md:px-6 text-center leading-tight whitespace-pre-line">
+        <span className="relative z-10 text-white text-body-5 lg:text-body-3 font-medium px-2 sm:px-4 md:px-6 text-center leading-tight whitespace-pre-line">
           {title}
         </span>
       </div>
