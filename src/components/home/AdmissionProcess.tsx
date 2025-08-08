@@ -15,27 +15,27 @@ const admissionSteps: AdmissionStep[] = [
 
 export const AdmissionProcess = () => {
   return (
-    <section className="bg-white py-16 px-4">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-h1 md:text-h1 font-bold text-center mb-12 text-text-primary" style={{ fontFamily: 'var(--font-family-fustat)' }}>
+    <section className="bg-bg px-4 py-16">
+      <div className="mx-auto max-w-7xl">
+        <h2 className="text-h1 text-text-primary mb-12 text-center font-bold">
           Admission Process
         </h2>
 
         <div className="relative">
-          <div 
-            className="flex justify-center overflow-x-auto md:overflow-x-visible scrollbar-hide"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            <div className="flex gap-4 pb-4 justify-center mx-auto">
+          <div className="scrollbar-hide flex overflow-x-auto md:justify-center md:overflow-x-visible">
+            <div className="flex gap-4 px-4 pb-4 md:mx-auto md:justify-center md:px-0">
               {admissionSteps.map((step, index) => (
-                <div key={step.number} className="flex items-center flex-shrink-0">
+                <div
+                  key={step.number}
+                  className="flex flex-shrink-0 items-center"
+                >
                   <AdmissionStepCard {...step} />
                   {index < admissionSteps?.length - 1 && (
-                    <div className="flex items-center mt-[5rem] md:mt-[6rem] ml-1 md:ml-2">
-                      <img 
-                        src={smallRectangleIcon} 
-                        alt="small rectangle" 
-                        className="w-10 h-4 md:w-12 md:h-5 opacity-70"
+                    <div className="mt-[5rem] ml-1 flex items-center md:mt-[6rem] md:ml-2">
+                      <img
+                        src={smallRectangleIcon}
+                        alt="small rectangle"
+                        className="h-4 w-10 opacity-70 md:h-5 md:w-12"
                       />
                     </div>
                   )}
