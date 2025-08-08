@@ -5,7 +5,7 @@ import youtubeWhite from '@/assets/youtube-white.svg';
 import messengerWhite from '@/assets/messenger-white.svg';
 import telegramWhite from '@/assets/telegram-white.svg';
 
-const HomeSection: React.FC = () => {
+const HeroSection: React.FC = () => {
   return (
     <section className="relative h-screen w-full overflow-hidden">
       <div className="absolute inset-0">
@@ -61,4 +61,4 @@ const HomeSection: React.FC = () => {
   );
 };
 
-export default HomeSection;
+export default HeroSection;
