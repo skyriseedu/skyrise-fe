@@ -25,31 +25,31 @@ const OurServices = () => {
     {
       id: 2,
       title: 'PRE-UNIVERSITY',
-      subtitle: 'Foundation Programs',
+      subtitle: 'Pre-University Programs',
       description:
-        'Prepare for your university journey with our comprehensive foundation courses',
+        'Explore (ED Visa supported) GED, IGCSE, OSSD, and Language courses!',
       icon: preUniversityIcon,
     },
     {
       id: 3,
-      title: 'VISA SUPPORT',
-      subtitle: 'Visa Application Assistance',
-      description: 'Get expert help with your student visa application process',
+      title: 'VISA',
+      subtitle: 'Visa Services',
+      description: 'Skip the stress, we get your Ed Visa with ease (Ygn / Laos)',
       icon: visaSupportIcon,
     },
     {
       id: 4,
       title: 'ACCOMMODATION & AIRPORT PICK-UP',
-      subtitle: 'Safe Airport Transfer',
+      subtitle: 'Accommodation & Airport Pick-up',
       description:
-        'Reliable airport pickup service to ensure your safe arrival',
+        'Settle with our +100 accommodation options upon arrival!',
       icon: airportPickupIcon,
     },
     {
       id: 5,
       title: 'ADMISSION PROCESS SUPPORT',
-      subtitle: 'University Application',
-      description: 'Complete support for your university admission process',
+      subtitle: 'University Application Support',
+      description: 'Apply with clarity and confidence—you are the future!',
       icon: admissionSupportIcon,
     },
   ];
@@ -65,8 +65,8 @@ const OurServices = () => {
           Our Services
         </h2>
 
-        <div className="flex flex-wrap justify-center gap-6">
-          {services.map((service) => (
+        <div className="flex flex-wrap justify-center gap-8">
+          {services?.map((service) => (
             <FlipCard
               key={service.id}
               title={service.title}
