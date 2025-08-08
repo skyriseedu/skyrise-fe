@@ -56,7 +56,7 @@ const WhyChooseUs: React.FC<WhyChooseUsProps> = ({
         <h2 className="text-h1 mb-6 font-semibold text-text-primary">
           {title}
         </h2>
-        <p className="text-body-3 mx-auto max-w-3xl leading-relaxed text-text-primary">
+        <p className="text-body-3 lg:text-h1 mx-auto max-w-3xl leading-relaxed text-text-primary">
           {subtitle}
         </p>
       </div>
@@ -68,12 +68,12 @@ const WhyChooseUs: React.FC<WhyChooseUsProps> = ({
             className={`relative rounded-[10px] p-3 text-center sm:p-4 md:p-8 ${reason.backgroundColor || ''}`}
           >
             <h3
-              className={`mb-2 text-h1 font-semibold md:mb-4 md:text-[40px] ${reason.textColor}`}
+              className={`mb-2 text-h1 font-semibold md:mb-4 lg:text-h-xl ${reason.textColor}`}
             >
               {reason.number}
             </h3>
             <p
-              className={`text-body-4 leading-tight font-semibold break-words ${reason.textColor}`}
+              className={`text-body-4 lg:text-h-xl leading-tight font-semibold break-words ${reason.textColor}`}
             >
               {reason.title}
             </p>
