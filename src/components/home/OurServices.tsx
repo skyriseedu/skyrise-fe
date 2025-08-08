@@ -34,15 +34,15 @@ const OurServices = () => {
       id: 3,
       title: 'VISA',
       subtitle: 'Visa Services',
-      description: 'Skip the stress, we get your Ed Visa with ease (Ygn / Laos)',
+      description:
+        'Skip the stress, we get your Ed Visa with ease (Ygn / Laos)',
       icon: visaSupportIcon,
     },
     {
       id: 4,
       title: 'ACCOMMODATION & AIRPORT PICK-UP',
       subtitle: 'Accommodation & Airport Pick-up',
-      description:
-        'Settle with our +100 accommodation options upon arrival!',
+      description: 'Settle with our +100 accommodation options upon arrival!',
       icon: airportPickupIcon,
     },
     {
@@ -61,7 +61,7 @@ const OurServices = () => {
   return (
     <section className="bg-white px-4 py-16">
       <div className="mx-auto max-w-7xl">
-        <h2 className="mb-12 text-center text-h1 font-bold text-text-primary">
+        <h2 className="text-h1 text-text-primary mb-12 text-center font-bold">
           Our Services
         </h2>
 
