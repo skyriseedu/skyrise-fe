@@ -73,10 +73,10 @@ const Footer: React.FC = () => {
     <footer className="bg-secondary relative overflow-hidden px-6 pt-8 pb-15 lg:px-12 lg:pt-12 lg:pb-20">
       <div className="lg:flex lg:items-start lg:justify-between lg:space-x-8">
         <div className="mb-8 lg:mb-0 lg:max-w-md lg:flex-1">
-          <h3 className="text-h1 text-primary font-fustat mb-4 font-semibold">
+          <h3 className="text-h1 text-primary mb-4 font-semibold">
             Contact Us
           </h3>
-          <p className="text-body-4 text-text-primary mb-6">
+          <p className="text-h3 lg:text-h1 mb-6 font-normal">
             Have questions about university? Reach out to SkyRise Corner – we're
             here to help you every step of the way!
           </p>
@@ -93,18 +93,18 @@ const Footer: React.FC = () => {
                 <div className="text-primary flex h-6 w-6 items-center justify-center">
                   {social.icon}
                 </div>
-                <span className="text-body-4">
+                <span className="text-h3 lg:text-h1 font-normal">
                   skyrise/{social.name.toLowerCase()}.com
                 </span>
               </a>
             ))}
           </div>
 
-          <div className="text-body-4 text-text-primary mb-4">
+          <div className="text-h3 text-text-primary lg:text-h1 mb-4 font-normal">
             Passionate about education? Join SkyRise Corner as a consultant and
             help students achieve their university dreams!
           </div>
-          <button className="bg-primary text-body-2 hover:bg-primary/80 w-full rounded-lg px-6 py-2 text-white transition-colors lg:w-auto">
+          <button className="bg-primary text-h3 hover:bg-primary/80 lg:text-h1 w-full rounded-lg px-6 py-2 font-medium text-white transition-colors lg:w-auto lg:font-bold">
             Join With Us!
           </button>
         </div>
@@ -117,7 +117,7 @@ const Footer: React.FC = () => {
                   <div>
                     <button
                       onClick={toggleServices}
-                      className="md:text-body-2 lg:text-body-1 text-text-primary hover:text-primary flex w-full items-start text-left transition-colors"
+                      className="text-h3 text-text-primary hover:text-primary lg:text-h1 flex w-full items-start text-left font-normal transition-colors"
                     >
                       <span className="flex items-center space-x-2">
                         <span>{item.name}</span>
@@ -133,7 +133,7 @@ const Footer: React.FC = () => {
                           <li key={subItem.name}>
                             <Link
                               to={subItem.path}
-                              className="md:text-body-2 lg:text-body-1 text-text-primary hover:text-primary block transition-colors"
+                              className="text-h4 lg:text-h2 text-text-primary hover:text-primary block font-normal transition-colors"
                             >
                               {subItem.name}
                             </Link>
@@ -146,7 +146,7 @@ const Footer: React.FC = () => {
                   item.path && (
                     <Link
                       to={item.path}
-                      className="md:text-body-2 lg:text-body-1 text-text-primary hover:text-primary transition-colors"
+                      className="text-h3 lg:text-h1 text-text-primary hover:text-primary font-normal transition-colors"
                     >
                       {item.name}
                     </Link>
@@ -158,10 +158,10 @@ const Footer: React.FC = () => {
         </nav>
       </div>
 
-      <div className="absolute right-8 bottom-20 opacity-30 lg:right-12 lg:bottom-24 lg:opacity-50">
-        <div className="flex h-32 w-32 rotate-45 transform items-center justify-center lg:h-40 lg:w-40">
-          <div className="-rotate-45 transform">
-            <SkyRiseLogo2 className="text-text-secondary h-50 w-auto" />
+      <div className="absolute -right-20 -bottom-5 opacity-30 lg:right-12 lg:bottom-24">
+        <div className="flex transform items-center justify-center">
+          <div className="transform">
+            <SkyRiseLogo2 className="text-text-secondary h-80 w-auto" />
           </div>
         </div>
       </div>

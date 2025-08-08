@@ -15,7 +15,7 @@ const App: React.FC = () => {
             path="universities"
             element={
               <div className="p-6">
-                <h1 className="text-h1 font-fustat font-bold">
+                <h1 className="text-h1 font-bold">
                   Universities & Consultants
                 </h1>
                 <p className="text-body-3 text-text-secondary mt-4">

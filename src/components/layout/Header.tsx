@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SkyRiseLogo from '../../assets/skyrise-logo.svg';
 import Menu from '../../assets/menu.svg?react';
@@ -42,6 +42,39 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
   const [currentLanguage, setCurrentLanguage] = useState('En');
   const [expandedServices, setExpandedServices] = useState(false);
   const location = useLocation();
+  const servicesRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        servicesRef.current &&
+        !servicesRef.current.contains(event.target as Node)
+      ) {
+        setExpandedServices(false);
+      }
+    };
+
+    if (expandedServices) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [expandedServices]);
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
 
   const toggleLanguage = () => {
     setCurrentLanguage(currentLanguage === 'En' ? 'Mm' : 'En');
@@ -69,14 +102,12 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
             <div key={item.name} className="relative">
               {item.hasSubmenu ? (
                 <div
+                  ref={servicesRef}
                   className="relative"
-                  onMouseEnter={() => setExpandedServices(true)}
-                  onMouseLeave={() =>
-                    setTimeout(() => setExpandedServices(false), 200)
-                  }
+                  onClick={() => setExpandedServices(!expandedServices)}
                 >
                   <button
-                    className={`text-body-4 ${isActiveMenuItem(item) ? '' : 'hover:text-primary'} flex items-center space-x-1 font-semibold transition-colors ${
+                    className={` ${isActiveMenuItem(item) ? '' : 'hover:text-primary'} text-h1 flex items-center space-x-1 font-semibold transition-colors ${
                       isActiveMenuItem(item)
                         ? 'bg-primary rounded-full px-4 py-2 text-white'
                         : 'text-text-primary'
@@ -84,19 +115,19 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
                   >
                     <span>{item.name}</span>
                     <CaretDown
-                      className={`h-4 w-4 transition-transform duration-200 ${
+                      className={`h-5 w-5 transition-transform duration-200 ${
                         expandedServices ? 'rotate-180' : ''
                       }`}
                     />
                   </button>
 
                   {expandedServices && (
-                    <div className="absolute top-full left-0 z-50 mt-2 w-64 rounded-lg border border-gray-100 bg-white py-2 font-semibold shadow-lg">
+                    <div className="absolute top-full left-0 z-50 mt-2 w-64 rounded-lg border border-gray-100 bg-white py-2 shadow-lg">
                       {item.subItems?.map((subItem) => (
                         <Link
                           key={subItem.name}
                           to={subItem.path}
-                          className="text-body-5 text-text-primary hover:bg-secondary hover:text-primary block px-4 py-2 transition-colors"
+                          className="text-h2 text-text-primary hover:bg-secondary hover:text-primary block px-4 py-2 font-medium transition-colors"
                         >
                           {subItem.name}
                         </Link>
@@ -107,7 +138,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
               ) : (
                 <Link
                   to={item.path || '/'}
-                  className={`text-body-4 font-medium transition-colors ${
+                  className={`text-h1 font-semibold transition-colors ${
                     isActiveMenuItem(item)
                       ? 'bg-primary rounded-full px-4 py-2 text-white'
                       : 'text-text-primary hover:text-primary'
@@ -123,7 +154,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
         <div className="flex items-center space-x-4">
           <button
             onClick={toggleLanguage}
-            className="text-text-primary text-body-2 flex items-center space-x-1"
+            className="text-text-primary text-h1 flex items-center space-x-1 font-semibold"
           >
             <span>
               <span className={currentLanguage === 'En' ? 'underline' : ''}>

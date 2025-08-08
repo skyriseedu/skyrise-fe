@@ -62,7 +62,7 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
                     <div className="flex items-center justify-start">
                       <span>{item.name}</span>
                       <CaretDown
-                        className={`h-4 w-4 transition-transform duration-200 ${expandedServices ? 'rotate-180' : ''}`}
+                        className={`h-5 w-5 transition-transform duration-200 ${expandedServices ? 'rotate-180' : ''}`}
                       />
                     </div>
                   </button>
