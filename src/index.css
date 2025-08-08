@@ -43,6 +43,7 @@
 }
 
 @layer utilities {
+  /* Base typography classes */
   .text-h1 {
     font-size: var(--font-size-h1);
     font-family: var(--font-family-fustat);
@@ -106,5 +107,42 @@
   .scrollbar-hide {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
+  }
+
+  /* Responsive variants for lg: breakpoint */
+  @media (min-width: 1024px) {
+    .lg\:text-h1 {
+      font-size: var(--font-size-h1);
+    }
+    .lg\:text-h2 {
+      font-size: var(--font-size-h2);
+    }
+    .lg\:text-h3 {
+      font-size: var(--font-size-h3);
+    }
+    .lg\:text-h4 {
+      font-size: var(--font-size-h4);
+    }
+    .lg\:text-h5 {
+      font-size: var(--font-size-h5);
+    }
+    .lg\:text-h6 {
+      font-size: var(--font-size-h6);
+    }
+    .lg\:text-body-1 {
+      font-size: var(--font-size-body-1);
+    }
+    .lg\:text-body-2 {
+      font-size: var(--font-size-body-2);
+    }
+    .lg\:text-body-3 {
+      font-size: var(--font-size-body-3);
+    }
+    .lg\:text-body-4 {
+      font-size: var(--font-size-body-4);
+    }
+    .lg\:text-body-5 {
+      font-size: var(--font-size-body-5);
+    }
   }
 }
