@@ -28,7 +28,7 @@ const FlipCard: React.FC<FlipCardProps> = ({
   };
 
   return (
-    <div className={`relative w-80 h-96 ${className}`}>
+    <div className={`relative w-full max-w-[370px] h-[220px] ${className}`}>
       <motion.div
         className="absolute inset-0 w-full h-full cursor-pointer"
         style={{
@@ -47,7 +47,7 @@ const FlipCard: React.FC<FlipCardProps> = ({
             WebkitBackfaceVisibility: 'hidden'
           }}
         >
-          <div className="relative w-full h-full bg-white rounded-2xl flex flex-col overflow-hidden">
+          <div className="relative w-full h-full bg-white rounded-2xl flex items-center justify-center overflow-hidden">
             <div className="absolute top-4 right-4 z-10">
               <img 
                 src={flipIcon} 
@@ -56,16 +56,16 @@ const FlipCard: React.FC<FlipCardProps> = ({
               />
             </div>
             
-            <div className="relative bg-white h-2/3 flex items-center justify-center">    
+            <div className="absolute inset-0 flex items-center justify-center">
               <img 
                 src={icon} 
                 alt={title} 
-                className="w-32 h-32 object-contain"
+                className="w-40 h-40 object-contain"
               />
             </div>
             
-            <div className="bg-[#A6A6A6] h-1/3 flex items-center justify-center">
-              <h3 className="text-xl font-bold text-white uppercase tracking-wider">
+            <div className="w-full py-4 px-4 flex items-center justify-center absolute" style={{ backgroundColor: 'rgba(166, 166, 166, 1)', backgroundBlendMode: 'multiply' }}>
+              <h3 className="text-h4 font-bold text-white uppercase tracking-wider text-center leading-tight">
                 {title}
               </h3>
             </div>
@@ -81,7 +81,7 @@ const FlipCard: React.FC<FlipCardProps> = ({
             transform: 'rotateY(180deg)'
           }}
         >
-          <div className="relative w-full h-full bg-white rounded-2xl flex flex-col items-center justify-center p-8">
+          <div className="relative w-full h-full bg-white rounded-2xl flex flex-col items-center justify-center p-6">
             <div className="absolute top-4 right-4">
               <img 
                 src={flipIcon} 
@@ -90,17 +90,17 @@ const FlipCard: React.FC<FlipCardProps> = ({
               />
             </div>
             
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">
+            <h3 className="text-h3 font-bold text-text-primary mb-1">
               {title}
             </h3>
             
             {subtitle && (
-              <h4 className="text-lg font-semibold text-gray-700 mb-4">
+              <h4 className="text-body-4 font-semibold text-text-secondary mb-2">
                 {subtitle}
               </h4>
             )}
             
-            <p className="text-gray-600 text-center mb-8">
+            <p className="text-body-5 text-text-secondary text-center mb-4">
               {description}
             </p>
             
@@ -109,7 +109,7 @@ const FlipCard: React.FC<FlipCardProps> = ({
                 e.stopPropagation();
                 onButtonClick?.();
               }}
-              className="bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-8 rounded-lg transition-colors duration-200"
+              className="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-[10px] transition-colors duration-200 text-body-5"
             >
               {buttonText}
             </button>
