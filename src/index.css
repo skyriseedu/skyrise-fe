@@ -3,7 +3,7 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-primary: #de585a;
+  --color-primary: #de585b;
   --color-secondary: #ffe8e9;
   --color-bg: #ffffff;
   --color-text-primary: #323438;
@@ -30,7 +30,7 @@
   --font-size-body-5: 0.75rem; /* 12px */
 
   --line-height-tight: 1.2;
-  --line-height-normal: 1.5;
+  --line-height-normal: 1.4;
   --line-height-relaxed: 1.75;
 }
 
@@ -43,37 +43,106 @@
 }
 
 @layer utilities {
+  /* Base typography classes */
   .text-h1 {
     font-size: var(--font-size-h1);
+    font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
   }
   .text-h2 {
     font-size: var(--font-size-h2);
+    font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
   }
   .text-h3 {
     font-size: var(--font-size-h3);
+    font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
   }
   .text-h4 {
-    font-size: var(--font-size-h4);
+    font-size: var(--font-size-h4); 
+    font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
   }
   .text-h5 {
     font-size: var(--font-size-h5);
+    font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
   }
   .text-h6 {
     font-size: var(--font-size-h6);
+    font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
   }
   .text-body-1 {
-    font-size: var(--font-size-body-1);
+    font-size: var(--font-size-body-1); /* 20px */
+    font-family: var(--font-family-roboto);
+    line-height: var(--line-height-normal);
   }
   .text-body-2 {
     font-size: var(--font-size-body-2);
+    font-family: var(--font-family-roboto);
+    line-height: var(--line-height-normal);
   }
   .text-body-3 {
-    font-size: var(--font-size-body-3);
+    font-size: var(--font-size-body-3); /* 16px */
+    font-family: var(--font-family-roboto);
+    line-height: var(--line-height-normal);
   }
   .text-body-4 {
-    font-size: var(--font-size-body-4);
+    font-size: var(--font-size-body-4); /* 14px */
+    font-family: var(--font-family-roboto);
+    line-height: var(--line-height-normal);
   }
   .text-body-5 {
     font-size: var(--font-size-body-5);
+    font-family: var(--font-family-roboto);
+    line-height: var(--line-height-normal);
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* Responsive variants for lg: breakpoint */
+  @media (min-width: 1024px) {
+    .lg\:text-h1 {
+      font-size: var(--font-size-h1);
+    }
+    .lg\:text-h2 {
+      font-size: var(--font-size-h2);
+    }
+    .lg\:text-h3 {
+      font-size: var(--font-size-h3);
+    }
+    .lg\:text-h4 {
+      font-size: var(--font-size-h4);
+    }
+    .lg\:text-h5 {
+      font-size: var(--font-size-h5);
+    }
+    .lg\:text-h6 {
+      font-size: var(--font-size-h6);
+    }
+    .lg\:text-body-1 {
+      font-size: var(--font-size-body-1);
+    }
+    .lg\:text-body-2 {
+      font-size: var(--font-size-body-2);
+    }
+    .lg\:text-body-3 {
+      font-size: var(--font-size-body-3);
+    }
+    .lg\:text-body-4 {
+      font-size: var(--font-size-body-4);
+    }
+    .lg\:text-body-5 {
+      font-size: var(--font-size-body-5);
+    }
   }
 }
