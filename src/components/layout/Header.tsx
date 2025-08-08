@@ -97,7 +97,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
           <img src={SkyRiseLogo} alt="SkyRise Logo" className="h-12 w-auto" />
         </Link>
 
-        <nav className="hidden items-center space-x-8 lg:flex">
+        <nav className="hidden items-center space-x-4 lg:flex">
           {navigationItems.map((item) => (
             <div key={item.name} className="relative">
               {item.hasSubmenu ? (
@@ -107,10 +107,10 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
                   onClick={() => setExpandedServices(!expandedServices)}
                 >
                   <button
-                    className={` ${isActiveMenuItem(item) ? '' : 'hover:text-primary'} text-h1 flex items-center space-x-1 font-semibold transition-colors ${
+                    className={`text-h1 flex cursor-pointer items-center space-x-1 rounded-full px-4 py-2 font-semibold transition-colors ${
                       isActiveMenuItem(item)
-                        ? 'bg-primary rounded-full px-4 py-2 text-white'
-                        : 'text-text-primary'
+                        ? 'bg-primary text-white'
+                        : 'text-text-primary hover:text-primary'
                     }`}
                   >
                     <span>{item.name}</span>
@@ -138,9 +138,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
               ) : (
                 <Link
                   to={item.path || '/'}
-                  className={`text-h1 font-semibold transition-colors ${
+                  className={`text-h1 rounded-full px-4 py-2 font-semibold transition-colors ${
                     isActiveMenuItem(item)
-                      ? 'bg-primary rounded-full px-4 py-2 text-white'
+                      ? 'bg-primary text-white'
                       : 'text-text-primary hover:text-primary'
                   }`}
                 >
@@ -154,7 +154,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
         <div className="flex items-center space-x-4">
           <button
             onClick={toggleLanguage}
-            className="text-text-primary text-h1 flex items-center space-x-1 font-semibold"
+            className="text-text-primary text-h1 flex cursor-pointer items-center space-x-1 font-semibold"
           >
             <span>
               <span className={currentLanguage === 'En' ? 'underline' : ''}>
