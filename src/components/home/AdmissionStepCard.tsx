@@ -13,8 +13,7 @@ const AdmissionStepCard = ({ number, title }: AdmissionStepCardProps) => {
         <img 
           src={ellipseIcon} 
           alt="ellipse" 
-          className="absolute inset-0 w-20 h-full md:w-24"
-          style={{ filter: 'opacity(0.5)' }}
+          className="absolute inset-0 w-20 h-full md:w-24 opacity-50"
         />
         <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-8 h-8 md:top-2 md:w-10 md:h-10 bg-primary rounded-full border-2 border-white flex items-center justify-center">
           <span className="text-h4 md:text-h3 font-semibold text-white">{number}</span>
@@ -27,10 +26,9 @@ const AdmissionStepCard = ({ number, title }: AdmissionStepCardProps) => {
         <img 
           src={rectangleIcon} 
           alt="rectangle" 
-          className="absolute inset-0 w-full h-full"
-          style={{ objectFit: 'fill' }}
+          className="absolute inset-0 w-full h-full object-fill"
         />
-        <span className="relative z-10 text-white text-body-5 sm:text-body-4 md:text-body-2 lg:text-body-1 font-medium px-2 sm:px-4 md:px-6 text-center leading-tight whitespace-pre-line">
+        <span className="relative z-10 text-white sm:text-body-5 lg:text-body-2 font-medium px-2 sm:px-4 md:px-6 text-center leading-tight whitespace-pre-line">
           {title}
         </span>
       </div>

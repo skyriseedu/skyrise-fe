@@ -64,7 +64,7 @@ const FlipCard: React.FC<FlipCardProps> = ({
               />
             </div>
             
-            <div className="w-full py-4 px-4 flex items-center justify-center absolute" style={{ backgroundColor: 'rgba(166, 166, 166, 1)', backgroundBlendMode: 'multiply' }}>
+            <div className="w-full py-4 px-4 flex items-center justify-center absolute bg-gray-500 mix-blend-multiply">
               <h3 className="text-h4 font-bold text-white uppercase tracking-wider text-center leading-tight">
                 {title}
               </h3>

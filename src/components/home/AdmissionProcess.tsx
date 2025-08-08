@@ -15,18 +15,17 @@ const admissionSteps: AdmissionStep[] = [
 
 export const AdmissionProcess = () => {
   return (
-    <section className="bg-white py-16 px-4">
+    <section className="bg-bg py-16 px-4">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-h1 md:text-h1 font-bold text-center mb-12 text-text-primary" style={{ fontFamily: 'var(--font-family-fustat)' }}>
+        <h2 className="text-h1 md:text-h1 font-bold text-center mb-12 text-text-primary">
           Admission Process
         </h2>
 
         <div className="relative">
           <div 
-            className="flex justify-center overflow-x-auto md:overflow-x-visible scrollbar-hide"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            className="flex overflow-x-auto md:overflow-x-visible scrollbar-hide md:justify-center"
           >
-            <div className="flex gap-4 pb-4 justify-center mx-auto">
+            <div className="flex gap-4 pb-4 px-4 md:px-0 md:justify-center md:mx-auto">
               {admissionSteps.map((step, index) => (
                 <div key={step.number} className="flex items-center flex-shrink-0">
                   <AdmissionStepCard {...step} />

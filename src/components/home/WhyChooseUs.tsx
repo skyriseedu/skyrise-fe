@@ -29,34 +29,34 @@ const WhyChooseUs: React.FC<WhyChooseUsProps> = ({
     {
       number: 1,
       title: 'Genuine experiences shared by seniors',
-      textColor: 'text-[var(--color-text-primary)]',
+      textColor: 'text-text-primary',
     },
     {
       number: 2,
       title: 'Clear path to your best-fit university',
-      textColor: 'text-[var(--color-primary)]',
-      backgroundColor: 'bg-[var(--color-secondary)]',
+      textColor: 'text-primary',
+      backgroundColor: 'bg-secondary',
     },
     {
       number: 3,
       title: 'Personal guidance you can rely on',
-      textColor: 'text-[var(--color-text-primary)]',
+      textColor: 'text-text-primary',
     },
     {
       number: 4,
       title: 'Inspiring community that grows with you',
-      textColor: 'text-[var(--color-primary)]',
-      backgroundColor: 'bg-[var(--color-secondary)]',
+      textColor: 'text-primary',
+      backgroundColor: 'bg-secondary',
     },
   ],
 }) => {
   return (
     <div className="mx-auto max-w-6xl px-4 py-16">
       <div className="mb-12 text-center">
-        <h2 className="text-h1 mb-6 font-semibold text-[var(--color-text-primary)]">
+        <h2 className="text-h1 mb-6 font-semibold text-text-primary">
           {title}
         </h2>
-        <p className="text-body-3 mx-auto max-w-3xl leading-relaxed text-[var(--color-text-primary)]">
+        <p className="text-body-3 mx-auto max-w-3xl leading-relaxed text-text-primary">
           {subtitle}
         </p>
       </div>
@@ -65,10 +65,10 @@ const WhyChooseUs: React.FC<WhyChooseUsProps> = ({
         {reasons?.map((reason) => (
           <div
             key={reason.number}
-            className={`relative rounded-[var(--border-radius)] p-3 text-center sm:p-4 md:p-8 ${reason.backgroundColor || ''}`}
+            className={`relative rounded-[10px] p-3 text-center sm:p-4 md:p-8 ${reason.backgroundColor || ''}`}
           >
             <h3
-              className={`mb-2 text-[24px] font-semibold sm:text-[24px] md:mb-4 md:text-[40px] ${reason.textColor}`}
+              className={`mb-2 text-h1 font-semibold md:mb-4 md:text-[40px] ${reason.textColor}`}
             >
               {reason.number}
             </h3>

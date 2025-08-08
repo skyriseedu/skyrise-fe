@@ -59,7 +59,7 @@ const OurServices = () => {
   };
 
   return (
-    <section className="bg-gray-50 px-4 py-16">
+    <section className="bg-white px-4 py-16">
       <div className="mx-auto max-w-7xl">
         <h2 className="mb-12 text-center text-h1 font-bold text-text-primary">
           Our Services
