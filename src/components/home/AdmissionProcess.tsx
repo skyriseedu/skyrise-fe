@@ -15,7 +15,7 @@ const admissionSteps: AdmissionStep[] = [
 
 export const AdmissionProcess = () => {
   return (
-    <section className="bg-bg px-4 py-16">
+    <section className="bg-bg px-4 py-8 mb-2">
       <div className="mx-auto max-w-7xl">
         <h2 className="text-h1 text-text-primary mb-12 text-center font-semibold lg:text-[40px]">
           Admission Process

@@ -52,7 +52,7 @@ const WhyChooseUs: React.FC<WhyChooseUsProps> = ({
   ],
 }) => {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-16">
+    <div className="mx-auto max-w-6xl px-4 mb-10 mt-14">
       <div className="mb-12 text-center">
         <h2 className="text-h1 text-text-primary mb-6 font-semibold lg:text-[40px]">
           {title}
