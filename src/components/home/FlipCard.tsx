@@ -41,27 +41,27 @@ const FlipCard: React.FC<FlipCardProps> = ({
       >
         {/* Front Side */}
         <div
-          className="absolute inset-0 h-full w-full rounded-2xl shadow-lg"
+          className="absolute inset-0 h-full w-full rounded-3xl shadow-lg"
           style={{
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
           }}
         >
-          <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-2xl bg-white">
+          <div className="relative flex h-full w-full flex-col overflow-hidden rounded-3xl bg-white">
             <div className="absolute top-4 right-4 z-10">
               <img src={flipIcon} alt="Flip card" className="h-6 w-6" />
             </div>
 
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex flex-1 items-center justify-center p-8">
               <img
                 src={icon}
                 alt={title}
-                className="h-40 w-40 object-contain"
+                className="h-32 w-32 object-contain"
               />
             </div>
 
-            <div className="absolute flex w-full items-center justify-center bg-gray-400 px-4 py-4 mix-blend-multiply">
-              <h3 className="text-h-xl lg:text-h-xl text-center leading-tight font-bold tracking-wider text-white">
+            <div className="flex items-center justify-center bg-secondary px-4 py-6">
+              <h3 className="text-h2 lg:text-h-xl text-center font-semibold text-primary">
                 {title}
               </h3>
             </div>
@@ -70,14 +70,14 @@ const FlipCard: React.FC<FlipCardProps> = ({
 
         {/* Back Side */}
         <div
-          className="absolute inset-0 h-full w-full rounded-2xl shadow-lg"
+          className="absolute inset-0 h-full w-full rounded-3xl shadow-lg"
           style={{
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
           }}
         >
-          <div className="relative flex h-full w-full flex-col items-center justify-center rounded-2xl bg-white p-8">
+          <div className="relative flex h-full w-full flex-col items-center justify-center rounded-3xl bg-white p-8">
             <div className="absolute top-4 right-4">
               <img src={flipIcon} alt="Flip card" className="h-6 w-6" />
             </div>
