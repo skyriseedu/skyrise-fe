@@ -1,5 +1,5 @@
 import React from 'react';
-import landingPageStudents from '@/assets/images/landing-page-students.png';
+import skyriseVideo from '@/assets/videos/skyrise.mov';
 import facebookWhite from '@/assets/facebook-white.svg';
 import youtubeWhite from '@/assets/youtube-white.svg';
 import messengerWhite from '@/assets/messenger-white.svg';
@@ -9,11 +9,18 @@ const HeroSection: React.FC = () => {
   return (
     <section className="relative h-screen w-full overflow-hidden">
       <div className="absolute inset-0">
-        <img
-          src={landingPageStudents}
-          alt="Students celebrating graduation"
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
           className="h-full w-full object-cover"
-        />
+        >
+          <source src={skyriseVideo} type="video/mp4" />
+          <source src={skyriseVideo} type="video/quicktime" />
+          Your browser does not support the video tag.
+        </video>
         <div className="absolute inset-0 bg-black/40" />
       </div>
 
