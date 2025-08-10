@@ -63,7 +63,7 @@ const FlipCard: React.FC<FlipCardProps> = ({
             </div>
 
             <div className="flex items-center justify-center bg-secondary px-4 py-6">
-              <h3 className="text-h1 lg:text-h1 text-center font-semibold text-primary">
+              <h3 className="text-h4 lg:text-h2 text-center font-semibold text-primary">
                 {title}
               </h3>
             </div>
@@ -84,17 +84,17 @@ const FlipCard: React.FC<FlipCardProps> = ({
               <img src={flipIcon} alt="Flip card" className="h-6 w-6" />
             </div>
 
-            <h3 className="text-h2 lg:text-h-xl text-text-primary mb-1 font-bold normal-case">
+            <h3 className="text-h3 lg:text-h2 text-text-primary mb-1 font-semibold normal-case">
               {backsideTitle}
             </h3>
 
             {subtitle && (
-              <h4 className="text-body-4 lg:text-body-1 text-text-primary mb-2 font-semibold">
+              <h4 className="text-body-5 lg:text-body-3 text-text-primary mb-2 font-semibold">
                 {subtitle}
               </h4>
             )}
 
-            <p className="text-body-4 lg:text-body-1 text-text-primary mb-4 text-center">
+            <p className="text-body-4 lg:text-body-2 text-text-primary mb-4 text-center">
               {description}
             </p>
 
@@ -103,7 +103,7 @@ const FlipCard: React.FC<FlipCardProps> = ({
                 e.stopPropagation();
                 onButtonClick?.();
               }}
-              className="bg-primary hover:bg-primary/90 text-body-3 lg:text-h1 w-[80%] rounded-[10px] px-10 py-3 font-medium text-white transition-colors duration-200"
+              className="bg-primary hover:bg-primary/90 text-body-5 lg:text-body-3 w-[80%] rounded-[10px] px-10 py-3 font-semibold text-white transition-colors duration-200"
             >
               {buttonText}
             </button>

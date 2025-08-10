@@ -4,6 +4,7 @@ import facebookWhite from '@/assets/facebook-white.svg';
 import youtubeWhite from '@/assets/youtube-white.svg';
 import messengerWhite from '@/assets/messenger-white.svg';
 import telegramWhite from '@/assets/telegram-white.svg';
+import Button from '@/components/common/Button';
 
 const HeroSection: React.FC = () => {
   return (
@@ -25,15 +26,15 @@ const HeroSection: React.FC = () => {
       </div>
 
       <div className="relative z-10 flex h-full">
-        <div className="w-full max-w-7xl px-4 pt-20 sm:px-6 lg:px-8 lg:pt-32">
-          <div className="max-w-2xl">
-            <h1 className="mb-6 text-[40px] leading-tight font-bold text-white md:text-[48px] lg:text-[56px]">
+        <div className="w-full max-w-7xl px-6 pt-14 sm:px-6 lg:px-10 lg:pt-20">
+          <div>
+            <h1 className="mb-6 font-semibold leading-tight text-white text-[32px] md:text-[48px] lg:text-[76px]">
               Study Without Limits.
               <br />
               We'll Show You How.
             </h1>
 
-            <p className="text-body-4 lg:text-h1 mb-6 text-white">
+            <p className="text-body-4 lg:text-body-2 mb-6 text-white">
               We aim to help every student find their suitable universities with
               honesty, heart, and real support.
             </p>
@@ -54,12 +55,13 @@ const HeroSection: React.FC = () => {
             </div>
 
             <div className="mt-6 mb-4 flex justify-center lg:justify-start">
-              <a
-                href="#"
-                className="bg-primary text-body-4 hover:bg-primary/90 lg:text-h1 inline-block w-80 cursor-pointer rounded-[10px] px-20 py-3 text-center font-medium text-white transition-colors"
+              <Button
+                size="lg"
+                className="w-86 text-body-5 lg:text-body-3 font-semibold rounded-[10px]"
+                onClick={() => console.log('Get Started clicked')}
               >
                 Get Started
-              </a>
+              </Button>
             </div>
           </div>
         </div>

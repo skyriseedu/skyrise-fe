@@ -17,10 +17,10 @@ export default function StatsCard({ title, count, description }: StatsCardProps)
   return (
     <div className="flex flex-col items-center text-center">
       <div className="mb-4">
-        <h3 className="text-h2 font-medium text-text-primary">{formattedTitle}</h3>
-        <div className="text-h-xl mt-4 font-bold text-text-primary">{count}</div>
+        <h3 className="text-h3 font-semibold text-text-primary md:text-h2">{formattedTitle}</h3>
+        <div className="text-h1 mt-4 font-semibold text-text-primary md:text-[40px] lg:text-[48px]">{count}</div>
       </div>
-      <p className="text-body-4 lg:text-h1 text-text-secondary max-w-[280px]">{description}</p>
+      <p className="text-body-4 lg:text-body-2 text-text-secondary max-w-[280px]">{description}</p>
     </div>
   );
 }
