@@ -61,7 +61,7 @@ const WhyChooseUs: React.FC<WhyChooseUsProps> = ({
         </p>
       </div>
 
-      <div className="mb-20 grid grid-cols-4 gap-2 md:gap-4">
+      <div className="mb-20 grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
         {reasons?.map((reason) => (
           <div
             key={reason.number}
