@@ -26,32 +26,32 @@ const HeroSection: React.FC = () => {
               We'll Show You How.
             </h1>
 
-            <p className="text-body-4 lg:text-h1 mb-8 text-white">
+            <p className="text-body-4 lg:text-h1 mb-6 text-white">
               We aim to help every student find their suitable universities with
               honesty, heart, and real support.
             </p>
 
-            <div className="mb-8 flex gap-4">
-              <a
-                href="#"
-                className="bg-primary text-body-4 hover:bg-primary/90 lg:text-h1 inline-block rounded-[10px] px-12 py-3 font-medium text-white transition-colors"
-              >
-                Get Started
+            <div className="flex items-center gap-4">
+              <a href="#" className="hover:opacity-80">
+                <img src={facebookWhite} alt="Facebook" className="h-8 w-8" />
+              </a>
+              <a href="#" className="hover:opacity-80">
+                <img src={messengerWhite} alt="Messenger" className="h-8 w-8" />
+              </a>
+              <a href="#" className="hover:opacity-80">
+                <img src={youtubeWhite} alt="YouTube" className="h-8 w-8" />
+              </a>
+              <a href="#" className="hover:opacity-80">
+                <img src={telegramWhite} alt="Telegram" className="h-8 w-8" />
               </a>
             </div>
 
-            <div className="flex items-center gap-4">
-              <a href="#" className="hover:opacity-80">
-                <img src={facebookWhite} alt="Facebook" className="h-6 w-6" />
-              </a>
-              <a href="#" className="hover:opacity-80">
-                <img src={messengerWhite} alt="Messenger" className="h-6 w-6" />
-              </a>
-              <a href="#" className="hover:opacity-80">
-                <img src={youtubeWhite} alt="YouTube" className="h-6 w-6" />
-              </a>
-              <a href="#" className="hover:opacity-80">
-                <img src={telegramWhite} alt="Telegram" className="h-6 w-6" />
+            <div className="mt-6 mb-4 flex justify-center lg:justify-start">
+              <a
+                href="#"
+                className="bg-primary text-body-4 hover:bg-primary/90 lg:text-h1 inline-block w-80 cursor-pointer rounded-[10px] px-20 py-3 text-center font-medium text-white transition-colors"
+              >
+                Get Started
               </a>
             </div>
           </div>
