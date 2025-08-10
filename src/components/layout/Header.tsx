@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SkyRiseLogo from '../../assets/skyrise-logo.svg';
 import Menu from '../../assets/menu.svg?react';
-import Close from '../../assets/close.svg?react';
+import Close from '../../assets/chat-close.svg?react';
 import CaretDown from '../../assets/caret-down.svg?react';
 
 interface HeaderProps {
@@ -91,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
+    <header className="sticky top-0 z-60 bg-white shadow-sm">
       <div className="flex items-center justify-between px-6 py-5">
         <Link to="/" className="flex items-center">
           <img src={SkyRiseLogo} alt="SkyRise Logo" className="h-12 w-auto" />
@@ -107,7 +107,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
                   onClick={() => setExpandedServices(!expandedServices)}
                 >
                   <button
-                    className={`text-h1 flex cursor-pointer items-center space-x-1 rounded-full px-4 py-2 font-semibold transition-colors ${
+                    className={`text-h2 flex cursor-pointer items-center space-x-1 rounded-full px-4 py-2 font-semibold transition-colors ${
                       isActiveMenuItem(item)
                         ? 'bg-primary text-white'
                         : 'text-text-primary hover:text-primary'
@@ -139,7 +139,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
               ) : (
                 <Link
                   to={item.path || '/'}
-                  className={`text-h1 rounded-full px-4 py-2 font-semibold transition-colors ${
+                  className={`text-h2 rounded-full px-4 py-2 font-semibold transition-colors ${
                     isActiveMenuItem(item)
                       ? 'bg-primary text-white'
                       : 'text-text-primary hover:text-primary'
@@ -155,7 +155,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
         <div className="flex items-center space-x-4">
           <button
             onClick={toggleLanguage}
-            className="text-text-primary text-h1 flex cursor-pointer items-center space-x-1 font-semibold"
+            className="text-text-primary text-h3 lg:text-h2 flex cursor-pointer items-center space-x-1 font-semibold"
           >
             <span>
               <span className={currentLanguage === 'En' ? 'underline' : ''}>

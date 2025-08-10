@@ -60,7 +60,7 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
 
           {/* Navigation Panel */}
           <motion.div
-            className="fixed top-20 right-0 z-50 h-[calc(100vh-5rem)] w-80 overflow-hidden rounded-l-xl bg-white shadow-lg"
+            className="fixed top-22 right-0 z-50 h-[calc(100vh-5rem)] w-80 overflow-hidden rounded-l-xl bg-white shadow-xl"
             initial={{ x: '100%' }}
             animate={{ x: '0%' }}
             exit={{ x: '100%' }}
@@ -72,14 +72,14 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
             }}
           >
             <nav className="relative z-10 px-6 py-4">
-              <ul className="">
+              <ul className="py-1">
                 {navigationItems.map((item) => (
                   <li key={item.name}>
                     {item.hasSubmenu ? (
                       <div>
                         <button
                           onClick={toggleServices}
-                          className={`text-h-2 text-text-primary hover:bg-secondary hover:text-primary block w-full rounded-lg px-4 py-3 text-left font-semibold`}
+                          className={`text-h3 text-text-primary hover:bg-secondary hover:text-primary block w-full rounded-lg px-4 py-3 text-left font-semibold`}
                         >
                           <div className="flex items-center justify-start">
                             <span>{item.name}</span>
@@ -91,7 +91,7 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
 
                         {expandedServices && (
                           <motion.ul
-                            className="mt-2 ml-4"
+                            className="mt-1 ml-4"
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
@@ -102,7 +102,7 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
                                 <Link
                                   to={subItem.path}
                                   onClick={onClose}
-                                  className="text-h-2 text-text-primary hover:bg-secondary hover:text-primary block rounded-lg px-4 py-2 font-semibold transition-colors"
+                                  className="text-h3 text-text-primary hover:bg-secondary hover:text-primary block rounded-lg px-4 py-2 font-semibold transition-colors"
                                 >
                                   {subItem.name}
                                 </Link>
@@ -116,7 +116,7 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
                         <Link
                           to={item.path}
                           onClick={onClose}
-                          className={`text-h-2 block rounded-lg px-4 py-3 font-semibold transition-colors ${
+                          className={`text-h3 block rounded-lg px-4 py-3 font-semibold transition-colors ${
                             item.isActive
                               ? 'bg-primary text-white'
                               : 'text-text-primary hover:bg-secondary hover:text-primary'
