@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import skyriseVideo from '@/assets/videos/skyrise.mov';
 import facebookWhite from '@/assets/facebook-white.svg';
 import youtubeWhite from '@/assets/youtube-white.svg';
@@ -7,6 +8,8 @@ import telegramWhite from '@/assets/telegram-white.svg';
 import Button from '@/components/common/Button';
 
 const HeroSection: React.FC = () => {
+  const { t } = useTranslation();
+  
   return (
     <section className="relative h-screen w-full overflow-hidden">
       <div className="absolute inset-0">
@@ -20,7 +23,7 @@ const HeroSection: React.FC = () => {
         >
           <source src={skyriseVideo} type="video/mp4" />
           <source src={skyriseVideo} type="video/quicktime" />
-          Your browser does not support the video tag.
+          {t('home.hero.videoFallback')}
         </video>
         <div className="absolute inset-0 bg-black/40" />
       </div>
@@ -29,28 +32,30 @@ const HeroSection: React.FC = () => {
         <div className="w-full max-w-7xl px-6 pt-14 sm:px-6 lg:px-10 lg:pt-20">
           <div>
             <h1 className="mb-6 font-semibold leading-tight text-white text-[32px] md:text-[48px] lg:text-[76px]">
-              Study Without Limits.
-              <br />
-              We'll Show You How.
+              {t('home.hero.title').split('\n').map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  {index < t('home.hero.title').split('\n').length - 1 && <br />}
+                </React.Fragment>
+              ))}
             </h1>
 
             <p className="text-body-4 lg:text-body-2 mb-6 text-white">
-              We aim to help every student find their suitable universities with
-              honesty, heart, and real support.
+              {t('home.hero.subtitle')}
             </p>
 
             <div className="flex items-center gap-4">
               <a href="#" className="hover:opacity-80">
-                <img src={facebookWhite} alt="Facebook" className="h-8 w-8" />
+                <img src={facebookWhite} alt={t('common.social.facebook')} className="h-8 w-8" />
               </a>
               <a href="#" className="hover:opacity-80">
-                <img src={messengerWhite} alt="Messenger" className="h-8 w-8" />
+                <img src={messengerWhite} alt={t('common.social.messenger')} className="h-8 w-8" />
               </a>
               <a href="#" className="hover:opacity-80">
-                <img src={youtubeWhite} alt="YouTube" className="h-8 w-8" />
+                <img src={youtubeWhite} alt={t('common.social.youtube')} className="h-8 w-8" />
               </a>
               <a href="#" className="hover:opacity-80">
-                <img src={telegramWhite} alt="Telegram" className="h-8 w-8" />
+                <img src={telegramWhite} alt={t('common.social.telegram')} className="h-8 w-8" />
               </a>
             </div>
 
@@ -60,7 +65,7 @@ const HeroSection: React.FC = () => {
                 className="w-86 text-body-5 lg:text-body-3 font-semibold rounded-[10px]"
                 onClick={() => console.log('Get Started clicked')}
               >
-                Get Started
+                {t('common.buttons.getStarted')}
               </Button>
             </div>
           </div>

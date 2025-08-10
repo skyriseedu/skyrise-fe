@@ -13,5 +13,110 @@
     "accommodationAirportPickup": "နေရာထိုင်ခင်းနှင့် လေဆိပ်ကြိုဆိုရေး",
     "preUniversity": "တက္ကသိုလ်ကြိုတန်း",
     "blogs": "ဘလော့ဂ်များ"
+  },
+  "common": {
+    "social": {
+      "facebook": "Facebook",
+      "messenger": "Messenger",
+      "youtube": "YouTube",
+      "telegram": "Telegram"
+    },
+    "buttons": {
+      "getStarted": "Get Started",
+      "bookFreeConsultation": "Book Free Consultation"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Study Without Limits. \nWe'll Show You How.",
+      "subtitle": "We aim to help every student find their suitable universities with honesty, heart, and real support.",
+      "videoFallback": "Your browser does not support the video tag."
+    },
+    "whyChooseUs": {
+      "title": "Why Choose Us",
+      "description": "We created this space because we hate overrated reviews and sugar-coated promotions just as much as you do. Instead, we believe in making you find",
+      "points": {
+        "1": "Genuine experiences shared by seniors",
+        "2": "Clear path to your best-fit university",
+        "3": "Personal guidance you can rely on",
+        "4": "Inspiring community that grows with you"
+      }
+    },
+    "admissionProcess": {
+      "title": "Admission Process",
+      "steps": {
+        "1": "Explore University",
+        "2": "Consult with SkyRise",
+        "3": "Apply with SkyRise",
+        "4": "Take Visa & Accommodation Services"
+      },
+      "icons": {
+        "smallRectangle": "small rectangle",
+        "ellipse": "ellipse",
+        "rectangle": "rectangle"
+      }
+    },
+    "services": {
+      "title": "Our Services",
+      "consultation": {
+        "badge": "CONSULTATION",
+        "title": "Consultation",
+        "subtitle": "Admission Consultation",
+        "description": "Talk with current senior students & Get Advice!",
+        "iconAlt": "Consultation service icon"
+      },
+      "preUniversity": {
+        "badge": "PRE-UNIVERSITY",
+        "title": "Pre-University",
+        "subtitle": "Pre-University Programs",
+        "description": "Explore (ED Visa supported) GED, IGCSE, OSSD, and Language courses!",
+        "iconAlt": "Pre-University service icon"
+      },
+      "visa": {
+        "badge": "VISA",
+        "title": "Visa",
+        "subtitle": "Visa Services",
+        "description": "Skip the stress, we get your Ed Visa with ease (Ygn / Laos)",
+        "iconAlt": "Visa service icon"
+      },
+      "accommodation": {
+        "badge": "ACCOMMODATION & AIRPORT PICK-UP",
+        "title": "Accommodation & Airport Pick-up",
+        "subtitle": "Accommodation & Airport Pick-up",
+        "description": "Settle with our +100 accommodation options upon arrival!",
+        "iconAlt": "Accommodation service icon"
+      },
+      "admissionSupport": {
+        "badge": "ADMISSION PROCESS SUPPORT",
+        "title": "Admission Process Support",
+        "subtitle": "University Application Support",
+        "description": "Apply with clarity and confidence—you are the future!",
+        "iconAlt": "Admission support service icon"
+      },
+      "checkService": "Check service",
+      "flipCardAlt": "Flip card"
+    },
+    "stats": {
+      "studentConsultants": {
+        "title": "Student Consultants",
+        "value": "10+",
+        "description": "We've guided countless dreamers—now it's your turn. Wherever you are, we're here to help you grow, dream bigger, and reach higher."
+      },
+      "programs": {
+        "title": "Programs",
+        "value": "10+",
+        "description": "We collected everything in one place, because your journey should start with a choice."
+      },
+      "universities": {
+        "title": "Universities",
+        "value": "10+",
+        "description": "We open doors to brighter opportunities by working closely with trusted universities nationwide."
+      },
+      "scholarship": {
+        "title": "Scholarship",
+        "value": "10+",
+        "description": "We're here to help you unlock scholarships and funding because everyone deserves a chance to study abroad."
+      }
+    }
   }
 }
