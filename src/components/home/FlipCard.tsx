@@ -5,6 +5,7 @@ import flipIcon from '@/assets/flip-card-arrow.svg';
 interface FlipCardProps {
   title: string;
   icon: string;
+  backsideTitle: string;
   description: string;
   subtitle?: string;
   buttonText?: string;
@@ -15,6 +16,7 @@ interface FlipCardProps {
 const FlipCard: React.FC<FlipCardProps> = ({
   title,
   icon,
+  backsideTitle,
   description,
   subtitle,
   buttonText = 'Check service',
@@ -61,7 +63,7 @@ const FlipCard: React.FC<FlipCardProps> = ({
             </div>
 
             <div className="flex items-center justify-center bg-secondary px-4 py-6">
-              <h3 className="text-h2 lg:text-h-xl text-center font-semibold text-primary">
+              <h3 className="text-h1 lg:text-h1 text-center font-semibold text-primary">
                 {title}
               </h3>
             </div>
@@ -82,8 +84,8 @@ const FlipCard: React.FC<FlipCardProps> = ({
               <img src={flipIcon} alt="Flip card" className="h-6 w-6" />
             </div>
 
-            <h3 className="text-h2 lg:text-h-xl text-text-primary mb-1 font-bold">
-              {title}
+            <h3 className="text-h2 lg:text-h-xl text-text-primary mb-1 font-bold normal-case">
+              {backsideTitle}
             </h3>
 
             {subtitle && (

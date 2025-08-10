@@ -8,6 +8,7 @@ import serviceIcon from '@/assets/service-home.svg';
 interface ServiceCard {
   id: number;
   title: string;
+  backsideTitle: string;
   subtitle: string;
   description: string;
   icon: string;
@@ -18,6 +19,7 @@ const OurServices = () => {
     {
       id: 1,
       title: 'CONSULTATION',
+      backsideTitle: 'Consultation',
       subtitle: 'Admission Consultation',
       description: 'Talk with current senior students & Get Advice!',
       icon: serviceIcon,
@@ -25,6 +27,7 @@ const OurServices = () => {
     {
       id: 2,
       title: 'PRE-UNIVERSITY',
+      backsideTitle: 'Pre-University',
       subtitle: 'Pre-University Programs',
       description:
         'Explore (ED Visa supported) GED, IGCSE, OSSD, and Language courses!',
@@ -33,6 +36,7 @@ const OurServices = () => {
     {
       id: 3,
       title: 'VISA',
+      backsideTitle: 'Visa',
       subtitle: 'Visa Services',
       description:
         'Skip the stress, we get your Ed Visa with ease (Ygn / Laos)',
@@ -41,6 +45,7 @@ const OurServices = () => {
     {
       id: 4,
       title: 'ACCOMMODATION & AIRPORT PICK-UP',
+      backsideTitle: 'Accommodation & Airport Pick-iP',
       subtitle: 'Accommodation & Airport Pick-up',
       description: 'Settle with our +100 accommodation options upon arrival!',
       icon: airportPickupIcon,
@@ -48,6 +53,7 @@ const OurServices = () => {
     {
       id: 5,
       title: 'ADMISSION PROCESS SUPPORT',
+      backsideTitle: 'Admission Process Support',
       subtitle: 'University Application Support',
       description: 'Apply with clarity and confidence—you are the future!',
       icon: admissionSupportIcon,
@@ -70,6 +76,7 @@ const OurServices = () => {
             <FlipCard
               key={service.id}
               title={service.title}
+              backsideTitle={service.backsideTitle}
               subtitle={service.subtitle}
               description={service.description}
               icon={service.icon}
