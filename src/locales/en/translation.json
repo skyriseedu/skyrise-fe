@@ -82,21 +82,21 @@
         "badge": "PRE-UNIVERSITY",
         "title": "Pre-University",
         "subtitle": "Pre-University Programs",
-        "description": "Explore (ED Visa supported) GED, IGCSE, OSSD, and Language courses!",
+        "description": "Explore (ED Visa supported) GED, IGCSE, OSSD, and\n Language courses!",
         "iconAlt": "Pre-University service icon"
       },
       "visa": {
         "badge": "VISA",
         "title": "Visa",
         "subtitle": "Visa Services",
-        "description": "Skip the stress, we get your Ed Visa with ease (Ygn / Laos)",
+        "description": "Skip the stress, we get your Ed Visa \nwith ease (Ygn / Laos)",
         "iconAlt": "Visa service icon"
       },
       "accommodation": {
         "badge": "ACCOMMODATION & AIRPORT PICK-UP",
         "title": "Accommodation & Airport Pick-up",
         "subtitle": "Accommodation & Airport Pick-up",
-        "description": "Settle with our +100 accommodation options upon arrival!",
+        "description": "Settle with our +100 accommodation options \nupon arrival!",
         "iconAlt": "Accommodation service icon"
       },
       "admissionSupport": {

@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import flipIcon from '@/assets/flip-card-arrow.svg';
 import Button from '@/components/common/Button';
 
 interface FlipCardProps {
   title: string;
   icon: string;
+  iconAlt?: string;
   backsideTitle: string;
   description: string;
   subtitle?: string;
@@ -17,13 +19,15 @@ interface FlipCardProps {
 const FlipCard: React.FC<FlipCardProps> = ({
   title,
   icon,
+  iconAlt,
   backsideTitle,
   description,
   subtitle,
-  buttonText = 'Check service',
+  buttonText,
   onButtonClick,
   className = '',
 }) => {
+  const { t } = useTranslation();
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => {
@@ -52,13 +56,13 @@ const FlipCard: React.FC<FlipCardProps> = ({
         >
           <div className="relative flex h-full w-full flex-col overflow-hidden rounded-3xl bg-white">
             <div className="absolute top-4 right-4 z-10">
-              <img src={flipIcon} alt="Flip card" className="h-6 w-6" />
+              <img src={flipIcon} alt={t('home.services.flipCardAlt')} className="h-6 w-6" />
             </div>
 
             <div className="flex flex-1 items-center justify-center p-8">
               <img
                 src={icon}
-                alt={title}
+                alt={iconAlt || title}
                 className="h-32 w-32 object-contain"
               />
             </div>
@@ -95,7 +99,7 @@ const FlipCard: React.FC<FlipCardProps> = ({
               </h4>
             )}
 
-            <p className="text-body-4 lg:text-body-2 text-text-primary mb-4 text-center">
+            <p className="text-body-4 lg:text-body-2 text-text-primary mb-4 text-center whitespace-pre-line">
               {description}
             </p>
 
@@ -107,7 +111,7 @@ const FlipCard: React.FC<FlipCardProps> = ({
               size="lg"
               className="w-[80%] text-body-5 lg:text-body-3 font-semibold rounded-[10px]"
             >
-              {buttonText}
+              {t('home.services.checkService') || buttonText }
             </Button>
           </div>
         </div>

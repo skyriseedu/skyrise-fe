@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import FlipCard from './FlipCard';
 import preUniversityIcon from '@/assets/pre-university-home.svg';
 import airportPickupIcon from '@/assets/airport-pickup-home.svg';
@@ -12,51 +13,57 @@ interface ServiceCard {
   subtitle: string;
   description: string;
   icon: string;
+  iconAlt: string;
 }
 
 const OurServices = () => {
+  const { t } = useTranslation();
+  
   const services: ServiceCard[] = [
     {
       id: 1,
-      title: 'CONSULTATION',
-      backsideTitle: 'Consultation',
-      subtitle: 'Admission Consultation',
-      description: 'Talk with current senior students & Get Advice!',
+      title: t('home.services.consultation.badge'),
+      backsideTitle: t('home.services.consultation.title'),
+      subtitle: t('home.services.consultation.subtitle'),
+      description: t('home.services.consultation.description'),
       icon: serviceIcon,
+      iconAlt: t('home.services.consultation.iconAlt'),
     },
     {
       id: 2,
-      title: 'PRE-UNIVERSITY',
-      backsideTitle: 'Pre-University',
-      subtitle: 'Pre-University Programs',
-      description:
-        'Explore (ED Visa supported) GED, IGCSE, OSSD, and Language courses!',
+      title: t('home.services.preUniversity.badge'),
+      backsideTitle: t('home.services.preUniversity.title'),
+      subtitle: t('home.services.preUniversity.subtitle'),
+      description: t('home.services.preUniversity.description'),
       icon: preUniversityIcon,
+      iconAlt: t('home.services.preUniversity.iconAlt'),
     },
     {
       id: 3,
-      title: 'VISA',
-      backsideTitle: 'Visa',
-      subtitle: 'Visa Services',
-      description:
-        'Skip the stress, we get your Ed Visa with ease (Ygn / Laos)',
+      title: t('home.services.visa.badge'),
+      backsideTitle: t('home.services.visa.title'),
+      subtitle: t('home.services.visa.subtitle'),
+      description: t('home.services.visa.description'),
       icon: visaSupportIcon,
+      iconAlt: t('home.services.visa.iconAlt'),
     },
     {
       id: 4,
-      title: 'ACCOMMODATION & AIRPORT PICK-UP',
-      backsideTitle: 'Accommodation & Airport Pick-up',
-      subtitle: 'Accommodation & Airport Pick-up',
-      description: 'Settle with our +100 accommodation options upon arrival!',
+      title: t('home.services.accommodation.badge'),
+      backsideTitle: t('home.services.accommodation.title'),
+      subtitle: t('home.services.accommodation.subtitle'),
+      description: t('home.services.accommodation.description'),
       icon: airportPickupIcon,
+      iconAlt: t('home.services.accommodation.iconAlt'),
     },
     {
       id: 5,
-      title: 'ADMISSION PROCESS SUPPORT',
-      backsideTitle: 'Admission Process Support',
-      subtitle: 'University Application Support',
-      description: 'Apply with clarity and confidence—you are the future!',
+      title: t('home.services.admissionSupport.badge'),
+      backsideTitle: t('home.services.admissionSupport.title'),
+      subtitle: t('home.services.admissionSupport.subtitle'),
+      description: t('home.services.admissionSupport.description'),
       icon: admissionSupportIcon,
+      iconAlt: t('home.services.admissionSupport.iconAlt'),
     },
   ];
 
@@ -68,7 +75,7 @@ const OurServices = () => {
     <section className="bg-white px-4 py-16">
       <div className="mx-auto max-w-7xl">
         <h2 className="text-h1 text-text-primary mb-12 text-center font-semibold lg:text-[40px]">
-          Our Services
+          {t('home.services.title')}
         </h2>
 
         <div className="flex flex-wrap justify-center gap-8">
@@ -80,6 +87,7 @@ const OurServices = () => {
               subtitle={service.subtitle}
               description={service.description}
               icon={service.icon}
+              iconAlt={service.iconAlt}
               onButtonClick={() => handleServiceClick(service.title)}
             />
           ))}
