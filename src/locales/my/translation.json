@@ -45,10 +45,22 @@
     "admissionProcess": {
       "title": "Admission Process",
       "steps": {
-        "1": "Explore University",
-        "2": "Consult with SkyRise",
-        "3": "Apply with SkyRise",
-        "4": "Take Visa & Accommodation Services"
+        "1": {
+          "number": "1",
+          "title": "Explore \nUniversity"
+        },
+        "2": {
+          "number": "2",
+          "title": "Consult with \nSkyRise"
+        },
+        "3": {
+          "number": "3",
+          "title": "Apply with \nSkyRise"
+        },
+        "4": {
+          "number": "4",
+          "title": "Take Visa &\n Accommodation \nServices"
+        }
       },
       "icons": {
         "smallRectangle": "small rectangle",
