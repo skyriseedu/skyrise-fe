@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import CaretDown from '../../assets/caret-down.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
 
@@ -39,76 +40,106 @@ const navigationItems = [
 const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
   const [expandedServices, setExpandedServices] = useState(false);
 
-  if (!isOpen) return null;
-
   const toggleServices = () => {
     setExpandedServices(!expandedServices);
   };
 
   return (
-    <div className="fixed top-21 right-0 z-50 h-full w-80 transform overflow-hidden rounded-xl bg-white shadow-lg transition-transform duration-300 ease-in-out">
-      <div className="flex justify-end p-4"></div>
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            className="fixed inset-0 z-40 bg-black/50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={onClose}
+          />
 
-      <nav className="px-6 py-4">
-        <ul className="space-y-1">
-          {navigationItems.map((item) => (
-            <li key={item.name}>
-              {item.hasSubmenu ? (
-                <div>
-                  <button
-                    onClick={toggleServices}
-                    className={`text-body-1 text-text-primary hover:bg-secondary hover:text-primary block w-full rounded-lg px-4 py-3 text-left font-semibold`}
-                  >
-                    <div className="flex items-center justify-start">
-                      <span>{item.name}</span>
-                      <CaretDown
-                        className={`h-5 w-5 transition-transform duration-200 ${expandedServices ? 'rotate-180' : ''}`}
-                      />
-                    </div>
-                  </button>
+          {/* Navigation Panel */}
+          <motion.div
+            className="fixed top-20 right-0 z-50 h-[calc(100vh-5rem)] w-80 overflow-hidden rounded-l-xl bg-white shadow-lg"
+            initial={{ x: '100%' }}
+            animate={{ x: '0%' }}
+            exit={{ x: '100%' }}
+            transition={{
+              type: 'spring',
+              damping: 30,
+              stiffness: 300,
+              duration: 0.3,
+            }}
+          >
+            <nav className="relative z-10 px-6 py-4">
+              <ul className="">
+                {navigationItems.map((item) => (
+                  <li key={item.name}>
+                    {item.hasSubmenu ? (
+                      <div>
+                        <button
+                          onClick={toggleServices}
+                          className={`text-h-2 text-text-primary hover:bg-secondary hover:text-primary block w-full rounded-lg px-4 py-3 text-left font-semibold`}
+                        >
+                          <div className="flex items-center justify-start">
+                            <span>{item.name}</span>
+                            <CaretDown
+                              className={`h-5 w-5 transition-transform duration-200 ${expandedServices ? 'rotate-180' : ''}`}
+                            />
+                          </div>
+                        </button>
 
-                  {expandedServices && (
-                    <ul className="mt-2 ml-4 space-y-1">
-                      {item.subItems?.map((subItem) => (
-                        <li key={subItem.name}>
-                          <Link
-                            to={subItem.path}
-                            onClick={onClose}
-                            className="text-body-1 text-text-primary hover:bg-primary hover:text-primary block rounded-lg px-4 py-2 font-semibold transition-colors"
+                        {expandedServices && (
+                          <motion.ul
+                            className="mt-2 ml-4"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.2 }}
                           >
-                            {subItem.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ) : (
-                item.path && (
-                  <Link
-                    to={item.path}
-                    onClick={onClose}
-                    className={`text-body-1 block rounded-lg px-4 py-3 font-semibold transition-colors ${
-                      item.isActive
-                        ? 'bg-primary text-white'
-                        : 'text-text-primary hover:bg-secondary hover:text-primary'
-                    }`}
-                  >
-                    {item.name}
-                  </Link>
-                )
-              )}
-            </li>
-          ))}
-        </ul>
-      </nav>
+                            {item.subItems?.map((subItem) => (
+                              <li key={subItem.name}>
+                                <Link
+                                  to={subItem.path}
+                                  onClick={onClose}
+                                  className="text-h-2 text-text-primary hover:bg-secondary hover:text-primary block rounded-lg px-4 py-2 font-semibold transition-colors"
+                                >
+                                  {subItem.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </motion.ul>
+                        )}
+                      </div>
+                    ) : (
+                      item.path && (
+                        <Link
+                          to={item.path}
+                          onClick={onClose}
+                          className={`text-h-2 block rounded-lg px-4 py-3 font-semibold transition-colors ${
+                            item.isActive
+                              ? 'bg-primary text-white'
+                              : 'text-text-primary hover:bg-secondary hover:text-primary'
+                          }`}
+                        >
+                          {item.name}
+                        </Link>
+                      )
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
 
-      <div className="absolute bottom-30 -left-20 opacity-20">
-        <div className="flex transform items-center justify-center">
-          <SkyRiseLogo2 className="text-text-secondary h-70 w-auto" />
-        </div>
-      </div>
-    </div>
+            <div className="absolute bottom-30 -left-20 opacity-20">
+              <div className="flex transform items-center justify-center">
+                <SkyRiseLogo2 className="text-text-secondary h-70 w-auto" />
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 };
 

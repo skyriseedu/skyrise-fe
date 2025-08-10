@@ -91,8 +91,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
   };
 
   return (
-    <header className="relative z-50 bg-white shadow-sm">
-      <div className="flex items-center justify-between px-6 pt-3 pb-6">
+    <header className="sticky top-0 z-50 bg-white shadow-sm">
+      <div className="flex items-center justify-between px-6 py-5">
         <Link to="/" className="flex items-center">
           <img src={SkyRiseLogo} alt="SkyRise Logo" className="h-12 w-auto" />
         </Link>
@@ -122,12 +122,13 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
                   </button>
 
                   {expandedServices && (
-                    <div className="absolute top-full left-0 z-50 mt-2 w-64 rounded-lg border border-gray-100 bg-white py-2 shadow-lg">
+                    <div className="animate-in fade-in-0 zoom-in-95 absolute top-full left-0 z-50 mt-2 w-64 rounded-lg border border-gray-100 bg-white py-2 shadow-lg duration-200">
                       {item.subItems?.map((subItem) => (
                         <Link
                           key={subItem.name}
                           to={subItem.path}
                           className="text-h2 text-text-primary hover:bg-secondary hover:text-primary block px-4 py-2 font-medium transition-colors"
+                          onClick={() => setExpandedServices(false)}
                         >
                           {subItem.name}
                         </Link>

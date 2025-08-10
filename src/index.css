@@ -29,6 +29,7 @@
   --font-size-body-3: 1rem; /* 16px */
   --font-size-body-4: 0.875rem; /* 14px */
   --font-size-body-5: 0.75rem; /* 12px */
+  --font-size-body-xl: 1.5rem; /* 24px */
 
   --line-height-tight: 1.2;
   --line-height-normal: 1.4;
@@ -106,6 +107,12 @@
     line-height: var(--line-height-normal);
   }
 
+  .text-body-xl {
+    font-size: var(--font-size-body-xl);
+    font-family: var(--font-family-roboto);
+    line-height: var(--line-height-normal);
+  }
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
@@ -152,6 +159,9 @@
     }
     .lg\:text-body-5 {
       font-size: var(--font-size-body-5);
+    }
+    .lg\:text-body-xl {
+      font-size: var(--font-size-body-xl);
     }
   }
 }
