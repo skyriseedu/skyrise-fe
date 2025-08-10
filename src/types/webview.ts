@@ -6,9 +6,6 @@ export interface WebViewDetectionResult {
   userAgent: string;
 }
 
-/**
- * Supported WebView types
- */
 export type WebViewType = 'facebook' | 'instagram' | 'messenger' | 'unknown';
 
 /**
