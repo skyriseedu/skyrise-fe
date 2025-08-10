@@ -8,17 +8,17 @@ import Button from '@/components/common/Button';
 
 const HomePage: React.FC = () => {
   return (
-    <div className="min-h-screen mb-4">
+    <div className="mb-4 min-h-screen">
       <HeroSection />
       <WhyChooseUs />
       <AdmissionProcess />
       <OurServices />
       <StatsSection />
-      
-      <div className="flex justify-center py-8 px-4">
+
+      <div className="flex justify-center px-4 py-8">
         <Button
           size="lg"
-          className="w-full sm:w-auto sm:px-12 text-body-5 lg:text-body-3 font-semibold rounded-[10px]"
+          className="text-body-5 lg:text-body-3 w-full rounded-[10px] font-semibold sm:w-auto sm:px-12"
           onClick={() => console.log('Book Free Consultation clicked')}
         >
           Book Free Consultation

@@ -18,7 +18,7 @@ interface ServiceCard {
 
 const OurServices = () => {
   const { t } = useTranslation();
-  
+
   const services: ServiceCard[] = [
     {
       id: 1,

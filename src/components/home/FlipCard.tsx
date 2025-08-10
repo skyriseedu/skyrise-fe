@@ -56,7 +56,11 @@ const FlipCard: React.FC<FlipCardProps> = ({
         >
           <div className="relative flex h-full w-full flex-col overflow-hidden rounded-3xl bg-white">
             <div className="absolute top-4 right-4 z-10">
-              <img src={flipIcon} alt={t('home.services.flipCardAlt')} className="h-6 w-6" />
+              <img
+                src={flipIcon}
+                alt={t('home.services.flipCardAlt')}
+                className="h-6 w-6"
+              />
             </div>
 
             <div className="flex flex-1 items-center justify-center p-8">
@@ -67,8 +71,8 @@ const FlipCard: React.FC<FlipCardProps> = ({
               />
             </div>
 
-            <div className="flex items-center justify-center bg-secondary px-4 py-6">
-              <h3 className="text-h4 lg:text-h2 text-center font-semibold text-primary">
+            <div className="bg-secondary flex items-center justify-center px-4 py-6">
+              <h3 className="text-h4 lg:text-h2 text-primary text-center font-semibold">
                 {title}
               </h3>
             </div>
@@ -89,12 +93,12 @@ const FlipCard: React.FC<FlipCardProps> = ({
               <img src={flipIcon} alt="Flip card" className="h-6 w-6" />
             </div>
 
-            <h3 className="text-h3 lg:text-h2 text-text-primary mb-1 font-semibold text-center normal-case">
+            <h3 className="text-h3 lg:text-h2 text-text-primary mb-1 text-center font-semibold normal-case">
               {backsideTitle}
             </h3>
 
             {subtitle && (
-              <h4 className="text-body-5 mt-3 lg:text-body-3 text-text-primary mb-2 font-semibold">
+              <h4 className="text-body-5 lg:text-body-3 text-text-primary mt-3 mb-2 font-semibold">
                 {subtitle}
               </h4>
             )}
@@ -109,9 +113,9 @@ const FlipCard: React.FC<FlipCardProps> = ({
                 onButtonClick?.();
               }}
               size="lg"
-              className="w-[80%] text-body-5 lg:text-body-3 font-semibold rounded-[10px]"
+              className="text-body-5 lg:text-body-3 w-[80%] rounded-[10px] font-semibold"
             >
-              {t('home.services.checkService') || buttonText }
+              {t('home.services.checkService') || buttonText}
             </Button>
           </div>
         </div>

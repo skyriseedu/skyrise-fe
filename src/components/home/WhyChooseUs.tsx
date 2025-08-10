@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 const WhyChooseUs: React.FC = () => {
   const { t } = useTranslation();
-  
+
   const reasons = [
     {
       number: 1,
@@ -30,7 +30,7 @@ const WhyChooseUs: React.FC = () => {
     },
   ];
   return (
-    <div className="mx-auto max-w-6xl px-4 mb-10 mt-14">
+    <div className="mx-auto mt-14 mb-10 max-w-6xl px-4">
       <div className="mb-12 text-center">
         <h2 className="text-h1 text-text-primary mb-6 font-semibold lg:text-[40px]">
           {t('home.whyChooseUs.title')}
@@ -40,14 +40,14 @@ const WhyChooseUs: React.FC = () => {
         </p>
       </div>
 
-      <div className="mb-20 grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+      <div className="mb-20 grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-4">
         {reasons?.map((reason) => (
           <div
             key={reason?.number}
             className={`relative rounded-[10px] p-3 text-center sm:p-4 md:p-8 ${reason.backgroundColor || ''}`}
           >
             <h3
-              className={`text-h1 lg:text-[40px] mb-2 font-semibold md:mb-4 ${reason.textColor}`}
+              className={`text-h1 mb-2 font-semibold md:mb-4 lg:text-[40px] ${reason.textColor}`}
             >
               {reason?.number}
             </h3>

@@ -9,15 +9,27 @@ interface AdmissionStep {
 
 export const AdmissionProcess = () => {
   const { t } = useTranslation();
-  
+
   const admissionSteps: AdmissionStep[] = [
-    { number: t('home.admissionProcess.steps.1.number'), title: t('home.admissionProcess.steps.1.title') },
-    { number: t('home.admissionProcess.steps.2.number'), title: t('home.admissionProcess.steps.2.title') },
-    { number: t('home.admissionProcess.steps.3.number'), title: t('home.admissionProcess.steps.3.title') },
-    { number: t('home.admissionProcess.steps.4.number'), title: t('home.admissionProcess.steps.4.title') },
+    {
+      number: t('home.admissionProcess.steps.1.number'),
+      title: t('home.admissionProcess.steps.1.title'),
+    },
+    {
+      number: t('home.admissionProcess.steps.2.number'),
+      title: t('home.admissionProcess.steps.2.title'),
+    },
+    {
+      number: t('home.admissionProcess.steps.3.number'),
+      title: t('home.admissionProcess.steps.3.title'),
+    },
+    {
+      number: t('home.admissionProcess.steps.4.number'),
+      title: t('home.admissionProcess.steps.4.title'),
+    },
   ];
   return (
-    <section className="bg-bg px-6 md:px-8 lg:px-12 py-8 mb-2">
+    <section className="bg-bg mb-2 px-6 py-8 md:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
         <h2 className="text-h1 text-text-primary mb-12 text-center font-semibold lg:text-[40px]">
           {t('home.admissionProcess.title')}

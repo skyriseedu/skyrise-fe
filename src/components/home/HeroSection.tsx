@@ -9,7 +9,7 @@ import Button from '@/components/common/Button';
 
 const HeroSection: React.FC = () => {
   const { t } = useTranslation();
-  
+
   return (
     <section className="relative h-screen w-full overflow-hidden">
       <div className="absolute inset-0">
@@ -31,13 +31,17 @@ const HeroSection: React.FC = () => {
       <div className="relative z-10 flex h-full">
         <div className="w-full max-w-7xl px-6 pt-14 sm:px-6 lg:px-10 lg:pt-20">
           <div>
-            <h1 className="mb-6 font-semibold leading-tight text-white text-[32px] md:text-[48px] lg:text-[76px]">
-              {t('home.hero.title').split('\n').map((line, index) => (
-                <React.Fragment key={index}>
-                  {line}
-                  {index < t('home.hero.title').split('\n').length - 1 && <br />}
-                </React.Fragment>
-              ))}
+            <h1 className="mb-6 text-[32px] leading-tight font-semibold text-white md:text-[48px] lg:text-[76px]">
+              {t('home.hero.title')
+                .split('\n')
+                .map((line, index) => (
+                  <React.Fragment key={index}>
+                    {line}
+                    {index < t('home.hero.title').split('\n').length - 1 && (
+                      <br />
+                    )}
+                  </React.Fragment>
+                ))}
             </h1>
 
             <p className="text-body-4 lg:text-body-2 mb-6 text-white">
@@ -46,23 +50,39 @@ const HeroSection: React.FC = () => {
 
             <div className="flex items-center gap-4">
               <a href="#" className="hover:opacity-80">
-                <img src={facebookWhite} alt={t('common.social.facebook')} className="h-8 w-8" />
+                <img
+                  src={facebookWhite}
+                  alt={t('common.social.facebook')}
+                  className="h-8 w-8"
+                />
               </a>
               <a href="#" className="hover:opacity-80">
-                <img src={messengerWhite} alt={t('common.social.messenger')} className="h-8 w-8" />
+                <img
+                  src={messengerWhite}
+                  alt={t('common.social.messenger')}
+                  className="h-8 w-8"
+                />
               </a>
               <a href="#" className="hover:opacity-80">
-                <img src={youtubeWhite} alt={t('common.social.youtube')} className="h-8 w-8" />
+                <img
+                  src={youtubeWhite}
+                  alt={t('common.social.youtube')}
+                  className="h-8 w-8"
+                />
               </a>
               <a href="#" className="hover:opacity-80">
-                <img src={telegramWhite} alt={t('common.social.telegram')} className="h-8 w-8" />
+                <img
+                  src={telegramWhite}
+                  alt={t('common.social.telegram')}
+                  className="h-8 w-8"
+                />
               </a>
             </div>
 
             <div className="mt-6 mb-4 flex justify-center lg:justify-start">
               <Button
                 size="lg"
-                className="w-86 text-body-5 lg:text-body-3 font-semibold rounded-[10px]"
+                className="text-body-5 lg:text-body-3 w-86 rounded-[10px] font-semibold"
                 onClick={() => console.log('Get Started clicked')}
               >
                 {t('common.buttons.getStarted')}
