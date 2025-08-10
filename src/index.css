@@ -125,6 +125,44 @@
 
   /* Responsive variants for lg: breakpoint */
   @media (min-width: 1024px) {
+    /* Heading responsive classes */
+    .lg\:text-h1 {
+      font-size: var(--font-size-h1);
+      font-family: var(--font-family-fustat);
+      line-height: var(--line-height-normal);
+    }
+    .lg\:text-h2 {
+      font-size: var(--font-size-h2);
+      font-family: var(--font-family-fustat);
+      line-height: var(--line-height-normal);
+    }
+    .lg\:text-h3 {
+      font-size: var(--font-size-h3);
+      font-family: var(--font-family-fustat);
+      line-height: var(--line-height-normal);
+    }
+    .lg\:text-h4 {
+      font-size: var(--font-size-h4);
+      font-family: var(--font-family-fustat);
+      line-height: var(--line-height-normal);
+    }
+    .lg\:text-h5 {
+      font-size: var(--font-size-h5);
+      font-family: var(--font-family-fustat);
+      line-height: var(--line-height-normal);
+    }
+    .lg\:text-h6 {
+      font-size: var(--font-size-h6);
+      font-family: var(--font-family-fustat);
+      line-height: var(--line-height-normal);
+    }
+    .lg\:text-h7 {
+      font-size: var(--font-size-h7);
+      font-family: var(--font-family-fustat);
+      line-height: var(--line-height-normal);
+    }
+    
+    /* Body responsive classes */
     .lg\:text-body-1 {
       font-size: 1.375rem; /* 22px */
     }

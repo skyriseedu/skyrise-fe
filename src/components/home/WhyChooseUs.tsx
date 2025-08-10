@@ -34,19 +34,20 @@ const WhyChooseUs: React.FC<WhyChooseUsProps> = ({
     {
       number: 2,
       title: 'Clear path to your best-fit university',
-      textColor: 'text-primary',
+      textColor: 'text-primary md:text-primary',
       backgroundColor: 'bg-secondary',
     },
     {
       number: 3,
       title: 'Personal guidance you can rely on',
-      textColor: 'text-text-primary',
+      textColor: 'text-primary md:text-text-primary',
+      backgroundColor: 'bg-secondary md:bg-transparent',
     },
     {
       number: 4,
       title: 'Inspiring community that grows with you',
       textColor: 'text-primary',
-      backgroundColor: 'bg-secondary',
+      backgroundColor: 'md:bg-secondary sm:bg-transparent',
     },
   ],
 }) => {

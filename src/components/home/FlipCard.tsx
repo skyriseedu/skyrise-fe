@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import flipIcon from '@/assets/flip-card-arrow.svg';
+import Button from '@/components/common/Button';
 
 interface FlipCardProps {
   title: string;
@@ -84,12 +85,12 @@ const FlipCard: React.FC<FlipCardProps> = ({
               <img src={flipIcon} alt="Flip card" className="h-6 w-6" />
             </div>
 
-            <h3 className="text-h3 lg:text-h2 text-text-primary mb-1 font-semibold normal-case">
+            <h3 className="text-h3 lg:text-h2 text-text-primary mb-1 font-semibold text-center normal-case">
               {backsideTitle}
             </h3>
 
             {subtitle && (
-              <h4 className="text-body-5 lg:text-body-3 text-text-primary mb-2 font-semibold">
+              <h4 className="text-body-5 mt-3 lg:text-body-3 text-text-primary mb-2 font-semibold">
                 {subtitle}
               </h4>
             )}
@@ -98,15 +99,16 @@ const FlipCard: React.FC<FlipCardProps> = ({
               {description}
             </p>
 
-            <button
+            <Button
               onClick={(e) => {
                 e.stopPropagation();
                 onButtonClick?.();
               }}
-              className="bg-primary hover:bg-primary/90 text-body-5 lg:text-body-3 w-[80%] rounded-[10px] px-10 py-3 font-semibold text-white transition-colors duration-200"
+              size="lg"
+              className="w-[80%] text-body-5 lg:text-body-3 font-semibold rounded-[10px]"
             >
               {buttonText}
-            </button>
+            </Button>
           </div>
         </div>
       </motion.div>

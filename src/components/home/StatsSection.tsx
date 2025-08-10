@@ -29,7 +29,7 @@ const statsData = [
 
 export default function StatsSection() {
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-9 sm:py-9 md:py-16 lg:py-16 px-4 bg-white">
       <div className="container mx-auto max-w-7xl">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 sm:gap-10 md:gap-12">
           {statsData?.map((stat, index) => (

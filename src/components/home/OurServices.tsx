@@ -45,7 +45,7 @@ const OurServices = () => {
     {
       id: 4,
       title: 'ACCOMMODATION & AIRPORT PICK-UP',
-      backsideTitle: 'Accommodation & Airport Pick-iP',
+      backsideTitle: 'Accommodation & Airport Pick-up',
       subtitle: 'Accommodation & Airport Pick-up',
       description: 'Settle with our +100 accommodation options upon arrival!',
       icon: airportPickupIcon,
