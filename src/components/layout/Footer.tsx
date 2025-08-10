@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Facebook from '../../assets/facebook.svg?react';
 import YouTube from '../../assets/youtube.svg?react';
@@ -52,11 +52,11 @@ const footerNavigation = [
       { name: 'Visa', path: '/services/visa' },
       {
         name: 'Accommodation & Airport Pick-up',
-        path: '/services/accommodation-and-airport-pick-up',
+        path: '/services/accommodation',
       },
       {
         name: 'Pre-University Program',
-        path: '/services/pre-university-program',
+        path: '/services/pre-university',
       },
     ],
   },
@@ -65,18 +65,19 @@ const footerNavigation = [
 
 const Footer: React.FC = () => {
   const [expandedServices, setExpandedServices] = useState(false);
+  const servicesRef = useRef<HTMLDivElement>(null);
 
   const toggleServices = () => {
     setExpandedServices(!expandedServices);
   };
   return (
-    <footer className="bg-secondary relative overflow-hidden px-6 pt-8 pb-15 lg:px-12 lg:pt-12 lg:pb-20">
+    <footer className="bg-secondary relative overflow-hidden px-6 pt-8 pb-15 lg:px-12 lg:pt-12 lg:pb-50">
       <div className="lg:flex lg:items-start lg:justify-between lg:space-x-8">
         <div className="mb-8 lg:mb-0 lg:max-w-md lg:flex-1">
-          <h3 className="text-h1 text-primary mb-4 font-semibold">
+          <h3 className="text-h1 lg:text-h1 text-primary mb-4 font-semibold">
             Contact Us
           </h3>
-          <p className="text-h3 lg:text-h1 mb-6 font-normal">
+          <p className="text-body-3 lg:text-body-1 font-regular mb-6 lg:font-normal">
             Have questions about university? Reach out to SkyRise Corner – we're
             here to help you every step of the way!
           </p>
@@ -93,31 +94,31 @@ const Footer: React.FC = () => {
                 <div className="text-primary flex h-6 w-6 items-center justify-center">
                   {social.icon}
                 </div>
-                <span className="text-h3 lg:text-h1 font-normal">
+                <span className="text-body-3 lg:text-body-1 font-regular lg:font-normal">
                   skyrise/{social.name.toLowerCase()}.com
                 </span>
               </a>
             ))}
           </div>
 
-          <div className="text-h3 text-text-primary lg:text-h1 mb-4 font-normal">
+          <div className="text-body-3 text-text-primary lg:text-body-1 mb-4 font-normal">
             Passionate about education? Join SkyRise Corner as a consultant and
             help students achieve their university dreams!
           </div>
-          <button className="bg-primary text-h3 hover:bg-primary/80 lg:text-h1 w-full rounded-lg px-6 py-2 font-medium text-white transition-colors lg:w-auto lg:font-bold">
+          <button className="bg-primary text-h3 hover:bg-primary/80 lg:text-h2 w-full cursor-pointer rounded-lg px-6 py-2 font-medium text-white transition-colors lg:font-bold">
             Join With Us!
           </button>
         </div>
 
-        <nav className="mb-8 lg:mb-0 lg:max-w-xs lg:flex-1">
+        <nav className="relative z-10 mb-8 lg:mt-10 lg:mr-20 lg:mb-0 lg:max-w-xs lg:flex-1">
           <ul className="space-y-3 lg:space-y-4">
             {footerNavigation.map((item) => (
               <li key={item.name}>
                 {item.hasSubmenu ? (
-                  <div>
+                  <div ref={servicesRef}>
                     <button
                       onClick={toggleServices}
-                      className="text-h3 text-text-primary hover:text-primary lg:text-h1 flex w-full items-start text-left font-normal transition-colors"
+                      className="text-h3 text-text-primary hover:text-primary lg:text-h1 flex w-full cursor-pointer items-start text-left font-normal transition-colors"
                     >
                       <span className="flex items-center space-x-2">
                         <span>{item.name}</span>
@@ -133,7 +134,7 @@ const Footer: React.FC = () => {
                           <li key={subItem.name}>
                             <Link
                               to={subItem.path}
-                              className="text-h4 lg:text-h2 text-text-primary hover:text-primary block font-normal transition-colors"
+                              className="text-h4 lg:text-h2 text-text-primary hover:text-primary block cursor-pointer font-normal transition-colors"
                             >
                               {subItem.name}
                             </Link>
@@ -146,7 +147,7 @@ const Footer: React.FC = () => {
                   item.path && (
                     <Link
                       to={item.path}
-                      className="text-h3 lg:text-h1 text-text-primary hover:text-primary font-normal transition-colors"
+                      className="text-h3 lg:text-h1 text-text-primary hover:text-primary cursor-pointer font-normal transition-colors"
                     >
                       {item.name}
                     </Link>
@@ -158,7 +159,7 @@ const Footer: React.FC = () => {
         </nav>
       </div>
 
-      <div className="absolute -right-20 -bottom-5 opacity-30 lg:right-12 lg:bottom-24">
+      <div className="absolute -right-20 -bottom-5 opacity-30 lg:right-12 lg:bottom-10">
         <div className="flex transform items-center justify-center">
           <div className="transform">
             <SkyRiseLogo2 className="text-text-secondary h-80 w-auto" />
