@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { BlogCategory, BlogFilterProps } from '../../types/blog';
+import CaretDown from '../../assets/caret-down.svg?react';
 
 const BlogFilter: React.FC<BlogFilterProps> = ({
   selectedCategory,
@@ -42,40 +43,30 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
     <div className="relative inline-block" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="text-h4 text-text-primary hover:border-primary flex min-w-[200px] items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 font-medium shadow-sm transition-all duration-200 hover:shadow-md"
+        className="text-h5 text-text-primary hover:text-primary flex min-w-[200px] items-center justify-start gap-3 rounded-full border-none bg-transparent px-4 py-2 font-semibold transition-colors"
       >
         <span>
-          Filter by:{' '}
           {categories.find((cat) => cat.value === selectedCategory)?.label ||
             selectedCategory}
         </span>
-        <svg
-          className={`h-4 w-4 transform transition-transform duration-200 ${
+
+        <CaretDown
+          className={`h-5 w-5 transition-transform duration-200 ${
             isOpen ? 'rotate-180' : ''
           }`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="m19 9-7 7-7-7"
-          />
-        </svg>
+        />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 z-50 mt-1 w-full min-w-[200px] rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div className="animate-in fade-in-0 zoom-in-95 absolute top-full left-0 z-50 mt-2 w-45 rounded-lg border border-gray-100 bg-white py-2 shadow-lg duration-200">
           {categories.map((category) => (
             <button
               key={category.value}
               onClick={() => handleCategorySelect(category.value)}
-              className={`text-h4 block w-full px-4 py-3 text-left font-medium transition-colors first:rounded-t-lg last:rounded-b-lg hover:bg-gray-50 ${
+              className={`text-h5 block w-full px-4 py-2 text-left font-medium transition-colors ${
                 selectedCategory === category.value
                   ? 'bg-primary/10 text-primary'
-                  : 'text-text-secondary hover:text-text-primary'
+                  : 'text-text-primary hover:bg-secondary hover:text-primary'
               }`}
             >
               {category.label}

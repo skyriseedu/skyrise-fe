@@ -90,8 +90,12 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
     return location.pathname.startsWith(item.path || '');
   };
 
+  const isHomePage = location.pathname === '/';
+
   return (
-    <header className="sticky top-0 z-60 bg-white shadow-sm">
+    <header
+      className={`sticky top-0 z-60 bg-white ${isHomePage ? 'shadow-sm' : ''}`}
+    >
       <div className="flex items-center justify-between px-6 py-5">
         <Link to="/" className="flex items-center">
           <img src={SkyRiseLogo} alt="SkyRise Logo" className="h-12 w-auto" />

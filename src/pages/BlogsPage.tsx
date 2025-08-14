@@ -8,7 +8,7 @@ const BlogsPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] =
     useState<BlogCategory>('All Categories');
   const [currentPage, setCurrentPage] = useState(1);
-  const blogsPerPage = 6;
+  const blogsPerPage = 5;
 
   // Filter blogs based on selected category
   const filteredBlogs = useMemo(() => {
@@ -49,21 +49,32 @@ const BlogsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pt-0 pb-16 lg:px-14">
-      <div className="container mx-auto px-4 py-12">
-        {/* Filter Section */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between">
-            <BlogFilter
-              selectedCategory={selectedCategory}
-              onCategoryChange={handleCategoryChange}
-            />
+    <div className="min-h-screen pb-16">
+      {/* Page Header Section - connects seamlessly with main header */}
+      <div className="bg-white shadow-sm">
+        <div className="container mx-auto px-4 py-2">
+          <div className="flex items-center gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="text-center lg:text-left">
+              <h1 className="lg:text-h1 text-h2 text-text-primary mb-2 font-bold">
+                Blogs
+              </h1>
+            </div>
+            <div className="flex justify-center lg:justify-start">
+              <BlogFilter
+                selectedCategory={selectedCategory}
+                onCategoryChange={handleCategoryChange}
+              />
+            </div>
           </div>
-        </section>
-        {/* Latest Blog Post Section */}
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-4">
         <section className="mb-16">
           <div className="mb-8 flex items-center justify-between">
-            <h2 className="text-h2 text-text-primary font-bold">Latest Post</h2>
+            <h2 className="text-h3 lg:h1 text-text-primary font-bold">
+              Latest Post
+            </h2>
           </div>
           <div className="w-full">
             <BlogCard blog={latestBlog} variant="medium" />
