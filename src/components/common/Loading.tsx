@@ -7,21 +7,21 @@ interface LoadingProps {
   color?: 'primary' | 'secondary' | 'white' | 'text-primary' | 'text-secondary';
 }
 
-const Loading: React.FC<LoadingProps> = ({ 
-  className, 
+const Loading: React.FC<LoadingProps> = ({
+  className,
   size = 'md',
-  color = 'primary' 
+  color = 'primary',
 }) => {
   const dotSizeClasses = {
     sm: 'w-2 h-2',
     md: 'w-3 h-3',
-    lg: 'w-4 h-4'
+    lg: 'w-4 h-4',
   };
 
   const spaceClasses = {
     sm: 'space-x-1',
     md: 'space-x-2',
-    lg: 'space-x-3'
+    lg: 'space-x-3',
   };
 
   const activeColorClasses = {
@@ -29,12 +29,16 @@ const Loading: React.FC<LoadingProps> = ({
     secondary: 'bg-secondary',
     white: 'bg-white',
     'text-primary': 'bg-text-primary',
-    'text-secondary': 'bg-text-secondary'
+    'text-secondary': 'bg-text-secondary',
   };
 
   return (
-    <motion.div 
-      className={clsx('flex items-center justify-center', spaceClasses[size], className)}
+    <motion.div
+      className={clsx(
+        'flex items-center justify-center',
+        spaceClasses[size],
+        className
+      )}
     >
       {[0, 1, 2]?.map((index) => (
         <motion.div
@@ -53,7 +57,7 @@ const Loading: React.FC<LoadingProps> = ({
             duration: 1.5,
             repeat: Infinity,
             delay: index * 0.2,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
         />
       ))}

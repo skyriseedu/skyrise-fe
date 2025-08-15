@@ -19,28 +19,38 @@ interface StatsResponse {
 
 export default function StatsSection() {
   const { i18n, t } = useTranslation();
-  
-  const { data: statsData, isLoading, error, isError } = useQuery({
+
+  const {
+    data: statsData,
+    isLoading,
+    error,
+    isError,
+  } = useQuery({
     queryKey: ['stats', i18n.language],
     queryFn: async () => {
-      const response = await fetch(`/api/v1/overview?lang=${i18n.language || 'en'}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `/api/v1/overview?lang=${i18n.language || 'en'}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(
+          errorData.message || `HTTP error! status: ${response.status}`
+        );
       }
 
       const result: StatsResponse = await response.json();
       // console.log('API Response:', result, import.meta.env.VITE_API_BASE_URL);
-      
+
       if (result.success && result.data) {
         return result.data;
       }
-      
+
       throw new Error(result.message || 'Invalid response format');
     },
     staleTime: 10 * 60 * 1000, // 10 minutes
@@ -48,15 +58,13 @@ export default function StatsSection() {
   });
 
   // console.log('Query state:', { isLoading, isError, error, statsData });
-  
+
   if (error) {
     console.error('Error details:', error);
   }
 
   if (isLoading) {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
   if (isError || !statsData) {
