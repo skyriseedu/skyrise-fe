@@ -45,7 +45,8 @@ export default function StatsSection() {
       }
 
       const result: StatsResponse = await response.json();
-      // console.log('API Response:', result, import.meta.env.VITE_API_BASE_URL);
+      console.log('API Response:', result, i18n.language);
+      console.log('API URL:', `/api/v1/overview?lang=${i18n.language || ''}`);
 
       if (result.success && result.data) {
         return result.data;
