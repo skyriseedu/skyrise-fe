@@ -29,7 +29,7 @@ export default function StatsSection() {
     queryKey: ['stats', i18n.language],
     queryFn: async () => {
       const response = await fetch(
-        `/api/v1/overview?lang=${i18n.language || 'en'}`,
+        `${import.meta.env.VITE_API_BASE_URL || 'https://skyrise-backend-wh9o.onrender.com/api/v1'}/overview?lang=${i18n.language || 'en'}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -45,9 +45,11 @@ export default function StatsSection() {
       }
 
       const result: StatsResponse = await response.json();
-      // console.log('API Response:', result, import.meta.env.VITE_API_BASE_URL);
+      console.log('API Response:', result);
+      console.log('API URL:', `${import.meta.env.VITE_API_BASE_URL || 'https://skyrise-backend-wh9o.onrender.com/api/v1'}/overview?lang=${i18n.language || 'en'}`);
 
       if (result.success && result.data) {
+        // console.log('Returning data:', result.data);
         return result.data;
       }
 
@@ -57,7 +59,7 @@ export default function StatsSection() {
     gcTime: 15 * 60 * 1000, // 15 minutes
   });
 
-  // console.log('Query state:', { isLoading, isError, error, statsData });
+  console.log('Query state:', { isLoading, isError, error, statsData });
 
   if (error) {
     console.error('Error details:', error);
