@@ -51,28 +51,26 @@ const BlogsPage: React.FC = () => {
   return (
     <div className="min-h-screen pb-16">
       {/* Page Header Section - connects seamlessly with main header */}
-      <div className="bg-white shadow-sm">
-        <div className="container mx-auto px-4 py-2">
-          <div className="flex items-center gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="text-center lg:text-left">
-              <h1 className="lg:text-h1 text-h2 text-text-primary mb-2 font-bold">
-                Blogs
-              </h1>
-            </div>
-            <div className="flex justify-center lg:justify-start">
-              <BlogFilter
-                selectedCategory={selectedCategory}
-                onCategoryChange={handleCategoryChange}
-              />
-            </div>
+      <div className="flex items-center bg-white px-5 pb-3 shadow-md lg:px-10">
+        <div className="flex items-start gap-4 lg:justify-start">
+          <div className="flex items-center text-center lg:text-left">
+            <h1 className="lg:text-h1 text-h2 text-text-primary font-bold">
+              Blogs
+            </h1>
+          </div>
+          <div className="flex items-center justify-center lg:justify-start">
+            <BlogFilter
+              selectedCategory={selectedCategory}
+              onCategoryChange={handleCategoryChange}
+            />
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-4">
-        <section className="mb-16">
-          <div className="mb-8 flex items-center justify-between">
-            <h2 className="text-h3 lg:h1 text-text-primary font-bold">
+      <div className="container mx-auto px-5 py-2 lg:px-8">
+        <section className="mb-10">
+          <div className="mb-8 flex items-center justify-between px-2">
+            <h2 className="text-h3 lg:text-h1 text-text-primary font-bold">
               Latest Post
             </h2>
           </div>
@@ -82,8 +80,8 @@ const BlogsPage: React.FC = () => {
         </section>
 
         {/* Featured Blogs Section */}
-        <section className="mb-16">
-          <h2 className="text-h2 text-text-primary mb-8 font-bold">
+        <section className="mb-10">
+          <h2 className="text-h3 lg:text-h1 text-text-primary mb-8 font-bold">
             Featured Blogs
           </h2>
           <div className="scrollbar-hide overflow-x-auto scroll-smooth">
@@ -98,10 +96,6 @@ const BlogsPage: React.FC = () => {
               ))}
             </div>
           </div>
-          {/* Scroll hint for mobile */}
-          <p className="text-h6 text-text-secondary mt-2 text-center md:hidden">
-            ← Swipe to see more →
-          </p>
         </section>
 
         {/* All Blogs Section */}
@@ -125,9 +119,21 @@ const BlogsPage: React.FC = () => {
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="text-h4 hover:border-primary hover:text-primary rounded-lg border border-gray-200 px-4 py-2 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                    className="text-text-secondary hover:border-primary hover:text-primary flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Previous
+                    <svg
+                      className="h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
                   </button>
 
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(
@@ -135,10 +141,10 @@ const BlogsPage: React.FC = () => {
                       <button
                         key={page}
                         onClick={() => handlePageChange(page)}
-                        className={`text-h4 h-10 w-10 rounded-lg font-medium transition-colors ${
+                        className={`text-h4 h-10 w-10 rounded-full font-medium transition-colors ${
                           currentPage === page
                             ? 'bg-primary text-white'
-                            : 'text-text-secondary hover:border-primary hover:text-primary border border-gray-200 bg-white'
+                            : 'text-text-secondary hover:text-primary border border-gray-200 bg-white hover:bg-gray-50'
                         }`}
                       >
                         {page}
@@ -149,9 +155,21 @@ const BlogsPage: React.FC = () => {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="text-h4 hover:border-primary hover:text-primary rounded-lg border border-gray-200 px-4 py-2 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                    className="text-text-secondary hover:border-primary hover:text-primary flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Next
+                    <svg
+                      className="h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
                   </button>
                 </div>
               )}

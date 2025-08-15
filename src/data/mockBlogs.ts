@@ -4,8 +4,7 @@ export const mockBlogs: Blog[] = [
   {
     _id: '6898b824df6565fb1cb1f0d2',
     title: 'Student Visa Requirements for Canada',
-    blogText:
-      'Getting a student visa for Canada requires careful preparation and documentation. Here is everything you need to know about the application process, required documents, and timelines for Canadian student visas.',
+    blogText: 'Getting a student visa for Canada requires careful preparation ',
     imageUrl:
       'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg',
     description:
@@ -23,8 +22,7 @@ export const mockBlogs: Blog[] = [
   {
     _id: '6898b614df6565fb1cb1f0c8',
     title: 'Study Abroad in Australia',
-    blogText:
-      'Australia has become one of the most popular destinations for international students. With world-class universities and stunning landscapes, it offers an ideal environment for academic growth.',
+    blogText: 'Australia has become o',
     imageUrl:
       'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg',
     category: 'program',

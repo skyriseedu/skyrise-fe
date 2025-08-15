@@ -18,27 +18,27 @@ const BlogCard: React.FC<BlogCardProps> = ({
       case 'medium':
         return {
           container: 'max-w-full',
-          imageHeight: 'h-26',
+          imageHeight: 'h-26 lg:h-50',
           padding: 'p-6',
-          titleSize: 'text-h4 lg:text-h3',
-          textSize: 'text-body-6',
+          titleSize: 'text-h4 lg:text-h2',
+          textSize: 'text-body-6 lg:text-body-2',
           metaSize: 'text-body-6',
           layout: 'vertical',
         };
       case 'small':
         return {
-          container: 'w-72',
+          container: 'w-50 lg:w-67 lg:h-80 h-70',
           imageHeight: 'aspect-video',
           padding: 'p-4',
           titleSize: 'text-h4 lg:text-h3',
-          textSize: 'text-body-6',
+          textSize: 'text-body-6 lg:text-body-4',
           metaSize: 'text-body-6',
           layout: 'vertical',
         };
       case 'mini':
         return {
           container: 'w-full',
-          imageHeight: 'w-20 h-16',
+          imageHeight: 'w-20 h-20',
           padding: 'p-4',
           titleSize: 'text-h4 lg:text-h3',
           textSize: 'text-body-6',
@@ -60,11 +60,17 @@ const BlogCard: React.FC<BlogCardProps> = ({
 
   const variantClasses = getVariantClasses();
 
+  // Function to truncate text to prevent overflow
+  const truncateText = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
+  };
+
   if (variant === 'mini') {
     return (
       <Link
         to={`/blogs/${blog.slug}`}
-        className={`group flex items-center gap-4 overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-md ${variantClasses.container} ${className}`}
+        className={`group flex items-center gap-4 overflow-hidden rounded-lg bg-white shadow-lg transition-all duration-300 hover:shadow-md ${variantClasses.container} ${className}`}
       >
         <div
           className={`${variantClasses.imageHeight} flex-shrink-0 overflow-hidden rounded-lg py-2 pl-2`}
@@ -101,10 +107,10 @@ const BlogCard: React.FC<BlogCardProps> = ({
   return (
     <Link
       to={`/blogs/${blog.slug}`}
-      className={`group block overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-md ${variantClasses.container} ${className}`}
+      className={`group block overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 hover:shadow-md ${variantClasses.container} ${className}`}
     >
       <div
-        className={`${variantClasses.imageHeight} overflow-hidden ${variant === 'medium' || variant === 'small' ? 'px-3 pt-3' : ''}`}
+        className={`${variantClasses.imageHeight} overflow-hidden ${variant === 'medium' || variant === 'small' ? 'px-2 pt-3 lg:px-3' : ''}`}
       >
         <img
           src={blog.imageUrl || 'https://via.placeholder.com/400x300'}
@@ -115,7 +121,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
 
       <div className={variantClasses.padding}>
         <h3
-          className={`text-text-primary group-hover:text-primary mb-3 line-clamp-2 font-semibold transition-colors ${variantClasses.titleSize}`}
+          className={`text-text-primary group-hover:text-primary mb-2 line-clamp-2 font-semibold transition-colors ${variantClasses.titleSize}`}
         >
           {blog.title}
         </h3>
@@ -134,9 +140,9 @@ const BlogCard: React.FC<BlogCardProps> = ({
         </div>
 
         <p
-          className={`text-text-secondary line-clamp-3 ${variantClasses.textSize}`}
+          className={`text-text-primary line-clamp-3 ${variantClasses.textSize}`}
         >
-          {blog.description || blog.blogText}
+          {truncateText(blog.description || blog.blogText || '', 55)}
         </p>
       </div>
     </Link>
