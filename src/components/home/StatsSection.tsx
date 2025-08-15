@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
-import axiosInstance from '@/lib/axios';
+import { useQuery } from '@tanstack/react-query';
 import StatsCard from './StatsCard';
 import Loading from '../common/Loading';
 
@@ -13,52 +11,56 @@ interface StatsData {
   reviews: { text: string; count: number };
 }
 
+interface StatsResponse {
+  success: boolean;
+  data: StatsData;
+  message?: string;
+}
+
 export default function StatsSection() {
   const { i18n, t } = useTranslation();
-  const [statsData, setStatsData] = useState<StatsData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isServerError, setIsServerError] = useState(false);
+  
+  const { data: statsData, isLoading, error, isError } = useQuery({
+    queryKey: ['stats', i18n.language],
+    queryFn: async () => {
+      const response = await fetch(`/api/v1/overview?lang=${i18n.language || 'en'}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true);
-        const response = await axiosInstance.get('/overview', {
-          params: { lang: i18n.language }
-        });
-        
-        console.log(response.data);
-        if (response.data.success && response.data.data) {
-          setStatsData(response.data.data);
-        } else {
-          throw new Error('Invalid response format');
-        }
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          if (err.response?.status === 500) {
-            setIsServerError(true);
-          }
-          const errorMessage = err.response?.data?.message || err.message || 'An error occurred';
-          setError(errorMessage);
-        } else {
-          setError(err instanceof Error ? err.message : 'An error occurred');
-        }
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
-    };
 
-    fetchStats();
-  }, [i18n.language]);
+      const result: StatsResponse = await response.json();
+      // console.log('API Response:', result, import.meta.env.VITE_API_BASE_URL);
+      
+      if (result.success && result.data) {
+        return result.data;
+      }
+      
+      throw new Error(result.message || 'Invalid response format');
+    },
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
+  });
 
-  if (loading) {
+  // console.log('Query state:', { isLoading, isError, error, statsData });
+  
+  if (error) {
+    console.error('Error details:', error);
+  }
+
+  if (isLoading) {
     return (
       <Loading />
     );
   }
 
-  if (error || !statsData) {
+  if (isError || !statsData) {
+    const isServerError = error?.message?.includes('status: 500');
     if (isServerError) {
       return (
         <section className="bg-white px-4 py-9 sm:py-9 md:py-16 lg:py-16">

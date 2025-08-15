@@ -1,11 +1,25 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Layout } from './components/layout';
 import { HomePage, ExplorePage, AboutPage } from './pages';
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+    },
+  },
+});
+
 const App: React.FC = () => {
   return (
-    <Router>
+    <QueryClientProvider client={queryClient}>
+      <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
@@ -102,6 +116,8 @@ const App: React.FC = () => {
         />
       </Routes>
     </Router>
+    <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 };
 
