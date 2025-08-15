@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import skyriseVideo from '@/assets/videos/skyrise.mov';
 import facebookWhite from '@/assets/facebook-white.svg';
 import youtubeWhite from '@/assets/youtube-white.svg';
@@ -9,6 +10,7 @@ import Button from '@/components/common/Button';
 
 const HeroSection: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
@@ -83,7 +85,7 @@ const HeroSection: React.FC = () => {
               <Button
                 size="lg"
                 className="text-body-5 lg:text-body-3 w-86 rounded-[10px] font-semibold"
-                onClick={() => console.log('Get Started clicked')}
+                onClick={() => navigate('/explore')}
               >
                 {t('common.buttons.getStarted')}
               </Button>
