@@ -27,7 +27,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
         };
       case 'small':
         return {
-          container: 'w-50 lg:w-67 lg:h-80 h-70',
+          container: 'w-50 lg:w-62 lg:h-80 h-70',
           imageHeight: 'aspect-video',
           padding: 'p-4',
           titleSize: 'text-h4 lg:text-h3',
@@ -37,8 +37,8 @@ const BlogCard: React.FC<BlogCardProps> = ({
         };
       case 'mini':
         return {
-          container: 'w-full',
-          imageHeight: 'w-20 h-20',
+          container: 'w-full h-21 lg:h-25',
+          imageHeight: 'w-20 h-20 lg:h-24',
           padding: 'p-4',
           titleSize: 'text-h4 lg:text-h3',
           textSize: 'text-body-6',
@@ -82,7 +82,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
           />
         </div>
 
-        <div className="flex-1 py-1">
+        <div className="flex-1 py-1 pr-2">
           <h3
             className={`text-text-primary group-hover:text-primary mb-2 line-clamp-2 font-semibold transition-colors ${variantClasses.titleSize}`}
           >

@@ -3,6 +3,8 @@ import BlogCard from '../components/blog/BlogCard';
 import BlogFilter from '../components/blog/BlogFilter';
 import { mockBlogs } from '../data/mockBlogs';
 import type { BlogCategory } from '../types/blog';
+import CaretLeft from '../assets/caret-left.svg?react';
+import CaretRight from '../assets/caret-right.svg?react';
 
 const BlogsPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] =
@@ -51,7 +53,7 @@ const BlogsPage: React.FC = () => {
   return (
     <div className="min-h-screen pb-16">
       {/* Page Header Section - connects seamlessly with main header */}
-      <div className="flex items-center bg-white px-5 pb-3 shadow-md lg:px-10">
+      <div className="flex items-center bg-white px-5 pb-3 shadow-md lg:px-15">
         <div className="flex items-start gap-4 lg:justify-start">
           <div className="flex items-center text-center lg:text-left">
             <h1 className="lg:text-h1 text-h2 text-text-primary font-bold">
@@ -67,9 +69,9 @@ const BlogsPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-5 py-2 lg:px-8">
+      <div className="w-full px-5 py-2 lg:px-15">
         <section className="mb-10">
-          <div className="mb-8 flex items-center justify-between px-2">
+          <div className="mt-2 mb-8 flex items-center justify-between">
             <h2 className="text-h3 lg:text-h1 text-text-primary font-bold">
               Latest Post
             </h2>
@@ -121,19 +123,7 @@ const BlogsPage: React.FC = () => {
                     disabled={currentPage === 1}
                     className="text-text-secondary hover:border-primary hover:text-primary flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
+                    <CaretLeft className="h-4 w-4" />
                   </button>
 
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(
@@ -157,19 +147,7 @@ const BlogsPage: React.FC = () => {
                     disabled={currentPage === totalPages}
                     className="text-text-secondary hover:border-primary hover:text-primary flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
+                    <CaretRight className="h-4 w-4" />
                   </button>
                 </div>
               )}
