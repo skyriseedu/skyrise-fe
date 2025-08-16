@@ -21,13 +21,11 @@ const BlogsPage: React.FC = () => {
     return mockBlogs.filter((blog) => blog.category === selectedCategory);
   }, [selectedCategory]);
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
   const startIndex = (currentPage - 1) * blogsPerPage;
   const endIndex = startIndex + blogsPerPage;
   const currentBlogs = filteredBlogs.slice(startIndex, endIndex);
 
-  // Get latest blog (most recent by date from filtered blogs)
   const latestBlog = useMemo(() => {
     const blogsToSearch =
       selectedCategory === 'All Categories' ? mockBlogs : filteredBlogs;
@@ -37,7 +35,6 @@ const BlogsPage: React.FC = () => {
     )[0];
   }, [selectedCategory, filteredBlogs]);
 
-  // Get featured blogs (excluding the latest one) - only show for "All Categories"
   const featuredBlogs = useMemo(() => {
     if (selectedCategory !== 'All Categories') return [];
     return mockBlogs.filter((blog) => blog._id !== latestBlog._id).slice(0, 5);
@@ -45,18 +42,16 @@ const BlogsPage: React.FC = () => {
 
   const handleCategoryChange = (category: BlogCategory) => {
     setSelectedCategory(category);
-    setCurrentPage(1); // Reset to first page when category changes
+    setCurrentPage(1);
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // Scroll to top of blog section
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div className="min-h-screen pb-16">
-      {/* Page Header Section - connects seamlessly with main header */}
       <div className="flex items-center bg-white px-5 pb-3 shadow-md lg:px-15">
         <div className="flex items-start gap-4 lg:justify-start">
           <div className="flex items-center text-center lg:text-left">
@@ -64,7 +59,7 @@ const BlogsPage: React.FC = () => {
               Blogs
             </h1>
           </div>
-          <div className="flex items-center justify-center lg:justify-start">
+          <div className="flex items-center justify-center lg:justify-start lg:pt-2">
             <BlogFilter
               selectedCategory={selectedCategory}
               onCategoryChange={handleCategoryChange}
@@ -87,7 +82,6 @@ const BlogsPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Featured Blogs Section - only show for "All Categories" */}
         {selectedCategory === 'All Categories' && (
           <section className="mb-10">
             <h2 className="text-h3 lg:text-h1 text-text-primary mb-8 font-bold">
@@ -108,7 +102,6 @@ const BlogsPage: React.FC = () => {
           </section>
         )}
 
-        {/* Blog List Section */}
         <section>
           {selectedCategory === 'All Categories' && (
             <h2 className="text-h2 text-text-primary mb-8 font-bold">
@@ -116,7 +109,6 @@ const BlogsPage: React.FC = () => {
             </h2>
           )}
 
-          {/* Blog List */}
           {currentBlogs.length > 0 ? (
             <>
               <div className="mb-12 space-y-4">
@@ -125,7 +117,6 @@ const BlogsPage: React.FC = () => {
                 ))}
               </div>
 
-              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-center">
                   <div className="flex items-center space-x-2">
@@ -140,7 +131,6 @@ const BlogsPage: React.FC = () => {
                     {(() => {
                       const getPageNumbers = () => {
                         if (totalPages <= 3) {
-                          // Show all pages if 3 or fewer
                           return Array.from(
                             { length: totalPages },
                             (_, i) => i + 1
