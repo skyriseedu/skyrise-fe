@@ -5,6 +5,7 @@ import { mockBlogs } from '../data/mockBlogs';
 import type { BlogCategory } from '../types/blog';
 import CaretLeft from '../assets/caret-left.svg?react';
 import CaretRight from '../assets/caret-right.svg?react';
+import { capitalizeFirstLetters } from '@/helpers';
 
 const BlogsPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] =
@@ -26,18 +27,21 @@ const BlogsPage: React.FC = () => {
   const endIndex = startIndex + blogsPerPage;
   const currentBlogs = filteredBlogs.slice(startIndex, endIndex);
 
-  // Get latest blog (most recent by date)
+  // Get latest blog (most recent by date from filtered blogs)
   const latestBlog = useMemo(() => {
-    return [...mockBlogs].sort(
+    const blogsToSearch =
+      selectedCategory === 'All Categories' ? mockBlogs : filteredBlogs;
+    return [...blogsToSearch].sort(
       (a, b) =>
         new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime()
     )[0];
-  }, []);
+  }, [selectedCategory, filteredBlogs]);
 
-  // Get featured blogs (excluding the latest one)
+  // Get featured blogs (excluding the latest one) - only show for "All Categories"
   const featuredBlogs = useMemo(() => {
+    if (selectedCategory !== 'All Categories') return [];
     return mockBlogs.filter((blog) => blog._id !== latestBlog._id).slice(0, 5);
-  }, [latestBlog]);
+  }, [latestBlog, selectedCategory]);
 
   const handleCategoryChange = (category: BlogCategory) => {
     setSelectedCategory(category);
@@ -73,7 +77,9 @@ const BlogsPage: React.FC = () => {
         <section className="mb-10">
           <div className="mt-2 mb-8 flex items-center justify-between">
             <h2 className="text-h3 lg:text-h1 text-text-primary font-bold">
-              Latest Post
+              {selectedCategory === 'All Categories'
+                ? 'Latest Post'
+                : capitalizeFirstLetters(selectedCategory.toString())}
             </h2>
           </div>
           <div className="w-full">
@@ -81,30 +87,34 @@ const BlogsPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Featured Blogs Section */}
-        <section className="mb-10">
-          <h2 className="text-h3 lg:text-h1 text-text-primary mb-8 font-bold">
-            Featured Blogs
-          </h2>
-          <div className="scrollbar-hide overflow-x-auto scroll-smooth">
-            <div
-              className="flex gap-6 px-1 pb-4"
-              style={{ width: 'max-content' }}
-            >
-              {featuredBlogs.map((blog) => (
-                <div key={blog._id} className="flex-shrink-0">
-                  <BlogCard blog={blog} variant="small" />
-                </div>
-              ))}
+        {/* Featured Blogs Section - only show for "All Categories" */}
+        {selectedCategory === 'All Categories' && (
+          <section className="mb-10">
+            <h2 className="text-h3 lg:text-h1 text-text-primary mb-8 font-bold">
+              Featured Blogs
+            </h2>
+            <div className="scrollbar-hide overflow-x-auto scroll-smooth">
+              <div
+                className="flex gap-6 px-1 pb-4"
+                style={{ width: 'max-content' }}
+              >
+                {featuredBlogs.map((blog) => (
+                  <div key={blog._id} className="flex-shrink-0">
+                    <BlogCard blog={blog} variant="small" />
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
-        {/* All Blogs Section */}
+        {/* Blog List Section */}
         <section>
-          <h2 className="text-h2 text-text-primary mb-8 font-bold">
-            All Blogs
-          </h2>
+          {selectedCategory === 'All Categories' && (
+            <h2 className="text-h2 text-text-primary mb-8 font-bold">
+              All Blogs
+            </h2>
+          )}
 
           {/* Blog List */}
           {currentBlogs.length > 0 ? (
