@@ -165,4 +165,204 @@ export const mockBlogs: Blog[] = [
     updatedAt: '2025-08-10T15:08:32.895Z',
     slug: 'study-abroad-programs-in-australia-1754838512895',
   },
+  {
+    _id: '6898b5f0df6565fb1cb1f0c5',
+    title:
+      'Study Abroad Programs in Australia Study Abroad Programs in Australia',
+    blogText:
+      'Australia has become one of the most popular destinations for international students seeking quality education and unique cultural experiences. With world-class universities, stunning landscapes, and a welcoming multicultural society, Australia offers an ideal environment for academic and personal growth.',
+    imageUrl:
+      'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg',
+    description:
+      'Discover why Australia is the perfect destination for your international education journey.',
+    category: 'program',
+    status: 'published',
+    tags: [],
+    readingTime: 1,
+    views: 0,
+    postedDate: '2025-08-10T15:08:32.895Z',
+    createdAt: '2025-08-10T15:08:32.895Z',
+    updatedAt: '2025-08-10T15:08:32.895Z',
+    slug: 'study-abroad-programs-in-australia-1754838512895',
+  },
+  {
+    _id: '6898b5f0df6565fb1cb1f0c5',
+    title:
+      'Study Abroad Programs in Australia Study Abroad Programs in Australia',
+    blogText:
+      'Australia has become one of the most popular destinations for international students seeking quality education and unique cultural experiences. With world-class universities, stunning landscapes, and a welcoming multicultural society, Australia offers an ideal environment for academic and personal growth.',
+    imageUrl:
+      'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg',
+    description:
+      'Discover why Australia is the perfect destination for your international education journey.',
+    category: 'program',
+    status: 'published',
+    tags: [],
+    readingTime: 1,
+    views: 0,
+    postedDate: '2025-08-10T15:08:32.895Z',
+    createdAt: '2025-08-10T15:08:32.895Z',
+    updatedAt: '2025-08-10T15:08:32.895Z',
+    slug: 'study-abroad-programs-in-australia-1754838512895',
+  },
+  {
+    _id: '6898b5f0df6565fb1cb1f0c5',
+    title:
+      'Study Abroad Programs in Australia Study Abroad Programs in Australia',
+    blogText:
+      'Australia has become one of the most popular destinations for international students seeking quality education and unique cultural experiences. With world-class universities, stunning landscapes, and a welcoming multicultural society, Australia offers an ideal environment for academic and personal growth.',
+    imageUrl:
+      'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg',
+    description:
+      'Discover why Australia is the perfect destination for your international education journey.',
+    category: 'program',
+    status: 'published',
+    tags: [],
+    readingTime: 1,
+    views: 0,
+    postedDate: '2025-08-10T15:08:32.895Z',
+    createdAt: '2025-08-10T15:08:32.895Z',
+    updatedAt: '2025-08-10T15:08:32.895Z',
+    slug: 'study-abroad-programs-in-australia-1754838512895',
+  },
+  {
+    _id: '6898b5f0df6565fb1cb1f0c5',
+    title:
+      'Study Abroad Programs in Australia Study Abroad Programs in Australia',
+    blogText:
+      'Australia has become one of the most popular destinations for international students seeking quality education and unique cultural experiences. With world-class universities, stunning landscapes, and a welcoming multicultural society, Australia offers an ideal environment for academic and personal growth.',
+    imageUrl:
+      'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg',
+    description:
+      'Discover why Australia is the perfect destination for your international education journey.',
+    category: 'program',
+    status: 'published',
+    tags: [],
+    readingTime: 1,
+    views: 0,
+    postedDate: '2025-08-10T15:08:32.895Z',
+    createdAt: '2025-08-10T15:08:32.895Z',
+    updatedAt: '2025-08-10T15:08:32.895Z',
+    slug: 'study-abroad-programs-in-australia-1754838512895',
+  },
+  {
+    _id: '6898b5f0df6565fb1cb1f0c5',
+    title:
+      'Study Abroad Programs in Australia Study Abroad Programs in Australia',
+    blogText:
+      'Australia has become one of the most popular destinations for international students seeking quality education and unique cultural experiences. With world-class universities, stunning landscapes, and a welcoming multicultural society, Australia offers an ideal environment for academic and personal growth.',
+    imageUrl:
+      'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg',
+    description:
+      'Discover why Australia is the perfect destination for your international education journey.',
+    category: 'program',
+    status: 'published',
+    tags: [],
+    readingTime: 1,
+    views: 0,
+    postedDate: '2025-08-10T15:08:32.895Z',
+    createdAt: '2025-08-10T15:08:32.895Z',
+    updatedAt: '2025-08-10T15:08:32.895Z',
+    slug: 'study-abroad-programs-in-australia-1754838512895',
+  },
+  {
+    _id: '6898b5f0df6565fb1cb1f0c5',
+    title:
+      'Study Abroad Programs in Australia Study Abroad Programs in Australia',
+    blogText:
+      'Australia has become one of the most popular destinations for international students seeking quality education and unique cultural experiences. With world-class universities, stunning landscapes, and a welcoming multicultural society, Australia offers an ideal environment for academic and personal growth.',
+    imageUrl:
+      'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg',
+    description:
+      'Discover why Australia is the perfect destination for your international education journey.',
+    category: 'program',
+    status: 'published',
+    tags: [],
+    readingTime: 1,
+    views: 0,
+    postedDate: '2025-08-10T15:08:32.895Z',
+    createdAt: '2025-08-10T15:08:32.895Z',
+    updatedAt: '2025-08-10T15:08:32.895Z',
+    slug: 'study-abroad-programs-in-australia-1754838512895',
+  },
+  {
+    _id: '6898b5f0df6565fb1cb1f0c5',
+    title:
+      'Study Abroad Programs in Australia Study Abroad Programs in Australia',
+    blogText:
+      'Australia has become one of the most popular destinations for international students seeking quality education and unique cultural experiences. With world-class universities, stunning landscapes, and a welcoming multicultural society, Australia offers an ideal environment for academic and personal growth.',
+    imageUrl:
+      'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg',
+    description:
+      'Discover why Australia is the perfect destination for your international education journey.',
+    category: 'program',
+    status: 'published',
+    tags: [],
+    readingTime: 1,
+    views: 0,
+    postedDate: '2025-08-10T15:08:32.895Z',
+    createdAt: '2025-08-10T15:08:32.895Z',
+    updatedAt: '2025-08-10T15:08:32.895Z',
+    slug: 'study-abroad-programs-in-australia-1754838512895',
+  },
+  {
+    _id: '6898b5f0df6565fb1cb1f0c5',
+    title:
+      'Study Abroad Programs in Australia Study Abroad Programs in Australia',
+    blogText:
+      'Australia has become one of the most popular destinations for international students seeking quality education and unique cultural experiences. With world-class universities, stunning landscapes, and a welcoming multicultural society, Australia offers an ideal environment for academic and personal growth.',
+    imageUrl:
+      'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg',
+    description:
+      'Discover why Australia is the perfect destination for your international education journey.',
+    category: 'program',
+    status: 'published',
+    tags: [],
+    readingTime: 1,
+    views: 0,
+    postedDate: '2025-08-10T15:08:32.895Z',
+    createdAt: '2025-08-10T15:08:32.895Z',
+    updatedAt: '2025-08-10T15:08:32.895Z',
+    slug: 'study-abroad-programs-in-australia-1754838512895',
+  },
+  {
+    _id: '6898b5f0df6565fb1cb1f0c5',
+    title:
+      'Study Abroad Programs in Australia Study Abroad Programs in Australia',
+    blogText:
+      'Australia has become one of the most popular destinations for international students seeking quality education and unique cultural experiences. With world-class universities, stunning landscapes, and a welcoming multicultural society, Australia offers an ideal environment for academic and personal growth.',
+    imageUrl:
+      'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg',
+    description:
+      'Discover why Australia is the perfect destination for your international education journey.',
+    category: 'program',
+    status: 'published',
+    tags: [],
+    readingTime: 1,
+    views: 0,
+    postedDate: '2025-08-10T15:08:32.895Z',
+    createdAt: '2025-08-10T15:08:32.895Z',
+    updatedAt: '2025-08-10T15:08:32.895Z',
+    slug: 'study-abroad-programs-in-australia-1754838512895',
+  },
+  {
+    _id: '6898b5f0df6565fb1cb1f0c5',
+    title:
+      'Study Abroad Programs in Australia Study Abroad Programs in Australia',
+    blogText:
+      'Australia has become one of the most popular destinations for international students seeking quality education and unique cultural experiences. With world-class universities, stunning landscapes, and a welcoming multicultural society, Australia offers an ideal environment for academic and personal growth.',
+    imageUrl:
+      'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg',
+    description:
+      'Discover why Australia is the perfect destination for your international education journey.',
+    category: 'program',
+    status: 'published',
+    tags: [],
+    readingTime: 1,
+    views: 0,
+    postedDate: '2025-08-10T15:08:32.895Z',
+    createdAt: '2025-08-10T15:08:32.895Z',
+    updatedAt: '2025-08-10T15:08:32.895Z',
+    slug: 'study-abroad-programs-in-australia-1754838512895',
+  },
 ];

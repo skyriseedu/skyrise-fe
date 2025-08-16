@@ -117,38 +117,65 @@ const BlogsPage: React.FC = () => {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="text-text-secondary hover:border-primary hover:text-primary flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <CaretLeft className="h-4 w-4" />
-                  </button>
+                <div className="flex items-center justify-center">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="hover:text-primary text-text-primary flex h-10 w-10 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <CaretLeft className="h-5 w-5" />
+                    </button>
 
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (page) => (
-                      <button
-                        key={page}
-                        onClick={() => handlePageChange(page)}
-                        className={`text-h4 h-10 w-10 rounded-full font-medium transition-colors ${
-                          currentPage === page
-                            ? 'bg-primary text-white'
-                            : 'text-text-secondary hover:text-primary border border-gray-200 bg-white hover:bg-gray-50'
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    )
-                  )}
+                    {(() => {
+                      const getPageNumbers = () => {
+                        if (totalPages <= 3) {
+                          // Show all pages if 3 or fewer
+                          return Array.from(
+                            { length: totalPages },
+                            (_, i) => i + 1
+                          );
+                        }
 
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="text-text-secondary hover:border-primary hover:text-primary flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <CaretRight className="h-4 w-4" />
-                  </button>
+                        if (currentPage === 1) {
+                          // Show first 3 pages
+                          return [1, 2, 3];
+                        } else if (currentPage === totalPages) {
+                          // Show last 3 pages
+                          return [totalPages - 2, totalPages - 1, totalPages];
+                        } else {
+                          // Show current page and neighbors
+                          return [
+                            currentPage - 1,
+                            currentPage,
+                            currentPage + 1,
+                          ];
+                        }
+                      };
+
+                      return getPageNumbers().map((page) => (
+                        <button
+                          key={page}
+                          onClick={() => handlePageChange(page)}
+                          className={`text-body-5 lg:text-body-1 h-10 w-10 rounded-full font-medium transition-colors ${
+                            currentPage === page
+                              ? 'bg-primary text-white shadow-sm'
+                              : 'text-text-secondary hover:bg-primary hover:text-white'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ));
+                    })()}
+
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="text-text-primary hover:text-primary flex h-10 w-10 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <CaretRight className="h-5 w-5" />
+                    </button>
+                  </div>
                 </div>
               )}
             </>

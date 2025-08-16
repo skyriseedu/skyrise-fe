@@ -17,7 +17,6 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
     { value: 'student reviews', label: 'Student Reviews' },
   ];
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
