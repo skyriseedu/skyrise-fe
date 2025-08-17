@@ -7,12 +7,17 @@ interface KeyInfoCardProps {
 }
 
 const KeyInfoCard: React.FC<KeyInfoCardProps> = ({ icon, label, value }) => {
+  
   return (
     <div className="bg-[#FCE8EC] rounded-xl p-4 lg:p-5 flex items-center gap-3 h-full">
-      <span className="text-xl lg:text-2xl">{icon}</span>
+        <img 
+          src={icon} 
+          alt={label} 
+          className="w-6 h-6 lg:w-6 -mt-7 lg:h-6"
+        />
       <div>
-        <p className="text-gray-700 text-sm lg:text-base">{label}</p>
-        <p className="text-lg lg:text-xl font-bold text-gray-900">
+        <p className="text-text-primary text-body-4 lg:text-body-4">{label}</p>
+        <p className="text-body-1 lg:text-h3 font-semibold text-text-primary">
           {value}
         </p>
       </div>

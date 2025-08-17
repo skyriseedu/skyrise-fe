@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import KeyInfoCard from '@/components/program-details/KeyInfoCard';
 import arrowLeft from '@/assets/arrow-left.svg';
 import ReviewsSection from '@/components/reviews/ReviewsSection';
+import calendarIcon from '@/assets/calendar.svg';
+import graduationCap from '@/assets/graduation-cap.svg';
+import document from '@/assets/document.svg';
+import card from '@/assets/card.svg';
+import location from '@/assets/location.svg';
+import bookOpen from '@/assets/book-open.svg';
 
 const ProgramDetailsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,32 +18,32 @@ const ProgramDetailsPage: React.FC = () => {
     description: 'The Information and Communication Technology (ICT) program encourages students to think critically and creatively as they learn how to find, process, and apply the vast amounts of information available in today\'s connected, digital world.',
     keyInfo: [
       {
-        icon: '🎓',
+        icon: graduationCap, 
         label: 'Degree',
         value: 'Bachelor'
       },
       {
-        icon: '📅',
+        icon: calendarIcon,
         label: 'Duration',
         value: '4 years'
       },
       {
-        icon: '📍',
+        icon: location, 
         label: 'Location',
         value: 'Bangkok'
       },
       {
-        icon: '💼',
+        icon: document, 
         label: 'Application Fees',
         value: 'Charged'
       },
       {
-        icon: '📆',
+        icon: bookOpen,
         label: 'Upcoming Intake',
         value: 'August 2025'
       },
       {
-        icon: '💰',
+        icon: card,
         label: 'Total Tuition Fee',
         value: '600,000 THB'
       }
@@ -56,10 +62,10 @@ const ProgramDetailsPage: React.FC = () => {
                 <img src={arrowLeft} alt="Back" className="w-5 h-5" />
               </button>
               <div className="flex-1">
-                <h1 className="text-xl font-semibold text-gray-800 leading-tight">
+                <h1 className="text-xl font-semibold text-text-primary leading-tight">
                   {programData.title}
                 </h1>
-                <p className="text-gray-500 text-sm mt-2">Rangsit University</p>
+                <p className="text-text-secondary text-sm mt-2">Rangsit University</p>
               </div>
             </div>
           </div>
@@ -71,7 +77,7 @@ const ProgramDetailsPage: React.FC = () => {
             >
               <img src={arrowLeft} alt="Back" className="w-6 h-6" />
             </button>
-            <h2 className="text-2xl font-semibold text-gray-800">{programData.title}</h2>
+            <h2 className="text-2xl font-semibold text-text-primary">{programData.title}</h2>
           </div>
 
           {/* Program Section */}
@@ -84,14 +90,6 @@ const ProgramDetailsPage: React.FC = () => {
                     alt="Programming"
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                    <div className="text-green-400 font-mono text-[11px] lg:text-base text-center">
-                      <div>const program = {`{`}</div>
-                      <div className="lg:ml-4">type: 'ICT',</div>
-                      <div className="lg:ml-4">skills: ['web', 'code']</div>
-                      <div>{`}`};</div>
-                    </div>
-                  </div>
                 </div>
                 
                 <div className="absolute top-0 left-0 w-28 h-28 lg:w-48 lg:h-48 rounded-full overflow-hidden shadow-xl z-10"
@@ -104,16 +102,13 @@ const ProgramDetailsPage: React.FC = () => {
                     alt="Web Design"
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <span className="text-white text-xs lg:text-lg font-bold">WEB DESIGN</span>
-                  </div>
                 </div>
               </div>
             </div>
 
             <div className="flex-1 max-w-2xl px-4 lg:px-0">
-              <h2 className="text-2xl lg:text-4xl font-bold mb-4 lg:mb-6 text-gray-800">About Program</h2>
-              <p className="text-gray-600 leading-relaxed text-base lg:text-lg">
+              <h2 className="text-h3 lg:text-h1 font-bold mb-4 lg:mb-6 text-text-primary">About Program</h2>
+              <p className="text-text-primary leading-relaxed text-body-2 lg:text-body-1">
                 {programData.description}
               </p>
             </div>
@@ -121,7 +116,7 @@ const ProgramDetailsPage: React.FC = () => {
 
           {/* Key Information Section */}
           <div className="py-12">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-8 text-gray-800">Key Information</h2>
+            <h2 className="text-h3 lg:text-h1 font-semibold mb-8 text-text-primary">Key Information</h2>
             <div className="max-w-6xl mx-auto">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               <div className="h-20 lg:h-24">
@@ -146,12 +141,15 @@ const ProgramDetailsPage: React.FC = () => {
                 />
               </div>
               
-              <div className="col-span-2 lg:col-span-1 lg:row-span-2 h-24 lg:h-auto order-last lg:order-none">
-                <div className="bg-[#E94B5C] rounded-xl h-full flex flex-col items-center justify-center text-white cursor-pointer hover:bg-[#d43d4e] transition-colors">
+              <div className="col-span-2 lg:col-span-1 lg:row-span-2 h-18 lg:h-auto order-last lg:order-none">
+                <div className="bg-primary rounded-xl h-full flex flex-col items-center justify-center text-white cursor-pointer hover:bg-[#d43d4e] transition-colors px-4">
                   <div className="text-center">
-                    <div className="text-xl lg:text-3xl font-bold">Book</div>
-                    <div className="text-xl lg:text-3xl font-bold">Free</div>
-                    <div className="text-xl lg:text-3xl font-bold">Consultation</div>
+                    <div className="text-body-2 font-semibold lg:hidden">Book Free Consultation</div>
+                    <div className="hidden lg:block">
+                      <div className="text-h2 font-semibold">Book</div>
+                      <div className="text-h2 font-semibold">Free</div>
+                      <div className="text-h2 font-semibold">Consultation</div>
+                    </div>
                   </div>
                 </div>
               </div>

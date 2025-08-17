@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Layout } from './components/layout';
 import HomePage from './pages/users/home/HomePage';
 import ExplorePage from './pages/users/explore/ExplorePage';
+import ProgramDetailsPage from './pages/users/explore/ProgramDetailsPage';
 import AboutPage from './pages/users/about/AboutPage';
 import BlogsPage from './pages/users/blogs/BlogsPage';
 import BlogDetailPage from './pages/users/blogs/BlogDetailPage';
@@ -32,6 +33,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
             <Route path="explore" element={<ExplorePage />} />
+            <Route path="programs/:id" element={<ProgramDetailsPage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="universities" element={<UniversitiesPage />} />
             <Route
