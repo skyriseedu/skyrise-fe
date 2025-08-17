@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import BlogCard from '../../../components/blog/BlogCard';
-import BlogFilter from '../../../components/blog/BlogFilter';
-import { mockBlogs } from '../../../data/mockBlogs';
-import type { BlogCategory } from '../../../types/blog';
-import CaretLeft from '../../../assets/caret-left.svg?react';
-import CaretRight from '../../../assets/caret-right.svg?react';
+import BlogCard from '@/components/blog/BlogCard';
+import BlogFilter from '@/components/blog/BlogFilter';
+import { mockBlogs } from '@/data/mockBlogs';
+import type { BlogCategory } from '@/types/blog';
+import CaretLeft from '@/assets/caret-left.svg?react';
+import CaretRight from '@/assets/caret-right.svg?react';
 import { capitalizeFirstLetters } from '@/helpers';
 
 const BlogsPage: React.FC = () => {
