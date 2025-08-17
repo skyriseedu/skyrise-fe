@@ -32,7 +32,7 @@ const WhyChooseUs: React.FC = () => {
   return (
     <div className="mx-auto mt-14 mb-10 max-w-6xl px-4">
       <div className="mb-12 text-center">
-        <h2 className="text-h1 text-text-primary mb-6 font-semibold lg:text-h1">
+        <h2 className="text-h1 text-text-primary lg:text-h1 mb-6 font-semibold">
           {t('home.whyChooseUs.title')}
         </h2>
         <p className="text-body-4 lg:text-body-2 text-text-primary mx-auto max-w-3xl leading-relaxed">
