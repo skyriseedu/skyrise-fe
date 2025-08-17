@@ -2,9 +2,16 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Layout } from './components/layout';
-import { HomePage, ExplorePage, AboutPage } from './pages';
-import BlogsPage from './pages/BlogsPage';
-import BlogDetailPage from './pages/BlogDetailPage';
+import HomePage from './pages/users/home/HomePage';
+import ExplorePage from './pages/users/explore/ExplorePage';
+import AboutPage from './pages/users/about/AboutPage';
+import BlogsPage from './pages/users/blogs/BlogsPage';
+import BlogDetailPage from './pages/users/blogs/BlogDetailPage';
+import UniversitiesPage from './pages/users/universities/UniversitiesPage';
+import UniversityApplicationPage from './pages/users/services/UniversityApplicationPage';
+import VisaAssistancePage from './pages/users/services/VisaAssistancePage';
+import CounselingPage from './pages/users/services/CounselingPage';
+import ScholarshipsPage from './pages/users/services/ScholarshipsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,70 +34,19 @@ const App: React.FC = () => {
             <Route path="explore" element={<ExplorePage />} />
             {/* <Route path="programs/:id" element={<ProgramDetailsPage />} /> */}
             <Route path="about" element={<AboutPage />} />
-            <Route
-              path="universities"
-              element={
-                <div className="p-6">
-                  <h1 className="text-h1 font-bold">
-                    Universities & Consultants
-                  </h1>
-                  <p className="text-body-3 text-text-secondary mt-4">
-                    Coming soon...
-                  </p>
-                </div>
-              }
-            />
+            <Route path="universities" element={<UniversitiesPage />} />
             <Route
               path="services/university-application"
-              element={
-                <div className="p-6">
-                  <h1 className="text-h1 font-fustat font-bold">
-                    University Application
-                  </h1>
-                  <p className="text-body-3 text-text-secondary mt-4">
-                    Coming soon...
-                  </p>
-                </div>
-              }
+              element={<UniversityApplicationPage />}
             />
             <Route
               path="services/visa-assistance"
-              element={
-                <div className="p-6">
-                  <h1 className="text-h1 font-fustat font-bold">
-                    Visa Assistance
-                  </h1>
-                  <p className="text-body-3 text-text-secondary mt-4">
-                    Coming soon...
-                  </p>
-                </div>
-              }
+              element={<VisaAssistancePage />}
             />
-            <Route
-              path="services/counseling"
-              element={
-                <div className="p-6">
-                  <h1 className="text-h1 font-fustat font-bold">
-                    Study Abroad Counseling
-                  </h1>
-                  <p className="text-body-3 text-text-secondary mt-4">
-                    Coming soon...
-                  </p>
-                </div>
-              }
-            />
+            <Route path="services/counseling" element={<CounselingPage />} />
             <Route
               path="services/scholarships"
-              element={
-                <div className="p-6">
-                  <h1 className="text-h1 font-fustat font-bold">
-                    Scholarship Guidance
-                  </h1>
-                  <p className="text-body-3 text-text-secondary mt-4">
-                    Coming soon...
-                  </p>
-                </div>
-              }
+              element={<ScholarshipsPage />}
             />
             <Route path="blogs" element={<BlogsPage />} />
             <Route path="blogs/:slug" element={<BlogDetailPage />} />
