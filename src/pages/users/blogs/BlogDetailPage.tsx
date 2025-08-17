@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { mockBlogs } from '../data/mockBlogs';
-import BlogCard from '../components/blog/BlogCard';
-import ArrowLeft from '../assets/arrow-left.svg?react';
+import { mockBlogs } from '../../../data/mockBlogs';
+import BlogCard from '../../../components/blog/BlogCard';
+import ArrowLeft from '../../../assets/arrow-left.svg?react';
 
 const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
