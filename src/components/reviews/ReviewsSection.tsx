@@ -36,25 +36,30 @@ const ReviewsSection: React.FC = () => {
           Student Reviews
         </h2>
         
-        <div className="relative">
-          {/* Horizontal scroll container */}
-          <div className="overflow-x-auto pb-6 pt-12 scrollbar-hide">
-            <div className="flex gap-6 lg:gap-8">
-              {reviewsData.map((review) => (
-                <div
-                  key={review.id}
-                  className="flex-none w-[280px] sm:w-[340px] md:w-[380px]"
-                >
-                  <ReviewCard
-                    name={review.name}
-                    program={review.program}
-                    testimonial={review.testimonial}
-                  />
-                </div>
-              ))}
+        {reviewsData.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-lg text-gray-500">No reviews at the moment</p>
+          </div>
+        ) : (
+          <div className="relative max-w-[1200px] mx-auto">
+            <div className="overflow-x-auto pb-6 pt-12 scrollbar-hide">
+              <div className="flex gap-5">
+                {reviewsData.map((review) => (
+                  <div
+                    key={review.id}
+                    className="flex-none w-[280px] sm:w-[340px] lg:w-[370px]"
+                  >
+                    <ReviewCard
+                      name={review.name}
+                      program={review.program}
+                      testimonial={review.testimonial}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );
