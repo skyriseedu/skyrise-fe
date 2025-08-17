@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Layout } from './components/layout';
 import { HomePage, ExplorePage, AboutPage } from './pages';
+import BlogsPage from './pages/BlogsPage';
+import BlogDetailPage from './pages/BlogDetailPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,6 +25,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
             <Route path="explore" element={<ExplorePage />} />
+            {/* <Route path="programs/:id" element={<ProgramDetailsPage />} /> */}
             <Route path="about" element={<AboutPage />} />
             <Route
               path="universities"
@@ -90,17 +92,8 @@ const App: React.FC = () => {
                 </div>
               }
             />
-            <Route
-              path="blogs"
-              element={
-                <div className="p-6">
-                  <h1 className="text-h1 font-fustat font-bold">Blogs</h1>
-                  <p className="text-body-3 text-text-secondary mt-4">
-                    Coming soon...
-                  </p>
-                </div>
-              }
-            />
+            <Route path="blogs" element={<BlogsPage />} />
+            <Route path="blogs/:slug" element={<BlogDetailPage />} />
           </Route>
 
           <Route
@@ -118,7 +111,6 @@ const App: React.FC = () => {
           />
         </Routes>
       </Router>
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };
