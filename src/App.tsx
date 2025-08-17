@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/layout';
 import { HomePage, ExplorePage, AboutPage } from './pages';
+import BlogsPage from './pages/BlogsPage';
+import BlogDetailPage from './pages/BlogDetailPage';
 
 const App: React.FC = () => {
   return (
@@ -76,17 +78,8 @@ const App: React.FC = () => {
               </div>
             }
           />
-          <Route
-            path="blogs"
-            element={
-              <div className="p-6">
-                <h1 className="text-h1 font-fustat font-bold">Blogs</h1>
-                <p className="text-body-3 text-text-secondary mt-4">
-                  Coming soon...
-                </p>
-              </div>
-            }
-          />
+          <Route path="blogs" element={<BlogsPage />} />
+          <Route path="blogs/:slug" element={<BlogDetailPage />} />
         </Route>
 
         <Route
