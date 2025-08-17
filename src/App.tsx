@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/layout';
 import { HomePage, ExplorePage, AboutPage } from './pages';
+import ProgramDetailsPage from './pages/ProgramDetailsPage';
 
 const App: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ const App: React.FC = () => {
           <Route index element={<HomePage />} />
           <Route path="explore" element={<ExplorePage />} />
           <Route path="about" element={<AboutPage />} />
+          <Route path="programs/:id" element={<ProgramDetailsPage />} />
           <Route
             path="universities"
             element={

@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../common/Button';
 
 interface ProgramCardProps {
+  id?: string;
   title: string;
   university: string;
   upcomingIntake: string;
@@ -40,6 +42,7 @@ const ApplicationDeadline: React.FC<{ deadline: string }> = ({ deadline }) => (
 );
 
 const ProgramCard: React.FC<ProgramCardProps> = ({
+  id = '1',
   title,
   university,
   upcomingIntake,
@@ -51,6 +54,7 @@ const ProgramCard: React.FC<ProgramCardProps> = ({
   onApplyClick,
   onReadDetailsClick,
 }) => {
+  const navigate = useNavigate();
   const programInfo = [
     { label: 'Upcoming Intake', value: upcomingIntake },
     { label: 'Duration', value: duration },
@@ -83,7 +87,13 @@ const ProgramCard: React.FC<ProgramCardProps> = ({
         
         <Button
           primary
-          onClick={onReadDetailsClick}
+          onClick={() => {
+            if (onReadDetailsClick) {
+              onReadDetailsClick();
+            } else {
+              navigate(`/programs/${id}`);
+            }
+          }}
           className="!bg-[var(--color-primary)] hover:!bg-[var(--color-primary)]/90 flex-1 lg:flex-none lg:!px-8 whitespace-nowrap"
         >
           Read Details

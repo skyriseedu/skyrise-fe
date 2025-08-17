@@ -30,9 +30,9 @@ const ExplorePage: React.FC = () => {
         
         <div className="flex flex-col gap-4">
           <ProgramCard
+            id="1"
             {...sampleProgram}
             onApplyClick={() => console.log('Apply clicked')}
-            onReadDetailsClick={() => console.log('Read details clicked')}
           />
         </div>
       </div>
