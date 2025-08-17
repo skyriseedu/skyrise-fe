@@ -31,7 +31,7 @@ export const AdmissionProcess = () => {
   return (
     <section className="bg-bg mb-2 px-6 py-8 md:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-h1 text-text-primary mb-12 text-center font-semibold lg:text-[40px]">
+        <h2 className="text-h1 text-text-primary mb-12 text-center font-semibold lg:text-h1">
           {t('home.admissionProcess.title')}
         </h2>
 

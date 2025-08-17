@@ -76,8 +76,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
     };
   }, [isMenuOpen]);
 
-  const toggleLanguage = () => {
-    setCurrentLanguage(currentLanguage === 'En' ? 'Mm' : 'En');
+  const handleLanguageChange = (language: string) => {
+    setCurrentLanguage(language);
   };
 
   const isActiveMenuItem = (item: (typeof navigationItems)[0]) => {
@@ -111,7 +111,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
                   onClick={() => setExpandedServices(!expandedServices)}
                 >
                   <button
-                    className={`text-h2 flex cursor-pointer items-center space-x-1 rounded-full px-4 py-2 font-semibold transition-colors ${
+                    className={`text-h3 flex cursor-pointer items-center space-x-1 rounded-full px-4 py-2 font-semibold transition-colors ${
                       isActiveMenuItem(item)
                         ? 'bg-primary text-white'
                         : 'text-text-primary hover:text-primary'
@@ -131,7 +131,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
                         <Link
                           key={subItem.name}
                           to={subItem.path}
-                          className="text-h2 text-text-primary hover:bg-secondary hover:text-primary block px-4 py-2 font-medium transition-colors"
+                          className="text-h3 text-text-primary hover:bg-secondary hover:text-primary block px-4 py-2 font-medium transition-colors"
                           onClick={() => setExpandedServices(false)}
                         >
                           {subItem.name}
@@ -143,7 +143,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
               ) : (
                 <Link
                   to={item.path || '/'}
-                  className={`text-h2 rounded-full px-4 py-2 font-semibold transition-colors ${
+                  className={`text-h3 rounded-full px-4 py-2 font-semibold transition-colors ${
                     isActiveMenuItem(item)
                       ? 'bg-primary text-white'
                       : 'text-text-primary hover:text-primary'
@@ -157,20 +157,25 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
         </nav>
 
         <div className="flex items-center space-x-4">
-          <button
-            onClick={toggleLanguage}
-            className="text-text-primary text-h3 lg:text-h2 flex cursor-pointer items-center space-x-1 font-semibold"
-          >
-            <span>
-              <span className={currentLanguage === 'En' ? 'underline' : ''}>
-                En
-              </span>
-              /
-              <span className={currentLanguage === 'Mm' ? 'underline' : ''}>
-                Mm
-              </span>
-            </span>
-          </button>
+          <div className="text-text-primary text-h3 lg:text-h3 flex items-center font-semibold">
+            <button
+              onClick={() => handleLanguageChange('En')}
+              className={`cursor-pointer transition-all ${
+                currentLanguage === 'En' ? 'underline' : 'hover:opacity-70'
+              }`}
+            >
+              En
+            </button>
+            <span className="mx-1">/</span>
+            <button
+              onClick={() => handleLanguageChange('Mm')}
+              className={`cursor-pointer transition-all ${
+                currentLanguage === 'Mm' ? 'underline' : 'hover:opacity-70'
+              }`}
+            >
+              Mm
+            </button>
+          </div>
 
           <button
             onClick={onMenuToggle}
