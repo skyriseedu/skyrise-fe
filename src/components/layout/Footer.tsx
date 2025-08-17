@@ -74,10 +74,10 @@ const Footer: React.FC = () => {
     <footer className="bg-secondary relative overflow-hidden px-6 pt-8 pb-15 lg:px-12 lg:pt-12 lg:pb-50">
       <div className="lg:flex lg:items-start lg:justify-between lg:space-x-8">
         <div className="mb-8 lg:mb-0 lg:max-w-md lg:flex-1">
-          <h3 className="text-h1 lg:text-h1 text-primary mb-4 font-semibold">
+          <h3 className="text-h1 lg:text-h3 text-primary mb-4 font-semibold">
             Contact Us
           </h3>
-          <p className="text-body-3 lg:text-body-1 font-regular mb-6 lg:font-normal">
+          <p className="text-body-3 lg:text-body-4 font-regular mb-6 lg:font-normal">
             Have questions about university? Reach out to SkyRise Corner – we're
             here to help you every step of the way!
           </p>
@@ -94,18 +94,18 @@ const Footer: React.FC = () => {
                 <div className="text-primary flex h-6 w-6 items-center justify-center">
                   {social.icon}
                 </div>
-                <span className="text-body-3 lg:text-body-1 font-regular lg:font-normal">
+                <span className="text-body-3 lg:text-body-4 font-regular lg:font-normal">
                   skyrise/{social.name.toLowerCase()}.com
                 </span>
               </a>
             ))}
           </div>
 
-          <div className="text-body-3 text-text-primary lg:text-body-1 mb-4 font-normal">
+          <div className="text-body-3 text-text-primary lg:text-body-4 mb-4 font-normal">
             Passionate about education? Join SkyRise Corner as a consultant and
             help students achieve their university dreams!
           </div>
-          <button className="bg-primary text-h3 hover:bg-primary/80 lg:text-h2 w-full cursor-pointer rounded-lg px-6 py-2 font-medium text-white transition-colors lg:font-bold">
+          <button className="bg-primary text-h3 hover:bg-primary/80 lg:text-h4 w-full cursor-pointer rounded-lg px-6 py-2 font-medium text-white transition-colors lg:font-bold">
             Join With Us!
           </button>
         </div>
@@ -118,7 +118,7 @@ const Footer: React.FC = () => {
                   <div ref={servicesRef}>
                     <button
                       onClick={toggleServices}
-                      className="text-h3 text-text-primary hover:text-primary lg:text-h1 flex w-full cursor-pointer items-start text-left font-normal transition-colors"
+                      className="text-h3 text-text-primary hover:text-primary lg:text-h3 flex w-full cursor-pointer items-start text-left font-normal transition-colors"
                     >
                       <span className="flex items-center space-x-2">
                         <span>{item.name}</span>
@@ -134,7 +134,7 @@ const Footer: React.FC = () => {
                           <li key={subItem.name}>
                             <Link
                               to={subItem.path}
-                              className="text-h4 lg:text-h2 text-text-primary hover:text-primary block cursor-pointer font-normal transition-colors"
+                              className="text-h4 lg:text-h4 text-text-primary hover:text-primary block cursor-pointer font-normal transition-colors"
                             >
                               {subItem.name}
                             </Link>
@@ -147,7 +147,7 @@ const Footer: React.FC = () => {
                   item.path && (
                     <Link
                       to={item.path}
-                      className="text-h3 lg:text-h1 text-text-primary hover:text-primary cursor-pointer font-normal transition-colors"
+                      className="text-h3 lg:text-h3 text-text-primary hover:text-primary cursor-pointer font-normal transition-colors"
                     >
                       {item.name}
                     </Link>
