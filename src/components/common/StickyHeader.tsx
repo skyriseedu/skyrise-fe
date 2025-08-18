@@ -31,7 +31,7 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
         <div className="lg:mx-auto lg:max-w-7xl">
           <div className="flex items-start gap-3">
             {showBackButton && (
-              <button onClick={() => navigate(-1)} className="mt-1 lg:mt-0">
+              <button onClick={() => navigate(-1)} className="mt-1 lg:mt-0 cursor-pointer">
                 <img
                   src={arrowLeft}
                   alt="Back"
