@@ -1,8 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import KeyInfoCard from '@/components/program-details/KeyInfoCard';
 import ProgramStructure from '@/components/program-details/ProgramStructure';
-import arrowLeft from '@/assets/arrow-left.svg';
+import StickyHeader from '@/components/common/StickyHeader';
 import ReviewsSection from '@/components/reviews/ReviewsSection';
 import calendarIcon from '@/assets/calendar.svg';
 import graduationCap from '@/assets/graduation-cap.svg';
@@ -12,7 +11,6 @@ import location from '@/assets/location.svg';
 import bookOpen from '@/assets/book-open.svg';
 
 const ProgramDetailsPage: React.FC = () => {
-  const navigate = useNavigate();
 
   const programData = {
     title: 'Bachelor of Science in Information and Communication Technology',
@@ -53,35 +51,14 @@ const ProgramDetailsPage: React.FC = () => {
 
   return (
       <div className="bg-white min-h-screen">
+        <StickyHeader 
+          title={programData.title}
+          subtitle="Rangsit University"
+          mobilePadding="px-8"
+          desktopPadding="lg:px-0"
+        />
+
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
-          <div className="lg:hidden -mx-4 px-4 pb-4 mb-8 border-b border-gray-200">
-            <div className="flex items-start gap-3">
-              <button
-                onClick={() => navigate(-1)}
-                className="mt-1"
-              >
-                <img src={arrowLeft} alt="Back" className="w-5 h-5" />
-              </button>
-              <div className="flex-1">
-                <h1 className="text-xl font-semibold text-text-primary leading-tight">
-                  {programData.title}
-                </h1>
-                <p className="text-text-secondary text-sm mt-2">Rangsit University</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="hidden lg:flex items-center gap-3 mb-12">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center justify-center"
-            >
-              <img src={arrowLeft} alt="Back" className="w-6 h-6" />
-            </button>
-            <h2 className="text-2xl font-semibold text-text-primary">{programData.title}</h2>
-          </div>
-
-          {/* Program Section */}
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center mb-12 lg:mb-20">
             <div className="relative flex-shrink-0 w-full lg:w-auto">
               <div className="relative w-[240px] h-[240px] lg:w-[380px] lg:h-[380px] mx-auto lg:mx-0">
