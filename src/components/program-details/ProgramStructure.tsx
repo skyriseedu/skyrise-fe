@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import caretDown from '@/assets/caret-down.svg';
 
 interface AccordionItem {
@@ -45,8 +46,14 @@ const ProgramStructure: React.FC = () => {
         Program Structure
       </h2>
       <div className="space-y-3">
-        {accordionData.map((item) => (
-          <div key={item.id} className="">
+        {accordionData?.map((item, index) => (
+          <motion.div
+            key={item.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
+            className="border-b border-gray-100 last:border-0"
+          >
             <button
               onClick={() => toggleItem(item.id)}
               className="flex w-full cursor-pointer items-start bg-white py-4"
@@ -55,27 +62,41 @@ const ProgramStructure: React.FC = () => {
                 <span className="text-body-2 lg:text-body-2 text-text-primary font-medium">
                   {item.title}
                 </span>
-                <img
+                <motion.img
                   src={caretDown}
                   alt="Toggle"
-                  className={`h-5 w-5 transition-transform duration-200 ${
-                    openItems.includes(item.id) ? 'rotate-180' : ''
-                  }`}
+                  className="h-5 w-5"
+                  animate={{ rotate: openItems.includes(item.id) ? 180 : 0 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
                 />
               </div>
             </button>
-            <div
-              className={`overflow-hidden transition-all duration-300 ${
-                openItems.includes(item.id) ? 'max-h-96' : 'max-h-0'
-              }`}
-            >
-              <div className="pb-4">
-                <p className="text-body-3 lg:text-body-3 text-text-secondary">
-                  {item.content}
-                </p>
-              </div>
-            </div>
-          </div>
+            <AnimatePresence initial={false}>
+              {openItems?.includes(item.id) && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{
+                    height: { duration: 0.3, ease: 'easeInOut' },
+                    opacity: { duration: 0.3, ease: 'easeInOut' },
+                  }}
+                  className="overflow-hidden"
+                >
+                  <motion.div
+                    className="pb-4"
+                    initial={{ y: -10 }}
+                    animate={{ y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
+                  >
+                    <p className="text-body-3 lg:text-body-3 text-text-secondary">
+                      {item.content}
+                    </p>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         ))}
       </div>
     </div>
