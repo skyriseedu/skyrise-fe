@@ -46,7 +46,7 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
                 </h1>
               )}
               {subtitle && (
-                <p className="text-text-secondary mt-2 text-sm lg:hidden">
+                <p className="text-text-secondary mt-2 text-sm">
                   {subtitle}
                 </p>
               )}
