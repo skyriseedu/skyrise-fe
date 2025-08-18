@@ -16,38 +16,38 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
 }) => {
   return (
     <div className="relative">
-      <div className="absolute -top-10 left-6 z-10 w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden bg-gray-300">
+      <div className="absolute -top-10 left-6 z-10 h-20 w-20 overflow-hidden rounded-full bg-gray-300 md:h-24 md:w-24">
         {imageUrl ? (
-          <img 
-            src={imageUrl} 
+          <img
+            src={imageUrl}
             alt={name}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         ) : (
-          <div className="w-full h-full bg-gray-400" />
+          <div className="h-full w-full bg-gray-400" />
         )}
       </div>
 
-      <div className="bg-[#FCE8EC] rounded-[20px] pt-4 pb-6 px-4 md:px-6 mt-8 h-auto min-h-[280px] md:min-h-[260px] shadow-lg overflow-hidden">
-        <div className="flex items-start gap-3 md:gap-4 mb-4">
-          <div className="w-20 md:w-24 flex-shrink-0" /> 
+      <div className="mt-8 h-auto min-h-[280px] overflow-hidden rounded-[20px] bg-[#FCE8EC] px-4 pt-4 pb-6 shadow-lg md:min-h-[260px] md:px-6">
+        <div className="mb-4 flex items-start gap-3 md:gap-4">
+          <div className="w-20 flex-shrink-0 md:w-24" />
           <div className="min-w-0 flex-1">
-            <h3 className="text-base md:text-xl font-semibold text-[var(--color-text-primary)] break-words">
+            <h3 className="text-base font-semibold break-words text-[var(--color-text-primary)] md:text-xl">
               {name}
             </h3>
-            <p className="text-xs md:text-sm text-gray-600 mt-1 break-words">
+            <p className="mt-1 text-xs break-words text-gray-600 md:text-sm">
               {program}
             </p>
           </div>
         </div>
 
         <div className="relative px-2 md:px-4">
-          <img 
-            src={reviewIcon} 
-            alt="Quote" 
-            className="absolute -top-4 -left-2 w-4 md:w-5 h-5 md:h-6"
+          <img
+            src={reviewIcon}
+            alt="Quote"
+            className="absolute -top-4 -left-2 h-5 w-4 md:h-6 md:w-5"
           />
-          <p className="text-xs md:text-sm leading-relaxed text-[var(--color-text-primary)] break-words">
+          <p className="text-xs leading-relaxed break-words text-[var(--color-text-primary)] md:text-sm">
             {testimonial}
           </p>
         </div>
