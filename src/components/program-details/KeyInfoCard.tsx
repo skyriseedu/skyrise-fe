@@ -17,7 +17,7 @@ const KeyInfoCard: React.FC<KeyInfoCardProps> = ({ icon, label, value }) => {
         />
       <div>
         <p className="text-text-primary text-body-4 lg:text-body-4">{label}</p>
-        <p className="text-body-1 lg:text-h3 font-semibold text-text-primary">
+        <p className="text-body-1 lg:text-body-1 font-semibold text-text-primary">
           {value}
         </p>
       </div>

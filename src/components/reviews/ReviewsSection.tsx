@@ -30,7 +30,7 @@ const reviewsData = [
 
 const ReviewsSection: React.FC = () => {
   return (
-    <section className="w-full py-12 lg:py-20">
+    <section className="w-full py-6 lg:py-16">
       <div className="container mx-auto px-4 lg:px-6">
         <h2 className="text-3xl lg:text-4xl font-bold mb-8 text-center text-[var(--color-text-primary)]">
           Student Reviews
@@ -42,7 +42,7 @@ const ReviewsSection: React.FC = () => {
           </div>
         ) : (
           <div className="relative max-w-[1200px] mx-auto">
-            <div className="overflow-x-auto pb-6 pt-12 scrollbar-hide">
+            <div className="overflow-x-auto pb-8 pt-8 scrollbar-hide">
               <div className="flex gap-5">
                 {reviewsData.map((review) => (
                   <div

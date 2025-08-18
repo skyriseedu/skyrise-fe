@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import KeyInfoCard from '@/components/program-details/KeyInfoCard';
+import ProgramStructure from '@/components/program-details/ProgramStructure';
 import arrowLeft from '@/assets/arrow-left.svg';
 import ReviewsSection from '@/components/reviews/ReviewsSection';
 import calendarIcon from '@/assets/calendar.svg';
@@ -107,8 +108,8 @@ const ProgramDetailsPage: React.FC = () => {
             </div>
 
             <div className="flex-1 max-w-2xl px-4 lg:px-0">
-              <h2 className="text-h3 lg:text-h1 font-bold mb-4 lg:mb-6 text-text-primary">About Program</h2>
-              <p className="text-text-primary leading-relaxed text-body-2 lg:text-body-1">
+              <h2 className="text-h3 lg:text-h2 font-bold mb-4 lg:mb-6 text-text-primary">About Program</h2>
+              <p className="text-text-primary leading-relaxed text-body-2 lg:text-body-2">
                 {programData.description}
               </p>
             </div>
@@ -116,7 +117,7 @@ const ProgramDetailsPage: React.FC = () => {
 
           {/* Key Information Section */}
           <div className="py-12">
-            <h2 className="text-h3 lg:text-h1 font-semibold mb-8 text-text-primary">Key Information</h2>
+            <h2 className="text-h3 lg:text-h2 font-semibold mb-8 text-text-primary">Key Information</h2>
             <div className="max-w-6xl mx-auto">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               <div className="h-20 lg:h-24">
@@ -146,9 +147,9 @@ const ProgramDetailsPage: React.FC = () => {
                   <div className="text-center">
                     <div className="text-body-2 font-semibold lg:hidden">Book Free Consultation</div>
                     <div className="hidden lg:block">
-                      <div className="text-h2 font-semibold">Book</div>
-                      <div className="text-h2 font-semibold">Free</div>
-                      <div className="text-h2 font-semibold">Consultation</div>
+                      <div className="text-h3 font-semibold">Book</div>
+                      <div className="text-h3 font-semibold">Free</div>
+                      <div className="text-h3 font-semibold">Consultation</div>
                     </div>
                   </div>
                 </div>
@@ -178,6 +179,7 @@ const ProgramDetailsPage: React.FC = () => {
               </div>
             </div>
           </div>
+          <ProgramStructure />
         </div>
         <ReviewsSection />
       </div>
