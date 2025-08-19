@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import caretDown from '@/assets/caret-down.svg';
-
-interface AccordionItem {
-  id: string;
-  title: string;
-  content: string;
-}
+import type { ProgramStructureItem } from '@/types/users/program';
 
 const ProgramStructure: React.FC = () => {
   const [openItems, setOpenItems] = useState<string[]>([]);
 
-  const accordionData: AccordionItem[] = [
+  const accordionData: ProgramStructureItem[] = [
     {
       id: 'credit',
       title: 'Total Credit Requirement',

@@ -48,7 +48,7 @@ const ReviewsSection: React.FC = () => {
           <div className="relative mx-auto max-w-[1200px]">
             <div className="scrollbar-hide overflow-x-auto pt-8 pb-8">
               <div className="flex gap-5">
-                {reviewsData.map((review) => (
+                {reviewsData?.map((review) => (
                   <div
                     key={review.id}
                     className="w-[280px] flex-none sm:w-[340px] lg:w-[370px]"
