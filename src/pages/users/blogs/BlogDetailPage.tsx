@@ -59,7 +59,10 @@ const BlogDetailPage: React.FC = () => {
         )}
         {blog && (
           <img
-            src={blog.imageUrl || 'https://via.placeholder.com/800x600'}
+            src={
+              blog.imageUrl ||
+              'https://placehold.co/800x600?text=Image+Not+Available'
+            }
             alt={blog.title}
             className={`h-full w-full object-cover lg:h-120 ${imageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
             onLoad={handleImageLoad}
