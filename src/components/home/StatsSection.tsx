@@ -2,20 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import StatsCard from './StatsCard';
 import Loading from '../common/Loading';
-
-interface StatsData {
-  studentConsultants: { text: string; count: number };
-  scholarship: { text: string; count: number };
-  universities: { text: string; count: number };
-  programs: { text: string; count: number };
-  reviews: { text: string; count: number };
-}
-
-interface StatsResponse {
-  success: boolean;
-  data: StatsData;
-  message?: string;
-}
+import type { StatsResponse } from '@/types/users/home';
 
 export default function StatsSection() {
   const { i18n, t } = useTranslation();
