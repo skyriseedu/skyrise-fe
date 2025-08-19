@@ -1,0 +1,51 @@
+import apiClient from '../client';
+import type {
+  BlogsApiResponse,
+  LatestBlogsApiResponse,
+  CategoryBlogsApiResponse,
+  SingleBlogApiResponse,
+  UseBlogsParams,
+} from '@/types/blog';
+
+/**
+ * Blog API Service - Simple and direct
+ */
+export const blogService = {
+  async getBlogs(params: UseBlogsParams = {}): Promise<BlogsApiResponse> {
+    const { category, page = 1, limit = 5 } = params;
+
+    const searchParams = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    if (category && category !== 'All Categories') {
+      searchParams.append('category', category);
+    }
+
+    const response = await apiClient.get(`/blogs?${searchParams}`);
+    return response.data;
+  },
+
+  async getLatestBlogs(limit: number = 3): Promise<LatestBlogsApiResponse> {
+    const response = await apiClient.get(`/blogs/latest?limit=${limit}`);
+    return response.data;
+  },
+
+  async getBlogsByCategory(
+    category: string
+  ): Promise<CategoryBlogsApiResponse> {
+    const response = await apiClient.get(`/blogs/category/${category}`);
+    return response.data;
+  },
+
+  async getBlogById(id: string): Promise<SingleBlogApiResponse> {
+    const response = await apiClient.get(`/blogs/${id}`);
+    return response.data;
+  },
+
+  async getBlogBySlug(slug: string): Promise<SingleBlogApiResponse> {
+    const response = await apiClient.get(`/blogs/${slug}`);
+    return response.data;
+  },
+};

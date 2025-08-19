@@ -22,7 +22,80 @@ export type BlogCategory =
   | 'visa'
   | 'student reviews';
 
-export interface BlogFilterProps {
-  selectedCategory: BlogCategory;
-  onCategoryChange: (category: BlogCategory) => void;
+// API Response Types
+export interface BlogsApiResponse {
+  success: boolean;
+  message: string;
+  count: number;
+  data: {
+    blogs: Blog[];
+    pagination?: {
+      currentPage: number;
+      totalPages: number;
+      totalBlogs: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+    };
+  };
+}
+
+export interface LatestBlogsApiResponse {
+  success: boolean;
+  message: string;
+  count: number;
+  data: {
+    blogs: Blog[];
+  };
+}
+
+export interface CategoryBlogsApiResponse {
+  success: boolean;
+  message: string;
+  count: number;
+  data: {
+    blogs: Blog[];
+  };
+}
+
+export interface SingleBlogApiResponse {
+  success: boolean;
+  message: string;
+  data: {
+    blog: Blog;
+  };
+}
+
+// Hook Types
+export interface UseBlogsParams {
+  category?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface UseBlogsReturn {
+  blogs: Blog[];
+  isLoading: boolean;
+  error: string | null;
+  pagination?: {
+    currentPage: number;
+    totalPages: number;
+    totalBlogs: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+  refetch: () => void;
+}
+
+export interface UseLatestBlogsReturn {
+  latestBlogs: Blog[];
+  isLoading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
+
+export interface UseCategoryBlogsReturn {
+  categoryBlogs: Blog[];
+  isLoading: boolean;
+  error: string | null;
+  refetch: () => void;
 }

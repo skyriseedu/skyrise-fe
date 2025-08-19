@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import BlogCard from '@/components/blog/BlogCard';
 import BlogFilter from '@/components/blog/BlogFilter';
-import { mockBlogs } from '@/data/mockBlogs';
+import { useBlogs, useLatestBlogs } from '@/queries';
 import type { BlogCategory } from '@/types/blog';
 import CaretLeft from '@/assets/caret-left.svg?react';
 import CaretRight from '@/assets/caret-right.svg?react';
@@ -13,32 +13,51 @@ const BlogsPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const blogsPerPage = 5;
 
-  // Filter blogs based on selected category
-  const filteredBlogs = useMemo(() => {
-    if (selectedCategory === 'All Categories') {
-      return mockBlogs;
-    }
-    return mockBlogs.filter((blog) => blog.category === selectedCategory);
-  }, [selectedCategory]);
+  const {
+    data: blogsData,
+    isLoading: blogsLoading,
+    error: blogsError,
+  } = useBlogs({
+    category:
+      selectedCategory === 'All Categories' ? undefined : selectedCategory,
+    page: currentPage,
+    limit: blogsPerPage,
+  });
 
-  const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
-  const startIndex = (currentPage - 1) * blogsPerPage;
-  const endIndex = startIndex + blogsPerPage;
-  const currentBlogs = filteredBlogs.slice(startIndex, endIndex);
+  const {
+    data: latestData,
+    isLoading: latestLoading,
+    error: latestError,
+  } = useLatestBlogs(selectedCategory === 'All Categories' ? 6 : 0); // Get 6 for latest + featured, 0 for categories
+
+  const currentBlogs = useMemo(() => blogsData?.data.blogs || [], [blogsData]);
+  const pagination = blogsData?.data.pagination;
+  const latestBlogs = useMemo(() => latestData?.data.blogs || [], [latestData]);
 
   const latestBlog = useMemo(() => {
-    const blogsToSearch =
-      selectedCategory === 'All Categories' ? mockBlogs : filteredBlogs;
-    return [...blogsToSearch].sort(
-      (a, b) =>
-        new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime()
-    )[0];
-  }, [selectedCategory, filteredBlogs]);
+    if (selectedCategory === 'All Categories') {
+      return latestBlogs[0];
+    } else {
+      return currentBlogs[0];
+    }
+  }, [selectedCategory, latestBlogs, currentBlogs]);
 
   const featuredBlogs = useMemo(() => {
     if (selectedCategory !== 'All Categories') return [];
-    return mockBlogs.filter((blog) => blog._id !== latestBlog._id).slice(0, 5);
-  }, [latestBlog, selectedCategory]);
+    return latestBlogs.slice(1, 6); // Skip first one, take next 5
+  }, [latestBlogs, selectedCategory]);
+
+  // Calculate total pages from API pagination
+  const totalPages = pagination?.totalPages || 1;
+
+  // Check if any data is loading
+  const isLoading =
+    blogsLoading || (selectedCategory === 'All Categories' && latestLoading);
+
+  // Handle errors
+  const hasError =
+    blogsError || (selectedCategory === 'All Categories' && latestError);
+  const errorMessage = blogsError?.message || latestError?.message;
 
   const handleCategoryChange = (category: BlogCategory) => {
     setSelectedCategory(category);
@@ -69,130 +88,161 @@ const BlogsPage: React.FC = () => {
       </div>
 
       <div className="w-full px-5 py-2 lg:px-15">
-        <section className="mb-10">
-          <div className="mt-2 mb-8 flex items-center justify-between">
-            <h2 className="text-h3 lg:text-h1 text-text-primary font-bold">
-              {selectedCategory === 'All Categories'
-                ? 'Latest Post'
-                : capitalizeFirstLetters(selectedCategory.toString())}
-            </h2>
-          </div>
-          <div className="w-full">
-            <BlogCard blog={latestBlog} variant="medium" />
-          </div>
-        </section>
-
-        {selectedCategory === 'All Categories' && (
-          <section className="mb-10">
-            <h2 className="text-h3 lg:text-h1 text-text-primary mb-8 font-bold">
-              Featured Blogs
-            </h2>
-            <div className="scrollbar-hide overflow-x-auto scroll-smooth">
-              <div
-                className="flex gap-6 px-1 pb-4"
-                style={{ width: 'max-content' }}
-              >
-                {featuredBlogs.map((blog) => (
-                  <div key={blog._id} className="flex-shrink-0">
-                    <BlogCard blog={blog} variant="small" />
-                  </div>
-                ))}
-              </div>
+        {/* Error State */}
+        {hasError && (
+          <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4">
+            <div className="text-red-800">
+              <p className="font-medium">Error loading blogs</p>
+              <p className="text-sm">{errorMessage}</p>
             </div>
-          </section>
+          </div>
         )}
 
-        <section>
-          {selectedCategory === 'All Categories' && (
-            <h2 className="text-h2 text-text-primary mb-8 font-bold">
-              All Blogs
-            </h2>
-          )}
+        {/* Loading State */}
+        {isLoading && currentBlogs.length === 0 && (
+          <div className="flex items-center justify-center py-16">
+            <div className="text-center">
+              <div className="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
+              <p className="text-text-secondary">Loading blogs...</p>
+            </div>
+          </div>
+        )}
 
-          {currentBlogs.length > 0 ? (
-            <>
-              <div className="mb-12 space-y-4">
-                {currentBlogs.map((blog) => (
-                  <BlogCard key={blog._id} blog={blog} variant="mini" />
-                ))}
-              </div>
+        {!isLoading && !hasError && (
+          <>
+            {latestBlog && (
+              <section className="mb-10">
+                <div className="mt-2 mb-8 flex items-center justify-between">
+                  <h2 className="text-h3 lg:text-h1 text-text-primary font-bold">
+                    {selectedCategory === 'All Categories'
+                      ? 'Latest Post'
+                      : capitalizeFirstLetters(selectedCategory.toString())}
+                  </h2>
+                </div>
+                <div className="w-full">
+                  <BlogCard blog={latestBlog} variant="medium" />
+                </div>
+              </section>
+            )}
 
-              {totalPages > 1 && (
-                <div className="flex items-center justify-center">
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="hover:text-primary text-text-primary flex h-10 w-10 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            {selectedCategory === 'All Categories' &&
+              featuredBlogs.length > 0 && (
+                <section className="mb-10">
+                  <h2 className="text-h3 lg:text-h1 text-text-primary mb-8 font-bold">
+                    Featured Blogs
+                  </h2>
+                  <div className="scrollbar-hide overflow-x-auto scroll-smooth">
+                    <div
+                      className="flex gap-6 px-1 pb-4"
+                      style={{ width: 'max-content' }}
                     >
-                      <CaretLeft className="h-5 w-5" />
-                    </button>
+                      {featuredBlogs.map((blog) => (
+                        <div key={blog._id} className="flex-shrink-0">
+                          <BlogCard blog={blog} variant="small" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              )}
 
-                    {(() => {
-                      const getPageNumbers = () => {
-                        if (totalPages <= 3) {
-                          return Array.from(
-                            { length: totalPages },
-                            (_, i) => i + 1
-                          );
-                        }
+            <section>
+              {selectedCategory === 'All Categories' && (
+                <h2 className="text-h2 text-text-primary mb-8 font-bold">
+                  All Blogs
+                </h2>
+              )}
 
-                        if (currentPage === 1) {
-                          // Show first 3 pages
-                          return [1, 2, 3];
-                        } else if (currentPage === totalPages) {
-                          // Show last 3 pages
-                          return [totalPages - 2, totalPages - 1, totalPages];
-                        } else {
-                          // Show current page and neighbors
-                          return [
-                            currentPage - 1,
-                            currentPage,
-                            currentPage + 1,
-                          ];
-                        }
-                      };
+              {currentBlogs.length > 0 ? (
+                <>
+                  <div className="mb-12 space-y-4">
+                    {currentBlogs.map((blog) => (
+                      <BlogCard key={blog._id} blog={blog} variant="mini" />
+                    ))}
+                  </div>
 
-                      return getPageNumbers().map((page) => (
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center">
+                      <div className="flex items-center space-x-2">
                         <button
-                          key={page}
-                          onClick={() => handlePageChange(page)}
-                          className={`text-body-5 lg:text-body-1 h-10 w-10 rounded-full font-medium transition-colors ${
-                            currentPage === page
-                              ? 'bg-primary text-white shadow-sm'
-                              : 'text-text-secondary hover:bg-primary hover:text-white'
-                          }`}
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 1 || isLoading}
+                          className="hover:text-primary text-text-primary flex h-10 w-10 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          {page}
+                          <CaretLeft className="h-5 w-5" />
                         </button>
-                      ));
-                    })()}
 
+                        {(() => {
+                          const getPageNumbers = () => {
+                            if (totalPages <= 3) {
+                              return Array.from(
+                                { length: totalPages },
+                                (_, i) => i + 1
+                              );
+                            }
+
+                            if (currentPage === 1) {
+                              return [1, 2, 3];
+                            } else if (currentPage === totalPages) {
+                              return [
+                                totalPages - 2,
+                                totalPages - 1,
+                                totalPages,
+                              ];
+                            } else {
+                              return [
+                                currentPage - 1,
+                                currentPage,
+                                currentPage + 1,
+                              ];
+                            }
+                          };
+
+                          return getPageNumbers().map((page) => (
+                            <button
+                              key={page}
+                              onClick={() => handlePageChange(page)}
+                              disabled={isLoading}
+                              className={`text-body-5 lg:text-body-1 h-10 w-10 rounded-full font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                                currentPage === page
+                                  ? 'bg-primary text-white shadow-sm'
+                                  : 'text-text-secondary hover:bg-primary hover:text-white'
+                              }`}
+                            >
+                              {page}
+                            </button>
+                          ));
+                        })()}
+
+                        <button
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage === totalPages || isLoading}
+                          className="text-text-primary hover:text-primary flex h-10 w-10 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <CaretRight className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                !isLoading && (
+                  <div className="py-12 text-center">
+                    <div className="text-h3 text-text-secondary mb-4">
+                      No blogs found in this category
+                    </div>
                     <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="text-text-primary hover:text-primary flex h-10 w-10 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={() => setSelectedCategory('All Categories')}
+                      className="text-primary hover:text-primary/80 text-h4 font-medium transition-colors"
                     >
-                      <CaretRight className="h-5 w-5" />
+                      View All Blogs →
                     </button>
                   </div>
-                </div>
+                )
               )}
-            </>
-          ) : (
-            <div className="py-12 text-center">
-              <div className="text-h3 text-text-secondary mb-4">
-                No blogs found in this category
-              </div>
-              <button
-                onClick={() => setSelectedCategory('All Categories')}
-                className="text-primary hover:text-primary/80 text-h4 font-medium transition-colors"
-              >
-                View All Blogs →
-              </button>
-            </div>
-          )}
-        </section>
+            </section>
+          </>
+        )}
       </div>
     </div>
   );

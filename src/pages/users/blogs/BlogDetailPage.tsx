@@ -1,21 +1,42 @@
 import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { mockBlogs } from '@/data/mockBlogs';
 import BlogCard from '@/components/blog/BlogCard';
 import ArrowLeft from '@/assets/arrow-left.svg?react';
+import { useBlogBySlug, useCategoryBlogs } from '@/queries/blogs';
 
 const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
 
-  const blog = mockBlogs.find((b) => b.slug === slug);
+  const {
+    data: blogData,
+    isLoading: blogLoading,
+    error: blogError,
+  } = useBlogBySlug(slug || '');
 
-  if (!blog) {
-    return <Navigate to="/blogs" replace />;
+  const blog = blogData?.data.blog;
+
+  const { data: relatedData } = useCategoryBlogs(blog?.category || '');
+
+  const relatedBlogs =
+    relatedData?.data.blogs?.filter((b) => b._id !== blog?._id).slice(0, 5) ||
+    [];
+
+  // Handle loading state
+  if (blogLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
+          <p className="text-text-secondary">Loading blog...</p>
+        </div>
+      </div>
+    );
   }
 
-  const relatedBlogs = mockBlogs
-    .filter((b) => b.category === blog.category && b._id !== blog._id)
-    .slice(0, 5);
+  // Handle error or blog not found
+  if (blogError || !blog) {
+    return <Navigate to="/blogs" replace />;
+  }
 
   return (
     <div className="min-h-screen pb-16">
@@ -61,9 +82,11 @@ const BlogDetailPage: React.FC = () => {
 
         <div className="prose prose-lg mb-12 max-w-none">
           <div className="text-h4 text-text-primary space-y-6 leading-relaxed">
-            {blog.blogText.split('\n\n').map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
+            {blog.blogText
+              .split('\n\n')
+              .map((paragraph: string, index: number) => (
+                <p key={index}>{paragraph}</p>
+              ))}
           </div>
         </div>
 
