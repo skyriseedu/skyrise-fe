@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import BlogCard from '@/components/blog/BlogCard';
 import BlogFilter from '@/components/blog/BlogFilter';
+import { BlogCardSkeleton } from '@/components/ui';
 import { useBlogs, useLatestBlogs } from '@/queries';
 import type { BlogCategory } from '@/types/blog';
 import CaretLeft from '@/assets/caret-left.svg?react';
@@ -98,8 +99,18 @@ const BlogsPage: React.FC = () => {
           </div>
         )}
 
-        {/* Loading State */}
-        {isLoading && currentBlogs.length === 0 && (
+        {/* Loading State - Only show skeleton for latest post */}
+        {isLoading && selectedCategory === 'All Categories' && (
+          <section className="mb-10">
+            <div className="mt-2 mb-8 flex items-center justify-between">
+              <div className="h-8 w-32 animate-pulse rounded bg-gray-200"></div>
+            </div>
+            <BlogCardSkeleton variant="medium" />
+          </section>
+        )}
+
+        {/* General loading for other categories */}
+        {isLoading && selectedCategory !== 'All Categories' && (
           <div className="flex items-center justify-center py-16">
             <div className="text-center">
               <div className="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>

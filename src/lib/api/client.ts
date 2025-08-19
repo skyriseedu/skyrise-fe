@@ -13,14 +13,9 @@ const apiClient = axios.create({
   },
 });
 
-apiClient.interceptors.request.use((config) => {
-  console.log(`🚀 ${config.method?.toUpperCase()} ${config.url}`);
-  return config;
-});
-
 apiClient.interceptors.response.use(
   (response) => {
-    console.log(`✅ ${response.status} ${response.config.url}`);
+    console.log('API called successfully:', response);
     return response;
   },
   (error) => {

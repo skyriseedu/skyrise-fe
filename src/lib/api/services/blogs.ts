@@ -7,9 +7,6 @@ import type {
   UseBlogsParams,
 } from '@/types/blog';
 
-/**
- * Blog API Service - Simple and direct
- */
 export const blogService = {
   async getBlogs(params: UseBlogsParams = {}): Promise<BlogsApiResponse> {
     const { category, page = 1, limit = 5 } = params;
