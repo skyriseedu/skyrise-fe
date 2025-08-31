@@ -4,8 +4,7 @@ import BlogFilter from '@/components/blog/BlogFilter';
 import { BlogCardSkeleton } from '@/components/ui';
 import { useBlogs, useLatestBlogs } from '@/queries';
 import type { BlogCategory } from '@/types/blog';
-import CaretLeft from '@/assets/caret-left.svg?react';
-import CaretRight from '@/assets/caret-right.svg?react';
+import Pagination from '@/components/common/Pagination';
 import { capitalizeFirstLetters } from '@/helpers';
 
 const BlogsPage: React.FC = () => {
@@ -180,67 +179,12 @@ const BlogsPage: React.FC = () => {
                   </div>
 
                   {totalPages > 1 && (
-                    <div className="flex items-center justify-center">
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          disabled={currentPage === 1 || isLoading}
-                          className="hover:text-primary text-text-primary flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <CaretLeft className="h-5 w-5" />
-                        </button>
-
-                        {(() => {
-                          const getPageNumbers = () => {
-                            if (totalPages <= 3) {
-                              return Array.from(
-                                { length: totalPages },
-                                (_, i) => i + 1
-                              );
-                            }
-
-                            if (currentPage === 1) {
-                              return [1, 2, 3];
-                            } else if (currentPage === totalPages) {
-                              return [
-                                totalPages - 2,
-                                totalPages - 1,
-                                totalPages,
-                              ];
-                            } else {
-                              return [
-                                currentPage - 1,
-                                currentPage,
-                                currentPage + 1,
-                              ];
-                            }
-                          };
-
-                          return getPageNumbers().map((page) => (
-                            <button
-                              key={page}
-                              onClick={() => handlePageChange(page)}
-                              disabled={isLoading}
-                              className={`text-body-5 lg:text-body-1 h-10 w-10 cursor-pointer rounded-full font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
-                                currentPage === page
-                                  ? 'bg-primary text-white shadow-sm'
-                                  : 'text-text-secondary hover:bg-primary hover:text-white'
-                              }`}
-                            >
-                              {page}
-                            </button>
-                          ));
-                        })()}
-
-                        <button
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          disabled={currentPage === totalPages || isLoading}
-                          className="text-text-primary hover:text-primary flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <CaretRight className="h-5 w-5" />
-                        </button>
-                      </div>
-                    </div>
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      isLoading={isLoading}
+                      onPageChange={handlePageChange}
+                    />
                   )}
                 </>
               ) : (
