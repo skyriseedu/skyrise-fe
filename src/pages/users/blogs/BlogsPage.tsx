@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import BlogCard from '@/components/blog/BlogCard';
 import BlogFilter from '@/components/blog/BlogFilter';
 import { BlogCardSkeleton } from '@/components/ui';
@@ -13,6 +13,7 @@ const BlogsPage: React.FC = () => {
     useState<BlogCategory>('All Categories');
   const [currentPage, setCurrentPage] = useState(1);
   const blogsPerPage = 5;
+  const allBlogsRef = useRef<HTMLDivElement>(null);
 
   const {
     data: blogsData,
@@ -67,7 +68,13 @@ const BlogsPage: React.FC = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      if (allBlogsRef.current) {
+        const y =
+          allBlogsRef.current.getBoundingClientRect().top + window.scrollY - 96; // 96px = 6rem
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }, 0);
   };
 
   return (
@@ -157,7 +164,7 @@ const BlogsPage: React.FC = () => {
                 </section>
               )}
 
-            <section>
+            <section ref={allBlogsRef}>
               {selectedCategory === 'All Categories' && (
                 <h2 className="text-h2 text-text-primary mb-8 font-bold">
                   All Blogs
@@ -178,7 +185,7 @@ const BlogsPage: React.FC = () => {
                         <button
                           onClick={() => handlePageChange(currentPage - 1)}
                           disabled={currentPage === 1 || isLoading}
-                          className="hover:text-primary text-text-primary flex h-10 w-10 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                          className="hover:text-primary text-text-primary flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           <CaretLeft className="h-5 w-5" />
                         </button>
@@ -214,7 +221,7 @@ const BlogsPage: React.FC = () => {
                               key={page}
                               onClick={() => handlePageChange(page)}
                               disabled={isLoading}
-                              className={`text-body-5 lg:text-body-1 h-10 w-10 rounded-full font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                              className={`text-body-5 lg:text-body-1 h-10 w-10 cursor-pointer rounded-full font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                                 currentPage === page
                                   ? 'bg-primary text-white shadow-sm'
                                   : 'text-text-secondary hover:bg-primary hover:text-white'
@@ -228,7 +235,7 @@ const BlogsPage: React.FC = () => {
                         <button
                           onClick={() => handlePageChange(currentPage + 1)}
                           disabled={currentPage === totalPages || isLoading}
-                          className="text-text-primary hover:text-primary flex h-10 w-10 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                          className="text-text-primary hover:text-primary flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           <CaretRight className="h-5 w-5" />
                         </button>
