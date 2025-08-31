@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '@/contexts/useLanguage';
 import { Link, useLocation } from 'react-router-dom';
 import SkyRiseLogo from '../../assets/skyrise-logo.svg';
 import Menu from '../../assets/menu.svg?react';
@@ -39,7 +41,8 @@ const navigationItems = [
 ];
 
 const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
-  const [currentLanguage, setCurrentLanguage] = useState('En');
+  const { language: currentLanguage, setLanguage } = useLanguage();
+  const { i18n } = useTranslation();
   const [expandedServices, setExpandedServices] = useState(false);
   const location = useLocation();
   const servicesRef = useRef<HTMLDivElement>(null);
@@ -76,8 +79,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
     };
   }, [isMenuOpen]);
 
-  const handleLanguageChange = (language: string) => {
-    setCurrentLanguage(language);
+  const handleLanguageChange = (language: 'En' | 'Mm') => {
+    setLanguage(language);
+    i18n.changeLanguage(language === 'En' ? 'en' : 'my');
   };
 
   const isActiveMenuItem = (item: (typeof navigationItems)[0]) => {
