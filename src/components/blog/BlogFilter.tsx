@@ -1,6 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import type { BlogCategory, BlogFilterProps } from '../../types/blog';
+import type { BlogCategory } from '../../types/blog';
 import CaretDown from '../../assets/caret-down.svg?react';
+
+interface BlogFilterProps {
+  selectedCategory: BlogCategory;
+  onCategoryChange: (category: BlogCategory) => void;
+}
 
 const BlogFilter: React.FC<BlogFilterProps> = ({
   selectedCategory,
