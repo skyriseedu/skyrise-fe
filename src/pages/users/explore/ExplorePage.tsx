@@ -1,41 +1,173 @@
 import ProgramCard from '@/components/explore/ProgramCard';
-import React from 'react';
+import MobileFilter from '@/components/explore/MobileFilter';
+import DesktopFilterDropdown from '@/components/explore/DesktopFilterDropdown';
+import type { ExploreFilters } from '@/types/users/explore';
+import React, { useState, useMemo } from 'react';
+import filterIcon from '@/assets/filter-alt.svg';
+import searchIcon from '@/assets/search.svg';
+import { useFilter } from '@/contexts/FilterContext';
 
 const ExplorePage: React.FC = () => {
-  const sampleProgram = {
-    title: 'Bachelor of Science in Information and Communication Technology',
-    university: 'Rangsit University',
-    upcomingIntake: 'Aug 2025',
-    duration: '4 years',
-    ranking: 'Public, 20th',
-    rankingYear: '2025',
-    totalTuitionFees: '600,000 THB',
-    applicationDeadline: 'July 23, 2025',
+  const [searchQuery, setSearchQuery] = useState('');
+  const { isMobileFilterOpen, setIsMobileFilterOpen } = useFilter();
+  const [filters, setFilters] = useState<ExploreFilters>({
+    degrees: [],
+    programs: [],
+    tuitionRanges: [],
+    duration: [],
+  });
+
+  const samplePrograms = [
+    {
+      id: '1',
+      title: 'Bachelor of Science in Information and Communication Technology',
+      university: 'Rangsit University',
+      upcomingIntake: 'Aug 2025',
+      duration: '4 years',
+      ranking: 'Public, 20th',
+      rankingYear: '2025',
+      totalTuitionFees: '600,000 THB',
+      applicationDeadline: 'July 23, 2025',
+      degree: 'bachelor',
+      program: 'it',
+      tuition: 600000,
+    }
+  ];
+
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (filters.degrees.length > 0) count += filters.degrees.length;
+    if (filters.programs.length > 0) count += filters.programs.length;
+    if (filters.duration.length > 0) count += filters.duration.length;
+    if (filters.tuitionRanges.length > 0) count += filters.tuitionRanges.length;
+    return count;
+  }, [filters]);
+
+  const hasActiveFilters = activeFiltersCount > 0;
+
+  const handleClearFilters = () => {
+    setFilters({
+      degrees: [],
+      programs: [],
+      tuitionRanges: [],
+      duration: [],
+    });
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-[1297px] px-4 py-8">
         <div className="mb-8">
-          <h1 className="mb-4 text-3xl font-bold text-gray-900">Explore</h1>
-          <div className="mb-6 flex items-center gap-4">
-            <p className="text-lg text-gray-600">Total Programs: 200</p>
+          <h1 className="mb-4 text-h2 font-fustat sm:text-h1">Explore</h1>
+          
+          <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-body-2 text-gray-600">
+              Total {samplePrograms.length} Programs Found
+            </p>
+            
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsMobileFilterOpen(true)}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 hover:border-gray-400 transition-colors sm:hidden"
+              >
+                <img src={filterIcon} alt="Filter" className="h-4 w-4" />
+                <span className="text-body-3">Filters</span>
+                {activeFiltersCount > 0 && (
+                  <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-body-5 text-white">
+                    {activeFiltersCount}
+                  </span>
+                )}
+              </button>
+              
+              <DesktopFilterDropdown
+                filters={filters}
+                onApplyFilters={setFilters}
+                activeFiltersCount={activeFiltersCount}
+              />
+            </div>
+          </div>
+
+          <div className="relative">
+            <img src={searchIcon} alt="Search" className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-50" />
             <input
               type="search"
               placeholder="Search Programs"
-              className="max-w-md flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none"
             />
           </div>
+
+          {hasActiveFilters && (
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              {filters.degrees.map((degree) => (
+                <span
+                  key={degree}
+                  className="inline-flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-body-4 text-primary"
+                >
+                  {degree.charAt(0).toUpperCase() + degree.slice(1)}
+                </span>
+              ))}
+              {filters.programs.map((program) => (
+                <span
+                  key={program}
+                  className="inline-flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-body-4 text-primary"
+                >
+                  {program.toUpperCase()}
+                </span>
+              ))}
+              {filters.duration.map((duration) => (
+                <span
+                  key={duration}
+                  className="inline-flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-body-4 text-primary"
+                >
+                  {duration} year{duration !== '1' ? 's' : ''}
+                </span>
+              ))}
+              {filters.tuitionRanges.map((range) => {
+                const rangeLabel = {
+                  '0-200000': '0 - 200,000 THB',
+                  '200000-400000': '200,000 - 400,000 THB',
+                  '400000-600000': '400,000 - 600,000 THB',
+                  '600000-800000': '600,000 - 800,000 THB',
+                  '800000+': '800,000+ THB'
+                }[range];
+                return (
+                  <span
+                    key={range}
+                    className="inline-flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-body-4 text-primary"
+                  >
+                    {rangeLabel}
+                  </span>
+                );
+              })}
+              <button
+                onClick={handleClearFilters}
+                className="text-body-4 text-primary hover:underline"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-4">
-          <ProgramCard
-            id="1"
-            {...sampleProgram}
-            onApplyClick={() => console.log('Apply clicked')}
-          />
+          {samplePrograms.map((program) => (
+            <ProgramCard
+              key={program.id}
+              {...program}
+              onApplyClick={() => console.log('Apply clicked')}
+            />
+          ))}
         </div>
       </div>
+
+      <MobileFilter
+        isOpen={isMobileFilterOpen}
+        onClose={() => setIsMobileFilterOpen(false)}
+        filters={filters}
+        onApplyFilters={setFilters}
+      />
     </div>
   );
 };
