@@ -50,7 +50,7 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
   filters: initialFilters,
   onApplyFilters,
 }) => {
-  const [expandedSections, setExpandedSections] = useState<string[]>([]);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['degrees']);
   const [localFilters, setLocalFilters] = useState<ExploreFilters>(initialFilters);
 
   useEffect(() => {
@@ -95,7 +95,7 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed rounded-[var(--border-radius-md)] inset-0 z-40 bg-secondary sm:hidden flex flex-col">
+    <div className="fixed rounded-[var(--border-radius-md)] border-top-2 inset-0 z-40 bg-secondary sm:hidden flex flex-col">
       <div className="bg-secondary px-6 py-8 shadow-sm mt-[72px]">
         <div className="flex items-center justify-between">
           <h2 className="text-h2 font-semibold  text-text-primary">Filters</h2>
