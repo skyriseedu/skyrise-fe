@@ -2,14 +2,18 @@ import ProgramCard from '@/components/explore/ProgramCard';
 import MobileFilter from '@/components/explore/MobileFilter';
 import DesktopFilterDropdown from '@/components/explore/DesktopFilterDropdown';
 import StickyHeader from '@/components/common/StickyHeader';
+import Pagination from '@/components/common/Pagination';
 import type { ExploreFilters } from '@/types/users/explore';
 import React, { useState, useMemo } from 'react';
 import filterIcon from '@/assets/filter-alt.svg';
 import searchIcon from '@/assets/search.svg';
 import { useFilterStore } from '@/store/useFilterStore';
 
+const ITEMS_PER_PAGE = 8;
+
 const ExplorePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const { isMobileFilterOpen, setIsMobileFilterOpen } = useFilterStore();
   const [filters, setFilters] = useState<ExploreFilters>({
     degrees: [],
@@ -33,6 +37,132 @@ const ExplorePage: React.FC = () => {
       program: 'it',
       tuition: 600000,
     },
+    {
+      id: '2',
+      title: 'Bachelor of Business Administration',
+      university: 'Chulalongkorn University',
+      upcomingIntake: 'Sep 2025',
+      duration: '4 years',
+      ranking: 'Public, 1st',
+      rankingYear: '2025',
+      totalTuitionFees: '800,000 THB',
+      applicationDeadline: 'August 15, 2025',
+      degree: 'bachelor',
+      program: 'business',
+      tuition: 800000,
+    },
+    {
+      id: '3',
+      title: 'Master of Engineering in Software Engineering',
+      university: 'Mahidol University',
+      upcomingIntake: 'Jan 2026',
+      duration: '2 years',
+      ranking: 'Public, 5th',
+      rankingYear: '2025',
+      totalTuitionFees: '450,000 THB',
+      applicationDeadline: 'December 1, 2025',
+      degree: 'master',
+      program: 'engineering',
+      tuition: 450000,
+    },
+    {
+      id: '4',
+      title: 'Bachelor of Medicine',
+      university: 'Siriraj Hospital Medical School',
+      upcomingIntake: 'June 2025',
+      duration: '6 years',
+      ranking: 'Public, 2nd',
+      rankingYear: '2025',
+      totalTuitionFees: '1,200,000 THB',
+      applicationDeadline: 'May 1, 2025',
+      degree: 'bachelor',
+      program: 'medicine',
+      tuition: 1200000,
+    },
+    {
+      id: '5',
+      title: 'Master of Business Administration (International Program)',
+      university: 'Thammasat University',
+      upcomingIntake: 'Aug 2025',
+      duration: '2 years',
+      ranking: 'Public, 8th',
+      rankingYear: '2025',
+      totalTuitionFees: '550,000 THB',
+      applicationDeadline: 'June 30, 2025',
+      degree: 'master',
+      program: 'business',
+      tuition: 550000,
+    },
+    {
+      id: '6',
+      title: 'Bachelor of Engineering in Computer Engineering',
+      university: 'King Mongkut\'s University of Technology Thonburi',
+      upcomingIntake: 'Aug 2025',
+      duration: '4 years',
+      ranking: 'Public, 12th',
+      rankingYear: '2025',
+      totalTuitionFees: '520,000 THB',
+      applicationDeadline: 'July 15, 2025',
+      degree: 'bachelor',
+      program: 'engineering',
+      tuition: 520000,
+    },
+    {
+      id: '7',
+      title: 'Master of Science in Data Science',
+      university: 'Chiang Mai University',
+      upcomingIntake: 'Jan 2026',
+      duration: '2 years',
+      ranking: 'Public, 7th',
+      rankingYear: '2025',
+      totalTuitionFees: '380,000 THB',
+      applicationDeadline: 'November 30, 2025',
+      degree: 'master',
+      program: 'it',
+      tuition: 380000,
+    },
+    {
+      id: '8',
+      title: 'Bachelor of Arts in International Business',
+      university: 'Kasetsart University',
+      upcomingIntake: 'Aug 2025',
+      duration: '4 years',
+      ranking: 'Public, 10th',
+      rankingYear: '2025',
+      totalTuitionFees: '480,000 THB',
+      applicationDeadline: 'June 15, 2025',
+      degree: 'bachelor',
+      program: 'business',
+      tuition: 480000,
+    },
+    {
+      id: '9',
+      title: 'Doctor of Medicine',
+      university: 'Prince of Songkla University',
+      upcomingIntake: 'June 2025',
+      duration: '6 years',
+      ranking: 'Public, 4th',
+      rankingYear: '2025',
+      totalTuitionFees: '1,100,000 THB',
+      applicationDeadline: 'April 30, 2025',
+      degree: 'bachelor',
+      program: 'medicine',
+      tuition: 1100000,
+    },
+    {
+      id: '10',
+      title: 'Master of Engineering in Electrical Engineering',
+      university: 'Suranaree University of Technology',
+      upcomingIntake: 'Jan 2026',
+      duration: '2 years',
+      ranking: 'Public, 15th',
+      rankingYear: '2025',
+      totalTuitionFees: '350,000 THB',
+      applicationDeadline: 'December 15, 2025',
+      degree: 'master',
+      program: 'engineering',
+      tuition: 350000,
+    },
   ];
 
   const activeFiltersCount = useMemo(() => {
@@ -53,6 +183,19 @@ const ExplorePage: React.FC = () => {
       tuitionRanges: [],
       duration: [],
     });
+    setCurrentPage(1);
+  };
+
+  // Calculate pagination - same for both mobile and desktop
+  const totalPages = Math.ceil(samplePrograms.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentPrograms = samplePrograms.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top of content area
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -166,7 +309,7 @@ const ExplorePage: React.FC = () => {
         {/* Content Section */}
         <div className="px-4 pt-4 pb-8">
           <div className="flex flex-col gap-4">
-            {samplePrograms.map((program) => (
+            {currentPrograms.map((program) => (
               <ProgramCard
                 key={program.id}
                 {...program}
@@ -174,6 +317,15 @@ const ExplorePage: React.FC = () => {
               />
             ))}
           </div>
+          {totalPages > 1 && (
+            <div className="mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -218,15 +370,27 @@ const ExplorePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-              {samplePrograms.map((program) => (
-                <ProgramCard
-                  key={program.id}
-                  {...program}
-                  onApplyClick={() => console.log('Apply clicked')}
-                />
-              ))}
+            {/* Desktop  */}
+            <div className="relative h-[450px] overflow-y-auto scrollbar-hide">
+              <div className="flex flex-col gap-4 pb-20">
+                {currentPrograms.map((program) => (
+                  <ProgramCard
+                    key={program.id}
+                    {...program}
+                    onApplyClick={() => console.log('Apply clicked')}
+                  />
+                ))}
+              </div>
             </div>
+            {totalPages > 1 && (
+              <div className="mt-8">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
