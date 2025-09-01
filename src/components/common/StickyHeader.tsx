@@ -33,7 +33,7 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
             {showBackButton && (
               <button
                 onClick={() => navigate(-1)}
-                className="mt-1 cursor-pointer lg:mt-0"
+                className="mt-1 cursor-pointer lg:mt-1"
               >
                 <img
                   src={arrowLeft}

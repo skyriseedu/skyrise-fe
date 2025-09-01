@@ -24,6 +24,7 @@
   --font-size-h5: 0.875rem; /* 14px */
   --font-size-h6: 0.75rem; /* 12px */
   --font-size-h7: 0.75rem; /* 12px */
+  --font-size-custom: 1.875rem; /* 30px */
 
   /* Font sizes - Roboto (Body) */
   --font-size-body-1: 1.25rem; /* 20px */
@@ -79,6 +80,11 @@
   }
   .text-h7 {
     font-size: var(--font-size-h7);
+    font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
+  }
+  .text-custom {
+    font-size: var(--font-size-custom);
     font-family: var(--font-family-fustat);
     line-height: var(--line-height-normal);
   }
@@ -215,6 +221,11 @@
     }
     .lg\:text-h7 {
       font-size: var(--font-size-h7);
+      font-family: var(--font-family-fustat);
+      line-height: var(--line-height-normal);
+    }
+    .lg\:text-custom {
+      font-size: var(--font-size-custom);
       font-family: var(--font-family-fustat);
       line-height: var(--line-height-normal);
     }

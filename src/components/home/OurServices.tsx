@@ -74,7 +74,7 @@ const OurServices = () => {
   return (
     <section className="bg-white px-4 py-16">
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-h1 text-text-primary lg:text-h1 mb-12 text-center font-semibold">
+        <h2 className="text-h1 text-text-primary lg:text-custom mb-12 text-center font-semibold">
           {t('home.services.title')}
         </h2>
 
