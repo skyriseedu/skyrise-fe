@@ -45,7 +45,7 @@ const ReviewsSection: React.FC = () => {
   return (
     <section className="w-full overflow-hidden py-6 lg:py-16">
       <div className="container mx-auto px-4 lg:px-6">
-        <h2 className="mb-8 text-center text-h2 font-bold text-[var(--color-text-primary)] lg:text-h2">
+        <h2 className="mb-1 text-left text-h3 font-semibold text-[var(--color-text-primary)] lg:text-h2">
           Student Reviews
         </h2>
 
