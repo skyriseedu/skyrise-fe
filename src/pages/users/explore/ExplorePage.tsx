@@ -63,15 +63,15 @@ const ExplorePage: React.FC = () => {
           <div className="mb-8">
             <h1 className="mb-4 text-h2 font-fustat sm:text-h1">Explore</h1>
             
-            <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mb-4 flex items-center justify-between">
               <p className="text-body-2 font-semibold text-text-primary">
-                Total {samplePrograms.length} Programs 
+                Total {samplePrograms.length} Programs Found
               </p>
               
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setIsMobileFilterOpen(true)}
-                  className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 hover:border-gray-400 transition-colors"
+                  className="flex items-center gap-2 rounded-lg bg-secondary px-4 py-2 cursor-pointer transition-colors"
                 >
                   <img src={filterIcon} alt="Filter" className="h-4 w-4" />
                   <span className="text-body-3">Filters</span>
@@ -162,14 +162,12 @@ const ExplorePage: React.FC = () => {
 
       {/* Desktop Layout */}
       <div className="hidden lg:block relative">
-        <div className="bg-white">
-          <StickyHeader 
-            title="Explore" 
-            showBackButton={false}
-            desktopPadding="px-0"
-            mobilePadding="px-0"
-          />
-        </div>
+        <StickyHeader 
+          title="Explore" 
+          showBackButton={false}
+          desktopPadding="px-0"
+          mobilePadding="px-0"
+        />
         
         <div className="flex">
           <div className="w-2/8 bg-secondary pl-8">
@@ -184,7 +182,7 @@ const ExplorePage: React.FC = () => {
           <div className="w-6/8 bg-white px-8 py-8">
             <div className="mb-6 flex items-center justify-between">
               <p className="text-h2 font-semibold text-text-primary">
-                Total {samplePrograms.length} Programs 
+                Total {samplePrograms.length} Programs Found
               </p>
               
               <div className="relative w-96">

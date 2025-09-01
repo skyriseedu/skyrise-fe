@@ -112,7 +112,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                       {section.options.map((option) => (
                         <label
                           key={option.value}
-                          className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors"
+                          className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors"
                         >
                           <input
                             type="checkbox"
@@ -155,7 +155,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                   className="overflow-hidden"
                 >
                   <div className="px-4 pb-4 space-y-3 bg-white">
-                    <label className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
                       <input
                         type="checkbox"
                         checked={localFilters.tuitionRanges?.includes('0-200000') || false}
@@ -164,7 +164,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                       />
                       <span className="text-body-2 text-text-primary">0 - 200,000 THB</span>
                     </label>
-                    <label className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
                       <input
                         type="checkbox"
                         checked={localFilters.tuitionRanges?.includes('200000-400000') || false}
@@ -173,7 +173,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                       />
                       <span className="text-body-2 text-text-primary">200,000 - 400,000 THB</span>
                     </label>
-                    <label className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
                       <input
                         type="checkbox"
                         checked={localFilters.tuitionRanges?.includes('400000-600000') || false}
@@ -182,7 +182,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                       />
                       <span className="text-body-3 text-text-primary">400,000 - 600,000 THB</span>
                     </label>
-                    <label className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
                       <input
                         type="checkbox"
                         checked={localFilters.tuitionRanges?.includes('600000-800000') || false}
@@ -191,7 +191,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                       />
                       <span className="text-body-3 text-text-primary">600,000 - 800,000 THB</span>
                     </label>
-                    <label className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
                       <input
                         type="checkbox"
                         checked={localFilters.tuitionRanges?.includes('800000+') || false}
