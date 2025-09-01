@@ -44,7 +44,7 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
             )}
             <div className="flex-1">
               {title && (
-                <h1 className="text-text-primary text-h2 font-semibold lg:text-h2">
+                <h1 className="text-text-primary text-h2 lg:text-h2 font-semibold">
                   {title}
                 </h1>
               )}
