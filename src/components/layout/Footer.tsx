@@ -6,6 +6,8 @@ import Messenger from '../../assets/messenger.svg?react';
 import Telegram from '../../assets/telegram.svg?react';
 import CaretDown from '../../assets/caret-down.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
+import ConsultationForm from '@/components/common/ConsultationForm';
+import type { ConsultationFormValues } from '@/components/common/ConsultationForm';
 
 const socialLinks = [
   {
@@ -66,6 +68,40 @@ const footerNavigation = [
 const Footer: React.FC = () => {
   const [expandedServices, setExpandedServices] = useState(false);
   const servicesRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [formValues, setFormValues] = useState<ConsultationFormValues>({
+    name: '',
+    email: '',
+    phone: '',
+    time: '',
+    date: '',
+    location: '',
+    question: '',
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (field: keyof ConsultationFormValues, value: string) => {
+    setFormValues((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = () => {
+    setLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false);
+      setIsOpen(false);
+      setFormValues({
+        name: '',
+        email: '',
+        phone: '',
+        time: '',
+        date: '',
+        location: '',
+        question: '',
+      });
+      // Optionally show success message
+    }, 1200);
+  };
 
   const toggleServices = () => {
     setExpandedServices(!expandedServices);
@@ -105,8 +141,11 @@ const Footer: React.FC = () => {
             Passionate about education? Join SkyRise Corner as a consultant and
             help students achieve their university dreams!
           </div>
-          <button className="bg-primary text-h3 hover:bg-primary/80 lg:text-h4 w-full cursor-pointer rounded-lg px-6 py-2 font-medium text-white transition-colors lg:font-bold">
-            Join With Us!
+          <button
+            className="bg-primary text-h3 hover:bg-primary/80 lg:text-h4 w-full cursor-pointer rounded-lg px-6 py-2 font-medium text-white transition-colors lg:font-bold"
+            onClick={() => setIsOpen(true)}
+          >
+            Apply with SkyRise
           </button>
         </div>
 
@@ -166,6 +205,28 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="relative">
+            <button
+              className="hover:text-primary absolute top-2 right-2 text-xl text-gray-400"
+              onClick={() => setIsOpen(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <ConsultationForm
+              values={formValues}
+              onChange={handleChange}
+              onSubmit={handleSubmit}
+              loading={loading}
+              headerText="Apply with SkyRise"
+              onClose={() => setIsOpen(false)}
+            />
+          </div>
+        </div>
+      )}
     </footer>
   );
 };
