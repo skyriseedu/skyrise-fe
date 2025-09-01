@@ -43,6 +43,7 @@ const Button: React.FC<Props> = (props) => {
   const {
     className,
     loading,
+    primary,
     secondary,
     destructive,
     outline,
