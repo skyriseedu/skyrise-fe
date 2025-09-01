@@ -47,7 +47,7 @@ const ReviewsSection: React.FC = () => {
         ) : (
           <div className="relative">
             <div className="overflow-hidden pt-12">
-              <div className="flex animate-scroll-reviews gap-5">
+              <div className="flex animate-scroll-reviews">
                 {[...Array(2)]?.map((_, setIndex) => (
                   <React.Fragment key={setIndex}>
                     {reviewsData.map((review) => (
