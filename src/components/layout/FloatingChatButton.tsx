@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import MessageQuestion from '../../assets/message-question.svg?react';
+import { useFilterStore } from '@/store/useFilterStore';
 
 const FloatingChatButton: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const { isMobileFilterOpen } = useFilterStore();
 
   const handleChatClick = () => {
     console.log('Opening chat...');
   };
+
+  // Hide the button when mobile filter is open
+  if (isMobileFilterOpen) return null;
 
   return (
     <button
