@@ -33,6 +33,15 @@ const reviewsData = [
 ];
 
 const ReviewsSection: React.FC = () => {
+  const [isPaused, setIsPaused] = React.useState(false);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    setIsPaused(true);
+    // Resume animation after 3 seconds of no scrolling
+    setTimeout(() => setIsPaused(false), 3000);
+  };
+
   return (
     <section className="w-full py-6 lg:py-16 overflow-hidden">
       <div className="container mx-auto px-4 lg:px-6">
@@ -46,14 +55,20 @@ const ReviewsSection: React.FC = () => {
           </div>
         ) : (
           <div className="relative">
-            <div className="overflow-hidden pt-12">
-              <div className="flex animate-scroll-reviews">
-                {[...Array(2)]?.map((_, setIndex) => (
+            <div 
+              ref={scrollRef}
+              className="overflow-x-auto scrollbar-hide pt-12 cursor-grab active:cursor-grabbing"
+              onScroll={handleScroll}
+              onTouchStart={() => setIsPaused(true)}
+              onTouchEnd={() => setTimeout(() => setIsPaused(false), 3000)}
+            >
+              <div className={`flex gap-5 ${!isPaused ? 'animate-scroll-reviews' : ''}`}>
+                {[...Array(3)]?.map((_, setIndex) => (
                   <React.Fragment key={setIndex}>
                     {reviewsData.map((review) => (
                       <div
                         key={`${review.id}-${setIndex}`}
-                        className="min-w-[280px] sm:min-w-[340px] lg:min-w-[370px] px-2.5"
+                        className="w-[260px] sm:w-[300px] lg:w-[340px] flex-shrink-0"
                       >
                         <ReviewCard
                           name={review.name}
