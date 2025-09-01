@@ -7,7 +7,7 @@ const reviewsData = [
     name: 'Mike Kyaw Zin',
     program: 'Information and Communication Technology',
     testimonial:
-      'SkyRise made the entire application process so much easier for me. They guided me step-by-step, from choosing the right program to submitting my documents on time. Their support really boosted my confidence, and I got accepted into my dream university!"',
+      'SkyRise made the entire application process so much easier for me. They guided me step-by-step, from choosing the right program to submitting my documents on time."',
   },
   {
     id: 2,
