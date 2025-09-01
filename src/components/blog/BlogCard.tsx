@@ -29,7 +29,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
         return {
           container: 'w-50 lg:w-62 lg:h-80 h-70',
           imageHeight: 'aspect-video',
-          padding: 'p-4',
+          padding: 'px-4 py-2',
           titleSize: 'text-h4 lg:text-h3',
           textSize: 'text-body-6 lg:text-body-4',
           metaSize: 'text-body-6',
@@ -76,7 +76,10 @@ const BlogCard: React.FC<BlogCardProps> = ({
           className={`${variantClasses.imageHeight} flex-shrink-0 overflow-hidden rounded-lg py-2 pl-2`}
         >
           <img
-            src={blog.imageUrl || 'https://via.placeholder.com/400x300'}
+            src={
+              blog.imageUrl ||
+              'https://placehold.co/400x300?text=Image+Not+Available'
+            }
             alt={blog.title}
             className="h-full w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -113,7 +116,10 @@ const BlogCard: React.FC<BlogCardProps> = ({
         className={`${variantClasses.imageHeight} overflow-hidden ${variant === 'medium' || variant === 'small' ? 'px-2 pt-3 lg:px-3' : ''}`}
       >
         <img
-          src={blog.imageUrl || 'https://via.placeholder.com/400x300'}
+          src={
+            blog.imageUrl ||
+            'https://placehold.co/600x400?text=Image+Not+Available'
+          }
           alt={blog.title}
           className={`h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 ${variant === 'medium' || variant === 'small' ? 'rounded-lg' : ''}`}
         />
@@ -142,7 +148,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
         <p
           className={`text-text-primary line-clamp-3 ${variantClasses.textSize}`}
         >
-          {truncateText(blog.description || blog.blogText || '', 55)}
+          {`${variant == 'medium' ? truncateText(blog.description || blog.blogText || '', 300) : truncateText(blog.description || blog.blogText || '', 55)}`}
         </p>
       </div>
     </Link>
