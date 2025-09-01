@@ -4,10 +4,11 @@ import { useTranslation } from 'react-i18next';
 
 export const useStats = () => {
   const { i18n } = useTranslation();
+  const langCode = i18n.language?.split('-')[0];
 
   return useQuery({
-    queryKey: ['stats', i18n.language],
-    queryFn: () => homeService.getStats(i18n.language),
+    queryKey: ['stats', langCode],
+    queryFn: () => homeService.getStats(langCode),
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 15 * 60 * 1000, // 15 minutes
   });
