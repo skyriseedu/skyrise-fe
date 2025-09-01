@@ -186,7 +186,6 @@ const ExplorePage: React.FC = () => {
     setCurrentPage(1);
   };
 
-  // Calculate pagination - same for both mobile and desktop
   const totalPages = Math.ceil(samplePrograms.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -194,7 +193,6 @@ const ExplorePage: React.FC = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // Scroll to top of content area
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
