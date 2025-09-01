@@ -58,12 +58,12 @@ const ExplorePage: React.FC = () => {
   return (
     <div className="min-h-screen md:bg-secondary sm:bg-white">
       {/* Mobile Layout */}
-      <div className="lg:hidden">
-        <div className="mx-auto max-w-[1297px] px-4 py-8">
-          <div className="mb-8">
-            <h1 className="mb-4 text-h2 font-fustat sm:text-h1">Explore</h1>
-            
-            <div className="mb-4 flex items-center justify-between">
+      <div className="lg:hidden relative">
+        {/* Sticky Header Section */}
+        <div className="sticky top-[82px] z-20 bg-white border-b border-gray-200">
+          <div className="px-4 py-4">
+            <h1 className="text-h2 font-fustat sm:text-h1 mb-4">Explore</h1>
+            <div className="mb-3 flex items-center justify-between">
               <p className="text-body-2 font-semibold text-text-primary">
                 Total {samplePrograms.length} Programs Found
               </p>
@@ -96,58 +96,71 @@ const ExplorePage: React.FC = () => {
             </div>
 
             {hasActiveFilters && (
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                {filters.degrees.map((degree) => (
-                  <span
-                    key={degree}
-                    className="inline-flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-body-4 text-primary"
-                  >
-                    {degree.charAt(0).toUpperCase() + degree.slice(1)}
-                  </span>
-                ))}
-                {filters.programs.map((program) => (
-                  <span
-                    key={program}
-                    className="inline-flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-body-4 text-primary"
-                  >
-                    {program.toUpperCase()}
-                  </span>
-                ))}
-                {filters.duration.map((duration) => (
-                  <span
-                    key={duration}
-                    className="inline-flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-body-4 text-primary"
-                  >
-                    {duration} year{duration !== '1' ? 's' : ''}
-                  </span>
-                ))}
-                {filters.tuitionRanges.map((range) => {
-                  const rangeLabel = {
-                    '0-200000': '0 - 200,000 THB',
-                    '200000-400000': '200,000 - 400,000 THB',
-                    '400000-600000': '400,000 - 600,000 THB',
-                    '600000-800000': '600,000 - 800,000 THB',
-                    '800000+': '800,000+ THB'
-                  }[range];
-                  return (
+              <div className="mt-4">
+                <div className="flex flex-wrap gap-2">
+                  {filters.degrees.map((degree) => (
                     <span
-                      key={range}
-                      className="inline-flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-body-4 text-primary"
+                      key={degree}
+                      className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-body-5 font-medium text-text-primary"
                     >
-                      {rangeLabel}
+                      {degree.charAt(0).toUpperCase() + degree.slice(1)}
                     </span>
-                  );
-                })}
+                  ))}
+                  {filters.programs.map((program) => {
+                    const programLabels: Record<string, string> = {
+                      'it': 'Information and Communication Technology',
+                      'business': 'Business Administration',
+                      'engineering': 'Engineering',
+                      'medicine': 'Medicine'
+                    };
+                    return (
+                      <span
+                        key={program}
+                        className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-body-5 font-medium text-text-primary"
+                      >
+                        {programLabels[program] || program}
+                      </span>
+                    );
+                  })}
+                  {filters.duration.map((duration) => (
+                    <span
+                      key={duration}
+                      className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-body-5 font-medium text-text-primary"
+                    >
+                      {duration} year{duration !== '1' ? 's' : ''}
+                    </span>
+                  ))}
+                  {filters.tuitionRanges.map((range) => {
+                    const rangeLabel = {
+                      '0-200000': '0 - 200,000 THB',
+                      '200000-400000': '200,000 - 400,000 THB',
+                      '400000-600000': '400,000 - 600,000 THB',
+                      '600000-800000': '600,000 - 800,000 THB',
+                      '800000+': '800,000+ THB'
+                    }[range];
+                    return (
+                      <span
+                        key={range}
+                        className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-body-5 font-medium text-text-primary"
+                      >
+                        {rangeLabel}
+                      </span>
+                    );
+                  })}
+                </div>
                 <button
                   onClick={handleClearFilters}
-                  className="text-body-4 text-primary hover:underline"
+                  className="m-2 mt-5 cursor-pointer text-body-5  text-primary underline"
                 >
                   Clear all filters
                 </button>
               </div>
             )}
           </div>
+        </div>
 
+        {/* Content Section */}
+        <div className="px-4 pt-4 pb-8">
           <div className="flex flex-col gap-4">
             {samplePrograms.map((program) => (
               <ProgramCard
@@ -197,57 +210,6 @@ const ExplorePage: React.FC = () => {
               </div>
             </div>
 
-            {hasActiveFilters && (
-              <div className="mb-6 flex flex-wrap items-center gap-2">
-                {filters.degrees.map((degree) => (
-                  <span
-                    key={degree}
-                    className="inline-flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-body-4 text-primary"
-                  >
-                    {degree.charAt(0).toUpperCase() + degree.slice(1)}
-                  </span>
-                ))}
-                {filters.programs.map((program) => (
-                  <span
-                    key={program}
-                    className="inline-flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-body-4 text-primary"
-                  >
-                    {program.toUpperCase()}
-                  </span>
-                ))}
-                {filters.duration.map((duration) => (
-                  <span
-                    key={duration}
-                    className="inline-flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-body-4 text-primary"
-                  >
-                    {duration} year{duration !== '1' ? 's' : ''}
-                  </span>
-                ))}
-                {filters.tuitionRanges.map((range) => {
-                  const rangeLabel = {
-                    '0-200000': '0 - 200,000 THB',
-                    '200000-400000': '200,000 - 400,000 THB',
-                    '400000-600000': '400,000 - 600,000 THB',
-                    '600000-800000': '600,000 - 800,000 THB',
-                    '800000+': '800,000+ THB'
-                  }[range];
-                  return (
-                    <span
-                      key={range}
-                      className="inline-flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-body-4 text-primary"
-                    >
-                      {rangeLabel}
-                    </span>
-                  );
-                })}
-                <button
-                  onClick={handleClearFilters}
-                  className="text-body-4 text-primary hover:underline"
-                >
-                  Clear all filters
-                </button>
-              </div>
-            )}
 
             <div className="flex flex-col gap-4">
               {samplePrograms.map((program) => (
