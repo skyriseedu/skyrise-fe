@@ -72,7 +72,7 @@ const FlipCard: React.FC<FlipCardProps> = ({
             </div>
 
             <div className="bg-secondary flex items-center justify-center px-4 py-6">
-              <h3 className="text-h4 lg:text-h2 text-primary text-center font-semibold">
+              <h3 className="text-h4 lg:text-h3 text-primary text-center font-semibold">
                 {title}
               </h3>
             </div>

@@ -1,51 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
+import { useStats } from '@/queries';
 import StatsCard from './StatsCard';
 import Loading from '../common/Loading';
-import type { StatsResponse } from '@/types/users/home';
 
 export default function StatsSection() {
-  const { i18n, t } = useTranslation();
-
-  const {
-    data: statsData,
-    isLoading,
-    error,
-    isError,
-  } = useQuery({
-    queryKey: ['stats', i18n.language],
-    queryFn: async () => {
-      const response = await fetch(
-        `/api/v1/overview?lang=${i18n.language || 'en'}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.message || `HTTP error! status: ${response.status}`
-        );
-      }
-
-      const result: StatsResponse = await response.json();
-      console.log('API Response:', result, i18n.language);
-      console.log('API URL:', `/api/v1/overview?lang=${i18n.language || ''}`);
-
-      if (result.success && result.data) {
-        return result.data;
-      }
-
-      throw new Error(result.message || 'Invalid response format');
-    },
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    gcTime: 15 * 60 * 1000, // 15 minutes
-  });
-
-  // console.log('Query state:', { isLoading, isError, error, statsData });
+  const { t } = useTranslation();
+  const { data: statsResponse, isLoading, error, isError } = useStats();
 
   if (error) {
     console.error('Error details:', error);
@@ -54,6 +14,8 @@ export default function StatsSection() {
   if (isLoading) {
     return <Loading />;
   }
+
+  const statsData = statsResponse?.data;
 
   if (isError || !statsData) {
     const isServerError = error?.message?.includes('status: 500');
