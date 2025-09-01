@@ -4,11 +4,11 @@ import Header from './Header';
 import Navigation from './Navigation';
 import Footer from './Footer';
 import FloatingChatButton from './FloatingChatButton';
-import { FilterProvider, useFilter } from '@/contexts/FilterContext';
+import { useFilterStore } from '@/store/useFilterStore';
 
 const LayoutContent: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { setIsMobileFilterOpen } = useFilter();
+  const { setIsMobileFilterOpen } = useFilterStore();
 
   const toggleMenu = () => {
     // Close filter when opening menu
@@ -40,11 +40,7 @@ const LayoutContent: React.FC = () => {
 };
 
 const Layout: React.FC = () => {
-  return (
-    <FilterProvider>
-      <LayoutContent />
-    </FilterProvider>
-  );
+  return <LayoutContent />;
 };
 
 export default Layout;

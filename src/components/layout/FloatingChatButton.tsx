@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import MessageQuestion from '../../assets/message-question.svg?react';
-import { useFilter } from '@/contexts/FilterContext';
+import { useFilterStore } from '@/store/useFilterStore';
 
 const FloatingChatButton: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
-  const { isMobileFilterOpen } = useFilter();
+  const { isMobileFilterOpen } = useFilterStore();
 
   const handleChatClick = () => {
     console.log('Opening chat...');

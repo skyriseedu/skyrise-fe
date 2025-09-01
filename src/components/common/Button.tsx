@@ -43,7 +43,7 @@ const Button: React.FC<Props> = (props) => {
   const {
     className,
     loading,
-    primary,
+    primary, // eslint-disable-line @typescript-eslint/no-unused-vars
     secondary,
     destructive,
     outline,

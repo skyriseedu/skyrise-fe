@@ -47,8 +47,14 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
   filters: initialFilters,
   onApplyFilters,
 }) => {
-  const [expandedSections, setExpandedSections] = useState<string[]>(['degrees', 'programs', 'duration', 'tuition']);
-  const [localFilters, setLocalFilters] = useState<ExploreFilters>(initialFilters);
+  const [expandedSections, setExpandedSections] = useState<string[]>([
+    'degrees',
+    'programs',
+    'duration',
+    'tuition',
+  ]);
+  const [localFilters, setLocalFilters] =
+    useState<ExploreFilters>(initialFilters);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections((prev) =>
@@ -58,7 +64,10 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
     );
   };
 
-  const handleFilterChange = (sectionId: keyof ExploreFilters, value: string) => {
+  const handleFilterChange = (
+    sectionId: keyof ExploreFilters,
+    value: string
+  ) => {
     setLocalFilters((prev) => {
       const currentValues = prev[sectionId] as string[];
       const updatedValues = currentValues.includes(value)
@@ -77,19 +86,26 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
   };
 
   return (
-    <div className="hidden lg:flex flex-col w-80 bg-secondary h-[calc(100vh-140px)]">
+    <div className="bg-secondary hidden h-[calc(100vh-140px)] w-80 flex-col lg:flex">
       <div className="flex-1 overflow-y-auto p-6">
-        <h2 className="text-h3 font-semibold mx-2 text-text-primary mb-6">Filters</h2>
-        
+        <h2 className="text-h3 text-text-primary mx-2 mb-6 font-semibold">
+          Filters
+        </h2>
+
         {/* Filter Sections */}
         <div className="space-y-3">
           {filterSections.map((section) => (
-            <div key={section.id} className="bg-white rounded-lg overflow-hidden">
+            <div
+              key={section.id}
+              className="overflow-hidden rounded-lg bg-white"
+            >
               <button
                 onClick={() => toggleSection(section.id)}
-                className="flex w-full items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
+                className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
               >
-                <span className="text-body-3 font-medium text-text-primary">{section.label}</span>
+                <span className="text-body-3 text-text-primary font-medium">
+                  {section.label}
+                </span>
                 <img
                   src={caretDownIcon}
                   alt="caretDownIcon"
@@ -98,7 +114,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                   }`}
                 />
               </button>
-              
+
               <AnimatePresence>
                 {expandedSections.includes(section.id) && section.options && (
                   <motion.div
@@ -108,19 +124,27 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                     className="overflow-hidden"
                   >
-                    <div className="px-4 pb-4 space-y-3 bg-white">
+                    <div className="space-y-3 bg-white px-4 pb-4">
                       {section.options.map((option) => (
                         <label
                           key={option.value}
-                          className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors"
+                          className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50"
                         >
                           <input
                             type="checkbox"
-                            checked={(localFilters[section.id] as string[])?.includes(option.value) || false}
-                            onChange={() => handleFilterChange(section.id, option.value)}
-                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                            checked={
+                              (localFilters[section.id] as string[])?.includes(
+                                option.value
+                              ) || false
+                            }
+                            onChange={() =>
+                              handleFilterChange(section.id, option.value)
+                            }
+                            className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
                           />
-                          <span className="text-body-2 text-text-primary">{option.label}</span>
+                          <span className="text-body-2 text-text-primary">
+                            {option.label}
+                          </span>
                         </label>
                       ))}
                     </div>
@@ -130,12 +154,14 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
             </div>
           ))}
 
-          <div className="bg-white rounded-lg overflow-hidden">
+          <div className="overflow-hidden rounded-lg bg-white">
             <button
               onClick={() => toggleSection('tuition')}
-              className="flex w-full items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
+              className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
             >
-              <span className="text-body-3 font-medium text-text-primary">Total Tuition Fees</span>
+              <span className="text-body-3 text-text-primary font-medium">
+                Total Tuition Fees
+              </span>
               <img
                 src={caretDownIcon}
                 alt=""
@@ -144,7 +170,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                 }`}
               />
             </button>
-            
+
             <AnimatePresence>
               {expandedSections.includes('tuition') && (
                 <motion.div
@@ -154,51 +180,89 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                   className="overflow-hidden"
                 >
-                  <div className="px-4 pb-4 space-y-3 bg-white">
-                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                  <div className="space-y-3 bg-white px-4 pb-4">
+                    <label className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50">
                       <input
                         type="checkbox"
-                        checked={localFilters.tuitionRanges?.includes('0-200000') || false}
-                        onChange={() => handleFilterChange('tuitionRanges', '0-200000')}
-                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        checked={
+                          localFilters.tuitionRanges?.includes('0-200000') ||
+                          false
+                        }
+                        onChange={() =>
+                          handleFilterChange('tuitionRanges', '0-200000')
+                        }
+                        className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
                       />
-                      <span className="text-body-2 text-text-primary">0 - 200,000 THB</span>
+                      <span className="text-body-2 text-text-primary">
+                        0 - 200,000 THB
+                      </span>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <label className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50">
                       <input
                         type="checkbox"
-                        checked={localFilters.tuitionRanges?.includes('200000-400000') || false}
-                        onChange={() => handleFilterChange('tuitionRanges', '200000-400000')}
-                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        checked={
+                          localFilters.tuitionRanges?.includes(
+                            '200000-400000'
+                          ) || false
+                        }
+                        onChange={() =>
+                          handleFilterChange('tuitionRanges', '200000-400000')
+                        }
+                        className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
                       />
-                      <span className="text-body-2 text-text-primary">200,000 - 400,000 THB</span>
+                      <span className="text-body-2 text-text-primary">
+                        200,000 - 400,000 THB
+                      </span>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <label className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50">
                       <input
                         type="checkbox"
-                        checked={localFilters.tuitionRanges?.includes('400000-600000') || false}
-                        onChange={() => handleFilterChange('tuitionRanges', '400000-600000')}
-                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        checked={
+                          localFilters.tuitionRanges?.includes(
+                            '400000-600000'
+                          ) || false
+                        }
+                        onChange={() =>
+                          handleFilterChange('tuitionRanges', '400000-600000')
+                        }
+                        className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
                       />
-                      <span className="text-body-3 text-text-primary">400,000 - 600,000 THB</span>
+                      <span className="text-body-3 text-text-primary">
+                        400,000 - 600,000 THB
+                      </span>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <label className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50">
                       <input
                         type="checkbox"
-                        checked={localFilters.tuitionRanges?.includes('600000-800000') || false}
-                        onChange={() => handleFilterChange('tuitionRanges', '600000-800000')}
-                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        checked={
+                          localFilters.tuitionRanges?.includes(
+                            '600000-800000'
+                          ) || false
+                        }
+                        onChange={() =>
+                          handleFilterChange('tuitionRanges', '600000-800000')
+                        }
+                        className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
                       />
-                      <span className="text-body-3 text-text-primary">600,000 - 800,000 THB</span>
+                      <span className="text-body-3 text-text-primary">
+                        600,000 - 800,000 THB
+                      </span>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <label className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50">
                       <input
                         type="checkbox"
-                        checked={localFilters.tuitionRanges?.includes('800000+') || false}
-                        onChange={() => handleFilterChange('tuitionRanges', '800000+')}
-                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        checked={
+                          localFilters.tuitionRanges?.includes('800000+') ||
+                          false
+                        }
+                        onChange={() =>
+                          handleFilterChange('tuitionRanges', '800000+')
+                        }
+                        className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
                       />
-                      <span className="text-body-3 text-text-primary">800,000+ THB</span>
+                      <span className="text-body-3 text-text-primary">
+                        800,000+ THB
+                      </span>
                     </label>
                   </div>
                 </motion.div>
@@ -209,12 +273,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
       </div>
 
       <div className="p-6 pt-4">
-        <Button 
-          onClick={handleConfirm}
-          size="lg" 
-          primary
-          className="w-full"
-        >
+        <Button onClick={handleConfirm} size="lg" primary className="w-full">
           Confirm
         </Button>
       </div>

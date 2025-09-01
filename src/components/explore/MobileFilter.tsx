@@ -50,8 +50,11 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
   filters: initialFilters,
   onApplyFilters,
 }) => {
-  const [expandedSections, setExpandedSections] = useState<string[]>(['degrees']);
-  const [localFilters, setLocalFilters] = useState<ExploreFilters>(initialFilters);
+  const [expandedSections, setExpandedSections] = useState<string[]>([
+    'degrees',
+  ]);
+  const [localFilters, setLocalFilters] =
+    useState<ExploreFilters>(initialFilters);
 
   useEffect(() => {
     if (isOpen) {
@@ -73,7 +76,10 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
     );
   };
 
-  const handleFilterChange = (sectionId: keyof ExploreFilters, value: string) => {
+  const handleFilterChange = (
+    sectionId: keyof ExploreFilters,
+    value: string
+  ) => {
     setLocalFilters((prev) => {
       const currentValues = prev[sectionId] as string[];
       const updatedValues = currentValues.includes(value)
@@ -95,32 +101,38 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed rounded-[var(--border-radius-md)] border-top-2 inset-0 z-40 bg-secondary sm:hidden flex flex-col">
-      <div className="bg-secondary px-6 py-8 shadow-sm mt-[72px]">
+    <div className="border-top-2 bg-secondary fixed inset-0 z-40 flex flex-col rounded-[var(--border-radius-md)] sm:hidden">
+      <div className="bg-secondary mt-[72px] px-6 py-8 shadow-sm">
         <div className="flex items-center justify-between">
-          <h2 className="text-h2 font-semibold  text-text-primary">Filters</h2>
+          <h2 className="text-h2 text-text-primary font-semibold">Filters</h2>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-primary hover:bg-primary/90 transition-colors"
+            className="bg-primary hover:bg-primary/90 flex h-8 w-8 items-center justify-center rounded-full transition-colors"
           >
-            <img src={closeIcon} alt="Close" className="h-6 w-6 filter brightness-0 invert" />
+            <img
+              src={closeIcon}
+              alt="Close"
+              className="h-6 w-6 brightness-0 invert filter"
+            />
           </button>
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-5 bg-secondary">
+      <div className="bg-secondary flex-1 overflow-y-auto p-5">
         {filterSections?.map((section) => (
           <div key={section.id} className="mb-3">
             <button
               onClick={() => toggleSection(section.id)}
               className="flex w-full items-center justify-between rounded-[var(--border-radius-sm)] bg-white p-4"
             >
-              <span className="text-body-1 font-semibold  text-text-primary">{section.label}</span>
+              <span className="text-body-1 text-text-primary font-semibold">
+                {section.label}
+              </span>
               <img
                 src={caretDownIcon}
                 alt=""
-                className={`h-6 w-6 ml-2 flex-shrink-0 transition-transform ${
+                className={`ml-2 h-6 w-6 flex-shrink-0 transition-transform ${
                   expandedSections.includes(section.id) ? 'rotate-180' : ''
                 }`}
               />
@@ -136,15 +148,26 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
                 >
                   <div className="mt-2 rounded-[var(--border-radius-sm)] bg-white p-4">
                     {section.options?.map((option) => (
-                  <label key={option.value} className="mb-3 flex items-center last:mb-0">
-                    <input
-                      type="checkbox"
-                      checked={(localFilters[section.id] as string[])?.includes(option.value) || false}
-                      onChange={() => handleFilterChange(section.id, option.value)}
-                      className="mr-3 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                    />
-                    <span className="text-body-2 text-text-primary">{option.label}</span>
-                    </label>
+                      <label
+                        key={option.value}
+                        className="mb-3 flex items-center last:mb-0"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={
+                            (localFilters[section.id] as string[])?.includes(
+                              option.value
+                            ) || false
+                          }
+                          onChange={() =>
+                            handleFilterChange(section.id, option.value)
+                          }
+                          className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
+                        />
+                        <span className="text-body-2 text-text-primary">
+                          {option.label}
+                        </span>
+                      </label>
                     ))}
                   </div>
                 </motion.div>
@@ -158,11 +181,13 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
             onClick={() => toggleSection('tuition')}
             className="flex w-full items-center justify-between rounded-[var(--border-radius-sm)] bg-white p-4"
           >
-            <span className="text-body-1 font-semibold text-text-primary whitespace-nowrap">Total Tuition Fees</span>
+            <span className="text-body-1 text-text-primary font-semibold whitespace-nowrap">
+              Total Tuition Fees
+            </span>
             <img
               src={caretDownIcon}
               alt=""
-              className={`h-6 w-6 ml-2 flex-shrink-0 transition-transform ${
+              className={`ml-2 h-6 w-6 flex-shrink-0 transition-transform ${
                 expandedSections.includes('tuition') ? 'rotate-180' : ''
               }`}
             />
@@ -178,51 +203,89 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
               >
                 <div className="mt-2 rounded-[var(--border-radius-sm)] bg-white p-4">
                   <div className="space-y-3">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={localFilters.tuitionRanges?.includes('0-200000') || false}
-                    onChange={() => handleFilterChange('tuitionRanges', '0-200000')}
-                    className="mr-3 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                  />
-                  <span className="text-body-2  text-text-primary">0 - 200,000 THB</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={localFilters.tuitionRanges?.includes('200000-400000') || false}
-                    onChange={() => handleFilterChange('tuitionRanges', '200000-400000')}
-                    className="mr-3 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                  />
-                  <span className="text-body-2  text-text-primary">200,000 - 400,000 THB</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={localFilters.tuitionRanges?.includes('400000-600000') || false}
-                    onChange={() => handleFilterChange('tuitionRanges', '400000-600000')}
-                    className="mr-3 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                  />
-                  <span className="text-body-2  text-text-primary">400,000 - 600,000 THB</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={localFilters.tuitionRanges?.includes('600000-800000') || false}
-                    onChange={() => handleFilterChange('tuitionRanges', '600000-800000')}
-                    className="mr-3 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                  />
-                  <span className="text-body-2  text-text-primary">600,000 - 800,000 THB</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={localFilters.tuitionRanges?.includes('800000+') || false}
-                    onChange={() => handleFilterChange('tuitionRanges', '800000+')}
-                    className="mr-3 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                  />
-                  <span className="text-body-2 text-text-primary">800,000+ THB</span>
-                </label>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={
+                          localFilters.tuitionRanges?.includes('0-200000') ||
+                          false
+                        }
+                        onChange={() =>
+                          handleFilterChange('tuitionRanges', '0-200000')
+                        }
+                        className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
+                      />
+                      <span className="text-body-2 text-text-primary">
+                        0 - 200,000 THB
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={
+                          localFilters.tuitionRanges?.includes(
+                            '200000-400000'
+                          ) || false
+                        }
+                        onChange={() =>
+                          handleFilterChange('tuitionRanges', '200000-400000')
+                        }
+                        className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
+                      />
+                      <span className="text-body-2 text-text-primary">
+                        200,000 - 400,000 THB
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={
+                          localFilters.tuitionRanges?.includes(
+                            '400000-600000'
+                          ) || false
+                        }
+                        onChange={() =>
+                          handleFilterChange('tuitionRanges', '400000-600000')
+                        }
+                        className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
+                      />
+                      <span className="text-body-2 text-text-primary">
+                        400,000 - 600,000 THB
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={
+                          localFilters.tuitionRanges?.includes(
+                            '600000-800000'
+                          ) || false
+                        }
+                        onChange={() =>
+                          handleFilterChange('tuitionRanges', '600000-800000')
+                        }
+                        className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
+                      />
+                      <span className="text-body-2 text-text-primary">
+                        600,000 - 800,000 THB
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={
+                          localFilters.tuitionRanges?.includes('800000+') ||
+                          false
+                        }
+                        onChange={() =>
+                          handleFilterChange('tuitionRanges', '800000+')
+                        }
+                        className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
+                      />
+                      <span className="text-body-2 text-text-primary">
+                        800,000+ THB
+                      </span>
+                    </label>
                   </div>
                 </div>
               </motion.div>
@@ -234,7 +297,7 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
       <div className="bg-secondary p-5 shadow-lg">
         <button
           onClick={handleConfirm}
-          className="w-full rounded-[var(--border-radius-sm)] bg-primary hover:bg-primary/90 py-3 text-center text-white font-roboto text-body-2 transition-colors"
+          className="bg-primary hover:bg-primary/90 font-roboto text-body-2 w-full rounded-[var(--border-radius-sm)] py-3 text-center text-white transition-colors"
         >
           Confirm
         </button>
