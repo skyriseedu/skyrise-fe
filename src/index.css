@@ -154,6 +154,26 @@
     scrollbar-color: #d1d1d1 #f5f5f5;
   }
 
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll-reviews {
+    animation: marquee 20s linear infinite;
+    will-change: transform;
+    display: flex;
+  }
+
+  /* Pause animation on hover */
+  .animate-scroll-reviews:hover {
+    animation-play-state: paused;
+  }
+
   /* Responsive variants for lg: breakpoint */
   @media (min-width: 1024px) {
     /* Heading responsive classes */

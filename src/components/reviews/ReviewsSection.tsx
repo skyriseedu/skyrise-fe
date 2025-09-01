@@ -34,7 +34,7 @@ const reviewsData = [
 
 const ReviewsSection: React.FC = () => {
   return (
-    <section className="w-full py-6 lg:py-16">
+    <section className="w-full py-6 lg:py-16 overflow-hidden">
       <div className="container mx-auto px-4 lg:px-6">
         <h2 className="mb-8 text-center text-3xl font-bold text-[var(--color-text-primary)] lg:text-4xl">
           Student Reviews
@@ -45,20 +45,24 @@ const ReviewsSection: React.FC = () => {
             <p className="text-lg text-gray-500">No reviews at the moment</p>
           </div>
         ) : (
-          <div className="relative mx-auto max-w-[1200px]">
-            <div className="scrollbar-hide overflow-x-auto pt-8 pb-8">
-              <div className="flex gap-5">
-                {reviewsData?.map((review) => (
-                  <div
-                    key={review.id}
-                    className="w-[280px] flex-none sm:w-[340px] lg:w-[370px]"
-                  >
-                    <ReviewCard
-                      name={review.name}
-                      program={review.program}
-                      testimonial={review.testimonial}
-                    />
-                  </div>
+          <div className="relative">
+            <div className="overflow-hidden pt-12">
+              <div className="flex animate-scroll-reviews gap-5">
+                {[...Array(2)]?.map((_, setIndex) => (
+                  <React.Fragment key={setIndex}>
+                    {reviewsData.map((review) => (
+                      <div
+                        key={`${review.id}-${setIndex}`}
+                        className="min-w-[280px] sm:min-w-[340px] lg:min-w-[370px] px-2.5"
+                      >
+                        <ReviewCard
+                          name={review.name}
+                          program={review.program}
+                          testimonial={review.testimonial}
+                        />
+                      </div>
+                    ))}
+                  </React.Fragment>
                 ))}
               </div>
             </div>

@@ -15,7 +15,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   imageUrl,
 }) => {
   return (
-    <div className="relative">
+    <div className="relative cursor-pointer">
       <div className="absolute -top-10 left-6 z-10 h-20 w-20 overflow-hidden rounded-full bg-gray-300 md:h-24 md:w-24">
         {imageUrl ? (
           <img
