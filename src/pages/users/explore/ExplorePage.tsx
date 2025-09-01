@@ -96,7 +96,7 @@ const ExplorePage: React.FC = () => {
     {
       id: '6',
       title: 'Bachelor of Engineering in Computer Engineering',
-      university: 'King Mongkut\'s University of Technology Thonburi',
+      university: "King Mongkut's University of Technology Thonburi",
       upcomingIntake: 'Aug 2025',
       duration: '4 years',
       ranking: 'Public, 12th',
@@ -371,7 +371,7 @@ const ExplorePage: React.FC = () => {
             </div>
 
             {/* Desktop  */}
-            <div className="relative h-[450px] overflow-y-auto scrollbar-hide">
+            <div className="scrollbar-hide relative h-[450px] overflow-y-auto">
               <div className="flex flex-col gap-4 pb-20">
                 {currentPrograms.map((program) => (
                   <ProgramCard
