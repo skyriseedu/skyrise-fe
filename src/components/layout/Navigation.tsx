@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import CaretDown from '../../assets/caret-down.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
@@ -10,7 +10,7 @@ interface NavigationProps {
 }
 
 const navigationItems = [
-  { name: 'Home', path: '/', isActive: true },
+  { name: 'Home', path: '/' },
   { name: 'Explore', path: '/explore' },
   { name: 'About Us', path: '/about' },
   { name: 'Universities & Consultants', path: '/universities' },
@@ -39,9 +39,20 @@ const navigationItems = [
 
 const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
   const [expandedServices, setExpandedServices] = useState(false);
+  const location = useLocation();
 
   const toggleServices = () => {
     setExpandedServices(!expandedServices);
+  };
+
+  const isActiveMenuItem = (item: (typeof navigationItems)[0]) => {
+    if (item.hasSubmenu) {
+      return location.pathname.startsWith('/services');
+    }
+    if (item.path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(item.path || '');
   };
 
   return (
@@ -79,7 +90,11 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
                       <div>
                         <button
                           onClick={toggleServices}
-                          className={`text-h3 text-text-primary hover:bg-secondary hover:text-primary block w-full rounded-lg px-4 py-3 text-left font-semibold`}
+                          className={`text-h3 block w-full rounded-lg px-4 py-3 text-left font-semibold transition-colors ${
+                            isActiveMenuItem(item)
+                              ? 'bg-primary text-white'
+                              : 'text-text-primary hover:bg-secondary hover:text-primary'
+                          }`}
                         >
                           <div className="flex items-center justify-start">
                             <span>{item.name}</span>
@@ -117,7 +132,7 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
                           to={item.path}
                           onClick={onClose}
                           className={`text-h3 block rounded-lg px-4 py-3 font-semibold transition-colors ${
-                            item.isActive
+                            isActiveMenuItem(item)
                               ? 'bg-primary text-white'
                               : 'text-text-primary hover:bg-secondary hover:text-primary'
                           }`}

@@ -88,7 +88,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
   return (
     <div className="bg-secondary hidden h-[calc(100vh-140px)] w-80 flex-col lg:flex">
       <div className="flex-1 overflow-y-auto p-6">
-        <h2 className="text-h3 text-text-primary mx-2 mb-6 font-semibold">
+        <h2 className="text-h3 text-text-primary mx-2 mb-4 font-semibold">
           Filters
         </h2>
 
