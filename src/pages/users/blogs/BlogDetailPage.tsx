@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import BlogCard from '@/components/blog/BlogCard';
 import Loading from '@/components/common/Loading';
@@ -23,6 +23,11 @@ const BlogDetailPage: React.FC = () => {
   const relatedBlogs =
     relatedData?.data.blogs?.filter((b) => b._id !== blog?._id).slice(0, 5) ||
     [];
+
+  // to start from top
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, []);
 
   const handleImageLoad = () => {
     setImageLoading(false);
