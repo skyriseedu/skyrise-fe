@@ -73,7 +73,7 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({members}) => {
           <CaretRight/>
         </button>
 
-        <div className="overflow-hidden px-8">
+        <div className="px-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}

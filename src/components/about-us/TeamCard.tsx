@@ -19,7 +19,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
   profileLink
 }) => {
   return (
-    <div className="bg-white rounded-2xl border-1 border-gray-50 shadow-md overflow-hidden w-[214px] h-[268px] md:w-[280px] md:h-[350px] lg:w-[280px] lg:h-[350px] flex flex-col">
+    <div className="bg-white rounded-2xl border-1 border-gray-100 shadow-md overflow-hidden w-[214px] h-[268px] md:w-[280px] md:h-[350px] lg:w-[280px] lg:h-[380px] flex flex-col">
       <div className="relative p-3 md:p-4 lg:p-5 pb-0">
         <div className="rounded-xl overflow-hidden border-2 md:border-3 lg:border-4 border-red-500">
           <img
@@ -32,7 +32,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
       
       <div className="px-4 md:px-5 lg:px-6 pt-2 md:pt-0 lg:pt-0 pb-3 flex flex-col">
         <div className="flex items-center justify-between mb-2 md:mb-3">
-          <h3 className="text-h3 lg:text-h3 font-semibold text-text-primary">
+          <h3 className="text-h3 lg:text-h3 font-semibold text-text-primary mt-2">
             {name}
           </h3>
           {profileLink && (
@@ -49,7 +49,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
         
         <div className="flex-1 flex flex-col justify-between">
           <div className="space-y-1 md:space-y-2 text-body-6 md:text-body-4 lg:text-body-6">
-            <p className="text-text-secondary font-semibold">
+            <p className="text-text-primary font-semibold">
               {position}
             </p>
             
