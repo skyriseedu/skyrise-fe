@@ -15,8 +15,8 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   imageUrl,
 }) => {
   return (
-    <div className="relative">
-      <div className="absolute -top-10 left-6 z-10 h-20 w-20 overflow-hidden rounded-full bg-gray-300 md:h-24 md:w-24">
+    <div className="relative cursor-pointer">
+      <div className="absolute -top-8 left-6 z-10 h-16 w-16 overflow-hidden rounded-full bg-gray-300 md:h-20 md:w-20">
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -28,14 +28,14 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
         )}
       </div>
 
-      <div className="mt-8 h-auto min-h-[280px] overflow-hidden rounded-[20px] bg-[#FCE8EC] px-4 pt-4 pb-6 shadow-lg md:min-h-[260px] md:px-6">
+      <div className="bg-secondary mt-8 h-auto min-h-[300px] overflow-hidden rounded-[20px] px-4 pt-4 pb-6 shadow-lg md:px-6">
         <div className="mb-4 flex items-start gap-3 md:gap-4">
-          <div className="w-20 flex-shrink-0 md:w-24" />
+          <div className="w-16 flex-shrink-0 md:w-20" />
           <div className="min-w-0 flex-1">
-            <h3 className="text-base font-semibold break-words text-[var(--color-text-primary)] md:text-xl">
+            <h3 className="text-body-1 md:text-body-2 font-semibold break-words text-[var(--color-text-primary)]">
               {name}
             </h3>
-            <p className="mt-1 text-xs break-words text-gray-600 md:text-sm">
+            <p className="text-body-5 text-text-secondary md:text-body-4 mt-1 break-words">
               {program}
             </p>
           </div>
@@ -47,7 +47,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
             alt="Quote"
             className="absolute -top-4 -left-2 h-5 w-4 md:h-6 md:w-5"
           />
-          <p className="text-xs leading-relaxed break-words text-[var(--color-text-primary)] md:text-sm">
+          <p className="text-body-3 md:text-body-4 leading-relaxed break-words text-[var(--color-text-primary)]">
             {testimonial}
           </p>
         </div>

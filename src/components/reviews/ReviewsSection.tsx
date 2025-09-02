@@ -7,7 +7,7 @@ const reviewsData = [
     name: 'Mike Kyaw Zin',
     program: 'Information and Communication Technology',
     testimonial:
-      'SkyRise made the entire application process so much easier for me. They guided me step-by-step, from choosing the right program to submitting my documents on time. Their support really boosted my confidence, and I got accepted into my dream university!"',
+      'SkyRise made the entire application process so much easier for me. They guided me step-by-step, from choosing the right program to submitting my documents on time."',
   },
   {
     id: 2,
@@ -33,10 +33,19 @@ const reviewsData = [
 ];
 
 const ReviewsSection: React.FC = () => {
+  const [isPaused, setIsPaused] = React.useState(false);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    setIsPaused(true);
+    // Resume animation after 3 seconds of no scrolling
+    setTimeout(() => setIsPaused(false), 3000);
+  };
+
   return (
-    <section className="w-full py-6 lg:py-16">
+    <section className="w-full overflow-hidden py-6 lg:py-16">
       <div className="container mx-auto px-4 lg:px-6">
-        <h2 className="mb-8 text-center text-3xl font-bold text-[var(--color-text-primary)] lg:text-4xl">
+        <h2 className="text-h3 lg:text-h2 mb-1 text-left font-semibold text-[var(--color-text-primary)]">
           Student Reviews
         </h2>
 
@@ -45,20 +54,32 @@ const ReviewsSection: React.FC = () => {
             <p className="text-lg text-gray-500">No reviews at the moment</p>
           </div>
         ) : (
-          <div className="relative mx-auto max-w-[1200px]">
-            <div className="scrollbar-hide overflow-x-auto pt-8 pb-8">
-              <div className="flex gap-5">
-                {reviewsData?.map((review) => (
-                  <div
-                    key={review.id}
-                    className="w-[280px] flex-none sm:w-[340px] lg:w-[370px]"
-                  >
-                    <ReviewCard
-                      name={review.name}
-                      program={review.program}
-                      testimonial={review.testimonial}
-                    />
-                  </div>
+          <div className="relative">
+            <div
+              ref={scrollRef}
+              className="scrollbar-hide cursor-grab overflow-x-auto pt-12 active:cursor-grabbing"
+              onScroll={handleScroll}
+              onTouchStart={() => setIsPaused(true)}
+              onTouchEnd={() => setTimeout(() => setIsPaused(false), 3000)}
+            >
+              <div
+                className={`flex gap-5 ${!isPaused ? 'animate-scroll-reviews' : ''}`}
+              >
+                {[...Array(3)]?.map((_, setIndex) => (
+                  <React.Fragment key={setIndex}>
+                    {reviewsData.map((review) => (
+                      <div
+                        key={`${review.id}-${setIndex}`}
+                        className="w-[260px] flex-shrink-0 sm:w-[300px] lg:w-[340px]"
+                      >
+                        <ReviewCard
+                          name={review.name}
+                          program={review.program}
+                          testimonial={review.testimonial}
+                        />
+                      </div>
+                    ))}
+                  </React.Fragment>
                 ))}
               </div>
             </div>

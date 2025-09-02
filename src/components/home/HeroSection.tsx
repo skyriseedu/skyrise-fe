@@ -33,7 +33,7 @@ const HeroSection: React.FC = () => {
       <div className="relative z-10 flex h-full">
         <div className="w-full max-w-7xl px-6 pt-14 sm:px-6 lg:px-10 lg:pt-20">
           <div>
-            <h1 className="mb-6 text-[32px] leading-tight font-semibold text-white md:text-[48px] lg:text-[76px]">
+            <h1 className="mb-6 text-[40px] leading-tight font-semibold text-white md:text-[48px] lg:text-[76px]">
               {t('home.hero.title')
                 .split('\n')
                 .map((line, index) => (
