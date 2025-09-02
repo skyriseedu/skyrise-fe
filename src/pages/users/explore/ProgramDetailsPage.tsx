@@ -87,7 +87,7 @@ const ProgramDetailsPage: React.FC = () => {
           </div>
 
           <div className="max-w-2xl flex-1 px-4 lg:px-0">
-            <h2 className="text-h3 lg:text-h2 text-text-primary mb-4 font-bold lg:mb-6">
+            <h2 className="text-h3 lg:text-h2 text-text-primary mb-4 font-semibold lg:mb-6">
               About Program
             </h2>
             <p className="text-text-primary text-body-2 lg:text-body-2 leading-relaxed">

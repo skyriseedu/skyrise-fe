@@ -24,6 +24,7 @@
   --font-size-h5: 0.875rem; /* 14px */
   --font-size-h6: 0.75rem; /* 12px */
   --font-size-h7: 0.75rem; /* 12px */
+  --font-size-custom: 1.875rem; /* 30px */
 
   /* Font sizes - Roboto (Body) */
   --font-size-body-1: 1.25rem; /* 20px */
@@ -79,6 +80,11 @@
   }
   .text-h7 {
     font-size: var(--font-size-h7);
+    font-family: var(--font-family-fustat);
+    line-height: var(--line-height-normal);
+  }
+  .text-custom {
+    font-size: var(--font-size-custom);
     font-family: var(--font-family-fustat);
     line-height: var(--line-height-normal);
   }
@@ -154,6 +160,32 @@
     scrollbar-color: #d1d1d1 #f5f5f5;
   }
 
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll-reviews {
+    animation: marquee 8s linear infinite;
+    will-change: transform;
+    display: flex;
+  }
+
+  @media (min-width: 640px) {
+    .animate-scroll-reviews {
+      animation-duration: 15s;
+    }
+  }
+
+  /* Pause animation on hover */
+  .animate-scroll-reviews:hover {
+    animation-play-state: paused;
+  }
+
   /* Responsive variants for lg: breakpoint */
   @media (min-width: 1024px) {
     /* Heading responsive classes */
@@ -189,6 +221,11 @@
     }
     .lg\:text-h7 {
       font-size: var(--font-size-h7);
+      font-family: var(--font-family-fustat);
+      line-height: var(--line-height-normal);
+    }
+    .lg\:text-custom {
+      font-size: var(--font-size-custom);
       font-family: var(--font-family-fustat);
       line-height: var(--line-height-normal);
     }
