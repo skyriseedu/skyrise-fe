@@ -5,6 +5,7 @@ import MissionVision from '@/components/about-us/MissionVision';
 import type { TeamMember } from '@/types/users/about-us';
 import founderImage from '@/assets/images/founder.jpg';
 import rangsitImage from '@/assets/images/rangsit.png';
+import ReviewsSection from '@/components/reviews/ReviewsSection';
 
 const AboutPage: React.FC = () => {
   const teamMembers: TeamMember[] = [
@@ -87,6 +88,8 @@ const AboutPage: React.FC = () => {
       <div className="hidden lg:block">
         <TeamGalleryDesktop members={teamMembers}/>
       </div>
+
+      <ReviewsSection title='Student Success Stories'/>
     </div>
   );
 };
