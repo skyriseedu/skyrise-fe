@@ -33,7 +33,7 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
             {showBackButton && (
               <button
                 onClick={() => navigate(-1)}
-                className="mt-1 cursor-pointer lg:mt-0"
+                className="mt-1 cursor-pointer lg:mt-1"
               >
                 <img
                   src={arrowLeft}
@@ -44,7 +44,7 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
             )}
             <div className="flex-1">
               {title && (
-                <h1 className="text-text-primary text-xl leading-tight font-semibold lg:text-2xl">
+                <h1 className="text-text-primary text-h2 lg:text-h2 font-semibold">
                   {title}
                 </h1>
               )}
