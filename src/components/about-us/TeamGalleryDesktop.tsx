@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import CaretLeft from "@/assets/Variant3Left.svg?react";
 import CaretRight from "@/assets/Variant3.svg?react";
 import clsx from "clsx";
@@ -18,11 +18,6 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({ members, title = "Let'
   const handleNext = () => {
     setCurrentIndex((prev) => Math.min(maxIndex, prev + 1));
   };
-
-  const visibleMembers = members?.slice(
-    currentIndex,
-    currentIndex + itemsPerPage
-  );
 
   return (
     <div className="w-full py-16 px-4">
@@ -59,36 +54,32 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({ members, title = "Let'
           <CaretRight/>
         </button>
 
-        <div className="px-8">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentIndex}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
-              className="flex justify-center gap-3"
-            >
-              {visibleMembers?.map((member, index) => (
-                <motion.div
-                  key={member.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex-shrink-0"
-                >
-                  <TeamCard 
-                    image={member.image}
-                    name={member.name}
-                    position={member.position}
-                    department={member.department}
-                    university={member.university}
-                    profileLink={member.profileLink}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
+        <div className="px-8 overflow-hidden">
+          <motion.div
+            className="flex gap-3"
+            animate={{ x: -currentIndex * (280 + 12) }}
+            transition={{ 
+              type: "spring",
+              stiffness: 200,
+              damping: 30
+            }}
+          >
+            {members?.map((member) => (
+              <div
+                key={member.id}
+                className="flex-shrink-0"
+              >
+                <TeamCard 
+                  image={member.image}
+                  name={member.name}
+                  position={member.position}
+                  department={member.department}
+                  university={member.university}
+                  profileLink={member.profileLink}
+                />
+              </div>
+            ))}
+          </motion.div>
         </div>
       </div>
     </div>
