@@ -8,6 +8,7 @@ import CaretDown from '../../assets/caret-down.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
 import ConsultationForm from '@/components/common/ConsultationForm';
 import type { ConsultationFormValues } from '@/components/common/ConsultationForm';
+import ConsultantForm from '../common/ConsultantForm';
 
 const socialLinks = [
   {
@@ -212,14 +213,23 @@ const Footer: React.FC = () => {
           onClick={() => setIsOpen(false)}
         >
           <div className="relative" onClick={(e) => e.stopPropagation()}>
-            <ConsultationForm
+            {/* <ConsultationForm
               values={formValues}
               onChange={handleChange}
               onSubmit={handleSubmit}
               loading={loading}
               headerText="Apply with SkyRise"
               onClose={() => setIsOpen(false)}
-            />
+            /> */}
+
+            {/* <ConsultantForm
+              values={formValues}
+              onChange={handleChange}
+              onSubmit={handleSubmit}
+              loading={loading}
+              headerText="Apply with SkyRise"
+              onClose={() => setIsOpen(false)}
+            /> */}
           </div>
         </div>
       )}
