@@ -1,21 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TeamCard from './TeamCard';
-
-interface TeamMember {
-  id: number;
-  image: string;
-  name: string;
-  position: string;
-  department: string;
-  university: string;
-  profileLink?: string;
-}
-
-interface TeamGalleryProps {
-  members: TeamMember[];
-  title?: string;
-}
+import type { TeamGalleryProps } from '@/types/users/about-us';
 
 const TeamGallery: React.FC<TeamGalleryProps> = ({ members, title = "Let's meet our team" }) => {
   const [currentIndex, setCurrentIndex] = useState(0);

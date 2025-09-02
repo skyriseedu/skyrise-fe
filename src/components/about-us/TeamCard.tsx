@@ -1,14 +1,6 @@
 import React from 'react';
 import openLinkIcon from '@/assets/open-link.svg';
-
-interface TeamCardProps {
-  image: string;
-  name: string;
-  position: string;
-  department: string;
-  university: string;
-  profileLink?: string;
-}
+import type { TeamCardProps } from '@/types/users/about-us';
 
 const TeamCard: React.FC<TeamCardProps> = ({
   image,
@@ -37,10 +29,11 @@ const TeamCard: React.FC<TeamCardProps> = ({
           </h3>
           {profileLink && (
             <a
-              href={openLinkIcon}
+              href={profileLink}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white cursor-pointer transition-colors rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0 ml-2"
+              aria-label={`View ${name}'s profile`}
             >
               <img src={openLinkIcon} alt="Open profile" className="w-6 h-6"  />
             </a>

@@ -4,23 +4,9 @@ import CaretLeft from "@/assets/Variant3Left.svg?react";
 import CaretRight from "@/assets/Variant3.svg?react";
 import clsx from "clsx";
 import TeamCard from "./TeamCard";
+import type { TeamGalleryProps } from "@/types/users/about-us";
 
-interface TeamMember {
-  id: number;
-  name: string;
-  position: string;
-  department: string;
-  university: string;
-  image: string;
-  profileLink?: string;
-}
-
-interface TeamGalleryProps {
-  members: TeamMember[];
-  title?: string;
-}
-
-const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({members}) => {
+const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({ members, title = "Let's meet our team" }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 4;
   const maxIndex = Math.max(0, members?.length - itemsPerPage);
@@ -41,7 +27,7 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({members}) => {
   return (
     <div className="w-full py-16 px-4">
       <h2 className="text-h2 text-center mb-12 text-text-primary">
-        Let's meet Our Team
+        {title}
       </h2>
 
       <div className="relative max-w-6xl mx-auto">

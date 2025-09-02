@@ -1,9 +1,10 @@
 import React from 'react';
 import TeamGallery from '@/components/about-us/TeamGallery';
 import TeamGalleryDesktop from '@/components/about-us/TeamGalleryDesktop';
+import type { TeamMember } from '@/types/users/about-us';
 
 const AboutPage: React.FC = () => {
-  const teamMembers = [
+  const teamMembers: TeamMember[] = [
     {
       id: 1,
       image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop',
