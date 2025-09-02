@@ -21,7 +21,7 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({ members, title = "Let'
 
   return (
     <div className="w-full py-16 px-4">
-      <h2 className="text-h2 text-center mb-12 text-text-primary">
+      <h2 className="text-h2 font-semibold text-center mb-12 text-text-primary">
         {title}
       </h2>
 

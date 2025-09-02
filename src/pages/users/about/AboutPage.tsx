@@ -1,7 +1,10 @@
 import React from 'react';
 import TeamGallery from '@/components/about-us/TeamGallery';
 import TeamGalleryDesktop from '@/components/about-us/TeamGalleryDesktop';
+import MissionVision from '@/components/about-us/MissionVision';
 import type { TeamMember } from '@/types/users/about-us';
+import founderImage from '@/assets/images/founder.jpg';
+import rangsitImage from '@/assets/images/rangsit.png';
 
 const AboutPage: React.FC = () => {
   const teamMembers: TeamMember[] = [
@@ -72,6 +75,9 @@ const AboutPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Mission & Vision Section */}
+      <MissionVision founderImage={founderImage} universityImage={rangsitImage} />
+      
       {/* Mobile View */}
       <div className="block lg:hidden">
         <TeamGallery members={teamMembers} />
