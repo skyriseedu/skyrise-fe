@@ -207,15 +207,14 @@ const Footer: React.FC = () => {
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="relative">
-            <button
-              className="hover:text-primary absolute top-2 right-2 text-xl text-gray-400"
-              onClick={() => setIsOpen(false)}
-              aria-label="Close"
-            >
-              ×
-            </button>
+        <div
+          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-35"
+          onClick={() => setIsOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-[94%] px-4"
+            onClick={(e) => e.stopPropagation()}
+          >
             <ConsultationForm
               values={formValues}
               onChange={handleChange}

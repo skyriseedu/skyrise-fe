@@ -63,15 +63,11 @@ const HomePage: React.FC = () => {
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="relative">
-            <button
-              className="hover:text-primary absolute top-2 right-2 text-xl text-gray-400"
-              onClick={() => setIsOpen(false)}
-              aria-label="Close"
-            >
-              ×
-            </button>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          onClick={() => setIsOpen(false)}
+        >
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
             <ConsultationForm
               values={formValues}
               onChange={handleChange}
