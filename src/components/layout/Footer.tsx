@@ -211,10 +211,7 @@ const Footer: React.FC = () => {
           className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-35"
           onClick={() => setIsOpen(false)}
         >
-          <div
-            className="relative w-full max-w-[94%] px-4"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
             <ConsultationForm
               values={formValues}
               onChange={handleChange}
