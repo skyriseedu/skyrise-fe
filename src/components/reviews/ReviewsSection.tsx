@@ -36,7 +36,9 @@ interface ReviewsSectionProps {
   title?: string;
 }
 
-const ReviewsSection: React.FC<ReviewsSectionProps> = ({ title = 'Student Reviews' }) => {
+const ReviewsSection: React.FC<ReviewsSectionProps> = ({
+  title = 'Student Reviews',
+}) => {
   const [isPaused, setIsPaused] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
@@ -47,7 +49,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({ title = 'Student Review
   };
 
   return (
-    <section className="w-full overflow-hidden py-6 mb-4 lg:py-16">
+    <section className="mb-4 w-full overflow-hidden py-6 lg:py-16">
       <div className="container mx-auto px-4 lg:px-6">
         <h2 className="text-h3 lg:text-h2 mb-1 text-left font-semibold text-[var(--color-text-primary)]">
           {title}

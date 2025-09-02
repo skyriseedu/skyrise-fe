@@ -8,23 +8,23 @@ const TeamCard: React.FC<TeamCardProps> = ({
   position,
   department,
   university,
-  profileLink
+  profileLink,
 }) => {
   return (
-    <div className="bg-white rounded-2xl border-1 border-gray-100 shadow-md overflow-hidden w-[214px] h-[268px] md:w-[280px] md:h-[350px] lg:w-[280px] lg:h-[380px] flex flex-col">
-      <div className="relative p-3 md:p-4 lg:p-5 pb-0">
-        <div className="rounded-xl overflow-hidden border-2 md:border-3 lg:border-4 border-red-500">
+    <div className="flex h-[268px] w-[214px] flex-col overflow-hidden rounded-2xl border-1 border-gray-100 bg-white shadow-md md:h-[350px] md:w-[280px] lg:h-[380px] lg:w-[280px]">
+      <div className="relative p-3 pb-0 md:p-4 lg:p-5">
+        <div className="overflow-hidden rounded-xl border-2 border-red-500 md:border-3 lg:border-4">
           <img
             src={image}
             alt={name}
-            className="w-full h-[120px] md:h-[160px] lg:h-[180px] object-cover"
+            className="h-[120px] w-full object-cover md:h-[160px] lg:h-[180px]"
           />
         </div>
       </div>
-      
-      <div className="px-4 md:px-5 lg:px-6 pt-2 md:pt-0 lg:pt-0 pb-3 flex flex-col">
-        <div className="flex items-center justify-between mb-2 md:mb-3">
-          <h3 className="text-h3 lg:text-h3 font-semibold text-text-primary mt-2">
+
+      <div className="flex flex-col px-4 pt-2 pb-3 md:px-5 md:pt-0 lg:px-6 lg:pt-0">
+        <div className="mb-2 flex items-center justify-between md:mb-3">
+          <h3 className="text-h3 lg:text-h3 text-text-primary mt-2 font-semibold">
             {name}
           </h3>
           {profileLink && (
@@ -32,24 +32,22 @@ const TeamCard: React.FC<TeamCardProps> = ({
               href={profileLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white cursor-pointer transition-colors rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0 ml-2"
+              className="ml-2 flex flex-shrink-0 cursor-pointer items-center justify-center rounded-lg bg-white transition-colors md:rounded-xl"
               aria-label={`View ${name}'s profile`}
             >
-              <img src={openLinkIcon} alt="Open profile" className="w-6 h-6"  />
+              <img src={openLinkIcon} alt="Open profile" className="h-6 w-6" />
             </a>
           )}
         </div>
-        
-        <div className="flex-1 flex flex-col justify-between">
-          <div className="space-y-1 md:space-y-2 text-body-6 md:text-body-4 lg:text-body-6">
-            <p className="text-text-primary font-semibold">
-              {position}
-            </p>
-            
+
+        <div className="flex flex-1 flex-col justify-between">
+          <div className="text-body-6 md:text-body-4 lg:text-body-6 space-y-1 md:space-y-2">
+            <p className="text-text-primary font-semibold">{position}</p>
+
             <p className="text-text-primary text-body-4 md:text-body-4 lg:text-body-4">
               {department}
             </p>
-            
+
             <p className="text-text-primary text-body-4 md:text-body-4 lg:text-body-4">
               {university}
             </p>

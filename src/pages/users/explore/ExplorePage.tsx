@@ -203,7 +203,7 @@ const ExplorePage: React.FC = () => {
         {/* Sticky Header Section */}
         <div className="sticky top-[82px] z-20 border-b border-gray-200 bg-white">
           <div className="px-4 py-4">
-            <h1 className="text-h2 font-fustat sm:text-h1 mb-4">Explore</h1>
+            <h1 className="text-h2 sm:text-h1 mb-4 font-semibold">Explore</h1>
             <div className="mb-3 flex items-center justify-between">
               <p className="text-body-2 text-text-primary font-semibold">
                 Total {samplePrograms.length} Programs Found
