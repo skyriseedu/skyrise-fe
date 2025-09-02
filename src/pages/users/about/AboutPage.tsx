@@ -2,10 +2,12 @@ import React from 'react';
 import TeamGallery from '@/components/about-us/TeamGallery';
 import TeamGalleryDesktop from '@/components/about-us/TeamGalleryDesktop';
 import MissionVision from '@/components/about-us/MissionVision';
+import GetToKnowSection from '@/components/about-us/GetToKnowSection';
 import type { TeamMember } from '@/types/users/about-us';
 import founderImage from '@/assets/images/founder.jpg';
 import rangsitImage from '@/assets/images/rangsit.png';
 import ReviewsSection from '@/components/reviews/ReviewsSection';
+import StickyHeader from '@/components/common/StickyHeader';
 
 const AboutPage: React.FC = () => {
   const teamMembers: TeamMember[] = [
@@ -76,20 +78,25 @@ const AboutPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Mission & Vision Section */}
+      <StickyHeader 
+        title="About Us" 
+        showBackButton={false}
+      />
+
+      <GetToKnowSection />
       <MissionVision founderImage={founderImage} universityImage={rangsitImage} />
       
-      {/* Mobile View */}
+      {/* Gallery Mobile View */}
       <div className="block lg:hidden">
         <TeamGallery members={teamMembers} />
       </div>
       
-      {/* Desktop View */}
+      {/* Gallery Desktop View */}
       <div className="hidden lg:block">
         <TeamGalleryDesktop members={teamMembers}/>
       </div>
 
-      <ReviewsSection title='Student Success Stories'/>
+      <ReviewsSection title='Student Success Stories'/> 
     </div>
   );
 };
