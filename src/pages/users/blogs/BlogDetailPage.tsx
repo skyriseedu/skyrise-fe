@@ -27,7 +27,7 @@ const BlogDetailPage: React.FC = () => {
   // to start from top
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });
-  }, []);
+  }, [slug]);
 
   const handleImageLoad = () => {
     setImageLoading(false);
