@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import KeyInfoCard from '@/components/program-details/KeyInfoCard';
 import ProgramStructure from '@/components/program-details/ProgramStructure';
 import StickyHeader from '@/components/common/StickyHeader';
 import ReviewsSection from '@/components/reviews/ReviewsSection';
+import Loading from '@/components/common/Loading';
 import calendarIcon from '@/assets/calendar.svg';
 import graduationCap from '@/assets/graduation-cap.svg';
 import document from '@/assets/document.svg';
@@ -11,6 +12,16 @@ import location from '@/assets/location.svg';
 import bookOpen from '@/assets/book-open.svg';
 
 const ProgramDetailsPage: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate data fetching
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
   const programData = {
     title: 'Bachelor of Science in Information and Communication Technology',
     description:
@@ -52,12 +63,20 @@ const ProgramDetailsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <StickyHeader
-        title={programData.title}
-        subtitle="Rangsit University"
+        title={isLoading ? undefined : programData.title}
+        subtitle={isLoading ? undefined : "Rangsit University"}
         mobilePadding="px-8"
         desktopPadding="lg:px-0"
+        isLoading={isLoading}
       />
 
+      {isLoading ? (
+        <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6 lg:py-8">
+          <div className="flex items-center justify-center h-96">
+            <Loading size="lg" color="primary" />
+          </div>
+        </div>
+      ) : (
       <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6 lg:py-8">
         <div className="mb-12 flex flex-col items-center gap-8 lg:mb-20 lg:flex-row lg:gap-12">
           <div className="relative w-full flex-shrink-0 lg:w-auto">
@@ -166,7 +185,8 @@ const ProgramDetailsPage: React.FC = () => {
         </div>
         <ProgramStructure />
       </div>
-      <ReviewsSection />
+      )}
+      {!isLoading && <ReviewsSection />}
     </div>
   );
 };
