@@ -3,8 +3,9 @@ import MobileFilter from '@/components/explore/MobileFilter';
 import DesktopFilterDropdown from '@/components/explore/DesktopFilterDropdown';
 import StickyHeader from '@/components/common/StickyHeader';
 import Pagination from '@/components/common/Pagination';
+import Loading from '@/components/common/Loading';
 import type { ExploreFilters } from '@/types/users/explore';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import filterIcon from '@/assets/filter-alt.svg';
 import searchIcon from '@/assets/search.svg';
 import { useFilterStore } from '@/store/useFilterStore';
@@ -14,6 +15,7 @@ const ITEMS_PER_PAGE = 8;
 const ExplorePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
   const { isMobileFilterOpen, setIsMobileFilterOpen } = useFilterStore();
   const [filters, setFilters] = useState<ExploreFilters>({
     degrees: [],
@@ -21,6 +23,15 @@ const ExplorePage: React.FC = () => {
     tuitionRanges: [],
     duration: [],
   });
+
+  useEffect(() => {
+    // Simulate data fetching
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const samplePrograms = [
     {
@@ -205,9 +216,13 @@ const ExplorePage: React.FC = () => {
           <div className="px-4 py-4">
             <h1 className="text-h2 sm:text-h1 mb-4 font-semibold">Explore</h1>
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-body-2 text-text-primary font-semibold">
-                Total {samplePrograms.length} Programs Found
-              </p>
+              {isLoading ? (
+                <div className="animate-pulse h-10 bg-secondary rounded w-40"></div>
+              ) : (
+                <p className="text-body-2 text-text-primary font-semibold">
+                  Total {samplePrograms?.length} Programs Found
+                </p>
+              )}
 
               <div className="flex items-center gap-3">
                 <button
@@ -306,23 +321,31 @@ const ExplorePage: React.FC = () => {
 
         {/* Content Section */}
         <div className="px-4 pt-4 pb-8">
-          <div className="flex flex-col gap-4">
-            {currentPrograms.map((program) => (
-              <ProgramCard
-                key={program.id}
-                {...program}
-                onApplyClick={() => console.log('Apply clicked')}
-              />
-            ))}
-          </div>
-          {totalPages > 1 && (
-            <div className="mt-8">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <Loading size="lg" color="primary" />
             </div>
+          ) : (
+            <>
+              <div className="flex flex-col gap-4">
+                {currentPrograms.map((program) => (
+                  <ProgramCard
+                    key={program.id}
+                    {...program}
+                    onApplyClick={() => console.log('Apply clicked')}
+                  />
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className="mt-8">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -348,9 +371,13 @@ const ExplorePage: React.FC = () => {
           {/* Main Content */}
           <div className="w-6/8 bg-white px-8 py-8">
             <div className="mb-6 flex items-center justify-between">
-              <p className="text-h2 text-text-primary font-semibold">
-                Total {samplePrograms.length} Programs Found
-              </p>
+              {isLoading ? (
+                <div className="animate-pulse h-8 bg-secondary rounded w-48"></div>
+              ) : (
+                <p className="text-h2 text-text-primary font-semibold">
+                  Total {samplePrograms.length} Programs Found
+                </p>
+              )}
 
               <div className="relative w-96">
                 <img
@@ -369,25 +396,33 @@ const ExplorePage: React.FC = () => {
             </div>
 
             {/* Desktop  */}
-            <div className="scrollbar-hide relative h-[450px] overflow-y-auto">
-              <div className="flex flex-col gap-4 pb-20">
-                {currentPrograms.map((program) => (
-                  <ProgramCard
-                    key={program.id}
-                    {...program}
-                    onApplyClick={() => console.log('Apply clicked')}
-                  />
-                ))}
+            {isLoading ? (
+              <div className="flex items-center justify-center h-[450px]">
+                <Loading size="lg" color="primary" />
               </div>
-            </div>
-            {totalPages > 1 && (
-              <div className="mt-8">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
-              </div>
+            ) : (
+              <>
+                <div className="scrollbar-hide relative h-[450px] overflow-y-auto">
+                  <div className="flex flex-col gap-4 pb-20">
+                    {currentPrograms.map((program) => (
+                      <ProgramCard
+                        key={program.id}
+                        {...program}
+                        onApplyClick={() => console.log('Apply clicked')}
+                      />
+                    ))}
+                  </div>
+                </div>
+                {totalPages > 1 && (
+                  <div className="mt-8">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
