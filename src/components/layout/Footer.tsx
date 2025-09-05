@@ -6,9 +6,8 @@ import Messenger from '../../assets/messenger.svg?react';
 import Telegram from '../../assets/telegram.svg?react';
 import CaretDown from '../../assets/caret-down.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
-import ConsultationForm from '@/components/common/ConsultationForm';
-import type { ConsultationFormValues } from '@/components/common/ConsultationForm';
-import ConsultantForm from '../common/ApplyConsultantForm';
+import BookConsultationForm from '../common/BookConsultationForm';
+import ApplicationForm from '../common/ApplicationForm';
 
 const socialLinks = [
   {
@@ -70,39 +69,6 @@ const Footer: React.FC = () => {
   const [expandedServices, setExpandedServices] = useState(false);
   const servicesRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [formValues, setFormValues] = useState<ConsultationFormValues>({
-    name: '',
-    email: '',
-    phone: '',
-    time: '',
-    date: '',
-    location: '',
-    question: '',
-  });
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (field: keyof ConsultationFormValues, value: string) => {
-    setFormValues((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = () => {
-    setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      setIsOpen(false);
-      setFormValues({
-        name: '',
-        email: '',
-        phone: '',
-        time: '',
-        date: '',
-        location: '',
-        question: '',
-      });
-      // Optionally show success message
-    }, 1200);
-  };
 
   const toggleServices = () => {
     setExpandedServices(!expandedServices);
@@ -213,23 +179,7 @@ const Footer: React.FC = () => {
           onClick={() => setIsOpen(false)}
         >
           <div className="relative" onClick={(e) => e.stopPropagation()}>
-            {/* <ConsultationForm
-              values={formValues}
-              onChange={handleChange}
-              onSubmit={handleSubmit}
-              loading={loading}
-              headerText="Apply with SkyRise"
-              onClose={() => setIsOpen(false)}
-            /> */}
-
-            <ConsultantForm
-              values={formValues}
-              onChange={handleChange}
-              onSubmit={handleSubmit}
-              loading={loading}
-              headerText="Apply with SkyRise"
-              onClose={() => setIsOpen(false)}
-            />
+            <BookConsultationForm onClose={() => setIsOpen(false)} />
           </div>
         </div>
       )}

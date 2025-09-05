@@ -5,8 +5,8 @@ import React, { useState } from 'react';
 import WhyChooseUs from '@/components/home/WhyChooseUs';
 import StatsSection from '@/components/home/StatsSection';
 import Button from '@/components/common/Button';
-import ConsultationForm from '@/components/common/ConsultationForm';
-import type { ConsultationFormValues } from '@/components/common/ConsultationForm';
+import ConsultationForm from '@/components/common/BookConsultationForm';
+import type { ConsultationFormValues } from '@/components/common/BookConsultationForm';
 
 const HomePage: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
