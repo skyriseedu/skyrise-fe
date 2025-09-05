@@ -3,7 +3,7 @@ import CaretDown from '../../assets/caret-down.svg?react';
 import CaretUp from '../../assets/caret-up.svg?react';
 import Calendar from '../../assets/calendar.svg?react';
 import closeIcon from '@/assets/close.svg';
-
+// this model is used for 'book consultation' and 'apply uni'
 export interface ConsultationFormValues {
   name: string;
   email: string;
