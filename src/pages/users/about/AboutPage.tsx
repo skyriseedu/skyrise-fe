@@ -9,6 +9,7 @@ import rangsitImage from '@/assets/images/rangsit.png';
 import ReviewsSection from '@/components/reviews/ReviewsSection';
 import StickyHeader from '@/components/common/StickyHeader';
 import JoinUsCard from '@/components/about-us/JoinUsCard';
+import AmbassadorSection from '@/components/about-us/AmbassadorSection';
 
 const AboutPage: React.FC = () => {
   const teamMembers: TeamMember[] = [
@@ -87,7 +88,6 @@ const AboutPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <StickyHeader title="About Us" showBackButton={false} />
-
       <GetToKnowSection />
       <MissionVision
         founderImage={founderImage}
@@ -105,6 +105,7 @@ const AboutPage: React.FC = () => {
       </div>
 
       <JoinUsCard />
+      <AmbassadorSection />
       <ReviewsSection title="Student Success Stories" />
     </div>
   );
