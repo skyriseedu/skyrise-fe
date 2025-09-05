@@ -8,6 +8,7 @@ import founderImage from '@/assets/images/founder.jpg';
 import rangsitImage from '@/assets/images/rangsit.png';
 import ReviewsSection from '@/components/reviews/ReviewsSection';
 import StickyHeader from '@/components/common/StickyHeader';
+import JoinUsCard from '@/components/about-us/JoinUsCard';
 
 const AboutPage: React.FC = () => {
   const teamMembers: TeamMember[] = [
@@ -103,6 +104,7 @@ const AboutPage: React.FC = () => {
         <TeamGalleryDesktop members={teamMembers} />
       </div>
 
+      <JoinUsCard />
       <ReviewsSection title="Student Success Stories" />
     </div>
   );
