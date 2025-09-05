@@ -6,6 +6,7 @@ import SkyRiseLogo from '../../assets/skyrise-logo.svg';
 import Menu from '../../assets/menu.svg?react';
 import Close from '../../assets/chat-close.svg?react';
 import CaretDown from '../../assets/caret-down.svg?react';
+import CaretDownWhite from '../../assets/caret-down-white.svg?react';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -94,6 +95,11 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
     return location.pathname.startsWith(item.path || '');
   };
 
+  const isActiveSubItem = (path: string | undefined) => {
+    if (!path) return false;
+    return location.pathname.startsWith(path);
+  };
+
   const isHomePage = location.pathname === '/';
 
   return (
@@ -122,11 +128,19 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
                     }`}
                   >
                     <span>{item.name}</span>
-                    <CaretDown
-                      className={`h-5 w-5 transition-transform duration-200 ${
-                        expandedServices ? 'rotate-180' : ''
-                      }`}
-                    />
+                    {isActiveMenuItem(item) ? (
+                      <CaretDownWhite
+                        className={`ml-1 h-3 w-3 transition-transform duration-200 ${
+                          expandedServices ? 'rotate-180' : ''
+                        }`}
+                      />
+                    ) : (
+                      <CaretDown
+                        className={`h-5 w-5 transition-transform duration-200 ${
+                          expandedServices ? 'rotate-180' : ''
+                        }`}
+                      />
+                    )}
                   </button>
 
                   {expandedServices && (
@@ -135,7 +149,11 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
                         <Link
                           key={subItem.name}
                           to={subItem.path}
-                          className="text-h3 text-text-primary hover:bg-secondary hover:text-primary block px-4 py-2 font-medium transition-colors"
+                          className={`text-h3 block px-4 py-2 font-medium transition-colors rounded-md ${
+                            isActiveSubItem(subItem.path)
+                              ? 'bg-primary text-white'
+                              : 'text-text-primary hover:bg-secondary hover:text-primary'
+                          }`}
                           onClick={() => setExpandedServices(false)}
                         >
                           {subItem.name}
