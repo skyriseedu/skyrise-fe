@@ -6,7 +6,7 @@ import Messenger from '../../assets/messenger.svg?react';
 import Telegram from '../../assets/telegram.svg?react';
 import CaretDown from '../../assets/caret-down.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
-import BookConsultationForm from '../common/BookConsultationForm';
+import SuccessModal from '../common/SuccessModal';
 import ApplicationForm from '../common/ApplicationForm';
 
 const socialLinks = [
@@ -69,6 +69,12 @@ const Footer: React.FC = () => {
   const [expandedServices, setExpandedServices] = useState(false);
   const servicesRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+
+  const handleFormSuccess = () => {
+    setIsOpen(false);
+    setShowSuccessModal(true);
+  };
 
   const toggleServices = () => {
     setExpandedServices(!expandedServices);
@@ -179,10 +185,21 @@ const Footer: React.FC = () => {
           onClick={() => setIsOpen(false)}
         >
           <div className="relative" onClick={(e) => e.stopPropagation()}>
-            <BookConsultationForm onClose={() => setIsOpen(false)} />
+            <ApplicationForm
+              onClose={() => setIsOpen(false)}
+              onSuccess={handleFormSuccess}
+            />
           </div>
         </div>
       )}
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Applied Successfully!"
+        message="Thank you for applying with us. We will contact you shortly via email to confirm your application details."
+      />
     </footer>
   );
 };

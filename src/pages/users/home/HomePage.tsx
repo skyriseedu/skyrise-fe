@@ -5,44 +5,12 @@ import React, { useState } from 'react';
 import WhyChooseUs from '@/components/home/WhyChooseUs';
 import StatsSection from '@/components/home/StatsSection';
 import Button from '@/components/common/Button';
-import ConsultationForm from '@/components/common/BookConsultationForm';
-import type { ConsultationFormValues } from '@/components/common/BookConsultationForm';
+import SuccessModal from '@/components/common/SuccessModal';
+import BookConsultationForm from '@/components/common/BookConsultationForm';
 
 const HomePage: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [formValues, setFormValues] = useState<ConsultationFormValues>({
-    name: '',
-    email: '',
-    phone: '',
-    time: '',
-    date: '',
-    location: '',
-    question: '',
-  });
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (field: keyof ConsultationFormValues, value: string) => {
-    setFormValues((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = () => {
-    setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      setIsOpen(false);
-      setFormValues({
-        name: '',
-        email: '',
-        phone: '',
-        time: '',
-        date: '',
-        location: '',
-        question: '',
-      });
-      // Optionally show success message
-    }, 1200);
-  };
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
 
   return (
     <div className="mb-4 min-h-screen">
@@ -68,17 +36,20 @@ const HomePage: React.FC = () => {
           onClick={() => setIsOpen(false)}
         >
           <div className="relative" onClick={(e) => e.stopPropagation()}>
-            <ConsultationForm
-              values={formValues}
-              onChange={handleChange}
-              onSubmit={handleSubmit}
-              loading={loading}
-              headerText="Tell Me Where You Want To Study?"
+            <BookConsultationForm
+              onSuccess={() => setShowSuccessModal(true)}
               onClose={() => setIsOpen(false)}
             />
           </div>
         </div>
       )}
+
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Consultation Booked Successfully!"
+        message="Thank you for booking a consultation with us. We will contact you shortly via email to confirm your appointment details."
+      />
     </div>
   );
 };

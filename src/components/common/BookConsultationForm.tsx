@@ -34,6 +34,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
   const bookConsultationMutation = useBookConsultation();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selectedCountryCode, setSelectedCountryCode] = useState('+95');
+  const [phoneInput, setPhoneInput] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarDate, setCalendarDate] = useState(new Date());
 
@@ -52,8 +53,6 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
         bookingDateSchedule: convertToISODate(values.bookingDateSchedule),
         phoneNumber: values.phoneNumber.split(' ').join(''),
       };
-
-      console.log('Transformed Data:', transformedData);
 
       await bookConsultationMutation.mutateAsync(transformedData);
       onSuccess?.();
@@ -105,7 +104,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
         }}
       >
         <h2 className="text-h3 mb-6 text-center font-semibold">
-          Book Consultation
+          Tell Me Where You Want To Study?
         </h2>
 
         {/* Error display */}
@@ -174,6 +173,13 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
                         onClick={() => {
                           setSelectedCountryCode(option);
                           setOpenDropdown(null);
+                          // Update the phoneNumber with new country code
+                          if (phoneInput) {
+                            handleChange(
+                              'phoneNumber',
+                              `${option} ${phoneInput}`
+                            );
+                          }
                         }}
                       >
                         {option}
@@ -184,13 +190,16 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
               </div>
               <input
                 className="flex-1 border-0 px-3 py-2 outline-none focus:ring-0"
-                value={values.phoneNumber.replace(/^\+\d+\s/, '')}
-                onChange={(e) =>
+                value={phoneInput}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  setPhoneInput(inputValue);
                   handleChange(
                     'phoneNumber',
-                    `${selectedCountryCode} ${e.target.value}`
-                  )
-                }
+                    `${selectedCountryCode} ${inputValue}`
+                  );
+                }}
+                placeholder="Enter phone number"
                 required
               />
             </div>

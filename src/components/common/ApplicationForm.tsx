@@ -4,8 +4,9 @@ import CaretDown from '../../assets/caret-down.svg?react';
 import CaretUp from '../../assets/caret-up.svg?react';
 import Calendar from '../../assets/calendar.svg?react';
 import closeIcon from '@/assets/close.svg';
-import { useBookConsultation } from '@/queries';
+import { useSubmitApplication } from '@/queries';
 import type { BookConsultationFormValues } from '@/types/users/forms';
+import { convertTo24HourFormat, convertToISODate } from '@/helpers';
 
 interface ConsultationFormProps {
   onClose: () => void;
@@ -30,11 +31,12 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
     question: '',
   });
 
-  const bookConsultationMutation = useBookConsultation();
+  const submitApplicationMutation = useSubmitApplication();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selectedCountryCode, setSelectedCountryCode] = useState('+95');
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarDate, setCalendarDate] = useState(new Date());
+  const [phoneInput, setPhoneInput] = useState('');
 
   const handleChange = (
     field: keyof BookConsultationFormValues,
@@ -45,7 +47,14 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
 
   const handleSubmit = async () => {
     try {
-      await bookConsultationMutation.mutateAsync(values);
+      const transformedData: BookConsultationFormValues = {
+        ...values,
+        bookingTimeSchedule: convertTo24HourFormat(values.bookingTimeSchedule),
+        bookingDateSchedule: convertToISODate(values.bookingDateSchedule),
+        phoneNumber: values.phoneNumber.split(' ').join(''),
+      };
+
+      await submitApplicationMutation.mutateAsync(transformedData);
       onSuccess?.();
       onClose();
     } catch (error) {
@@ -94,12 +103,14 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
           handleSubmit();
         }}
       >
-        <h2 className="text-h3 mb-6 text-center font-semibold">Apply</h2>
+        <h2 className="text-h3 mb-6 text-center font-semibold">
+          Apply with SkyRise
+        </h2>
 
         {/* Error display */}
-        {bookConsultationMutation.error && (
+        {submitApplicationMutation.error && (
           <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-700">
-            {bookConsultationMutation.error.message}
+            {submitApplicationMutation.error.message}
           </div>
         )}
 
@@ -162,6 +173,11 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
                         onClick={() => {
                           setSelectedCountryCode(option);
                           setOpenDropdown(null);
+                          // Update phoneNumber with new country code
+                          handleChange(
+                            'phoneNumber',
+                            `${option} ${phoneInput}`
+                          );
                         }}
                       >
                         {option}
@@ -172,13 +188,14 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
               </div>
               <input
                 className="flex-1 border-0 px-3 py-2 outline-none focus:ring-0"
-                value={values.phoneNumber.replace(/^\+\d+\s/, '')}
-                onChange={(e) =>
+                value={phoneInput}
+                onChange={(e) => {
+                  setPhoneInput(e.target.value);
                   handleChange(
                     'phoneNumber',
                     `${selectedCountryCode} ${e.target.value}`
-                  )
-                }
+                  );
+                }}
                 required
               />
             </div>
@@ -386,9 +403,9 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
         <button
           type="submit"
           className="bg-primary text-h4 hover:bg-primary/90 mb-3 w-full rounded-lg py-2 font-semibold text-white transition-colors disabled:opacity-50"
-          disabled={bookConsultationMutation.isPending}
+          disabled={submitApplicationMutation.isPending}
         >
-          {bookConsultationMutation.isPending ? 'Submitting...' : 'Submit'}
+          {submitApplicationMutation.isPending ? 'Submitting...' : 'Submit'}
         </button>
       </form>
     </div>
