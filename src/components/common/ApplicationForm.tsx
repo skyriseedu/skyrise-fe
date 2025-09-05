@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import CustomCalendar from './CustomCalendar';
 import CaretDown from '../../assets/caret-down.svg?react';
 import CaretUp from '../../assets/caret-up.svg?react';
 import Calendar from '../../assets/calendar.svg?react';
@@ -27,7 +28,6 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selectedCountryCode, setSelectedCountryCode] = useState('+95');
   const [showCalendar, setShowCalendar] = useState(false);
-  const [calendarDate, setCalendarDate] = useState(new Date());
   const [phoneInput, setPhoneInput] = useState('');
 
   const initialValues: BookConsultationFormValues = {
@@ -46,7 +46,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
         ...values,
         bookingTimeSchedule: convertTo24HourFormat(values.bookingTimeSchedule),
         bookingDateSchedule: convertToISODate(values.bookingDateSchedule),
-        phoneNumber: values.phoneNumber.split(' ').join(''),
+        phoneNumber: values.phoneNumber.replace(/\s+/g, ''), // Remove all spaces
       };
 
       await submitApplicationMutation.mutateAsync(transformedData);
@@ -55,23 +55,6 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
     } catch (error) {
       console.error('Error submitting consultation form:', error);
     }
-  };
-
-  // Generate calendar days
-  const generateCalendarDays = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
-
-    const days = [];
-    for (let i = 0; i < 42; i++) {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(startDate.getDate() + i);
-      days.push(currentDate);
-    }
-    return days;
   };
 
   return (
@@ -289,96 +272,27 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
                     onClick={() => setShowCalendar(!showCalendar)}
                   />
                   {showCalendar && (
-                    <div className="absolute top-full right-0 left-0 z-50 mt-1 rounded-lg border bg-white p-4 shadow-lg">
-                      <div className="mb-4 flex items-center justify-between">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setCalendarDate(
-                              new Date(
-                                calendarDate.getFullYear(),
-                                calendarDate.getMonth() - 1
-                              )
-                            )
-                          }
-                          className="rounded p-1 hover:bg-gray-100"
-                        >
-                          ‹
-                        </button>
-                        <span className="font-semibold">
-                          {calendarDate.toLocaleDateString('en-US', {
-                            month: 'long',
-                            year: 'numeric',
-                          })}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setCalendarDate(
-                              new Date(
-                                calendarDate.getFullYear(),
-                                calendarDate.getMonth() + 1
-                              )
-                            )
-                          }
-                          className="rounded p-1 hover:bg-gray-100"
-                        >
-                          ›
-                        </button>
-                      </div>
-                      <div className="mb-2 grid grid-cols-7 gap-1">
-                        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(
-                          (day) => (
-                            <div
-                              key={day}
-                              className="p-2 text-center text-sm font-medium text-gray-500"
-                            >
-                              {day}
-                            </div>
-                          )
-                        )}
-                      </div>
-                      <div className="grid grid-cols-7 gap-1">
-                        {generateCalendarDays(calendarDate).map(
-                          (day, index) => {
-                            const isCurrentMonth =
-                              day.getMonth() === calendarDate.getMonth();
-                            const isToday =
-                              day.toDateString() === new Date().toDateString();
-                            const isSelected =
-                              values.bookingDateSchedule ===
-                              day.toISOString().split('T')[0];
-
-                            return (
-                              <button
-                                key={index}
-                                type="button"
-                                onClick={() => {
-                                  const dateString = day
-                                    .toISOString()
-                                    .split('T')[0];
-                                  setFieldValue(
-                                    'bookingDateSchedule',
-                                    dateString
-                                  );
-                                  setShowCalendar(false);
-                                }}
-                                className={`rounded p-2 text-sm hover:bg-gray-100 ${
-                                  !isCurrentMonth
-                                    ? 'text-gray-300'
-                                    : isSelected
-                                      ? 'bg-primary hover:bg-primary/90 text-white'
-                                      : isToday
-                                        ? 'bg-blue-100 text-blue-600'
-                                        : 'text-gray-700'
-                                }`}
-                              >
-                                {day.getDate()}
-                              </button>
-                            );
-                          }
-                        )}
-                      </div>
+                    <div className="absolute top-full right-0 left-0 z-50 mt-1">
+                      <CustomCalendar
+                        selectedDate={
+                          values.bookingDateSchedule
+                            ? new Date(values.bookingDateSchedule)
+                            : null
+                        }
+                        onDateSelect={(date) => {
+                          // Format date as YYYY-MM-DD without timezone conversion
+                          const year = date.getFullYear();
+                          const month = String(date.getMonth() + 1).padStart(
+                            2,
+                            '0'
+                          );
+                          const day = String(date.getDate()).padStart(2, '0');
+                          const dateString = `${year}-${month}-${day}`;
+                          setFieldValue('bookingDateSchedule', dateString);
+                          setShowCalendar(false);
+                        }}
+                        className="border-0 shadow-lg"
+                      />
                     </div>
                   )}
                 </div>
