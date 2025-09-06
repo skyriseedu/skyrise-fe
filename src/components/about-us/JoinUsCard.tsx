@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import skyriseTeam from '@/assets/images/skyrise-team.png';
+import skyriseTeam from '@/assets/images/About us_join.jpeg';
 
 const JoinUsCard: React.FC = () => {
   return (
