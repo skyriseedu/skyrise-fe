@@ -50,7 +50,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
 
   return (
     <section className="mb-4 w-full overflow-hidden py-6 lg:py-16">
-      <div className="container mx-auto px-4 lg:px-6">
+      <div className="container mx-auto px-6 lg:px-8">
         <h2 className="text-h3 lg:text-h2 mb-1 text-left font-semibold text-[var(--color-text-primary)]">
           {title}
         </h2>
