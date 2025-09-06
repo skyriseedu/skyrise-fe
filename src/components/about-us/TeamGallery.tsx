@@ -108,7 +108,7 @@ const TeamGallery: React.FC<TeamGalleryProps> = ({
   };
 
   return (
-    <div className="w-full py-16">
+    <div className="w-full py-12">
       <div className="container mx-auto px-6 lg:px-8">
         <h2 className="text-h3 md:text-h2 lg:text-h2 text-text-primary text-center font-semibold mb-8">
           {title}

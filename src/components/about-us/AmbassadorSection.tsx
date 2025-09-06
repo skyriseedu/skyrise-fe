@@ -99,7 +99,7 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
   ];
 
   return (
-    <section className={`w-full py-12 lg:py-20 ${className}`}>
+    <section className={`w-full px-2 py-12 lg:py-20 ${className}`}>
       <div className="container mx-auto px-6 lg:px-8">
         <h2 className="text-h3 md:text-h2 lg:text-h2 text-text-primary mb-8 text-left font-semibold">
           {title}
