@@ -21,11 +21,11 @@ const UniversityTab: React.FC = () => {
   });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Debounce search term - wait 500ms after user stops typing
+  // wait 500ms after user stops typing
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-      // Reset to page 1 when search term changes
+
       if (searchTerm.trim() !== debouncedSearchTerm.trim()) {
         setCurrentPage(1);
       }
@@ -34,11 +34,9 @@ const UniversityTab: React.FC = () => {
     return () => clearTimeout(timer);
   }, [searchTerm, debouncedSearchTerm]);
 
-  // Determine whether to use search or get all universities
   const hasSearchCriteria =
     debouncedSearchTerm.trim() || filters.universityType.length === 1; // only if one type is selected (public or private)
 
-  // Use search API when there are search criteria
   const {
     data: searchData,
     isLoading: searchLoading,
@@ -50,7 +48,6 @@ const UniversityTab: React.FC = () => {
     limit: ITEMS_PER_PAGE,
   });
 
-  // Use get all API when no search criteria
   const {
     data: allData,
     isLoading: allLoading,
@@ -60,7 +57,6 @@ const UniversityTab: React.FC = () => {
     limit: ITEMS_PER_PAGE,
   });
 
-  // Determine which data to use
   const data = hasSearchCriteria ? searchData : allData;
   const isLoading = hasSearchCriteria ? searchLoading : allLoading;
   const error = hasSearchCriteria ? searchError : allError;
@@ -69,16 +65,13 @@ const UniversityTab: React.FC = () => {
   const totalUniversities = data?.total || 0;
   const totalPages = data?.pages || 1;
 
-  // Show loading when user is typing but search hasn't triggered yet
   const isTyping = searchTerm.trim() !== debouncedSearchTerm.trim();
   const isSearching = isLoading || isTyping;
 
-  // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [filters.universityType]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -176,37 +169,35 @@ const UniversityTab: React.FC = () => {
                         >
                           <div className="p-4">
                             <div className="space-y-2">
-                              {['Public', 'Private', 'International'].map(
-                                (type) => (
-                                  <label
-                                    key={type}
-                                    className="flex items-center space-x-2"
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      checked={filters.universityType.includes(
-                                        type as 'Public' | 'Private'
-                                      )}
-                                      onChange={(e) => {
-                                        const newTypes = e.target.checked
-                                          ? [
-                                              ...filters.universityType,
-                                              type as 'Public' | 'Private',
-                                            ]
-                                          : filters.universityType.filter(
-                                              (t) => t !== type
-                                            );
-                                        setFilters({
-                                          ...filters,
-                                          universityType: newTypes,
-                                        });
-                                      }}
-                                      className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
-                                    />
-                                    <span className="text-body-4">{type}</span>
-                                  </label>
-                                )
-                              )}
+                              {['Public', 'Private'].map((type) => (
+                                <label
+                                  key={type}
+                                  className="flex items-center space-x-2"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={filters.universityType.includes(
+                                      type as 'Public' | 'Private'
+                                    )}
+                                    onChange={(e) => {
+                                      const newTypes = e.target.checked
+                                        ? [
+                                            ...filters.universityType,
+                                            type as 'Public' | 'Private',
+                                          ]
+                                        : filters.universityType.filter(
+                                            (t) => t !== type
+                                          );
+                                      setFilters({
+                                        ...filters,
+                                        universityType: newTypes,
+                                      });
+                                    }}
+                                    className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
+                                  />
+                                  <span className="text-body-4">{type}</span>
+                                </label>
+                              ))}
                             </div>
                           </div>
                         </div>
