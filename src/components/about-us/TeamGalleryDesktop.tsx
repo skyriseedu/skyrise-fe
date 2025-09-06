@@ -34,7 +34,7 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({
             onClick={handlePrevious}
             disabled={currentIndex === 0}
             className={clsx(
-              'absolute top-1/2 -left-8 lg:-left-16 z-10 -translate-y-1/2',
+              'absolute top-1/2 -left-8 z-10 -translate-y-1/2 lg:-left-16',
               'h-10 w-10',
               'flex items-center justify-center',
               'transition-opacity duration-300',
@@ -50,7 +50,7 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({
             onClick={handleNext}
             disabled={currentIndex === maxIndex}
             className={clsx(
-              'absolute top-1/2 -right-8 lg:-right-16 z-10 -translate-y-1/2',
+              'absolute top-1/2 -right-8 z-10 -translate-y-1/2 lg:-right-16',
               'h-10 w-10',
               'flex items-center justify-center',
               'transition-opacity duration-300',
@@ -64,26 +64,26 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({
 
           <div className="overflow-hidden">
             <motion.div
-            className="flex gap-3"
-            animate={{ x: -currentIndex * (280 + 12) }}
-            transition={{
-              type: 'spring',
-              stiffness: 200,
-              damping: 30,
-            }}
-          >
-            {members?.map((member) => (
-              <div key={member.id} className="flex-shrink-0">
-                <TeamCard
-                  image={member.image}
-                  name={member.name}
-                  position={member.position}
-                  department={member.department}
-                  university={member.university}
-                  profileLink={member.profileLink}
-                />
-              </div>
-            ))}
+              className="flex gap-3"
+              animate={{ x: -currentIndex * (280 + 12) }}
+              transition={{
+                type: 'spring',
+                stiffness: 200,
+                damping: 30,
+              }}
+            >
+              {members?.map((member) => (
+                <div key={member.id} className="flex-shrink-0">
+                  <TeamCard
+                    image={member.image}
+                    name={member.name}
+                    position={member.position}
+                    department={member.department}
+                    university={member.university}
+                    profileLink={member.profileLink}
+                  />
+                </div>
+              ))}
             </motion.div>
           </div>
         </div>

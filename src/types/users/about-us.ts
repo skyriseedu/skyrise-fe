@@ -25,10 +25,10 @@ export interface TeamCardProps {
 // Ambassador types
 export interface Ambassador {
   id: number;
-  image: string; 
+  image: string;
   name: string;
-  department: string; 
-  university: string; 
+  department: string;
+  university: string;
 }
 
 export interface AmbassadorCardProps {

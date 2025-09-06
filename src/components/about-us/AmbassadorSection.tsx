@@ -19,21 +19,22 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
 
       const scrollWidth = container.scrollWidth - container.clientWidth;
       const scrollLeft = container.scrollLeft;
-      const scrollPercentage = scrollWidth > 0 ? (scrollLeft / scrollWidth) * 100 : 0;
-      
-      const indicatorWidth = 30; 
+      const scrollPercentage =
+        scrollWidth > 0 ? (scrollLeft / scrollWidth) * 100 : 0;
+
+      const indicatorWidth = 30;
       const maxLeft = 100 - indicatorWidth;
       const left = (scrollPercentage / 100) * maxLeft;
-      
+
       setScrollProgress({ width: indicatorWidth, left });
     };
 
     const container = scrollContainerRef.current;
     container?.addEventListener('scroll', handleScroll);
-    
+
     // Initial calculation
     handleScroll();
-    
+
     return () => {
       container?.removeEventListener('scroll', handleScroll);
     };
@@ -108,7 +109,10 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
 
       <div className="mx-auto max-w-[1200px]">
         <div className="relative">
-          <div ref={scrollContainerRef} className="overflow-x-auto scrollbar-hide">
+          <div
+            ref={scrollContainerRef}
+            className="scrollbar-hide overflow-x-auto"
+          >
             <div className="flex gap-3 px-8">
               {list?.map((data) => (
                 <AmbassadorCard
@@ -123,13 +127,13 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
           </div>
 
           {/* custom scrollbar indicator - desktop */}
-          <div className="hidden lg:block mt-6 px-90">
-            <div className="relative h-1.5 bg-secondary rounded-full">
-              <div 
-                className="absolute h-full bg-primary rounded-full transition-all duration-300"
-                style={{ 
-                  width: `${scrollProgress.width}%`, 
-                  left: `${scrollProgress.left}%` 
+          <div className="mt-6 hidden px-90 lg:block">
+            <div className="bg-secondary relative h-1.5 rounded-full">
+              <div
+                className="bg-primary absolute h-full rounded-full transition-all duration-300"
+                style={{
+                  width: `${scrollProgress.width}%`,
+                  left: `${scrollProgress.left}%`,
                 }}
               />
             </div>

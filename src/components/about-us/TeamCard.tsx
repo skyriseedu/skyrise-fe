@@ -13,7 +13,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
   return (
     <div className="flex h-[268px] w-[214px] flex-col overflow-hidden rounded-2xl border-1 border-gray-100 bg-white shadow-md md:h-[350px] md:w-[280px] lg:h-[380px] lg:w-[280px]">
       <div className="relative p-3 pb-0 md:p-4 lg:p-5">
-        <div className="overflow-hidden rounded-xl ">
+        <div className="overflow-hidden rounded-xl">
           <img
             src={image}
             alt={name}
