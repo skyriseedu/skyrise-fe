@@ -11,7 +11,7 @@ export const bookConsultationSchema = Yup.object({
     .required('Email is required'),
 
   phoneNumber: Yup.string()
-    .matches(/^\+\d{1,4}\s\d{6,15}$/, 'Please enter a valid phone number')
+    .matches(/^\+\d{1,4}\s?\d+$/, 'Please enter a valid phone number')
     .required('Phone number is required'),
 
   bookingTimeSchedule: Yup.string().required('Please select a booking time'),
@@ -36,7 +36,7 @@ export const applyConsultantSchema = Yup.object({
     .required('Email is required'),
 
   phoneNumber: Yup.string()
-    .matches(/^\+\d{1,4}\s\d{6,15}$/, 'Please enter a valid phone number')
+    .matches(/^\+\d{1,4}\s?\d+$/, 'Please enter a valid phone number')
     .required('Phone number is required'),
 
   reason: Yup.string()
@@ -59,7 +59,7 @@ export const applicationSchema = Yup.object({
     .required('Email is required'),
 
   phoneNumber: Yup.string()
-    .matches(/^\+\d{1,4}\s\d{6,15}$/, 'Please enter a valid phone number')
+    .matches(/^\+\d{1,4}\s?\d+$/, 'Please enter a valid phone number')
     .required('Phone number is required'),
 
   bookingTimeSchedule: Yup.string().required('Please select a booking time'),

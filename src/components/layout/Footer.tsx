@@ -8,6 +8,7 @@ import CaretDown from '../../assets/caret-down.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
 import SuccessModal from '../common/SuccessModal';
 import ApplicationForm from '../common/ApplicationForm';
+// import ApplyConsultantForm from '../common/ApplyConsultantForm';
 
 const socialLinks = [
   {
@@ -181,7 +182,7 @@ const Footer: React.FC = () => {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-35"
+          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-25"
           onClick={() => setIsOpen(false)}
         >
           <div className="relative" onClick={(e) => e.stopPropagation()}>
