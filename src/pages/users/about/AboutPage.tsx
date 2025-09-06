@@ -4,10 +4,12 @@ import TeamGalleryDesktop from '@/components/about-us/TeamGalleryDesktop';
 import MissionVision from '@/components/about-us/MissionVision';
 import GetToKnowSection from '@/components/about-us/GetToKnowSection';
 import type { TeamMember } from '@/types/users/about-us';
-import founderImage from '@/assets/images/founder.jpg';
-import rangsitImage from '@/assets/images/rangsit.png';
+import founderImage from '@/assets/images/founder.jpeg';
+import rangsitImage from '@/assets/images/Vision.jpeg';
 import ReviewsSection from '@/components/reviews/ReviewsSection';
 import StickyHeader from '@/components/common/StickyHeader';
+import JoinUsCard from '@/components/about-us/JoinUsCard';
+import AmbassadorSection from '@/components/about-us/AmbassadorSection';
 
 const AboutPage: React.FC = () => {
   const teamMembers: TeamMember[] = [
@@ -86,7 +88,6 @@ const AboutPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <StickyHeader title="About Us" showBackButton={false} />
-
       <GetToKnowSection />
       <MissionVision
         founderImage={founderImage}
@@ -103,6 +104,8 @@ const AboutPage: React.FC = () => {
         <TeamGalleryDesktop members={teamMembers} />
       </div>
 
+      <JoinUsCard />
+      <AmbassadorSection />
       <ReviewsSection title="Student Success Stories" />
     </div>
   );
