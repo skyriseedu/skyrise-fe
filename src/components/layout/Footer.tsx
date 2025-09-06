@@ -6,6 +6,8 @@ import Messenger from '../../assets/messenger.svg?react';
 import Telegram from '../../assets/telegram.svg?react';
 import CaretDown from '../../assets/caret-down.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
+import SuccessModal from '../common/SuccessModal';
+import ApplicationForm from '../common/ApplicationForm';
 
 const socialLinks = [
   {
@@ -66,6 +68,13 @@ const footerNavigation = [
 const Footer: React.FC = () => {
   const [expandedServices, setExpandedServices] = useState(false);
   const servicesRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+
+  const handleFormSuccess = () => {
+    setIsOpen(false);
+    setShowSuccessModal(true);
+  };
 
   const toggleServices = () => {
     setExpandedServices(!expandedServices);
@@ -105,8 +114,11 @@ const Footer: React.FC = () => {
             Passionate about education? Join SkyRise Corner as a consultant and
             help students achieve their university dreams!
           </div>
-          <button className="bg-primary text-h3 hover:bg-primary/80 lg:text-h4 w-full cursor-pointer rounded-lg px-6 py-2 font-medium text-white transition-colors lg:font-bold">
-            Join With Us!
+          <button
+            className="bg-primary text-h3 hover:bg-primary/80 lg:text-h4 w-full cursor-pointer rounded-lg px-6 py-2 font-medium text-white transition-colors lg:font-bold"
+            onClick={() => setIsOpen(true)}
+          >
+            Apply with SkyRise
           </button>
         </div>
 
@@ -166,6 +178,28 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-35"
+          onClick={() => setIsOpen(false)}
+        >
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <ApplicationForm
+              onClose={() => setIsOpen(false)}
+              onSuccess={handleFormSuccess}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Applied Successfully!"
+        message="Thank you for applying with us. We will contact you shortly via email to confirm your application details."
+      />
     </footer>
   );
 };
