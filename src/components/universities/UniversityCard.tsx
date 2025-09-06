@@ -6,14 +6,8 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
   onViewDetails,
   className = '',
 }) => {
-  const {
-    name,
-    logo,
-    rankingText,
-    programsCount,
-    applicationFees,
-    campusCount,
-  } = university;
+  const { universityName, logoImage, keyInformation, universityType } =
+    university;
 
   return (
     <div
@@ -21,17 +15,17 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
     >
       {/* University Logo and Name */}
       <div className="p-6 pb-4">
-        {logo && (
+        {logoImage && (
           <div className="mb-4 flex justify-center">
             <img
-              src={logo}
-              alt={`${name} logo`}
+              src={logoImage}
+              alt={`${universityName} logo`}
               className="h-16 w-16 object-contain"
             />
           </div>
         )}
         <h3 className="mb-6 text-center text-xl font-bold text-gray-900">
-          {name}
+          {universityName}
         </h3>
       </div>
 
@@ -42,14 +36,12 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
           <div>
             <div className="mb-1 text-sm text-gray-600">University Ranking</div>
             <div className="text-lg font-bold text-gray-900">
-              {rankingText || 'N/A'}
+              {keyInformation.ranking || `${universityType}, Established`}
             </div>
           </div>
           <div>
             <div className="mb-1 text-sm text-gray-600">No. of Campus</div>
-            <div className="text-lg font-bold text-gray-900">
-              {campusCount || 1}
-            </div>
+            <div className="text-lg font-bold text-gray-900">1</div>
           </div>
         </div>
 
@@ -58,14 +50,12 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
           <div>
             <div className="mb-1 text-sm text-gray-600">Programs</div>
             <div className="text-lg font-bold text-gray-900">
-              {programsCount || university.programs.length}
+              {keyInformation.programs}
             </div>
           </div>
           <div>
             <div className="mb-1 text-sm text-gray-600">Application Fees</div>
-            <div className="text-lg font-bold text-gray-900">
-              {applicationFees || 'Contact'}
-            </div>
+            <div className="text-lg font-bold text-gray-900">Free</div>
           </div>
         </div>
 

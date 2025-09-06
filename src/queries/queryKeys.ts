@@ -18,6 +18,9 @@ export const universityKeys = {
   lists: () => [...universityKeys.all, 'list'] as const,
   list: (filters: Record<string, unknown>) =>
     [...universityKeys.lists(), { filters }] as const,
+  searches: () => [...universityKeys.all, 'search'] as const,
+  search: (filters: Record<string, unknown>) =>
+    [...universityKeys.searches(), { filters }] as const,
   details: () => [...universityKeys.all, 'detail'] as const,
   detail: (id: string) => [...universityKeys.details(), id] as const,
   paginated: (page?: number, limit?: number) =>

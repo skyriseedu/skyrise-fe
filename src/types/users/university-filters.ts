@@ -1,10 +1,11 @@
 export interface UniversityFilters {
-  universityType: string[];
+  universityType: ('Public' | 'Private')[];
+  searchQuery?: string;
 }
 
 export interface UniversityFilterOption {
   label: string;
-  value: string;
+  value: 'Public' | 'Private';
 }
 
 export interface UniversityFilterSection {

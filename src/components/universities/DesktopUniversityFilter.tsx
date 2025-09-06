@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import caretDownIcon from '@/assets/caret-down.svg';
-import Button from '@/components/common/Button';
 import type {
   UniversityFilters,
   UniversityFilterSection,
@@ -18,21 +17,19 @@ const universityFilterSections: UniversityFilterSection[] = [
     id: 'universityType',
     label: 'University Type',
     options: [
-      { label: 'Public', value: 'public' },
-      { label: 'Private', value: 'private' },
+      { label: 'Public', value: 'Public' },
+      { label: 'Private', value: 'Private' },
     ],
   },
 ];
 
 const DesktopUniversityFilter: React.FC<DesktopUniversityFilterProps> = ({
-  filters: initialFilters,
+  filters,
   onApplyFilters,
 }) => {
   const [expandedSections, setExpandedSections] = useState<string[]>([
     'universityType',
   ]);
-  const [localFilters, setLocalFilters] =
-    useState<UniversityFilters>(initialFilters);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections((prev) =>
@@ -44,23 +41,17 @@ const DesktopUniversityFilter: React.FC<DesktopUniversityFilterProps> = ({
 
   const handleFilterChange = (
     sectionId: keyof UniversityFilters,
-    value: string
+    value: 'Public' | 'Private'
   ) => {
-    setLocalFilters((prev) => {
-      const currentValues = prev[sectionId] as string[];
-      const updatedValues = currentValues.includes(value)
-        ? currentValues?.filter((v) => v !== value)
-        : [...currentValues, value];
+    const currentValues = filters[sectionId] as ('Public' | 'Private')[];
+    const updatedValues = currentValues.includes(value)
+      ? currentValues.filter((v) => v !== value)
+      : [...currentValues, value];
 
-      return {
-        ...prev,
-        [sectionId]: updatedValues,
-      };
+    onApplyFilters({
+      ...filters,
+      [sectionId]: updatedValues,
     });
-  };
-
-  const handleConfirm = () => {
-    onApplyFilters(localFilters);
   };
 
   return (
@@ -111,9 +102,9 @@ const DesktopUniversityFilter: React.FC<DesktopUniversityFilterProps> = ({
                           <input
                             type="checkbox"
                             checked={
-                              (localFilters[section.id] as string[])?.includes(
-                                option.value
-                              ) || false
+                              (
+                                filters[section.id] as ('Public' | 'Private')[]
+                              )?.includes(option.value) || false
                             }
                             onChange={() =>
                               handleFilterChange(section.id, option.value)
@@ -132,12 +123,6 @@ const DesktopUniversityFilter: React.FC<DesktopUniversityFilterProps> = ({
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="p-6 pt-4">
-        <Button onClick={handleConfirm} size="lg" primary className="w-full">
-          Confirm
-        </Button>
       </div>
     </div>
   );

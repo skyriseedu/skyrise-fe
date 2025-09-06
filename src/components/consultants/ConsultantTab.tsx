@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Consultant } from '@/types/consultant';
+import type { Consultant } from '@/types/users/consultant';
 
 // Mock data - replace with real data later
 const mockConsultants: Consultant[] = [

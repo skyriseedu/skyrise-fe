@@ -1,26 +1,36 @@
 export interface University {
+  _id: string;
   id: string;
-  name: string;
-  location: string;
-  country: string;
-  image: string;
-  logo?: string;
-  ranking?: number;
-  rankingText?: string; // e.g., "Private, 1st"
-  description: string;
-  programs: string[];
-  programsCount?: number;
-  tuitionFee: {
-    min: number;
-    max: number;
-    currency: string;
+  universityName: string;
+  universityType: 'Public' | 'Private' | 'International';
+  logoImage: string;
+  coverImages: {
+    image1: string;
+    image2: string;
   };
-  applicationFees?: string; // e.g., "Free", "$50", etc.
-  acceptanceRate?: number;
-  establishedYear: number;
-  website?: string;
-  tags?: string[];
-  campusCount?: number;
+  aboutUniversity: string;
+  englishFoundation: string;
+  bachelor: string;
+  master: string;
+  keyInformation: {
+    ranking: string;
+    foundedYear: number;
+    location: string;
+    creditTransfer: string;
+    programs: number;
+  };
+  studentReviews: Array<{
+    _id: string;
+    studentName: string;
+    major: string;
+    studentImage: string;
+    review: string;
+  }>;
+  status: 'published' | 'draft' | 'archived';
+  views: number;
+  createdAt: string;
+  updatedAt: string;
+  slug: string;
 }
 
 export interface UniversityCardProps {
@@ -30,26 +40,46 @@ export interface UniversityCardProps {
   className?: string;
 }
 
-export interface GetUniversitiesRequest {
+export interface GetAllUniversitiesRequest {
   page?: number;
   limit?: number;
-  search?: string;
-  country?: string;
-  minTuition?: number;
-  maxTuition?: number;
-  programs?: string[];
-  tags?: string[];
+}
+
+export interface SearchUniversitiesRequest {
+  q?: string;
+  universityType?: 'Public' | 'Private';
+  page?: number;
+  limit?: number;
 }
 
 export interface GetUniversitiesResponse {
-  data: University[];
+  success: boolean;
+  count: number;
   total: number;
   page: number;
-  limit: number;
-  totalPages: number;
+  pages: number;
+  data: {
+    universities: University[];
+  };
+}
+
+export interface SearchUniversitiesResponse {
+  success: boolean;
+  count: number;
+  total: number;
+  page: number;
+  pages: number;
+  filters: {
+    q?: string;
+    universityType?: string;
+  };
+  data: {
+    universities: University[];
+  };
 }
 
 export interface SingleUniversityResponse {
+  success: boolean;
   data: {
     university: University;
   };
