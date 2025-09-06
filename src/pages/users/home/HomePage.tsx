@@ -32,7 +32,7 @@ const HomePage: React.FC = () => {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-25"
           onClick={() => setIsOpen(false)}
         >
           <div className="relative" onClick={(e) => e.stopPropagation()}>
