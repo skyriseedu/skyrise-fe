@@ -5,7 +5,7 @@ import Button from '@/components/common/Button';
 import type {
   UniversityFilters,
   UniversityFilterSection,
-} from '@/types/university-filters';
+} from '@/types/users/university-filters';
 
 interface DesktopUniversityFilterProps {
   filters: UniversityFilters;

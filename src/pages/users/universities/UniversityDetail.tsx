@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import type { University } from '@/types/university';
+import type { University } from '@/types/users/university';
 
 // Mock data - this would normally come from an API
 const mockUniversity: University = {

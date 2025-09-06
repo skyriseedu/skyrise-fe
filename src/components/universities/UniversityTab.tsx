@@ -2,210 +2,33 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { UniversityCard } from './index';
 import DesktopUniversityFilter from './DesktopUniversityFilter';
 import Pagination from '@/components/common/Pagination';
-import type { University } from '@/types/university';
-import type { UniversityFilters } from '@/types/university-filters';
+import type { University } from '@/types/users/university';
+import type { UniversityFilters } from '@/types/users/university-filters';
 import filterIcon from '@/assets/filter-alt.svg';
 import searchIcon from '@/assets/search.svg';
+import { useUniversities } from '@/queries';
 
 const ITEMS_PER_PAGE = 10;
-
-// Mock data - replace with real data later
-const mockUniversities: University[] = [
-  {
-    id: '1',
-    name: 'Rangsit University',
-    location: 'Thailand',
-    country: 'Thailand',
-    image: '/api/placeholder/400/300',
-    ranking: 2025,
-    description:
-      'Leading private university in Thailand offering world-class education and research opportunities.',
-    programs: ['Business', 'Engineering', 'Medicine', 'Arts'],
-    tuitionFee: { min: 200000, max: 400000, currency: '฿' },
-    acceptanceRate: 65,
-    establishedYear: 1990,
-    tags: ['Private', 'Research'],
-  },
-  {
-    id: '2',
-    name: 'Chulalongkorn University',
-    location: 'Bangkok',
-    country: 'Thailand',
-    image: '/api/placeholder/400/300',
-    ranking: 1,
-    description:
-      "Thailand's oldest and most prestigious university, known for academic excellence.",
-    programs: ['Engineering', 'Medicine', 'Arts', 'Science'],
-    tuitionFee: { min: 150000, max: 300000, currency: '฿' },
-    acceptanceRate: 25,
-    establishedYear: 1917,
-    tags: ['Public', 'Research'],
-  },
-  {
-    id: '3',
-    name: 'Mahidol University',
-    location: 'Bangkok',
-    country: 'Thailand',
-    image: '/api/placeholder/400/300',
-    ranking: 2,
-    description:
-      'Premier university specializing in health sciences and medical education.',
-    programs: ['Medicine', 'Public Health', 'Science', 'Engineering'],
-    tuitionFee: { min: 180000, max: 350000, currency: '฿' },
-    acceptanceRate: 30,
-    establishedYear: 1969,
-    tags: ['Public', 'Research'],
-  },
-  {
-    id: '4',
-    name: 'Thammasat University',
-    location: 'Bangkok',
-    country: 'Thailand',
-    image: '/api/placeholder/400/300',
-    ranking: 5,
-    description:
-      'Leading university in social sciences, law, and political science.',
-    programs: ['Law', 'Political Science', 'Economics', 'Business'],
-    tuitionFee: { min: 160000, max: 320000, currency: '฿' },
-    acceptanceRate: 35,
-    establishedYear: 1934,
-    tags: ['Public', 'Research'],
-  },
-  {
-    id: '5',
-    name: "King Mongkut's University of Technology Thonburi",
-    location: 'Bangkok',
-    country: 'Thailand',
-    image: '/api/placeholder/400/300',
-    ranking: 8,
-    description: 'Top engineering and technology university in Thailand.',
-    programs: ['Engineering', 'Computer Science', 'Architecture', 'Science'],
-    tuitionFee: { min: 170000, max: 340000, currency: '฿' },
-    acceptanceRate: 40,
-    establishedYear: 1957,
-    tags: ['Public', 'Research'],
-  },
-  {
-    id: '6',
-    name: 'Bangkok University',
-    location: 'Bangkok',
-    country: 'Thailand',
-    image: '/api/placeholder/400/300',
-    ranking: 15,
-    description:
-      'Private university known for creative arts and innovative programs.',
-    programs: ['Communication Arts', 'Business', 'Engineering', 'Design'],
-    tuitionFee: { min: 250000, max: 450000, currency: '฿' },
-    acceptanceRate: 60,
-    establishedYear: 1962,
-    tags: ['Private', 'International'],
-  },
-  {
-    id: '7',
-    name: 'Kasetsart University',
-    location: 'Bangkok',
-    country: 'Thailand',
-    image: '/api/placeholder/400/300',
-    ranking: 6,
-    description: 'Leading agricultural and natural resources university.',
-    programs: ['Agriculture', 'Engineering', 'Science', 'Veterinary Medicine'],
-    tuitionFee: { min: 140000, max: 280000, currency: '฿' },
-    acceptanceRate: 45,
-    establishedYear: 1943,
-    tags: ['Public', 'Research'],
-  },
-  {
-    id: '8',
-    name: 'Chiang Mai University',
-    location: 'Chiang Mai',
-    country: 'Thailand',
-    image: '/api/placeholder/400/300',
-    ranking: 10,
-    description:
-      'Premier university in Northern Thailand with strong research programs.',
-    programs: ['Medicine', 'Engineering', 'Agriculture', 'Social Sciences'],
-    tuitionFee: { min: 130000, max: 260000, currency: '฿' },
-    acceptanceRate: 50,
-    establishedYear: 1964,
-    tags: ['Public', 'Research'],
-  },
-  {
-    id: '9',
-    name: 'Assumption University',
-    location: 'Bangkok',
-    country: 'Thailand',
-    image: '/api/placeholder/400/300',
-    ranking: 20,
-    description:
-      'International private university with English-taught programs.',
-    programs: [
-      'Business',
-      'International Relations',
-      'Engineering',
-      'Architecture',
-    ],
-    tuitionFee: { min: 300000, max: 500000, currency: '฿' },
-    acceptanceRate: 70,
-    establishedYear: 1969,
-    tags: ['Private', 'International'],
-  },
-  {
-    id: '10',
-    name: 'Prince of Songkla University',
-    location: 'Hat Yai',
-    country: 'Thailand',
-    image: '/api/placeholder/400/300',
-    ranking: 12,
-    description:
-      'Leading university in Southern Thailand with comprehensive programs.',
-    programs: ['Medicine', 'Engineering', 'Natural Resources', 'Liberal Arts'],
-    tuitionFee: { min: 125000, max: 250000, currency: '฿' },
-    acceptanceRate: 55,
-    establishedYear: 1967,
-    tags: ['Public', 'Research'],
-  },
-  {
-    id: '11',
-    name: 'Khon Kaen University',
-    location: 'Khon Kaen',
-    country: 'Thailand',
-    image: '/api/placeholder/400/300',
-    ranking: 14,
-    description:
-      'Major university in Northeastern Thailand with diverse programs.',
-    programs: ['Medicine', 'Engineering', 'Agriculture', 'Humanities'],
-    tuitionFee: { min: 120000, max: 240000, currency: '฿' },
-    acceptanceRate: 60,
-    establishedYear: 1964,
-    tags: ['Public', 'Research'],
-  },
-  {
-    id: '12',
-    name: 'Silpakorn University',
-    location: 'Bangkok',
-    country: 'Thailand',
-    image: '/api/placeholder/400/300',
-    ranking: 18,
-    description:
-      'Premier university for fine arts, archaeology, and cultural studies.',
-    programs: ['Fine Arts', 'Architecture', 'Archaeology', 'Education'],
-    tuitionFee: { min: 135000, max: 270000, currency: '฿' },
-    acceptanceRate: 65,
-    establishedYear: 1943,
-    tags: ['Public', 'Research'],
-  },
-];
 
 const UniversityTab: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [universities] = useState<University[]>(mockUniversities);
   const [showMobileFilterDropdown, setShowMobileFilterDropdown] =
     useState(false);
   const [filters, setFilters] = useState<UniversityFilters>({
     universityType: [],
   });
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const {
+    data: universityData,
+    isLoading: universityLoading,
+    error: universityError,
+  } = useUniversities({
+    page: currentPage,
+    limit: ITEMS_PER_PAGE,
+    universityType: filters.universityType,
+  });
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -247,11 +70,6 @@ const UniversityTab: React.FC = () => {
   const handleViewDetails = (university: University) => {
     // Navigate to university detail page
     console.log('View details for:', university.name);
-  };
-
-  const handleApply = (university: University) => {
-    // Handle application logic
-    console.log('Apply to:', university.name);
   };
 
   return (
@@ -353,7 +171,6 @@ const UniversityTab: React.FC = () => {
                 key={university.id}
                 university={university}
                 onViewDetails={handleViewDetails}
-                onApply={handleApply}
               />
             ))}
           </div>
@@ -413,7 +230,6 @@ const UniversityTab: React.FC = () => {
                     key={university.id}
                     university={university}
                     onViewDetails={handleViewDetails}
-                    onApply={handleApply}
                   />
                 ))}
               </div>

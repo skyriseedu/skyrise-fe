@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { blogService } from '@/lib/api';
 import { blogKeys } from './queryKeys';
-import type { UseBlogsParams } from '@/types/blog';
+import type { UseBlogsParams } from '@/types/users/blog';
 
 export function useBlogs(params: UseBlogsParams = {}) {
   const { category, page = 1, limit = 5 } = params;
