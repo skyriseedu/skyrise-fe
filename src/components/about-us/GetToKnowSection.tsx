@@ -6,8 +6,8 @@ const GetToKnowSection: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="w-full px-6 py-16 lg:py-20">
-      <div className="container mx-auto px-4 lg:px-6">
+    <section className="w-full lg:py-8">
+      <div className="container mx-auto px-6 lg:px-8">
         <div className="max-w-4xl space-y-8 lg:max-w-none lg:text-left">
           <h2 className="text-h3 lg:text-h2 text-text-primary font-semibold">
             Get to know SkyRise

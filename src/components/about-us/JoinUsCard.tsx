@@ -4,7 +4,9 @@ import skyriseTeam from '@/assets/images/skyrise-team.png';
 
 const JoinUsCard: React.FC = () => {
   return (
-    <div className="rounded-3xl mx-8 mb-12 lg:mx-26 bg-white p-6 shadow-lg sm:p-8 lg:p-12 border-1 border-gray-100">
+    <div className="w-full py-12 lg:py-16">
+      <div className="container mx-auto px-6 lg:px-8">
+        <div className="rounded-3xl bg-white p-6 shadow-lg sm:p-8 lg:p-12 border-1 border-gray-100">
       <h3 className="text-h3 lg:text-h2 text-text-primary mb-6 font-semibold">Join Us!</h3>
 
       <div className="grid gap-6 lg:grid-cols-2 lg:items-center">
@@ -31,6 +33,8 @@ const JoinUsCard: React.FC = () => {
               <span className="absolute left-0 right-0 -bottom-1 h-1 rounded bg-primary/80"></span>
             </Link>
           </div>
+        </div>
+      </div>
         </div>
       </div>
     </div>

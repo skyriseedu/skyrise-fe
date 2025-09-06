@@ -99,10 +99,12 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
   ];
 
   return (
-    <section className={`w-full px-6 py-12 lg:py-16 ${className}`}>
-      <h2 className="text-h3 px-4 lg:px-22 md:text-h2 lg:text-h2 text-text-primary mb-8 text-start font-semibold">
-        {title}
-      </h2>
+    <section className={`w-full py-12 lg:py-20 ${className}`}>
+      <div className="container mx-auto px-6 lg:px-8">
+        <h2 className="text-h3 md:text-h2 lg:text-h2 text-text-primary mb-8 text-left font-semibold">
+          {title}
+        </h2>
+      </div>
 
       <div className="mx-auto max-w-[1200px]">
         <div className="relative">
@@ -121,7 +123,7 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
           </div>
 
           {/* custom scrollbar indicator - desktop */}
-          <div className="hidden lg:block mt-6 px-70">
+          <div className="hidden lg:block mt-6 px-90">
             <div className="relative h-1.5 bg-secondary rounded-full">
               <div 
                 className="absolute h-full bg-primary rounded-full transition-all duration-300"

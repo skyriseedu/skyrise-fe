@@ -23,46 +23,47 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({
   };
 
   return (
-    <div className="w-full px-4 py-16">
-      <h2 className="text-h2 text-text-primary mb-12 text-center font-semibold">
-        {title}
-      </h2>
+    <div className="w-full py-16">
+      <div className="container mx-auto px-6 lg:px-8">
+        <h2 className="text-h2 text-text-primary mb-12 text-center font-semibold">
+          {title}
+        </h2>
 
-      <div className="relative mx-auto max-w-6xl">
-        <button
-          onClick={handlePrevious}
-          disabled={currentIndex === 0}
-          className={clsx(
-            'absolute top-1/2 -left-16 z-10 -translate-y-1/2',
-            'h-10 w-10',
-            'flex items-center justify-center',
-            'transition-opacity duration-300',
-            currentIndex === 0
-              ? 'cursor-not-allowed opacity-50'
-              : 'hover:cursor-pointer'
-          )}
-        >
-          <CaretLeft />
-        </button>
+        <div className="relative mx-auto max-w-6xl">
+          <button
+            onClick={handlePrevious}
+            disabled={currentIndex === 0}
+            className={clsx(
+              'absolute top-1/2 -left-8 lg:-left-16 z-10 -translate-y-1/2',
+              'h-10 w-10',
+              'flex items-center justify-center',
+              'transition-opacity duration-300',
+              currentIndex === 0
+                ? 'cursor-not-allowed opacity-50'
+                : 'hover:cursor-pointer'
+            )}
+          >
+            <CaretLeft />
+          </button>
 
-        <button
-          onClick={handleNext}
-          disabled={currentIndex === maxIndex}
-          className={clsx(
-            'absolute top-1/2 -right-16 z-10 -translate-y-1/2',
-            'h-10 w-10',
-            'flex items-center justify-center',
-            'transition-opacity duration-300',
-            currentIndex === maxIndex
-              ? 'cursor-not-allowed opacity-50'
-              : 'hover:cursor-pointer'
-          )}
-        >
-          <CaretRight />
-        </button>
+          <button
+            onClick={handleNext}
+            disabled={currentIndex === maxIndex}
+            className={clsx(
+              'absolute top-1/2 -right-8 lg:-right-16 z-10 -translate-y-1/2',
+              'h-10 w-10',
+              'flex items-center justify-center',
+              'transition-opacity duration-300',
+              currentIndex === maxIndex
+                ? 'cursor-not-allowed opacity-50'
+                : 'hover:cursor-pointer'
+            )}
+          >
+            <CaretRight />
+          </button>
 
-        <div className="overflow-hidden px-8">
-          <motion.div
+          <div className="overflow-hidden">
+            <motion.div
             className="flex gap-3"
             animate={{ x: -currentIndex * (280 + 12) }}
             transition={{
@@ -83,7 +84,8 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({
                 />
               </div>
             ))}
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </div>
