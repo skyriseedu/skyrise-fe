@@ -86,8 +86,8 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
   };
 
   return (
-    <div className="bg-secondary hidden h-[calc(100vh-140px)] w-80 flex-col lg:flex">
-      <div className="flex-1 overflow-y-auto p-6">
+    <div className="bg-secondary hidden h-[calc(100vh-140px)] w-full flex-col lg:flex">
+      <div className="flex-1 overflow-y-auto p-4 xl:p-6">
         <h2 className="text-h3 text-text-primary mx-2 mb-4 font-semibold">
           Filters
         </h2>
@@ -272,7 +272,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
         </div>
       </div>
 
-      <div className="p-6 pt-4">
+      <div className="p-4 xl:p-6 pt-4">
         <Button onClick={handleConfirm} size="lg" primary className="w-full">
           Confirm
         </Button>

@@ -360,7 +360,7 @@ const ExplorePage: React.FC = () => {
         />
 
         <div className="flex">
-          <div className="bg-secondary w-2/8 pl-8">
+          <div className="bg-secondary w-72 xl:w-80 flex-shrink-0 pl-4 xl:pl-8">
             <DesktopFilterDropdown
               filters={filters}
               onApplyFilters={setFilters}
@@ -369,8 +369,8 @@ const ExplorePage: React.FC = () => {
           </div>
 
           {/* Main Content */}
-          <div className="w-6/8 bg-white px-8 py-8">
-            <div className="mb-6 flex items-center justify-between">
+          <div className="flex-1 bg-white px-4 xl:px-8 py-8">
+            <div className="mb-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
               {isLoading ? (
                 <div className="animate-pulse h-8 bg-secondary rounded w-48"></div>
               ) : (
@@ -379,7 +379,7 @@ const ExplorePage: React.FC = () => {
                 </p>
               )}
 
-              <div className="relative w-96">
+              <div className="relative w-full max-w-sm xl:max-w-md">
                 <img
                   src={searchIcon}
                   alt="Search"
