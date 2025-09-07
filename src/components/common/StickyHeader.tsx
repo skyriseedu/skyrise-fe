@@ -48,8 +48,8 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
               {isLoading ? (
                 <>
                   <div className="animate-pulse">
-                    <div className="h-20 bg-secondary rounded w-3/4 mb-3"></div>
-                    <div className="h-6 bg-secondary rounded w-1/3"></div>
+                    <div className="bg-secondary mb-3 h-20 w-3/4 rounded"></div>
+                    <div className="bg-secondary h-6 w-1/3 rounded"></div>
                   </div>
                 </>
               ) : (
@@ -60,7 +60,9 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
                     </h1>
                   )}
                   {subtitle && (
-                    <p className="text-text-secondary mt-2 text-sm">{subtitle}</p>
+                    <p className="text-text-secondary mt-2 text-sm">
+                      {subtitle}
+                    </p>
                   )}
                 </>
               )}

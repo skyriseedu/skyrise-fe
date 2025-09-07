@@ -217,7 +217,7 @@ const ExplorePage: React.FC = () => {
             <h1 className="text-h2 sm:text-h1 mb-4 font-semibold">Explore</h1>
             <div className="mb-3 flex items-center justify-between">
               {isLoading ? (
-                <div className="animate-pulse h-10 bg-secondary rounded w-40"></div>
+                <div className="bg-secondary h-10 w-40 animate-pulse rounded"></div>
               ) : (
                 <p className="text-body-2 text-text-primary font-semibold">
                   Total {samplePrograms?.length} Programs Found
@@ -322,7 +322,7 @@ const ExplorePage: React.FC = () => {
         {/* Content Section */}
         <div className="px-4 pt-4 pb-8">
           {isLoading ? (
-            <div className="flex items-center justify-center h-64">
+            <div className="flex h-64 items-center justify-center">
               <Loading size="lg" color="primary" />
             </div>
           ) : (
@@ -360,7 +360,7 @@ const ExplorePage: React.FC = () => {
         />
 
         <div className="flex">
-          <div className="bg-secondary w-72 xl:w-80 flex-shrink-0 pl-4 xl:pl-8">
+          <div className="bg-secondary w-72 flex-shrink-0 pl-4 xl:w-80 xl:pl-8">
             <DesktopFilterDropdown
               filters={filters}
               onApplyFilters={setFilters}
@@ -369,10 +369,10 @@ const ExplorePage: React.FC = () => {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 bg-white px-4 xl:px-8 py-8">
-            <div className="mb-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div className="flex-1 bg-white px-4 py-8 xl:px-8">
+            <div className="mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
               {isLoading ? (
-                <div className="animate-pulse h-8 bg-secondary rounded w-48"></div>
+                <div className="bg-secondary h-8 w-48 animate-pulse rounded"></div>
               ) : (
                 <p className="text-h2 text-text-primary font-semibold">
                   Total {samplePrograms.length} Programs Found
@@ -397,7 +397,7 @@ const ExplorePage: React.FC = () => {
 
             {/* Desktop  */}
             {isLoading ? (
-              <div className="flex items-center justify-center h-[450px]">
+              <div className="flex h-[450px] items-center justify-center">
                 <Loading size="lg" color="primary" />
               </div>
             ) : (

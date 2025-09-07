@@ -272,7 +272,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
         </div>
       </div>
 
-      <div className="p-4 xl:p-6 pt-4">
+      <div className="p-4 pt-4 xl:p-6">
         <Button onClick={handleConfirm} size="lg" primary className="w-full">
           Confirm
         </Button>

@@ -39,10 +39,7 @@ const ServicesShowcase: React.FC = () => {
         </div>
         {location.pathname !== '/services/consultation' && (
           <div className="shrink-0 md:w-auto md:shrink">
-            <ServiceCard
-              title="Consultation"
-              icon={consultation}
-            />
+            <ServiceCard title="Consultation" icon={consultation} />
           </div>
         )}
       </div>
