@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 
 interface ServiceCardProps {
   title: string;
-  icon: string; 
+  icon: string;
   iconAlt?: string;
-  to?: string; 
+  to?: string;
   onClick?: () => void;
   className?: string;
   iconClassName?: string;
@@ -25,8 +25,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 }) => {
   const content = (
     <div className={`${baseCardClasses} ${className}`}>
-      <img src={icon} alt={iconAlt || title} className={`${iconClassName} mb-4 object-contain`} />
-      <h3 className="text-h4 lg:text-h3 text-text-primary font-semibold">{title}</h3>
+      <img
+        src={icon}
+        alt={iconAlt || title}
+        className={`${iconClassName} mb-4 object-contain`}
+      />
+      <h3 className="text-h4 lg:text-h3 text-text-primary font-semibold">
+        {title}
+      </h3>
     </div>
   );
 
@@ -34,7 +40,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     return (
       <Link
         to={to}
-        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-3xl cursor-pointer"
+        className="focus-visible:ring-primary block cursor-pointer rounded-3xl focus:outline-none focus-visible:ring-2"
       >
         {content}
       </Link>
@@ -46,7 +52,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       <button
         type="button"
         onClick={onClick}
-        className="block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-3xl"
+        className="focus-visible:ring-primary block w-full rounded-3xl text-left focus:outline-none focus-visible:ring-2"
       >
         {content}
       </button>

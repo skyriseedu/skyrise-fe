@@ -149,7 +149,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
                         <Link
                           key={subItem.name}
                           to={subItem.path}
-                          className={`text-h3 block px-4 py-2 font-medium transition-colors rounded-md ${
+                          className={`text-h3 block rounded-md px-4 py-2 font-medium transition-colors ${
                             isActiveSubItem(subItem.path)
                               ? 'bg-primary text-white'
                               : 'text-text-primary hover:bg-secondary hover:text-primary'
