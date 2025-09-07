@@ -129,6 +129,16 @@
     scrollbar-width: none; /* Firefox */
   }
 
+  /* Utility to show scrollbar again */
+  .scrollbar-hide-none::-webkit-scrollbar {
+    display: initial;
+  }
+
+  .scrollbar-hide-none {
+    -ms-overflow-style: auto; /* IE and Edge */
+    scrollbar-width: auto; /* Firefox */
+  }
+
   /* Light scrollbar styles */
   ::-webkit-scrollbar {
     width: 12px;
@@ -186,8 +196,45 @@
     animation-play-state: paused;
   }
 
+  /* Custom scrollbar for ambassador section */
+  .custom-scrollbar::-webkit-scrollbar {
+    height: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #ffe6e7;
+    border-radius: 5px;
+    margin: 0 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 5px;
+    min-width: 50px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #c94649;
+  }
+
+  /* Firefox custom scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) #ffe6e7;
+  }
+
   /* Responsive variants for lg: breakpoint */
   @media (min-width: 1024px) {
+    /* Show scrollbar utilities for large screens */
+    .lg\:scrollbar-hide-none::-webkit-scrollbar {
+      display: initial;
+    }
+
+    .lg\:scrollbar-hide-none {
+      -ms-overflow-style: auto;
+      scrollbar-width: auto;
+    }
+
     /* Heading responsive classes */
     .lg\:text-h1 {
       font-size: var(--font-size-h1);

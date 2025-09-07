@@ -21,3 +21,25 @@ export interface TeamCardProps {
   university: string;
   profileLink?: string;
 }
+
+// Ambassador types
+export interface Ambassador {
+  id: number;
+  image: string;
+  name: string;
+  department: string;
+  university: string;
+}
+
+export interface AmbassadorCardProps {
+  image: string;
+  name: string;
+  department: string;
+  university: string;
+  className?: string;
+}
+
+export interface AmbassadorSectionProps {
+  title?: string;
+  className?: string;
+}
