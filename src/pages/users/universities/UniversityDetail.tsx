@@ -1,11 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useUniversityBySlug } from '@/queries';
 import type { University } from '@/types/users/university';
 import StickyHeader from '@/components/common/StickyHeader';
 import KeyInfoCard from '@/components/program-details/KeyInfoCard';
 import ReviewCard from '@/components/reviews/ReviewCard';
-import LeadingUniversities from '@/components/universities/LeadingUniversities';
 import calendarIcon from '@/assets/calendar.svg';
 import graduationCap from '@/assets/graduation-cap.svg';
 import document from '@/assets/document.svg';
@@ -269,13 +267,13 @@ const UniversityDetail: React.FC = () => {
           </div>
         )}
 
-        {/* Leading Universities Section */}
+        {/* Leading Universities Section
         <div className="py-12">
           <LeadingUniversities
             title="Other Leading Universities"
             className="border-t border-gray-200 pt-12"
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );
