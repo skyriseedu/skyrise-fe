@@ -10,6 +10,7 @@ interface StickyHeaderProps {
   desktopPadding?: string;
   showBackButton?: boolean;
   children?: React.ReactNode;
+  isLoading?: boolean;
 }
 
 const StickyHeader: React.FC<StickyHeaderProps> = ({
@@ -20,6 +21,7 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
   desktopPadding = 'px-4',
   showBackButton = true,
   children,
+  isLoading = false,
 }) => {
   const navigate = useNavigate();
 
@@ -43,13 +45,26 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
               </button>
             )}
             <div className="flex-1">
-              {title && (
-                <h1 className="text-text-primary text-h2 lg:text-h2 font-semibold">
-                  {title}
-                </h1>
-              )}
-              {subtitle && (
-                <p className="text-text-secondary mt-2 text-sm">{subtitle}</p>
+              {isLoading ? (
+                <>
+                  <div className="animate-pulse">
+                    <div className="bg-secondary mb-3 h-20 w-3/4 rounded"></div>
+                    <div className="bg-secondary h-6 w-1/3 rounded"></div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {title && (
+                    <h1 className="text-text-primary text-h2 lg:text-h2 font-semibold">
+                      {title}
+                    </h1>
+                  )}
+                  {subtitle && (
+                    <p className="text-text-secondary mt-2 text-sm">
+                      {subtitle}
+                    </p>
+                  )}
+                </>
               )}
               {children}
             </div>
