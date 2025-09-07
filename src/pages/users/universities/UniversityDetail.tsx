@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useUniversityBySlug } from '@/queries';
+import type { University } from '@/types/users/university';
 import StickyHeader from '@/components/common/StickyHeader';
 import KeyInfoCard from '@/components/program-details/KeyInfoCard';
 import ReviewCard from '@/components/reviews/ReviewCard';
@@ -10,14 +10,65 @@ import document from '@/assets/document.svg';
 import location from '@/assets/location.svg';
 import bookOpen from '@/assets/book-open.svg';
 
+// Mock data - this would normally come from an API
+const mockUniversity: University = {
+  _id: '1',
+  id: '1',
+  universityName: 'Rangsit University',
+  universityType: 'Private',
+  logoImage: '/api/placeholder/100/100',
+  coverImages: {
+    image1: '/api/placeholder/400/400',
+    image2: '/api/placeholder/300/300',
+  },
+  aboutUniversity:
+    'Rangsit University is a leading private university in Thailand, known for its excellence in education, research, and innovation. The university offers a wide range of undergraduate and graduate programs across various disciplines.',
+  englishFoundation:
+    '<p>Our English Foundation program is designed to prepare students for academic success in their chosen field of study.</p>',
+  bachelor:
+    '<p>Bachelor degree programs spanning across multiple disciplines including Business, Engineering, Medicine, and Arts.</p>',
+  master:
+    '<p>Advanced master programs for specialized career development and research opportunities.</p>',
+  keyInformation: {
+    ranking: '#2025',
+    foundedYear: 1990,
+    location: 'Bangkok, Thailand',
+    creditTransfer: 'Available',
+    programs: 50,
+  },
+  studentReviews: [
+    {
+      _id: '1',
+      studentName: 'John Doe',
+      major: 'Business Administration',
+      studentImage: '/api/placeholder/80/80',
+      review:
+        'Great university with excellent facilities and supportive faculty.',
+    },
+    {
+      _id: '2',
+      studentName: 'Jane Smith',
+      major: 'Computer Science',
+      studentImage: '/api/placeholder/80/80',
+      review: 'The programs are comprehensive and industry-relevant.',
+    },
+  ],
+  status: 'published',
+  views: 1250,
+  createdAt: '2024-01-01T00:00:00Z',
+  updatedAt: '2024-01-01T00:00:00Z',
+  slug: 'rangsit-university',
+};
+
 const UniversityDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
 
-  const {
-    data: universityData,
-    isLoading,
-    error,
-  } = useUniversityBySlug(slug || '');
+  // In a real app, you'd use: const { data: universityData, isLoading, error } = useUniversityBySlug(slug || '');
+  // For now, we'll use the mock data
+  console.log('University slug:', slug); // This would be used for fetching real data
+  const university = mockUniversity;
+  const isLoading = false;
+  const error = null;
 
   if (isLoading) {
     return (
@@ -30,7 +81,7 @@ const UniversityDetail: React.FC = () => {
     );
   }
 
-  if (error || !universityData?.data?.university) {
+  if (error || !university) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -44,8 +95,6 @@ const UniversityDetail: React.FC = () => {
       </div>
     );
   }
-
-  const university = universityData.data.university;
 
   const keyInfo = [
     {
@@ -105,6 +154,7 @@ const UniversityDetail: React.FC = () => {
         <div className="mb-12 flex flex-col items-center gap-8 lg:mb-20 lg:flex-row lg:gap-12">
           <div className="relative w-full flex-shrink-0 lg:w-auto">
             <div className="relative mx-auto h-[240px] w-[240px] lg:mx-0 lg:h-[380px] lg:w-[380px]">
+              {/* Main university image */}
               <div className="absolute right-0 bottom-0 h-44 w-44 overflow-hidden rounded-full shadow-xl lg:h-72 lg:w-72">
                 <img
                   src={university.coverImages.image1}
@@ -113,6 +163,7 @@ const UniversityDetail: React.FC = () => {
                 />
               </div>
 
+              {/* Secondary university image */}
               <div
                 className="absolute top-0 left-0 z-10 h-28 w-28 overflow-hidden rounded-full shadow-xl lg:h-48 lg:w-48"
                 style={{
@@ -124,6 +175,15 @@ const UniversityDetail: React.FC = () => {
                   src={university.coverImages.image2}
                   alt={`${university.universityName} campus`}
                   className="h-full w-full object-cover"
+                />
+              </div>
+
+              {/* University logo overlay */}
+              <div className="absolute bottom-2 left-2 z-20 h-16 w-16 overflow-hidden rounded-full bg-white p-2 shadow-lg lg:h-20 lg:w-20">
+                <img
+                  src={university.logoImage}
+                  alt={`${university.universityName} logo`}
+                  className="h-full w-full object-contain"
                 />
               </div>
             </div>
@@ -185,53 +245,6 @@ const UniversityDetail: React.FC = () => {
           {renderSection('Master', university.master)}
         </div>
 
-        {/* Entry Requirements and Scholarship Requirements */}
-        <div className="py-12">
-          <div className="space-y-8">
-            <div>
-              <button className="flex w-full items-center justify-between rounded-lg bg-gray-50 p-4 text-left transition-colors hover:bg-gray-100">
-                <span className="text-lg font-semibold text-gray-900">
-                  Entry Requirements
-                </span>
-                <svg
-                  className="h-5 w-5 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-            </div>
-
-            <div>
-              <button className="flex w-full items-center justify-between rounded-lg bg-gray-50 p-4 text-left transition-colors hover:bg-gray-100">
-                <span className="text-lg font-semibold text-gray-900">
-                  Scholarship Requirements
-                </span>
-                <svg
-                  className="h-5 w-5 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* Student Success Stories / Reviews */}
         {university.studentReviews && university.studentReviews.length > 0 && (
           <div className="py-12">
@@ -253,6 +266,14 @@ const UniversityDetail: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Leading Universities Section
+        <div className="py-12">
+          <LeadingUniversities
+            title="Other Leading Universities"
+            className="border-t border-gray-200 pt-12"
+          />
+        </div> */}
       </div>
     </div>
   );

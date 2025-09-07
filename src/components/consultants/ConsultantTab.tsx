@@ -1,18 +1,65 @@
 import React from 'react';
 import JoinUsCard from './joinUsCard';
+import coverImage from '../../assets/images/consultant-cover.png';
+import { useConsultantCount } from '@/queries/consultants';
+import UniversityList from './UniversityList';
+import testLog from '../../assets/test-logo.png';
+import SuccessModal from '../common/SuccessModal';
+import ApplyConsultantForm from '../common/ApplyConsultantForm';
+
+const universityLogos = [
+  {
+    src: testLog,
+    alt: 'Rangsit University',
+  },
+  {
+    src: testLog,
+    alt: 'Bangkok University',
+  },
+  {
+    src: testLog,
+    alt: 'UTCC',
+  },
+  {
+    src: testLog,
+    alt: 'Raffles University',
+  },
+  {
+    src: testLog,
+    alt: 'AIHM',
+  },
+  {
+    src: testLog,
+    alt: 'Dusit Thani College',
+  },
+];
 
 const ConsultantTab: React.FC = () => {
+  const { data: consultantCountResponse, isLoading: isLoadingConsultantCount } =
+    useConsultantCount();
+
+  let consultantCount = consultantCountResponse?.data.total || 0;
+  consultantCount -= consultantCount % 10; // Round down to nearest 10
+
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [showSuccessModal, setShowSuccessModal] = React.useState(false);
+
+  const handleFormSuccess = () => {
+    setIsOpen(false);
+    setShowSuccessModal(true);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div className="relative h-64 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+          src={coverImage}
           alt="Students studying"
           className="h-full w-full object-cover"
         />
-        <div className="bg-opacity-40 absolute inset-0 bg-black" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="px-4 text-center text-xl font-medium text-white">
+
+        <div className="absolute inset-0 mb-6 flex w-full items-end">
+          <h1 className="text-h3 lg:text-h1 w-full bg-black/50 py-4 text-center font-semibold text-white">
             "Calling Students Studying in Thailand. Make an Impact. Inspire the
             Next Generation."
           </h1>
@@ -20,7 +67,7 @@ const ConsultantTab: React.FC = () => {
       </div>
 
       <div className="w-full px-6 py-8 lg:px-16">
-        <div className="mb-8 flex items-start gap-4">
+        <div className="mb-4 flex items-start gap-4">
           <div className="flex-1">
             <h2 className="lg:text-h1 text-h3 mb-4 font-semibold text-gray-900">
               Requirements for applying 'Consultant'
@@ -139,14 +186,15 @@ const ConsultantTab: React.FC = () => {
         </div>
 
         {/* Community Stats */}
-        <div className="mb-8 p-4">
-          <div className="flex items-center justify-between space-x-8">
+        <div className="mb-4 p-4">
+          {/* Mobile Layout - 2 columns */}
+          <div className="flex items-center justify-between space-x-8 lg:hidden">
             <div>
               <div className="text-h2 lg:text-h1 font-semibold text-gray-600">
                 <div>Join an inspiring (RISE) community</div>
               </div>
               <div className="text-h1 mb-2 font-semibold text-gray-900">
-                50+
+                {isLoadingConsultantCount ? '...' : consultantCount}+
               </div>
             </div>
             <div className="text-body-2 lg:text-body-1 text-gray-600">
@@ -155,52 +203,65 @@ const ConsultantTab: React.FC = () => {
               SKYRISE, we celebrate students' journeys while empowering others.
             </div>
           </div>
+
+          {/* Large Screen Layout - 3 columns */}
+          <div className="hidden lg:grid lg:grid-cols-3 lg:items-center lg:gap-8">
+            <div className="text-center">
+              <div className="text-[100px] font-semibold text-gray-900">
+                {isLoadingConsultantCount ? '...' : consultantCount}+
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-h1 font-semibold text-gray-600">
+                Join an inspiring (RISE) community
+              </div>
+            </div>
+            <div className="text-body-1 text-gray-600">
+              We're proud of our consultants - scholarship winners, top
+              students, competition champions, and community (RISE)ers. At
+              SKYRISE, we celebrate students' journeys while empowering others.
+            </div>
+          </div>
         </div>
 
         <div className="mb-8 text-center">
-          <button className="bg-primary w-full rounded-lg px-8 py-3 font-medium text-white transition-colors hover:bg-red-600">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="bg-primary w-full cursor-pointer rounded-lg px-8 py-3 font-medium text-white transition-colors hover:bg-red-600 lg:w-[40%]"
+          >
             Join with us!
           </button>
         </div>
 
         <div className="mb-8">
-          <h3 className="text-h3 mb-6 font-semibold text-gray-900 lg:text-lg">
+          <h3 className="text-h3 lg:text-h1 mb-6 font-semibold text-gray-900 lg:text-lg">
             Our Ambassadors from Leading Universities
           </h3>
-          <div className="grid grid-cols-2 items-center justify-items-center gap-6 md:grid-cols-6">
-            <img
-              src="https://via.placeholder.com/80x40/E5E7EB/6B7280?text=RANGSIT"
-              alt="Rangsit University"
-              className="h-10 object-contain"
-            />
-            <img
-              src="https://via.placeholder.com/80x40/E5E7EB/6B7280?text=BANGKOK"
-              alt="Bangkok University"
-              className="h-10 object-contain"
-            />
-            <img
-              src="https://via.placeholder.com/80x40/E5E7EB/6B7280?text=UTCC"
-              alt="UTCC"
-              className="h-10 object-contain"
-            />
-            <img
-              src="https://via.placeholder.com/80x40/E5E7EB/6B7280?text=RAFFLES"
-              alt="Raffles University"
-              className="h-10 object-contain"
-            />
-            <img
-              src="https://via.placeholder.com/80x40/E5E7EB/6B7280?text=AIHM"
-              alt="AIHM"
-              className="h-10 object-contain"
-            />
-            <img
-              src="https://via.placeholder.com/80x40/E5E7EB/6B7280?text=DUSIT"
-              alt="Dusit Thani College"
-              className="h-10 object-contain"
+          <UniversityList logos={universityLogos} />
+        </div>
+      </div>
+
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-25"
+          onClick={() => setIsOpen(false)}
+        >
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <ApplyConsultantForm
+              onClose={() => setIsOpen(false)}
+              onSuccess={handleFormSuccess}
             />
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Applied Successfully!"
+        message="Thank you for applying with us. We will contact you shortly via email to confirm your application details."
+      />
     </div>
   );
 };

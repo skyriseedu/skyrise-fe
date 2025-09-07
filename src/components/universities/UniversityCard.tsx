@@ -66,7 +66,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
         </div>
         <button
           onClick={() => onViewDetails?.(university)}
-          className="bg-primary w-full rounded-xl px-4 py-3 font-medium text-white transition-colors duration-200 hover:bg-red-600"
+          className="bg-primary w-full cursor-pointer rounded-xl px-4 py-3 font-medium text-white transition-colors duration-200 hover:bg-red-600"
         >
           Read Details
         </button>

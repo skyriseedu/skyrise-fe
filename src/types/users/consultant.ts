@@ -26,3 +26,8 @@ export interface ConsultantCardProps {
   onBookConsultation?: (consultant: Consultant) => void;
   className?: string;
 }
+
+export interface consultantCountResponse {
+  success: boolean;
+  data: { total: number };
+}
