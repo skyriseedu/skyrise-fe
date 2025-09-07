@@ -1,46 +1,89 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { useUniversityBySlug } from '@/queries';
 import type { University } from '@/types/users/university';
+import StickyHeader from '@/components/common/StickyHeader';
+import KeyInfoCard from '@/components/program-details/KeyInfoCard';
+import ReviewCard from '@/components/reviews/ReviewCard';
+import LeadingUniversities from '@/components/universities/LeadingUniversities';
+import calendarIcon from '@/assets/calendar.svg';
+import graduationCap from '@/assets/graduation-cap.svg';
+import document from '@/assets/document.svg';
+import location from '@/assets/location.svg';
+import bookOpen from '@/assets/book-open.svg';
 
 // Mock data - this would normally come from an API
 const mockUniversity: University = {
+  _id: '1',
   id: '1',
-  name: 'Rangsit University',
-  location: 'Thailand',
-  country: 'Thailand',
-  image: '/api/placeholder/800/400',
-  ranking: 2025,
-  description:
-    'Rangsit University is a leading private university in Thailand, known for its excellence in education, research, and innovation. The university offers a wide range of undergraduate and graduate programs across various disciplines.',
-  programs: [
-    'Business Administration',
-    'Engineering',
-    'Medicine',
-    'Arts and Design',
-    'Computer Science',
-    'Law',
-  ],
-  tuitionFee: {
-    min: 200000,
-    max: 400000,
-    currency: '฿',
+  universityName: 'Rangsit University',
+  universityType: 'Private',
+  logoImage: '/api/placeholder/100/100',
+  coverImages: {
+    image1: '/api/placeholder/400/400',
+    image2: '/api/placeholder/300/300',
   },
-  acceptanceRate: 65,
-  establishedYear: 1990,
-  website: 'https://www.rsu.ac.th',
-  tags: ['Private', 'Research', 'International'],
+  aboutUniversity:
+    'Rangsit University is a leading private university in Thailand, known for its excellence in education, research, and innovation. The university offers a wide range of undergraduate and graduate programs across various disciplines.',
+  englishFoundation:
+    '<p>Our English Foundation program is designed to prepare students for academic success in their chosen field of study.</p>',
+  bachelor:
+    '<p>Bachelor degree programs spanning across multiple disciplines including Business, Engineering, Medicine, and Arts.</p>',
+  master:
+    '<p>Advanced master programs for specialized career development and research opportunities.</p>',
+  keyInformation: {
+    ranking: '#2025',
+    foundedYear: 1990,
+    location: 'Bangkok, Thailand',
+    creditTransfer: 'Available',
+    programs: 50,
+  },
+  studentReviews: [
+    {
+      _id: '1',
+      studentName: 'John Doe',
+      major: 'Business Administration',
+      studentImage: '/api/placeholder/80/80',
+      review:
+        'Great university with excellent facilities and supportive faculty.',
+    },
+    {
+      _id: '2',
+      studentName: 'Jane Smith',
+      major: 'Computer Science',
+      studentImage: '/api/placeholder/80/80',
+      review: 'The programs are comprehensive and industry-relevant.',
+    },
+  ],
+  status: 'published',
+  views: 1250,
+  createdAt: '2024-01-01T00:00:00Z',
+  updatedAt: '2024-01-01T00:00:00Z',
+  slug: 'rangsit-university',
 };
 
 const UniversityDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
 
-  // In a real app, you'd fetch the university data based on the ID
-  // For now, we'll use the mock data regardless of the ID
+  // In a real app, you'd use: const { data: universityData, isLoading, error } = useUniversityBySlug(slug || '');
+  // For now, we'll use the mock data
+  console.log('University slug:', slug); // This would be used for fetching real data
   const university = mockUniversity;
+  const isLoading = false;
+  const error = null;
 
-  console.log('University ID:', id); // This would be used for fetching real data
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
+          <p className="text-gray-600">Loading university details...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (!university) {
+  if (error || !university) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -48,167 +91,190 @@ const UniversityDetail: React.FC = () => {
             University Not Found
           </h2>
           <p className="text-gray-600">
-            The university you're looking for doesn't exist.
+            The university you're looking for doesn't exist or failed to load.
           </p>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="relative h-96 overflow-hidden">
-        <img
-          src={university.image}
-          alt={`${university.name} campus`}
-          className="h-full w-full object-cover"
+  const keyInfo = [
+    {
+      icon: graduationCap,
+      label: 'University Ranking',
+      value: university.keyInformation.ranking,
+    },
+    {
+      icon: calendarIcon,
+      label: 'Founded Year',
+      value: university.keyInformation.foundedYear.toString(),
+    },
+    {
+      icon: location,
+      label: 'Location',
+      value: university.keyInformation.location,
+    },
+    {
+      icon: document,
+      label: 'Credit Transfer',
+      value: university.keyInformation.creditTransfer,
+    },
+    {
+      icon: bookOpen,
+      label: 'Programs',
+      value: university.keyInformation.programs.toString(),
+    },
+  ];
+
+  const renderSection = (title: string, content: string) => {
+    if (!content || content.trim() === '') return null;
+
+    return (
+      <div className="mb-8">
+        <h3 className="text-h3 lg:text-h2 text-text-primary mb-6 font-semibold">
+          {title}
+        </h3>
+        <div
+          className="text-text-primary prose max-w-none"
+          dangerouslySetInnerHTML={{ __html: content }}
         />
-        <div className="bg-opacity-40 absolute inset-0 bg-black" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-white">
-            <h1 className="mb-4 text-4xl font-bold md:text-5xl">
-              {university.name}
-            </h1>
-            <div className="flex items-center justify-center text-xl">
-              <svg
-                className="mr-2 h-6 w-6"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                  clipRule="evenodd"
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      <StickyHeader
+        title={university.universityName}
+        subtitle=""
+        mobilePadding="px-8"
+        desktopPadding="lg:px-0"
+      />
+
+      {/* Hero Section with Cover Images */}
+      <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6 lg:py-8">
+        <div className="mb-12 flex flex-col items-center gap-8 lg:mb-20 lg:flex-row lg:gap-12">
+          <div className="relative w-full flex-shrink-0 lg:w-auto">
+            <div className="relative mx-auto h-[240px] w-[240px] lg:mx-0 lg:h-[380px] lg:w-[380px]">
+              {/* Main university image */}
+              <div className="absolute right-0 bottom-0 h-44 w-44 overflow-hidden rounded-full shadow-xl lg:h-72 lg:w-72">
+                <img
+                  src={university.coverImages.image1}
+                  alt={`${university.universityName} campus`}
+                  className="h-full w-full object-cover"
                 />
-              </svg>
-              <span>
-                {university.location}, {university.country}
-              </span>
+              </div>
+
+              {/* Secondary university image */}
+              <div
+                className="absolute top-0 left-0 z-10 h-28 w-28 overflow-hidden rounded-full shadow-xl lg:h-48 lg:w-48"
+                style={{
+                  top: '15%',
+                  left: '-5%',
+                }}
+              >
+                <img
+                  src={university.coverImages.image2}
+                  alt={`${university.universityName} campus`}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+
+              {/* University logo overlay */}
+              <div className="absolute bottom-2 left-2 z-20 h-16 w-16 overflow-hidden rounded-full bg-white p-2 shadow-lg lg:h-20 lg:w-20">
+                <img
+                  src={university.logoImage}
+                  alt={`${university.universityName} logo`}
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="max-w-2xl flex-1 px-4 lg:px-0">
+            <h2 className="text-h3 lg:text-h2 text-text-primary mb-4 font-semibold lg:mb-6">
+              About University
+            </h2>
+            <div
+              className="text-text-primary text-body-2 lg:text-body-2 prose max-w-none leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: university.aboutUniversity }}
+            />
+          </div>
+        </div>
+
+        {/* Key Information Section */}
+        <div className="py-12">
+          <h2 className="text-h3 lg:text-h2 text-text-primary mb-8 font-semibold">
+            Key Information
+          </h2>
+          <div className="mx-auto max-w-6xl">
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-6 lg:gap-6">
+              {keyInfo.map((info, index) => (
+                <div key={index} className="h-20 lg:h-24">
+                  <KeyInfoCard
+                    icon={info.icon}
+                    label={info.label}
+                    value={info.value}
+                  />
+                </div>
+              ))}
+
+              <div className="order-last col-span-2 h-18 lg:order-none lg:col-span-1 lg:row-span-2 lg:h-auto">
+                <div className="bg-primary flex h-full cursor-pointer flex-col items-center justify-center rounded-xl px-4 text-white transition-colors hover:bg-[#d43d4e]">
+                  <div className="text-center">
+                    <div className="text-body-2 font-semibold lg:hidden">
+                      Talk with your seniors
+                    </div>
+                    <div className="hidden lg:block">
+                      <div className="text-h3 font-semibold">Talk with</div>
+                      <div className="text-h3 font-semibold">your seniors</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Main Content */}
-          <div className="space-y-8 lg:col-span-2">
-            {/* About */}
-            <div className="rounded-2xl bg-white p-6 shadow-lg">
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">
-                About {university.name}
-              </h2>
-              <p className="leading-relaxed text-gray-600">
-                {university.description}
-              </p>
-            </div>
+        {/* Program Structure Sections */}
+        <div className="py-12">
+          <h2 className="text-h3 lg:text-h2 text-text-primary mb-8 font-semibold">
+            Program Structure
+          </h2>
 
-            {/* Programs */}
-            <div className="rounded-2xl bg-white p-6 shadow-lg">
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">
-                Programs Offered
-              </h2>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {university.programs.map((program, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center rounded-lg bg-gray-50 p-3"
-                  >
-                    <svg
-                      className="text-primary mr-3 h-5 w-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span className="font-medium text-gray-900">{program}</span>
-                  </div>
-                ))}
-              </div>
+          {renderSection('English Foundation', university.englishFoundation)}
+          {renderSection('Bachelor', university.bachelor)}
+          {renderSection('Master', university.master)}
+        </div>
+
+        {/* Student Success Stories / Reviews */}
+        {university.studentReviews && university.studentReviews.length > 0 && (
+          <div className="py-12">
+            <h2 className="text-h3 lg:text-h2 text-text-primary mb-8 font-semibold">
+              Student Success Stories
+            </h2>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {university.studentReviews.map((review) => (
+                <div key={review._id} className="w-full">
+                  <ReviewCard
+                    name={review.studentName}
+                    program={review.major}
+                    testimonial={review.review}
+                    imageUrl={review.studentImage}
+                  />
+                </div>
+              ))}
             </div>
           </div>
+        )}
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Quick Stats */}
-            <div className="rounded-2xl bg-white p-6 shadow-lg">
-              <h3 className="mb-4 text-xl font-bold text-gray-900">
-                Quick Facts
-              </h3>
-              <div className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Established</span>
-                  <span className="font-semibold">
-                    {university.establishedYear}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Ranking</span>
-                  <span className="font-semibold">#{university.ranking}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Acceptance Rate</span>
-                  <span className="font-semibold">
-                    {university.acceptanceRate}%
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Annual Tuition</span>
-                  <span className="font-semibold">
-                    {university.tuitionFee.currency}
-                    {university.tuitionFee.min.toLocaleString()} -{' '}
-                    {university.tuitionFee.currency}
-                    {university.tuitionFee.max.toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Tags */}
-            {university.tags && (
-              <div className="rounded-2xl bg-white p-6 shadow-lg">
-                <h3 className="mb-4 text-xl font-bold text-gray-900">Tags</h3>
-                <div className="flex flex-wrap gap-2">
-                  {university.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-primary/10 text-primary rounded-full px-3 py-1 text-sm font-medium"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Action Buttons */}
-            <div className="rounded-2xl bg-white p-6 shadow-lg">
-              <div className="space-y-3">
-                <button className="bg-primary hover:bg-primary/90 w-full rounded-lg px-4 py-3 font-medium text-white transition-colors duration-200">
-                  Apply Now
-                </button>
-                <button className="w-full rounded-lg bg-gray-100 px-4 py-3 font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-200">
-                  Download Brochure
-                </button>
-                {university.website && (
-                  <a
-                    href={university.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-center font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50"
-                  >
-                    Visit Website
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
+        {/* Leading Universities Section */}
+        <div className="py-12">
+          <LeadingUniversities
+            title="Other Leading Universities"
+            className="border-t border-gray-200 pt-12"
+          />
         </div>
       </div>
     </div>

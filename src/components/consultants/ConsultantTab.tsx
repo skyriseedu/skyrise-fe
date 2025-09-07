@@ -1,18 +1,26 @@
 import React from 'react';
 import JoinUsCard from './joinUsCard';
+import coverImage from '../../assets/images/consultant-cover.png';
+import { useConsultantCount } from '@/queries/consultants';
 
 const ConsultantTab: React.FC = () => {
+  const { data: consultantCountResponse, isLoading: isLoadingConsultantCount } =
+    useConsultantCount();
+
+  let consultantCount = consultantCountResponse?.data.total || 0;
+  consultantCount -= consultantCount % 10; // Round down to nearest 10
+
   return (
     <div className="min-h-screen bg-white">
       <div className="relative h-64 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+          src={coverImage}
           alt="Students studying"
           className="h-full w-full object-cover"
         />
-        <div className="bg-opacity-40 absolute inset-0 bg-black" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="px-4 text-center text-xl font-medium text-white">
+
+        <div className="absolute inset-0 mb-6 flex items-end justify-center">
+          <h1 className="text-h3 bg-black/50 px-4 text-center font-semibold text-white">
             "Calling Students Studying in Thailand. Make an Impact. Inspire the
             Next Generation."
           </h1>
@@ -146,7 +154,7 @@ const ConsultantTab: React.FC = () => {
                 <div>Join an inspiring (RISE) community</div>
               </div>
               <div className="text-h1 mb-2 font-semibold text-gray-900">
-                50+
+                {isLoadingConsultantCount ? '...' : consultantCount}+
               </div>
             </div>
             <div className="text-body-2 lg:text-body-1 text-gray-600">

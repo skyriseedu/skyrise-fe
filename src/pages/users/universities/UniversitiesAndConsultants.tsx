@@ -34,7 +34,7 @@ const UniversitiesAndConsultants: React.FC = () => {
                   onClick={() => setActiveTab('consultants')}
                   className={`rounded-full px-6 py-2 text-sm font-medium transition-colors ${
                     activeTab === 'consultants'
-                      ? 'bg-rose-500 text-white'
+                      ? 'bg-primary text-white'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
