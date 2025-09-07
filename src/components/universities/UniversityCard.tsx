@@ -1,9 +1,9 @@
 import React from 'react';
 import type { UniversityCardProps } from '@/types/users/university';
+import { Link } from 'react-router';
 
 const UniversityCard: React.FC<UniversityCardProps> = ({
   university,
-  onViewDetails,
   className = '',
 }) => {
   const { universityName, logoImage, keyInformation } = university;
@@ -64,12 +64,11 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
             <div className="text-body-1 font-semibold text-gray-900">Free</div>
           </div>
         </div>
-        <button
-          onClick={() => onViewDetails?.(university)}
-          className="bg-primary w-full cursor-pointer rounded-xl px-4 py-3 font-medium text-white transition-colors duration-200 hover:bg-red-600"
-        >
-          Read Details
-        </button>
+        <Link to={`/universities-and-consultants/${university.slug}`}>
+          <button className="bg-primary w-full cursor-pointer rounded-xl px-4 py-3 font-medium text-white transition-colors duration-200 hover:bg-red-600">
+            Read Details
+          </button>
+        </Link>
       </div>
     </div>
   );

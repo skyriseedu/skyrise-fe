@@ -2,7 +2,6 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { UniversityCard } from './index';
 import DesktopUniversityFilter from './DesktopUniversityFilter';
 import Pagination from '@/components/common/Pagination';
-import type { University } from '@/types/users/university';
 import type { UniversityFilters } from '@/types/users/university-filters';
 import filterIcon from '@/assets/filter-alt.svg';
 import searchIcon from '@/assets/search.svg';
@@ -98,11 +97,6 @@ const UniversityTab: React.FC = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleViewDetails = (university: University) => {
-    // Navigate to university detail page
-    console.log('View details for:', university.universityName);
   };
 
   return (
@@ -259,7 +253,6 @@ const UniversityTab: React.FC = () => {
                     <UniversityCard
                       key={university._id}
                       university={university}
-                      onViewDetails={handleViewDetails}
                     />
                   ))}
                 </div>
@@ -366,7 +359,6 @@ const UniversityTab: React.FC = () => {
                         <UniversityCard
                           key={university._id}
                           university={university}
-                          onViewDetails={handleViewDetails}
                         />
                       ))}
                     </div>
