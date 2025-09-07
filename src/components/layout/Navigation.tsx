@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import CaretDown from '../../assets/caret-down.svg?react';
+import CaretDownWhite from '../../assets/caret-down-white.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
 
 interface NavigationProps {
@@ -55,6 +56,11 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
     return location.pathname.startsWith(item.path || '');
   };
 
+  const isActiveSubItem = (path: string | undefined) => {
+    if (!path) return false;
+    return location.pathname.startsWith(path);
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -98,9 +104,19 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
                         >
                           <div className="flex items-center justify-start">
                             <span>{item.name}</span>
-                            <CaretDown
-                              className={`h-5 w-5 transition-transform duration-200 ${expandedServices ? 'rotate-180' : ''}`}
-                            />
+                            {isActiveMenuItem(item) ? (
+                              <CaretDownWhite
+                                className={`ml-3 h-3 w-3 transition-transform duration-200 ${
+                                  expandedServices ? 'rotate-180' : ''
+                                }`}
+                              />
+                            ) : (
+                              <CaretDown
+                                className={`h-5 w-5 transition-transform duration-200 ${
+                                  expandedServices ? 'rotate-180' : ''
+                                }`}
+                              />
+                            )}
                           </div>
                         </button>
 
@@ -117,7 +133,11 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
                                 <Link
                                   to={subItem.path}
                                   onClick={onClose}
-                                  className="text-h3 text-text-primary hover:bg-secondary hover:text-primary block rounded-lg px-4 py-2 font-semibold transition-colors"
+                                  className={`text-h3 block rounded-lg px-4 py-2 font-semibold transition-colors ${
+                                    isActiveSubItem(subItem.path)
+                                      ? 'bg-primary text-white'
+                                      : 'text-text-primary hover:bg-secondary hover:text-primary'
+                                  }`}
                                 >
                                   {subItem.name}
                                 </Link>
