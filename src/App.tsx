@@ -44,7 +44,7 @@ const App: React.FC = () => {
               path="services/visa-assistance"
               element={<VisaAssistancePage />}
             />
-            <Route path="services/counseling" element={<CounselingPage />} />
+            <Route path="services/consultation" element={<CounselingPage />} />
             <Route
               path="services/scholarships"
               element={<ScholarshipsPage />}

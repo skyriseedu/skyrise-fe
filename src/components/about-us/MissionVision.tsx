@@ -11,7 +11,7 @@ const MissionVision: React.FC<MissionVisionProps> = ({
 }) => {
   return (
     <section className="w-full bg-white py-10 lg:py-20">
-      <div className="container mx-auto px-4 lg:px-6">
+      <div className="container mx-auto px-6 lg:px-8">
         {/* Mobile Layout */}
         <div className="space-y-6 lg:hidden">
           <div className="overflow-hidden">
