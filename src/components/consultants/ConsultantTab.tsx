@@ -1,205 +1,206 @@
-import React, { useState } from 'react';
-import type { Consultant } from '@/types/users/consultant';
-
-// Mock data - replace with real data later
-const mockConsultants: Consultant[] = [
-  {
-    id: '1',
-    name: 'Dr. Sarah Johnson',
-    title: 'Senior Education Consultant',
-    company: 'Global Education Partners',
-    image: '/api/placeholder/150/150',
-    specialization: [
-      'University Applications',
-      'Scholarship Guidance',
-      'Career Planning',
-    ],
-    experience: 8,
-    rating: 4.9,
-    reviewCount: 127,
-    location: 'Bangkok, Thailand',
-    languages: ['English', 'Thai'],
-    description:
-      'Experienced education consultant specializing in international university applications and scholarship opportunities.',
-    price: {
-      amount: 150,
-      currency: '$',
-      per: 'hour',
-    },
-    availability: ['Monday', 'Tuesday', 'Wednesday', 'Friday'],
-    tags: ['Expert', 'Top Rated'],
-  },
-  // Add more mock consultants as needed
-];
+import React from 'react';
+import JoinUsCard from './joinUsCard';
 
 const ConsultantTab: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [consultants] = useState<Consultant[]>(mockConsultants);
-
-  const totalConsultants = consultants.length;
-
-  const handleViewProfile = (consultant: Consultant) => {
-    console.log('View profile for:', consultant.name);
-  };
-
-  const handleBookConsultation = (consultant: Consultant) => {
-    console.log('Book consultation with:', consultant.name);
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Stats Row */}
-      <div className="flex items-center justify-between">
-        <div className="text-lg font-medium text-gray-900">
-          Total Consultants {totalConsultants}
-        </div>
-        <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50">
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-            />
-          </svg>
-          Filters
-        </button>
-      </div>
-
-      {/* Search Bar */}
-      <div className="relative">
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <svg
-            className="h-5 w-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </div>
-        <input
-          type="text"
-          placeholder="Search Consultant"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="focus:ring-primary focus:border-primary block w-full rounded-lg border border-gray-300 bg-white py-3 pr-3 pl-10 leading-5 placeholder-gray-500 focus:placeholder-gray-400 focus:ring-1 focus:outline-none"
+    <div className="min-h-screen bg-white">
+      <div className="relative h-64 overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+          alt="Students studying"
+          className="h-full w-full object-cover"
         />
+        <div className="bg-opacity-40 absolute inset-0 bg-black" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <h1 className="px-4 text-center text-xl font-medium text-white">
+            "Calling Students Studying in Thailand. Make an Impact. Inspire the
+            Next Generation."
+          </h1>
+        </div>
       </div>
 
-      {/* Consultant Cards Grid */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {consultants.map((consultant) => (
-          <div
-            key={consultant.id}
-            className="overflow-hidden rounded-2xl bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl"
-          >
-            {/* Consultant Avatar */}
-            <div className="p-6 text-center">
-              <img
-                src={consultant.image}
-                alt={consultant.name}
-                className="mx-auto mb-4 h-20 w-20 rounded-full object-cover"
-              />
-              <h3 className="mb-1 text-lg font-bold text-gray-900">
-                {consultant.name}
-              </h3>
-              <p className="mb-2 text-sm text-gray-600">{consultant.title}</p>
-              <p className="text-xs text-gray-500">{consultant.company}</p>
-            </div>
-
-            {/* Consultant Info */}
-            <div className="px-6 pb-6">
-              {/* Rating and Experience */}
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center">
-                  <svg
-                    className="h-4 w-4 text-yellow-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                  <span className="ml-1 text-sm font-medium">
-                    {consultant.rating}
-                  </span>
-                  <span className="ml-1 text-xs text-gray-500">
-                    ({consultant.reviewCount})
-                  </span>
-                </div>
-                <span className="text-sm text-gray-600">
-                  {consultant.experience} years exp.
-                </span>
-              </div>
-
-              {/* Specialization Tags */}
-              <div className="mb-4">
-                <div className="flex flex-wrap gap-1">
-                  {consultant.specialization.slice(0, 2).map((spec, index) => (
-                    <span
-                      key={index}
-                      className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800"
-                    >
-                      {spec}
-                    </span>
-                  ))}
-                  {consultant.specialization.length > 2 && (
-                    <span className="text-xs text-gray-500">
-                      +{consultant.specialization.length - 2} more
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Price */}
-              <div className="mb-4 text-center">
-                <span className="text-primary text-lg font-bold">
-                  {consultant.price.currency}
-                  {consultant.price.amount}
-                </span>
-                <span className="text-sm text-gray-600">
-                  /{consultant.price.per}
-                </span>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-3">
-                <button
-                  onClick={() => handleViewProfile(consultant)}
-                  className="flex-1 rounded-lg bg-gray-100 px-4 py-2 font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-200"
-                >
-                  View Profile
-                </button>
-                <button
-                  onClick={() => handleBookConsultation(consultant)}
-                  className="bg-primary hover:bg-primary/90 flex-1 rounded-lg px-4 py-2 font-medium text-white transition-colors duration-200"
-                >
-                  Book Now
-                </button>
-              </div>
+      <div className="w-full px-6 py-8 lg:px-16">
+        <div className="mb-8 flex items-start gap-4">
+          <div className="flex-1">
+            <h2 className="lg:text-h1 text-h3 mb-4 font-semibold text-gray-900">
+              Requirements for applying 'Consultant'
+            </h2>
+            <div className="lg:text-body-1 text-body-3 mb-4 text-gray-600">
+              Are you currently studying in Thailand, both in private and public
+              universities? Join the{' '}
+              <span className="font-medium text-red-500">
+                SKYRISE Education Team
+              </span>{' '}
+              to support future students and get rewarded for your insights and
+              experiences!
             </div>
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* Load More Button */}
-      {consultants.length > 0 && (
-        <div className="flex justify-center">
-          <button className="rounded-lg border border-gray-300 bg-white px-6 py-3 text-gray-700 transition-colors hover:bg-gray-50">
-            Load More Consultants
+        <div className="mb-8">
+          <h3 className="lg:text-h1 mb-4 text-lg font-semibold text-gray-900">
+            What We're Looking For:
+          </h3>
+          <ul className="text-body-2 lg:text-body-1 space-y-3 text-gray-700">
+            <li className="flex items-start gap-2">
+              <span className="mt-1 text-red-500">•</span>
+              <span>
+                Current international or local student enrolled in a university
+                or college in Thailand.
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-1 text-red-500">•</span>
+              <span>
+                Good academic standing with relevant academic records or
+                consistent performance.
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-1 text-red-500">•</span>
+              <span>
+                Strong communication skills and a willingness to share your
+                daily experiences, and campus life honestly.
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-1 text-red-500">•</span>
+              <span>
+                Reliable and responsible individuals who can commit time
+                (Online) to support younger students.
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-1 text-red-500">•</span>
+              <span>
+                Stand out contributions in student communities, leadership,
+                volunteering, or unique achievements as a plus!
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div className="mb-8">
+          <h3 className="lg:text-h1 mb-6 text-lg font-semibold text-gray-900">
+            Why Join Us?
+          </h3>
+          <div className="lg:text-h2 mb-6 text-sm text-gray-600">
+            We value "Quality" over "Quantity", which is why selected
+            ambassadors will enjoy:
+          </div>
+
+          <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+            <JoinUsCard
+              number={1}
+              content="Exclusive rewards and incentives (commissions, recognition, gifts, or event invites)"
+            />
+            <JoinUsCard
+              number={2}
+              content="Priority access (to opportunities, networking, and partnerships through ‘SKYRISE’)"
+            />
+            <JoinUsCard
+              number={3}
+              content="Feature your profile on our website (build your impressive portfolio)"
+            />
+            <JoinUsCard
+              number={4}
+              content="Chance to inspire others, just like someone may have once inspired you"
+            />
+          </div>
+        </div>
+
+        <div className="mb-8">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+            What You'll do:
+          </h3>
+          <ul className="space-y-3 text-gray-700">
+            <li className="flex items-start gap-2">
+              <span className="mt-1 text-red-500">•</span>
+              <span>
+                <span className="font-semibold">Share</span> your real student
+                life experiences (consultations, videos, blogs, or Q&A).
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-1 text-red-500">•</span>
+              <span>
+                <span className="font-semibold">Share</span> answer students'
+                inquiries (Q and A) on your university).
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-1 text-red-500">•</span>
+              <span>
+                <span className="font-semibold">Represent SKYRISE</span> (with
+                passion and positivity).
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Community Stats */}
+        <div className="mb-8 p-4">
+          <div className="flex items-center justify-between space-x-8">
+            <div>
+              <div className="text-h2 lg:text-h1 font-semibold text-gray-600">
+                <div>Join an inspiring (RISE) community</div>
+              </div>
+              <div className="text-h1 mb-2 font-semibold text-gray-900">
+                50+
+              </div>
+            </div>
+            <div className="text-body-2 lg:text-body-1 text-gray-600">
+              We're proud of our consultants - scholarship winners, top
+              students, competition champions, and community (RISE)ers. At
+              SKYRISE, we celebrate students' journeys while empowering others.
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-8 text-center">
+          <button className="bg-primary w-full rounded-lg px-8 py-3 font-medium text-white transition-colors hover:bg-red-600">
+            Join with us!
           </button>
         </div>
-      )}
+
+        <div className="mb-8">
+          <h3 className="text-h3 mb-6 font-semibold text-gray-900 lg:text-lg">
+            Our Ambassadors from Leading Universities
+          </h3>
+          <div className="grid grid-cols-2 items-center justify-items-center gap-6 md:grid-cols-6">
+            <img
+              src="https://via.placeholder.com/80x40/E5E7EB/6B7280?text=RANGSIT"
+              alt="Rangsit University"
+              className="h-10 object-contain"
+            />
+            <img
+              src="https://via.placeholder.com/80x40/E5E7EB/6B7280?text=BANGKOK"
+              alt="Bangkok University"
+              className="h-10 object-contain"
+            />
+            <img
+              src="https://via.placeholder.com/80x40/E5E7EB/6B7280?text=UTCC"
+              alt="UTCC"
+              className="h-10 object-contain"
+            />
+            <img
+              src="https://via.placeholder.com/80x40/E5E7EB/6B7280?text=RAFFLES"
+              alt="Raffles University"
+              className="h-10 object-contain"
+            />
+            <img
+              src="https://via.placeholder.com/80x40/E5E7EB/6B7280?text=AIHM"
+              alt="AIHM"
+              className="h-10 object-contain"
+            />
+            <img
+              src="https://via.placeholder.com/80x40/E5E7EB/6B7280?text=DUSIT"
+              alt="Dusit Thani College"
+              className="h-10 object-contain"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
