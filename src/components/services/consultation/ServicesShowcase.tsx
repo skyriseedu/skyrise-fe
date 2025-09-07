@@ -1,11 +1,14 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import ServiceCard from '@/components/services/consultation/ServiceCard';
 import admissionSupportIcon from '@/assets/admission-support-home.svg';
 import visaSupportIcon from '@/assets/visa-support-home.svg';
 import preUniversityHome from '@/assets/pre-university-home.svg';
 import airpotPickUp from '@/assets/airport-pickup-home.svg';
+import consultation from '@/assets/service-home.svg';
 
 const ServicesShowcase: React.FC = () => {
+  const location = useLocation();
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-h3 lg:text-h2 mb-6 font-semibold">
@@ -34,6 +37,14 @@ const ServicesShowcase: React.FC = () => {
             icon={preUniversityHome}
           />
         </div>
+        {location.pathname !== '/services/consultation' && (
+          <div className="shrink-0 md:w-auto md:shrink">
+            <ServiceCard
+              title="Consultation"
+              icon={consultation}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
