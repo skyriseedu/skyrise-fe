@@ -1,6 +1,5 @@
 export interface University {
   _id: string;
-  id: string;
   universityName: string;
   universityType: 'Public' | 'Private' | 'International';
   logoImage: string;
