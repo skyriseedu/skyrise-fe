@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Layout } from './components/layout';
+import ScrollToTop from './components/common/ScrollToTop';
 import HomePage from './pages/users/home/HomePage';
 import ExplorePage from './pages/users/explore/ExplorePage';
 import ProgramDetailsPage from './pages/users/explore/ProgramDetailsPage';
@@ -29,6 +30,7 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
