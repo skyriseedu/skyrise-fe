@@ -10,7 +10,7 @@ const ServicesShowcase: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="mb-6 text-h3 lg:text-h2 font-semibold">Other services you may want to check</h1>
 
-      <div className="flex gap-4 overflow-x-auto pb-2 mt-3 md:grid md:grid-cols-4 md:gap-6 md:overflow-visible">
+      <div className="flex gap-4 overflow-x-auto pb-2 mt-3 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
         <div className="shrink-0 md:shrink md:w-auto">
           <ServiceCard
             title="Admission Process Support"
