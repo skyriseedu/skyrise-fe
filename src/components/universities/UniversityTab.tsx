@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { UniversityCard } from './index';
 import DesktopUniversityFilter from './DesktopUniversityFilter';
 import Pagination from '@/components/common/Pagination';
+import Loading from '@/components/common/Loading';
 import type { UniversityFilters } from '@/types/users/university-filters';
 import filterIcon from '@/assets/filter-alt.svg';
 import searchIcon from '@/assets/search.svg';
@@ -105,8 +106,8 @@ const UniversityTab: React.FC = () => {
       {isLoading && (
         <div className="flex items-center justify-center py-16">
           <div className="text-center">
-            <div className="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
-            <p className="text-text-secondary">Loading universities...</p>
+            <Loading size="lg" color="primary" />
+            <p className="text-text-secondary mt-4">Loading universities...</p>
           </div>
         </div>
       )}
@@ -208,7 +209,7 @@ const UniversityTab: React.FC = () => {
                   />
                   {isTyping && (
                     <div className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2">
-                      <div className="border-primary h-4 w-4 animate-spin rounded-full border-2 border-t-transparent"></div>
+                      <Loading size="sm" color="primary" />
                     </div>
                   )}
                   <input
@@ -228,8 +229,8 @@ const UniversityTab: React.FC = () => {
               {isSearching && (
                 <div className="flex items-center justify-center py-12">
                   <div className="text-center">
-                    <div className="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
-                    <p className="text-text-secondary">
+                    <Loading size="lg" color="primary" />
+                    <p className="text-text-secondary mt-4">
                       {isTyping ? 'Searching...' : 'Loading universities...'}
                     </p>
                   </div>
@@ -309,7 +310,7 @@ const UniversityTab: React.FC = () => {
                     />
                     {isTyping && (
                       <div className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2">
-                        <div className="border-primary h-4 w-4 animate-spin rounded-full border-2 border-t-transparent"></div>
+                        <Loading size="sm" color="primary" />
                       </div>
                     )}
                     <input
@@ -328,8 +329,8 @@ const UniversityTab: React.FC = () => {
                   {isSearching && (
                     <div className="flex h-full items-center justify-center">
                       <div className="text-center">
-                        <div className="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
-                        <p className="text-text-secondary">
+                        <Loading size="lg" color="primary" />
+                        <p className="text-text-secondary mt-4">
                           {isTyping
                             ? 'Searching...'
                             : 'Loading universities...'}

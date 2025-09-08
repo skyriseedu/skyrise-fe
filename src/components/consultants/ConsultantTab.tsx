@@ -6,6 +6,7 @@ import UniversityList from './UniversityList';
 import testLog from '../../assets/test-logo.png';
 import SuccessModal from '../common/SuccessModal';
 import ApplyConsultantForm from '../common/ApplyConsultantForm';
+import Loading from '@/components/common/Loading';
 
 const universityLogos = [
   {
@@ -194,7 +195,11 @@ const ConsultantTab: React.FC = () => {
                 <div>Join an inspiring (RISE) community</div>
               </div>
               <div className="text-h1 mb-2 font-semibold text-gray-900">
-                {isLoadingConsultantCount ? '...' : consultantCount}+
+                {isLoadingConsultantCount ? (
+                  <Loading size="md" color="primary" />
+                ) : (
+                  `${consultantCount}+`
+                )}
               </div>
             </div>
             <div className="text-body-2 lg:text-body-1 text-gray-600">
@@ -208,7 +213,13 @@ const ConsultantTab: React.FC = () => {
           <div className="hidden lg:grid lg:grid-cols-3 lg:items-center lg:gap-8">
             <div className="text-center">
               <div className="text-[100px] font-semibold text-gray-900">
-                {isLoadingConsultantCount ? '...' : consultantCount}+
+                {isLoadingConsultantCount ? (
+                  <div className="flex justify-center">
+                    <Loading size="lg" color="primary" />
+                  </div>
+                ) : (
+                  `${consultantCount}+`
+                )}
               </div>
             </div>
             <div className="text-center">
