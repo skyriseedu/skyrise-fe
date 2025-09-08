@@ -1,7 +1,7 @@
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { programsService } from '@/lib/api';
 import { programKeys } from './queryKeys';
-import type { UseProgramsParams, ProgramsSearchParams } from '@/types/users/program';
+import type { UseProgramsParams, ProgramsSearchParams, ProgramDetailsApiResponse } from '@/types/users/program';
 import type { ProgramFiltersResponse } from '@/types/users/explore';
 
 export function usePrograms(params: UseProgramsParams = {}) {
@@ -19,6 +19,14 @@ export function useProgramFilters() {
     queryKey: programKeys.filters(),
     queryFn: () => programsService.getProgramFilters(),
     staleTime: 60 * 60 * 2000, // 2 hour
+  });
+}
+
+export function useProgramBySlug(slug: string) {
+  return useQuery<ProgramDetailsApiResponse>({
+    queryKey: programKeys.detail(slug),
+    queryFn: () => programsService.getProgramBySlug(slug),
+    enabled: !!slug,
   });
 }
 

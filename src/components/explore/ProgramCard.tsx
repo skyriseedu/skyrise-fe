@@ -4,6 +4,7 @@ import Button from '../common/Button';
 
 interface ProgramCardProps {
   id?: string;
+  slug: string;
   title: string;
   university: string;
   upcomingIntake: string;
@@ -53,7 +54,7 @@ const ApplicationDeadline: React.FC<{ deadline: string }> = ({ deadline }) => (
 );
 
 const ProgramCard: React.FC<ProgramCardProps> = ({
-  id = '1',
+  slug,
   title,
   university,
   upcomingIntake,
@@ -104,7 +105,8 @@ const ProgramCard: React.FC<ProgramCardProps> = ({
             if (onReadDetailsClick) {
               onReadDetailsClick();
             } else {
-              navigate(`/programs/${id}`);
+              const path = `/programs/${slug}`;
+              navigate(path);
             }
           }}
           className="flex-1 !bg-[var(--color-primary)] whitespace-nowrap hover:!bg-[var(--color-primary)]/90 lg:flex-none lg:!px-8"

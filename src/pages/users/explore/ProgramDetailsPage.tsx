@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import KeyInfoCard from '@/components/program-details/KeyInfoCard';
 import ProgramStructure from '@/components/program-details/ProgramStructure';
 import StickyHeader from '@/components/common/StickyHeader';
@@ -6,65 +6,58 @@ import ReviewsSection from '@/components/reviews/ReviewsSection';
 import Loading from '@/components/common/Loading';
 import calendarIcon from '@/assets/calendar.svg';
 import graduationCap from '@/assets/graduation-cap.svg';
-import document from '@/assets/document.svg';
+import documentIcon from '@/assets/document.svg';
 import card from '@/assets/card.svg';
 import location from '@/assets/location.svg';
 import bookOpen from '@/assets/book-open.svg';
+import { useParams } from 'react-router-dom';
+import { useProgramBySlug } from '@/queries';
 
 const ProgramDetailsPage: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const { slug } = useParams<{ slug: string }>();
+  const { data, isLoading, isError } = useProgramBySlug(slug || '');
 
-  useEffect(() => {
-    // Simulate data fetching
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-  const programData = {
-    title: 'Bachelor of Science in Information and Communication Technology',
-    description:
-      "The Information and Communication Technology (ICT) program encourages students to think critically and creatively as they learn how to find, process, and apply the vast amounts of information available in today's connected, digital world.",
-    keyInfo: [
+  const keyInfoCards = useMemo(
+    () => [
       {
         icon: graduationCap,
         label: 'Degree',
-        value: 'Bachelor',
+        value: data?.data?.keyInformation?.degree ?? '—',
       },
       {
         icon: calendarIcon,
         label: 'Duration',
-        value: '4 years',
+        value: data?.data?.keyInformation?.duration ?? '—',
       },
       {
         icon: location,
         label: 'Location',
-        value: 'Bangkok',
+        value: data?.data?.keyInformation?.location ?? '—',
       },
       {
-        icon: document,
+        icon: documentIcon,
         label: 'Application Fees',
-        value: 'Charged',
+        value: data?.data?.keyInformation?.applicationFee ?? '—',
       },
       {
         icon: bookOpen,
         label: 'Upcoming Intake',
-        value: 'August 2025',
+        value: data?.data?.keyInformation?.upcomingIntake?.[0] ?? '—',
       },
       {
         icon: card,
         label: 'Total Tuition Fee',
-        value: '600,000 THB',
+        value: data?.data?.keyInformation?.totalTuitionFees ?? '—',
       },
     ],
-  };
+    [data]
+  );
 
   return (
     <div className="min-h-screen bg-white">
       <StickyHeader
-        title={isLoading ? undefined : programData.title}
-        subtitle={isLoading ? undefined : 'Rangsit University'}
+        title={isLoading ? undefined : data?.data?.programName}
+        subtitle={isLoading ? undefined : data?.data?.universityName}
         mobilePadding="px-8"
         desktopPadding="lg:px-0"
         isLoading={isLoading}
@@ -76,6 +69,12 @@ const ProgramDetailsPage: React.FC = () => {
             <Loading size="lg" color="primary" />
           </div>
         </div>
+      ) : isError ? (
+        <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6 lg:py-8">
+          <div className="flex h-96 items-center justify-center">
+            <p className="text-body-3 text-red-600">Failed to load program details.</p>
+          </div>
+        </div>
       ) : (
         <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6 lg:py-8">
           <div className="mb-12 flex flex-col items-center gap-8 lg:mb-20 lg:flex-row lg:gap-12">
@@ -83,8 +82,11 @@ const ProgramDetailsPage: React.FC = () => {
               <div className="relative mx-auto h-[240px] w-[240px] lg:mx-0 lg:h-[380px] lg:w-[380px]">
                 <div className="absolute right-0 bottom-0 h-44 w-44 overflow-hidden rounded-full shadow-xl lg:h-72 lg:w-72">
                   <img
-                    src="https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=500&h=500&fit=crop"
-                    alt="Programming"
+                    src={
+                      data?.data?.images?.image1 ||
+                      'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=500&h=500&fit=crop'
+                    }
+                    alt={data?.data?.programName || 'Program'}
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -97,8 +99,11 @@ const ProgramDetailsPage: React.FC = () => {
                   }}
                 >
                   <img
-                    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=400&fit=crop"
-                    alt="Web Design"
+                    src={
+                      data?.data?.images?.image2 ||
+                      'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=400&fit=crop'
+                    }
+                    alt={data?.data?.universityName || 'Program image'}
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -110,7 +115,7 @@ const ProgramDetailsPage: React.FC = () => {
                 About Program
               </h2>
               <p className="text-text-primary text-body-2 lg:text-body-2 leading-relaxed">
-                {programData.description}
+                {data?.data?.about || 'Program description is not available.'}
               </p>
             </div>
           </div>
@@ -124,23 +129,23 @@ const ProgramDetailsPage: React.FC = () => {
               <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
                 <div className="h-20 lg:h-24">
                   <KeyInfoCard
-                    icon={programData.keyInfo[0].icon}
-                    label={programData.keyInfo[0].label}
-                    value={programData.keyInfo[0].value}
+                    icon={keyInfoCards[0].icon}
+                    label={keyInfoCards[0].label}
+                    value={keyInfoCards[0].value}
                   />
                 </div>
                 <div className="h-20 lg:h-24">
                   <KeyInfoCard
-                    icon={programData.keyInfo[1].icon}
-                    label={programData.keyInfo[1].label}
-                    value={programData.keyInfo[1].value}
+                    icon={keyInfoCards[1].icon}
+                    label={keyInfoCards[1].label}
+                    value={keyInfoCards[1].value}
                   />
                 </div>
                 <div className="h-20 lg:h-24">
                   <KeyInfoCard
-                    icon={programData.keyInfo[2].icon}
-                    label={programData.keyInfo[2].label}
-                    value={programData.keyInfo[2].value}
+                    icon={keyInfoCards[2].icon}
+                    label={keyInfoCards[2].label}
+                    value={keyInfoCards[2].value}
                   />
                 </div>
 
@@ -163,23 +168,23 @@ const ProgramDetailsPage: React.FC = () => {
 
                 <div className="h-20 lg:h-24">
                   <KeyInfoCard
-                    icon={programData.keyInfo[3].icon}
-                    label={programData.keyInfo[3].label}
-                    value={programData.keyInfo[3].value}
+                    icon={keyInfoCards[3].icon}
+                    label={keyInfoCards[3].label}
+                    value={keyInfoCards[3].value}
                   />
                 </div>
                 <div className="h-20 lg:h-24">
                   <KeyInfoCard
-                    icon={programData.keyInfo[4].icon}
-                    label={programData.keyInfo[4].label}
-                    value={programData.keyInfo[4].value}
+                    icon={keyInfoCards[4].icon}
+                    label={keyInfoCards[4].label}
+                    value={keyInfoCards[4].value}
                   />
                 </div>
                 <div className="h-20 lg:h-24">
                   <KeyInfoCard
-                    icon={programData.keyInfo[5].icon}
-                    label={programData.keyInfo[5].label}
-                    value={programData.keyInfo[5].value}
+                    icon={keyInfoCards[5].icon}
+                    label={keyInfoCards[5].label}
+                    value={keyInfoCards[5].value}
                   />
                 </div>
               </div>
@@ -188,7 +193,7 @@ const ProgramDetailsPage: React.FC = () => {
           <ProgramStructure />
         </div>
       )}
-      {!isLoading && <ReviewsSection />}
+      {!isLoading && !isError && <ReviewsSection />}
     </div>
   );
 };

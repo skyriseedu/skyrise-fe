@@ -24,4 +24,6 @@ export const programKeys = {
   filters: () => [...programKeys.all, 'filters'] as const,
   search: (filters: Record<string, unknown>) =>
     [...programKeys.all, 'search', { filters }] as const,
+  details: () => [...programKeys.all, 'detail'] as const,
+  detail: (slug: string) => [...programKeys.details(), slug] as const,
 } as const;

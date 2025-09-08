@@ -154,6 +154,7 @@ const ExplorePage: React.FC = () => {
     () =>
       allPrograms.map((p: any) => ({
         id: p.id || p._id,
+        slug: p.slug,
         title: p.title || p.programName || 'Untitled Program',
         university: p.university || p.universityName || 'Unknown University',
         upcomingIntake:
@@ -332,6 +333,7 @@ const ExplorePage: React.FC = () => {
                     {filteredPrograms.map((program) => (
                   <ProgramCard
                     key={program.id}
+                    slug={(program as any).slug}
                     title={program.title}
                     university={program.university}
                     upcomingIntake={program.upcomingIntake}
@@ -432,6 +434,7 @@ const ExplorePage: React.FC = () => {
                     {filteredPrograms.map((program) => (
                       <ProgramCard
                         key={program.id}
+                        slug={(program as any).slug}
                         title={program.title}
                         university={program.university}
                         upcomingIntake={program.upcomingIntake}
