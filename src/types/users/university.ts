@@ -25,6 +25,7 @@ export interface University {
   studentReviews: Array<StudentReview>;
   status: 'published' | 'draft' | 'archived';
   views: number;
+  intakes: string[];
   createdAt: string;
   updatedAt: string;
   slug: string;
