@@ -91,7 +91,7 @@ const ExplorePage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const usingSearch = hasActiveFilters;
+  const usingSearch = hasActiveFilters || !!debouncedSearch;
   const searchParams = useMemo(() => {
     if (!usingSearch) return null;
     const degree = filters.degrees[0]
@@ -213,7 +213,7 @@ const ExplorePage: React.FC = () => {
                 </p>
               ) : (
                 <p className="text-body-2 text-text-primary font-semibold">
-                  Total {usingSearch ? totalCount : filteredPrograms.length} Programs Found
+                  Total {totalCount} Programs Found
                 </p>
               )}
 
@@ -378,7 +378,7 @@ const ExplorePage: React.FC = () => {
                 </p>
               ) : (
                 <p className="text-h2 text-text-primary font-semibold">
-                  Total {usingSearch ? totalCount : filteredPrograms.length} Programs Found
+                  Total {totalCount} Programs Found
                 </p>
               )}
 
