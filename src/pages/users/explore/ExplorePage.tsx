@@ -5,17 +5,17 @@ import StickyHeader from '@/components/common/StickyHeader';
 import Pagination from '@/components/common/Pagination';
 import Loading from '@/components/common/Loading';
 import type { ExploreFilters } from '@/types/users/explore';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import filterIcon from '@/assets/filter-alt.svg';
 import searchIcon from '@/assets/search.svg';
 import { useFilterStore } from '@/store/useFilterStore';
+import { usePrograms } from '@/queries';
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 10;
 
 const ExplorePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
   const { isMobileFilterOpen, setIsMobileFilterOpen } = useFilterStore();
   const [filters, setFilters] = useState<ExploreFilters>({
     degrees: [],
@@ -23,158 +23,10 @@ const ExplorePage: React.FC = () => {
     tuitionRanges: [],
     duration: [],
   });
-
-  useEffect(() => {
-    // Simulate data fetching
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const samplePrograms = [
-    {
-      id: '1',
-      title: 'Bachelor of Science in Information and Communication Technology',
-      university: 'Rangsit University',
-      upcomingIntake: 'Aug 2025',
-      duration: '4 years',
-      ranking: 'Public, 20th',
-      rankingYear: '2025',
-      totalTuitionFees: '600,000 THB',
-      applicationDeadline: 'July 23, 2025',
-      degree: 'bachelor',
-      program: 'it',
-      tuition: 600000,
-    },
-    {
-      id: '2',
-      title: 'Bachelor of Business Administration',
-      university: 'Chulalongkorn University',
-      upcomingIntake: 'Sep 2025',
-      duration: '4 years',
-      ranking: 'Public, 1st',
-      rankingYear: '2025',
-      totalTuitionFees: '800,000 THB',
-      applicationDeadline: 'August 15, 2025',
-      degree: 'bachelor',
-      program: 'business',
-      tuition: 800000,
-    },
-    {
-      id: '3',
-      title: 'Master of Engineering in Software Engineering',
-      university: 'Mahidol University',
-      upcomingIntake: 'Jan 2026',
-      duration: '2 years',
-      ranking: 'Public, 5th',
-      rankingYear: '2025',
-      totalTuitionFees: '450,000 THB',
-      applicationDeadline: 'December 1, 2025',
-      degree: 'master',
-      program: 'engineering',
-      tuition: 450000,
-    },
-    {
-      id: '4',
-      title: 'Bachelor of Medicine',
-      university: 'Siriraj Hospital Medical School',
-      upcomingIntake: 'June 2025',
-      duration: '6 years',
-      ranking: 'Public, 2nd',
-      rankingYear: '2025',
-      totalTuitionFees: '1,200,000 THB',
-      applicationDeadline: 'May 1, 2025',
-      degree: 'bachelor',
-      program: 'medicine',
-      tuition: 1200000,
-    },
-    {
-      id: '5',
-      title: 'Master of Business Administration (International Program)',
-      university: 'Thammasat University',
-      upcomingIntake: 'Aug 2025',
-      duration: '2 years',
-      ranking: 'Public, 8th',
-      rankingYear: '2025',
-      totalTuitionFees: '550,000 THB',
-      applicationDeadline: 'June 30, 2025',
-      degree: 'master',
-      program: 'business',
-      tuition: 550000,
-    },
-    {
-      id: '6',
-      title: 'Bachelor of Engineering in Computer Engineering',
-      university: "King Mongkut's University of Technology Thonburi",
-      upcomingIntake: 'Aug 2025',
-      duration: '4 years',
-      ranking: 'Public, 12th',
-      rankingYear: '2025',
-      totalTuitionFees: '520,000 THB',
-      applicationDeadline: 'July 15, 2025',
-      degree: 'bachelor',
-      program: 'engineering',
-      tuition: 520000,
-    },
-    {
-      id: '7',
-      title: 'Master of Science in Data Science',
-      university: 'Chiang Mai University',
-      upcomingIntake: 'Jan 2026',
-      duration: '2 years',
-      ranking: 'Public, 7th',
-      rankingYear: '2025',
-      totalTuitionFees: '380,000 THB',
-      applicationDeadline: 'November 30, 2025',
-      degree: 'master',
-      program: 'it',
-      tuition: 380000,
-    },
-    {
-      id: '8',
-      title: 'Bachelor of Arts in International Business',
-      university: 'Kasetsart University',
-      upcomingIntake: 'Aug 2025',
-      duration: '4 years',
-      ranking: 'Public, 10th',
-      rankingYear: '2025',
-      totalTuitionFees: '480,000 THB',
-      applicationDeadline: 'June 15, 2025',
-      degree: 'bachelor',
-      program: 'business',
-      tuition: 480000,
-    },
-    {
-      id: '9',
-      title: 'Doctor of Medicine',
-      university: 'Prince of Songkla University',
-      upcomingIntake: 'June 2025',
-      duration: '6 years',
-      ranking: 'Public, 4th',
-      rankingYear: '2025',
-      totalTuitionFees: '1,100,000 THB',
-      applicationDeadline: 'April 30, 2025',
-      degree: 'bachelor',
-      program: 'medicine',
-      tuition: 1100000,
-    },
-    {
-      id: '10',
-      title: 'Master of Engineering in Electrical Engineering',
-      university: 'Suranaree University of Technology',
-      upcomingIntake: 'Jan 2026',
-      duration: '2 years',
-      ranking: 'Public, 15th',
-      rankingYear: '2025',
-      totalTuitionFees: '350,000 THB',
-      applicationDeadline: 'December 15, 2025',
-      degree: 'master',
-      program: 'engineering',
-      tuition: 350000,
-    },
-  ];
+  const { data, isLoading, isError, error } = usePrograms({
+    page: currentPage,
+    limit: ITEMS_PER_PAGE,
+  });
 
   const activeFiltersCount = useMemo(() => {
     let count = 0;
@@ -197,10 +49,44 @@ const ExplorePage: React.FC = () => {
     setCurrentPage(1);
   };
 
-  const totalPages = Math.ceil(samplePrograms.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentPrograms = samplePrograms.slice(startIndex, endIndex);
+  const allPrograms = useMemo(() => {
+    const apiPrograms = (data as any)?.data?.programs as any[] | undefined;
+    if (Array.isArray(apiPrograms)) return apiPrograms;
+    const flatPrograms = (data as any)?.programs as any[] | undefined;
+    if (Array.isArray(flatPrograms)) return flatPrograms;
+    return [];
+  }, [data]);
+
+  const mappedPrograms = useMemo(
+    () =>
+      allPrograms.map((p: any) => ({
+        id: p.id || p._id,
+        title: p.title || p.programName || 'Untitled Program',
+        university: p.university || p.universityName || 'Unknown University',
+        upcomingIntake:
+          p.upcomingIntake ||
+          (Array.isArray(p?.keyInformation?.upcomingIntake)
+            ? p.keyInformation.upcomingIntake[0] || '—'
+            : '—'),
+        duration: p.duration || p?.keyInformation?.duration || '—',
+        ranking: p.ranking || p.universityRanking || '—',
+        rankingYear: p.rankingYear || '',
+        totalTuitionFees:
+          p.totalTuitionFees || p?.keyInformation?.totalTuitionFees || '—',
+        applicationDeadline: p.applicationDeadline || '—',
+      })),
+    [allPrograms]
+  );
+
+  const totalPages = useMemo(() => {
+    const rootPagination = (data as any)?.pagination;
+    if (rootPagination?.pages) return rootPagination.pages;
+    const nested = (data as any)?.data?.pagination;
+    if (nested?.totalPages) return nested.totalPages;
+    const totalCount =
+      (data as any)?.total ?? nested?.totalPrograms ?? mappedPrograms.length;
+    return Math.max(1, Math.ceil((totalCount || 0) / ITEMS_PER_PAGE));
+  }, [data, mappedPrograms]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -218,9 +104,14 @@ const ExplorePage: React.FC = () => {
             <div className="mb-3 flex items-center justify-between">
               {isLoading ? (
                 <div className="bg-secondary h-10 w-40 animate-pulse rounded"></div>
+              ) : isError ? (
+                <p className="text-body-2 text-red-600 font-semibold">
+                  {(error as any)?.message || 'Failed to load programs'}
+                </p>
               ) : (
                 <p className="text-body-2 text-text-primary font-semibold">
-                  Total {samplePrograms?.length} Programs Found
+                  Total {(data as any)?.total ?? mappedPrograms.length} Programs
+                  Found
                 </p>
               )}
 
@@ -325,13 +216,27 @@ const ExplorePage: React.FC = () => {
             <div className="flex h-64 items-center justify-center">
               <Loading size="lg" color="primary" />
             </div>
+          ) : isError ? (
+            <div className="flex h-64 items-center justify-center">
+              <p className="text-body-3 text-red-600">
+                {(error as any)?.message || 'Failed to load programs.'}
+              </p>
+            </div>
           ) : (
             <>
               <div className="flex flex-col gap-4">
-                {currentPrograms.map((program) => (
+                {mappedPrograms.map((program) => (
                   <ProgramCard
                     key={program.id}
-                    {...program}
+                    title={program.title}
+                    university={program.university}
+                    upcomingIntake={program.upcomingIntake}
+                    duration={program.duration}
+                    ranking={program.ranking}
+                    rankingYear={program.rankingYear}
+                    totalTuitionFees={program.totalTuitionFees}
+                    applicationDeadline={program.applicationDeadline}
+                    id={program.id}
                     onApplyClick={() => console.log('Apply clicked')}
                   />
                 ))}
@@ -373,9 +278,14 @@ const ExplorePage: React.FC = () => {
             <div className="mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
               {isLoading ? (
                 <div className="bg-secondary h-8 w-48 animate-pulse rounded"></div>
+              ) : isError ? (
+                <p className="text-body-3 text-red-600">
+                  {(error as any)?.message || 'Failed to load programs.'}
+                </p>
               ) : (
                 <p className="text-h2 text-text-primary font-semibold">
-                  Total {samplePrograms.length} Programs Found
+                  Total {(data as any)?.total ?? mappedPrograms.length} Programs
+                  Found
                 </p>
               )}
 
@@ -400,14 +310,28 @@ const ExplorePage: React.FC = () => {
               <div className="flex h-[450px] items-center justify-center">
                 <Loading size="lg" color="primary" />
               </div>
+            ) : isError ? (
+              <div className="flex h-[450px] items-center justify-center">
+                <p className="text-body-3 text-red-600">
+                  {(error as any)?.message || 'Failed to load programs.'}
+                </p>
+              </div>
             ) : (
               <>
                 <div className="scrollbar-hide relative h-[450px] overflow-y-auto">
                   <div className="flex flex-col gap-4 pb-20">
-                    {currentPrograms.map((program) => (
+                    {mappedPrograms.map((program) => (
                       <ProgramCard
                         key={program.id}
-                        {...program}
+                        title={program.title}
+                        university={program.university}
+                        upcomingIntake={program.upcomingIntake}
+                        duration={program.duration}
+                        ranking={program.ranking}
+                        rankingYear={program.rankingYear}
+                        totalTuitionFees={program.totalTuitionFees}
+                        applicationDeadline={program.applicationDeadline}
+                        id={program.id}
                         onApplyClick={() => console.log('Apply clicked')}
                       />
                     ))}

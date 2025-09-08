@@ -35,3 +35,21 @@ export interface ProgramsResponse {
 export interface ProgramDetailsResponse {
   program: Program;
 }
+export interface ProgramsApiResponse {
+  success: boolean;
+  message?: string;
+  count: number; 
+  total: number; 
+  pagination: {
+    page: number;
+    pages: number;
+  };
+  data: {
+    programs: any[]; 
+  };
+}
+
+export interface UseProgramsParams {
+  page?: number;
+  limit?: number;
+}

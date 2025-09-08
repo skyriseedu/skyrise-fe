@@ -12,3 +12,13 @@ export const blogKeys = {
   paginated: (category?: string, page?: number, limit?: number) =>
     [...blogKeys.all, 'paginated', { category, page, limit }] as const,
 } as const;
+
+// Query key factory for programs
+export const programKeys = {
+  all: ['programs'] as const,
+  lists: () => [...programKeys.all, 'list'] as const,
+  list: (filters: Record<string, unknown>) =>
+    [...programKeys.lists(), { filters }] as const,
+  paginated: (page?: number, limit?: number) =>
+    [...programKeys.all, 'paginated', { page, limit }] as const,
+} as const;
