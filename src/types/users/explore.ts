@@ -15,3 +15,14 @@ export interface FilterSection {
   label: string;
   options?: FilterOption[];
 }
+export interface ProgramFiltersResponse {
+  success: boolean;
+  message?: string;
+  data: {
+    degrees: FilterOption[];
+    programs: FilterOption[];
+    fees: FilterOption[];
+    durations: FilterOption[];
+    sortOptions?: FilterOption[];
+  };
+}

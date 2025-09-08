@@ -53,3 +53,11 @@ export interface UseProgramsParams {
   page?: number;
   limit?: number;
 }
+
+export interface ProgramsSearchParams extends UseProgramsParams {
+  q?: string;
+  degree?: string;
+  programs?: string | string[];
+  fees?: string | string[];
+  duration?: string | string[];
+}

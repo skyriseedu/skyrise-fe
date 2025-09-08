@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import caretDownIcon from '@/assets/caret-down.svg';
 import closeIcon from '@/assets/close.svg';
 import type { ExploreFilters, FilterSection } from '@/types/users/explore';
+import { useProgramOptionsStore } from '@/store/useProgramOptionsStore';
 
 interface MobileFilterProps {
   isOpen: boolean;
@@ -11,45 +12,26 @@ interface MobileFilterProps {
   onApplyFilters: (filters: ExploreFilters) => void;
 }
 
-const filterSections: FilterSection[] = [
-  {
-    id: 'degrees',
-    label: 'Degrees',
-    options: [
-      { label: 'Bachelor', value: 'bachelor' },
-      { label: 'Master', value: 'master' },
-      { label: 'PhD', value: 'phd' },
-    ],
-  },
-  {
-    id: 'programs',
-    label: 'Programs',
-    options: [
-      { label: 'Information Technology', value: 'it' },
-      { label: 'Business Administration', value: 'business' },
-      { label: 'Engineering', value: 'engineering' },
-      { label: 'Medicine', value: 'medicine' },
-    ],
-  },
-  {
-    id: 'duration',
-    label: 'Duration',
-    options: [
-      { label: '1 year', value: '1' },
-      { label: '2 years', value: '2' },
-      { label: '3 years', value: '3' },
-      { label: '4 years', value: '4' },
-      { label: '5+ years', value: '5+' },
-    ],
-  },
-];
-
 const MobileFilter: React.FC<MobileFilterProps> = ({
   isOpen,
   onClose,
   filters: initialFilters,
   onApplyFilters,
 }) => {
+  const { degrees, programs, durations, fees, fetchFilters, fetched, loading } =
+    useProgramOptionsStore();
+
+  useEffect(() => {
+    if (!fetched && !loading) fetchFilters();
+  }, [fetched, loading, fetchFilters]);
+
+  const filterSections: FilterSection[] = useMemo(() => {
+    return [
+      { id: 'degrees', label: 'Degrees', options: degrees },
+      { id: 'programs', label: 'Programs', options: programs },
+      { id: 'duration', label: 'Duration', options: durations },
+    ];
+  }, [degrees, programs, durations]);
   const [expandedSections, setExpandedSections] = useState<string[]>([
     'degrees',
   ]);
@@ -203,89 +185,24 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
               >
                 <div className="mt-2 rounded-[var(--border-radius-sm)] bg-white p-4">
                   <div className="space-y-3">
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={
-                          localFilters.tuitionRanges?.includes('0-200000') ||
-                          false
-                        }
-                        onChange={() =>
-                          handleFilterChange('tuitionRanges', '0-200000')
-                        }
-                        className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
-                      />
-                      <span className="text-body-2 text-text-primary">
-                        0 - 200,000 THB
-                      </span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={
-                          localFilters.tuitionRanges?.includes(
-                            '200000-400000'
-                          ) || false
-                        }
-                        onChange={() =>
-                          handleFilterChange('tuitionRanges', '200000-400000')
-                        }
-                        className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
-                      />
-                      <span className="text-body-2 text-text-primary">
-                        200,000 - 400,000 THB
-                      </span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={
-                          localFilters.tuitionRanges?.includes(
-                            '400000-600000'
-                          ) || false
-                        }
-                        onChange={() =>
-                          handleFilterChange('tuitionRanges', '400000-600000')
-                        }
-                        className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
-                      />
-                      <span className="text-body-2 text-text-primary">
-                        400,000 - 600,000 THB
-                      </span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={
-                          localFilters.tuitionRanges?.includes(
-                            '600000-800000'
-                          ) || false
-                        }
-                        onChange={() =>
-                          handleFilterChange('tuitionRanges', '600000-800000')
-                        }
-                        className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
-                      />
-                      <span className="text-body-2 text-text-primary">
-                        600,000 - 800,000 THB
-                      </span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={
-                          localFilters.tuitionRanges?.includes('800000+') ||
-                          false
-                        }
-                        onChange={() =>
-                          handleFilterChange('tuitionRanges', '800000+')
-                        }
-                        className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
-                      />
-                      <span className="text-body-2 text-text-primary">
-                        800,000+ THB
-                      </span>
-                    </label>
+                    {fees.map((fee) => (
+                      <label key={fee.value} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={
+                            localFilters.tuitionRanges?.includes(fee.value) ||
+                            false
+                          }
+                          onChange={() =>
+                            handleFilterChange('tuitionRanges', fee.value)
+                          }
+                          className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
+                        />
+                        <span className="text-body-2 text-text-primary">
+                          {fee.label}
+                        </span>
+                      </label>
+                    ))}
                   </div>
                 </div>
               </motion.div>

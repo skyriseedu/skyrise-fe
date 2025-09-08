@@ -21,4 +21,7 @@ export const programKeys = {
     [...programKeys.lists(), { filters }] as const,
   paginated: (page?: number, limit?: number) =>
     [...programKeys.all, 'paginated', { page, limit }] as const,
+  filters: () => [...programKeys.all, 'filters'] as const,
+  search: (filters: Record<string, unknown>) =>
+    [...programKeys.all, 'search', { filters }] as const,
 } as const;

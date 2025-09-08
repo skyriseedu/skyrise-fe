@@ -5,11 +5,13 @@ import StickyHeader from '@/components/common/StickyHeader';
 import Pagination from '@/components/common/Pagination';
 import Loading from '@/components/common/Loading';
 import type { ExploreFilters } from '@/types/users/explore';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import filterIcon from '@/assets/filter-alt.svg';
 import searchIcon from '@/assets/search.svg';
 import { useFilterStore } from '@/store/useFilterStore';
-import { usePrograms } from '@/queries';
+import { usePrograms, useProgramsSearch } from '@/queries';
+import { capitalizeFirstLetters } from '@/helpers';
+import { useProgramOptionsStore } from '@/store/useProgramOptionsStore';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -23,10 +25,33 @@ const ExplorePage: React.FC = () => {
     tuitionRanges: [],
     duration: [],
   });
-  const { data, isLoading, isError, error } = usePrograms({
-    page: currentPage,
-    limit: ITEMS_PER_PAGE,
-  });
+  const {
+    degrees: degreeOpts,
+    programs: programOpts,
+    durations: durationOpts,
+    fees: feeOpts,
+    fetchFilters,
+    fetched,
+    loading: loadingFilters,
+  } = useProgramOptionsStore();
+  
+  useEffect(() => {
+    if (!fetched && !loadingFilters) fetchFilters();
+  }, [fetched, loadingFilters, fetchFilters]);
+  const listQuery = usePrograms({ page: currentPage, limit: ITEMS_PER_PAGE });
+
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedSearch(searchQuery.trim()), 250);
+    return () => clearTimeout(id);
+  }, [searchQuery]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
 
   const activeFiltersCount = useMemo(() => {
     let count = 0;
@@ -48,6 +73,64 @@ const ExplorePage: React.FC = () => {
     });
     setCurrentPage(1);
   };
+
+  const labelMaps = useMemo(() => {
+    const deg = new Map<string, string>();
+    const prog = new Map<string, string>();
+    const dur = new Map<string, string>();
+    const fees = new Map<string, string>();
+    degreeOpts.forEach((o) => deg.set(o.value, o.label));
+    programOpts.forEach((o) => prog.set(o.value, o.label));
+    durationOpts.forEach((o) => dur.set(o.value, o.label));
+    feeOpts.forEach((o) => fees.set(o.value, o.label));
+    return { deg, prog, dur, fees };
+  }, [degreeOpts, programOpts, durationOpts, feeOpts]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const usingSearch = hasActiveFilters;
+  const searchParams = useMemo(() => {
+    if (!usingSearch) return null;
+    const degree = filters.degrees[0]
+      ? labelMaps.deg.get(filters.degrees[0]) ||
+        capitalizeFirstLetters(filters.degrees[0].replace(/-/g, ' '))
+      : undefined;
+    const programsParam = filters.programs.length
+      ? filters.programs.map(
+          (p) => labelMaps.prog.get(p) || capitalizeFirstLetters(p.replace(/-/g, ' '))
+        )
+      : undefined;
+    const feesParam = filters.tuitionRanges.length
+      ? filters.tuitionRanges
+      : undefined;
+    const durationParam = filters.duration.length
+      ? filters.duration.map((d) => {
+          const match = d.match(/[0-9]+(\.[0-9]+)?/);
+          return match ? match[0] : d;
+        })
+      : undefined;
+    const q = debouncedSearch || undefined;
+    return { degree, programs: programsParam, fees: feesParam, duration: durationParam, q };
+  }, [usingSearch, filters, debouncedSearch, labelMaps]);
+
+  const searchQueryResult = useProgramsSearch(
+    {
+      page: currentPage,
+      limit: ITEMS_PER_PAGE,
+      ...(searchParams || {}),
+    },
+    usingSearch
+  );
+
+  const data = usingSearch ? searchQueryResult.data : listQuery.data;
+  const isLoading = usingSearch
+    ? searchQueryResult.isLoading
+    : listQuery.isLoading;
+  const isError = usingSearch ? searchQueryResult.isError : listQuery.isError;
+  const error = usingSearch ? searchQueryResult.error : listQuery.error;
 
   const allPrograms = useMemo(() => {
     const apiPrograms = (data as any)?.data?.programs as any[] | undefined;
@@ -78,6 +161,27 @@ const ExplorePage: React.FC = () => {
     [allPrograms]
   );
 
+  const filteredPrograms = useMemo(() => {
+    if (usingSearch) return mappedPrograms; 
+    const q = debouncedSearch.toLowerCase();
+
+    const matchesDegree = (raw: any) => {
+      if (!filters.degrees.length) return true;
+      const deg = (raw?.keyInformation?.degree || '').toString().toLowerCase();
+      return filters.degrees.includes(deg);
+    };
+
+    const paired = mappedPrograms?.map((m, i) => ({ m, raw: allPrograms[i] }));
+
+    const textFiltered = debouncedSearch
+      ? paired.filter(({ m }) => (m.title || '')?.toLowerCase()?.includes(q))
+      : paired;
+
+    const structured = textFiltered?.filter(({ raw }) => matchesDegree(raw));
+
+    return structured?.map(({ m }) => m);
+  }, [usingSearch, debouncedSearch, mappedPrograms, allPrograms, filters]);
+
   const totalPages = useMemo(() => {
     const rootPagination = (data as any)?.pagination;
     if (rootPagination?.pages) return rootPagination.pages;
@@ -88,10 +192,9 @@ const ExplorePage: React.FC = () => {
     return Math.max(1, Math.ceil((totalCount || 0) / ITEMS_PER_PAGE));
   }, [data, mappedPrograms]);
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const totalCount = useMemo(() => {
+    return (data as any)?.total ?? mappedPrograms.length;
+  }, [data, mappedPrograms]);
 
   return (
     <div className="md:bg-secondary min-h-screen sm:bg-white">
@@ -110,8 +213,7 @@ const ExplorePage: React.FC = () => {
                 </p>
               ) : (
                 <p className="text-body-2 text-text-primary font-semibold">
-                  Total {(data as any)?.total ?? mappedPrograms.length} Programs
-                  Found
+                  Total {usingSearch ? totalCount : filteredPrograms.length} Programs Found
                 </p>
               )}
 
@@ -154,50 +256,36 @@ const ExplorePage: React.FC = () => {
                       key={degree}
                       className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium"
                     >
-                      {degree.charAt(0).toUpperCase() + degree.slice(1)}
+                      {labelMaps.deg.get(degree) ||
+                        capitalizeFirstLetters(degree.replace(/-/g, ' '))}
                     </span>
                   ))}
-                  {filters.programs.map((program) => {
-                    const programLabels: Record<string, string> = {
-                      it: 'Information and Communication Technology',
-                      business: 'Business Administration',
-                      engineering: 'Engineering',
-                      medicine: 'Medicine',
-                    };
-                    return (
-                      <span
-                        key={program}
-                        className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium"
-                      >
-                        {programLabels[program] || program}
-                      </span>
-                    );
-                  })}
+                  {filters.programs.map((program) => (
+                    <span
+                      key={program}
+                      className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium"
+                    >
+                      {labelMaps.prog.get(program) ||
+                        capitalizeFirstLetters(program.replace(/-/g, ' '))}
+                    </span>
+                  ))}
                   {filters.duration.map((duration) => (
                     <span
                       key={duration}
                       className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium"
                     >
-                      {duration} year{duration !== '1' ? 's' : ''}
+                      {labelMaps.dur.get(duration) || duration}
                     </span>
                   ))}
-                  {filters.tuitionRanges.map((range) => {
-                    const rangeLabel = {
-                      '0-200000': '0 - 200,000 THB',
-                      '200000-400000': '200,000 - 400,000 THB',
-                      '400000-600000': '400,000 - 600,000 THB',
-                      '600000-800000': '600,000 - 800,000 THB',
-                      '800000+': '800,000+ THB',
-                    }[range];
-                    return (
-                      <span
-                        key={range}
-                        className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium"
-                      >
-                        {rangeLabel}
-                      </span>
-                    );
-                  })}
+                  {filters.tuitionRanges.map((range) => (
+                    <span
+                      key={range}
+                      className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium"
+                    >
+                      {labelMaps.fees.get(range) ||
+                        capitalizeFirstLetters(range.replace(/-/g, ' '))}
+                    </span>
+                  ))}
                 </div>
                 <button
                   onClick={handleClearFilters}
@@ -212,20 +300,26 @@ const ExplorePage: React.FC = () => {
 
         {/* Content Section */}
         <div className="px-4 pt-4 pb-8">
-          {isLoading ? (
-            <div className="flex h-64 items-center justify-center">
-              <Loading size="lg" color="primary" />
-            </div>
-          ) : isError ? (
-            <div className="flex h-64 items-center justify-center">
-              <p className="text-body-3 text-red-600">
-                {(error as any)?.message || 'Failed to load programs.'}
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="flex flex-col gap-4">
-                {mappedPrograms.map((program) => (
+              {isLoading ? (
+                <div className="flex h-64 items-center justify-center">
+                  <Loading size="lg" color="primary" />
+                </div>
+              ) : isError ? (
+                <div className="flex h-64 items-center justify-center">
+                  <p className="text-body-3 text-red-600">
+                    {(error as any)?.message || 'Failed to load programs.'}
+                  </p>
+                </div>
+              ) : filteredPrograms?.length === 0 ? (
+                <div className="flex h-64 items-center justify-center">
+                  <p className="text-primary text-h3 font-semibold">
+                    0 PROGRAM FOUND
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="flex flex-col gap-4">
+                    {filteredPrograms.map((program) => (
                   <ProgramCard
                     key={program.id}
                     title={program.title}
@@ -284,8 +378,7 @@ const ExplorePage: React.FC = () => {
                 </p>
               ) : (
                 <p className="text-h2 text-text-primary font-semibold">
-                  Total {(data as any)?.total ?? mappedPrograms.length} Programs
-                  Found
+                  Total {usingSearch ? totalCount : filteredPrograms.length} Programs Found
                 </p>
               )}
 
@@ -316,11 +409,17 @@ const ExplorePage: React.FC = () => {
                   {(error as any)?.message || 'Failed to load programs.'}
                 </p>
               </div>
+            ) : filteredPrograms.length === 0 ? (
+              <div className="flex h-[450px] items-center justify-center">
+                <p className="text-primary text-h2 font-semibold">
+                  0 PROGRAM FOUND
+                </p>
+              </div>
             ) : (
               <>
                 <div className="scrollbar-hide relative h-[450px] overflow-y-auto">
                   <div className="flex flex-col gap-4 pb-20">
-                    {mappedPrograms.map((program) => (
+                    {filteredPrograms.map((program) => (
                       <ProgramCard
                         key={program.id}
                         title={program.title}
