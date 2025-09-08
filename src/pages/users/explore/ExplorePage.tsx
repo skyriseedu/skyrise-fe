@@ -12,6 +12,8 @@ import { useFilterStore } from '@/store/useFilterStore';
 import { usePrograms, useProgramsSearch } from '@/queries';
 import { capitalizeFirstLetters } from '@/helpers';
 import { useProgramOptionsStore } from '@/store/useProgramOptionsStore';
+import ApplicationForm from '@/components/common/ApplicationForm';
+import SuccessModal from '@/components/common/SuccessModal';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -19,6 +21,8 @@ const ExplorePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const { isMobileFilterOpen, setIsMobileFilterOpen } = useFilterStore();
+  const [isApplicationOpen, setIsApplicationOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [filters, setFilters] = useState<ExploreFilters>({
     degrees: [],
     programs: [],
@@ -89,6 +93,12 @@ const ExplorePage: React.FC = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleApplyClick = () => setIsApplicationOpen(true);
+  const handleFormSuccess = () => {
+    setIsApplicationOpen(false);
+    setShowSuccessModal(true);
   };
 
   const usingSearch = hasActiveFilters || !!debouncedSearch;
@@ -331,7 +341,7 @@ const ExplorePage: React.FC = () => {
                     totalTuitionFees={program.totalTuitionFees}
                     applicationDeadline={program.applicationDeadline}
                     id={program.id}
-                    onApplyClick={() => console.log('Apply clicked')}
+                    onApplyClick={handleApplyClick}
                   />
                 ))}
               </div>
@@ -431,7 +441,7 @@ const ExplorePage: React.FC = () => {
                         totalTuitionFees={program.totalTuitionFees}
                         applicationDeadline={program.applicationDeadline}
                         id={program.id}
-                        onApplyClick={() => console.log('Apply clicked')}
+                        onApplyClick={handleApplyClick}
                       />
                     ))}
                   </div>
@@ -456,6 +466,28 @@ const ExplorePage: React.FC = () => {
         onClose={() => setIsMobileFilterOpen(false)}
         filters={filters}
         onApplyFilters={setFilters}
+      />
+
+      {/* Application Form Modal */}
+      {isApplicationOpen && (
+        <div
+          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-25"
+          onClick={() => setIsApplicationOpen(false)}
+        >
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <ApplicationForm
+              onClose={() => setIsApplicationOpen(false)}
+              onSuccess={handleFormSuccess}
+            />
+          </div>
+        </div>
+      )}
+
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Applied Successfully!"
+        message="Thank you for applying with us. We will contact you shortly via email to confirm your application details."
       />
     </div>
   );
