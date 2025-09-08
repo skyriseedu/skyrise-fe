@@ -94,7 +94,7 @@ export interface ProgramDetails {
   images?: ProgramImages;
   keyInformation?: ProgramKeyInformation;
   undergraduateEntryRequirement?: string;
-  status?: 'published' | 'draft' | 'archived';
+  status?: 'published' | 'draftsaved';
   views?: number;
   studentReviews?: StudentReview[];
   createdAt: string;

@@ -190,7 +190,11 @@ const ProgramDetailsPage: React.FC = () => {
               </div>
             </div>
           </div>
-          <ProgramStructure />
+          <ProgramStructure
+            undergraduateEntryRequirement={data?.data?.undergraduateEntryRequirement}
+            creditDetails={data?.data?.creditDetails}
+            careerPaths={data?.data?.careerPaths}
+          />
         </div>
       )}
       {!isLoading && !isError && <ReviewsSection />}
