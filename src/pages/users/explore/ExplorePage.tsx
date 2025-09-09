@@ -366,8 +366,9 @@ const ExplorePage: React.FC = () => {
         <StickyHeader
           title="Explore"
           showBackButton={false}
-          desktopPadding="px-0"
-          mobilePadding="px-0"
+          mobilePadding="px-6"
+          desktopPadding="lg:px-15"
+          useContainer={false}
         />
 
         <div className="flex">

@@ -62,8 +62,9 @@ const ProgramDetailsPage: React.FC = () => {
       <StickyHeader
         title={isLoading ? undefined : data?.data?.programName}
         subtitle={isLoading ? undefined : data?.data?.universityName}
-        mobilePadding="px-8"
-        desktopPadding="lg:px-0"
+        mobilePadding="px-6"
+        desktopPadding="lg:px-15"
+        useContainer={false}
         isLoading={isLoading}
       />
 
