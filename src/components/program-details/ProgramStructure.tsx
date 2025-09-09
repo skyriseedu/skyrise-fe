@@ -62,9 +62,9 @@ const ProgramStructure: React.FC<ProgramStructureProps> = ({
 
   return (
     <div className="py-10">
-      { undergraduateEntryRequirement || creditDetails ||  careerPaths && <h2 className="text-h3 lg:text-h2 text-text-primary mb-8 font-semibold">
+      <h2 className="text-h3 lg:text-h2 text-text-primary mb-8 font-semibold">
         Program Structure
-      </h2> }
+      </h2>
       <div className="space-y-3">
         {accordionData?.map((item, index) => (
           <motion.div

@@ -72,7 +72,9 @@ const ProgramDetailsPage: React.FC = () => {
       ) : isError ? (
         <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6 lg:py-8">
           <div className="flex h-96 items-center justify-center">
-            <p className="text-body-3 text-red-600">Failed to load program details.</p>
+            <p className="text-body-3 text-red-600">
+              Failed to load program details.
+            </p>
           </div>
         </div>
       ) : (
@@ -190,11 +192,17 @@ const ProgramDetailsPage: React.FC = () => {
               </div>
             </div>
           </div>
-          <ProgramStructure
-            undergraduateEntryRequirement={data?.data?.undergraduateEntryRequirement}
-            creditDetails={data?.data?.creditDetails}
-            careerPaths={data?.data?.careerPaths}
-          />
+          {(data?.data?.undergraduateEntryRequirement ||
+            data?.data?.creditDetails ||
+            data?.data?.careerPaths) && (
+            <ProgramStructure
+              undergraduateEntryRequirement={
+                data?.data?.undergraduateEntryRequirement
+              }
+              creditDetails={data?.data?.creditDetails}
+              careerPaths={data?.data?.careerPaths}
+            />
+          )}
         </div>
       )}
       {!isLoading && !isError && (
