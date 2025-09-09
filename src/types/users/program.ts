@@ -1,3 +1,5 @@
+import type { Review } from "./review";
+
 export interface Program {
   id: string;
   slug: string;
@@ -77,14 +79,6 @@ export interface ProgramKeyInformation {
   upcomingIntake: string[];
 }
 
-export interface StudentReview {
-  _id: string;
-  studentName: string;
-  major: string;
-  studentImage: string;
-  review: string;
-}
-
 export interface ProgramDetails {
   _id: string;
   slug: string;
@@ -96,7 +90,7 @@ export interface ProgramDetails {
   undergraduateEntryRequirement?: string;
   status?: 'published' | 'draftsaved';
   views?: number;
-  studentReviews?: StudentReview[];
+  studentReviews?: Review[];
   createdAt: string;
   updatedAt: string;
   applicationDeadline?: string | null;

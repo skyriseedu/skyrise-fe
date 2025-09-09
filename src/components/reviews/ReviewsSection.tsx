@@ -1,43 +1,23 @@
 import React from 'react';
 import ReviewCard from './ReviewCard';
-
-const reviewsData = [
-  {
-    id: 1,
-    name: 'Mike Kyaw Zin',
-    program: 'Information and Communication Technology',
-    testimonial:
-      'SkyRise made the entire application process so much easier for me. They guided me step-by-step, from choosing the right program to submitting my documents on time."',
-  },
-  {
-    id: 2,
-    name: 'Eain Si',
-    program: 'Information and Communication Technology',
-    testimonial:
-      'I had no idea where to start with my application abroad, but SkyRise was there every step of the way. They were super patient and answered all my questions quickly. Thanks to them, I\'m now enrolled in a program I truly love!"',
-  },
-  {
-    id: 3,
-    name: 'Eain Si',
-    program: 'Information and Communication Technology',
-    testimonial:
-      'The team at SkyRise is incredibly professional and supportive. They helped me craft a strong personal statement and made sure all my paperwork was perfect. I highly recommend them to anyone applying for international programs."',
-  },
-  {
-    id: 4,
-    name: 'Andrew A',
-    program: 'Information and Communication Technology',
-    testimonial:
-      'What I appreciated most about SkyRise was how personalized their service was. They really took the time to understand my goals and found programs that matched perfectly. I\'m so grateful for their guidance!"',
-  },
-];
+import type { Review as ApiReview } from '@/types/users/review';
 
 interface ReviewsSectionProps {
   title?: string;
+  reviews?: ApiReview[];
 }
+
+type DisplayReview = {
+  id: string | number;
+  name: string;
+  program: string;
+  testimonial: string;
+  imageUrl?: string;
+};
 
 const ReviewsSection: React.FC<ReviewsSectionProps> = ({
   title = 'Student Reviews',
+  reviews,
 }) => {
   const [isPaused, setIsPaused] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
@@ -48,6 +28,20 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
     setTimeout(() => setIsPaused(false), 3000);
   };
 
+  // Normalize backend reviews to the card-friendly shape
+  const displayReviews: DisplayReview[] = React.useMemo(() => {
+    if (Array.isArray(reviews)) {
+      return reviews.map((r) => ({
+        id: r._id,
+        name: r.studentName,
+        program: r.major,
+        testimonial: r.review,
+        imageUrl: r.studentImage,
+      }));
+    }
+    return [];
+  }, [reviews]);
+
   return (
     <section className="mb-4 w-full overflow-hidden py-6 lg:py-16">
       <div className="container mx-auto px-6 lg:px-8">
@@ -55,9 +49,9 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
           {title}
         </h2>
 
-        {reviewsData.length === 0 ? (
+        {displayReviews?.length === 0 ? (
           <div className="py-12 text-center">
-            <p className="text-lg text-gray-500">No reviews at the moment</p>
+            <p className="text-lg text-primary">No reviews at the moment</p>
           </div>
         ) : (
           <div className="relative">
@@ -73,7 +67,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
               >
                 {[...Array(3)]?.map((_, setIndex) => (
                   <React.Fragment key={setIndex}>
-                    {reviewsData.map((review) => (
+                    {displayReviews?.map((review) => (
                       <div
                         key={`${review.id}-${setIndex}`}
                         className="w-[260px] flex-shrink-0 sm:w-[300px] lg:w-[340px]"
@@ -82,6 +76,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
                           name={review.name}
                           program={review.program}
                           testimonial={review.testimonial}
+                          imageUrl={review.imageUrl}
                         />
                       </div>
                     ))}

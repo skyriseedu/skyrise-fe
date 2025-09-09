@@ -197,7 +197,9 @@ const ProgramDetailsPage: React.FC = () => {
           />
         </div>
       )}
-      {!isLoading && !isError && <ReviewsSection />}
+      {!isLoading && !isError && (
+        <ReviewsSection reviews={data?.data?.studentReviews} />
+      )}
     </div>
   );
 };
