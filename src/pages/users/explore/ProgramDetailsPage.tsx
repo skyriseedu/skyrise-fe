@@ -12,9 +12,13 @@ import location from '@/assets/location.svg';
 import bookOpen from '@/assets/book-open.svg';
 import { useParams } from 'react-router-dom';
 import { useProgramBySlug } from '@/queries';
+import BookConsultationForm from '@/components/common/BookConsultationForm';
+import SuccessModal from '@/components/common/SuccessModal';
 
 const ProgramDetailsPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const [isConsultOpen, setIsConsultOpen] = React.useState<boolean>(false);
+  const [showSuccessModal, setShowSuccessModal] = React.useState<boolean>(false);
   const { data, isLoading, isError } = useProgramBySlug(slug || '');
 
   const keyInfoCards = useMemo(
@@ -152,7 +156,10 @@ const ProgramDetailsPage: React.FC = () => {
                 </div>
 
                 <div className="order-last col-span-2 h-18 lg:order-none lg:col-span-1 lg:row-span-2 lg:h-auto">
-                  <div className="bg-primary flex h-full cursor-pointer flex-col items-center justify-center rounded-xl px-4 text-white transition-colors hover:bg-[#d43d4e]">
+                  <div
+                    className="bg-primary flex h-full cursor-pointer flex-col items-center justify-center rounded-xl px-4 text-white transition-colors hover:bg-[#d43d4e]"
+                    onClick={() => setIsConsultOpen(true)}
+                  >
                     <div className="text-center">
                       <div className="text-body-2 font-semibold lg:hidden">
                         Book Free Consultation
@@ -208,6 +215,26 @@ const ProgramDetailsPage: React.FC = () => {
       {!isLoading && !isError && (
         <ReviewsSection reviews={data?.data?.studentReviews} />
       )}
+      {isConsultOpen && (
+        <div className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-25" onClick={() => setIsConsultOpen(false)}>
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <BookConsultationForm
+              onClose={() => setIsConsultOpen(false)}
+              onSuccess={() => {
+                setIsConsultOpen(false);
+                setShowSuccessModal(true);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Consultation Booked Successfully!"
+        message="Thank you for booking a consultation with us. We will contact you shortly via email to confirm your appointment details."
+      />
     </div>
   );
 };
