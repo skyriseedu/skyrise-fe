@@ -11,7 +11,7 @@ interface StickyHeaderProps {
   showBackButton?: boolean;
   children?: React.ReactNode;
   isLoading?: boolean;
-  useContainer?: boolean; 
+  useContainer?: boolean;
 }
 
 const StickyHeader: React.FC<StickyHeaderProps> = ({

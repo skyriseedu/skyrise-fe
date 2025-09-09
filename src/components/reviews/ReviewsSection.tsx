@@ -51,7 +51,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
 
         {displayReviews?.length === 0 ? (
           <div className="py-12 text-center">
-            <p className="text-lg text-primary">No reviews at the moment</p>
+            <p className="text-primary text-lg">No reviews at the moment</p>
           </div>
         ) : (
           <div className="relative">

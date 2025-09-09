@@ -1,4 +1,4 @@
-import type { Review } from "./review";
+import type { Review } from './review';
 
 export interface Program {
   id: string;
@@ -38,17 +38,40 @@ export interface ProgramsResponse {
 export interface ProgramDetailsResponse {
   program: Program;
 }
+export interface ProgramListItemRaw {
+  id?: string;
+  _id?: string;
+  slug?: string;
+  programName?: string;
+  title?: string;
+  universityName?: string;
+  university?: string;
+  upcomingIntake?: string;
+  duration?: string;
+  ranking?: string;
+  rankingYear?: string;
+  universityRanking?: string;
+  totalTuitionFees?: string;
+  applicationDeadline?: string;
+  keyInformation?: {
+    degree?: string;
+    duration?: string;
+    totalTuitionFees?: string;
+    upcomingIntake?: string[];
+  };
+}
+
 export interface ProgramsApiResponse {
   success: boolean;
   message?: string;
-  count: number; 
-  total: number; 
+  count: number;
+  total: number;
   pagination: {
     page: number;
     pages: number;
   };
   data: {
-    programs: any[]; 
+    programs: ProgramListItemRaw[];
   };
 }
 

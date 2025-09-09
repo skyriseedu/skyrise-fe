@@ -87,9 +87,9 @@ const AboutPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <StickyHeader 
-        title="About Us" 
-        showBackButton={false} 
+      <StickyHeader
+        title="About Us"
+        showBackButton={false}
         mobilePadding="px-6"
         desktopPadding="lg:px-15"
         useContainer={false}

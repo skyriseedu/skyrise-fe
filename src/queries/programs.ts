@@ -1,7 +1,11 @@
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { programsService } from '@/lib/api';
 import { programKeys } from './queryKeys';
-import type { UseProgramsParams, ProgramsSearchParams, ProgramDetailsApiResponse } from '@/types/users/program';
+import type {
+  UseProgramsParams,
+  ProgramsSearchParams,
+  ProgramDetailsApiResponse,
+} from '@/types/users/program';
 import type { ProgramFiltersResponse } from '@/types/users/explore';
 
 export function usePrograms(params: UseProgramsParams = {}) {
@@ -30,10 +34,21 @@ export function useProgramBySlug(slug: string) {
   });
 }
 
-export function useProgramsSearch(params: ProgramsSearchParams, enabled: boolean) {
+export function useProgramsSearch(
+  params: ProgramsSearchParams,
+  enabled: boolean
+) {
   const { page = 1, limit = 10, q, degree, programs, fees, duration } = params;
   return useQuery({
-    queryKey: programKeys.search({ page, limit, q, degree, programs, fees, duration }),
+    queryKey: programKeys.search({
+      page,
+      limit,
+      q,
+      degree,
+      programs,
+      fees,
+      duration,
+    }),
     queryFn: () =>
       programsService.searchPrograms({
         page,

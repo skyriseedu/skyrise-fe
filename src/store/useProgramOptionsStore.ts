@@ -38,8 +38,9 @@ export const useProgramOptionsStore = create<ProgramOptionsState>((set) => ({
         error: null,
         fetched: true,
       });
-    } catch (e: any) {
-      set({ loading: false, error: e?.message || 'Failed to load filters' });
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Failed to load filters';
+      set({ loading: false, error: message });
     }
   },
 }));

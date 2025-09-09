@@ -18,7 +18,8 @@ import SuccessModal from '@/components/common/SuccessModal';
 const ProgramDetailsPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [isConsultOpen, setIsConsultOpen] = React.useState<boolean>(false);
-  const [showSuccessModal, setShowSuccessModal] = React.useState<boolean>(false);
+  const [showSuccessModal, setShowSuccessModal] =
+    React.useState<boolean>(false);
   const { data, isLoading, isError } = useProgramBySlug(slug || '');
 
   const keyInfoCards = useMemo(
@@ -217,7 +218,10 @@ const ProgramDetailsPage: React.FC = () => {
         <ReviewsSection reviews={data?.data?.studentReviews} />
       )}
       {isConsultOpen && (
-        <div className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-25" onClick={() => setIsConsultOpen(false)}>
+        <div
+          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-25"
+          onClick={() => setIsConsultOpen(false)}
+        >
           <div className="relative" onClick={(e) => e.stopPropagation()}>
             <BookConsultationForm
               onClose={() => setIsConsultOpen(false)}

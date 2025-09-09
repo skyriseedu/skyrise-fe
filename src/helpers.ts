@@ -7,7 +7,9 @@ export const capitalizeFirstLetters = (str: string): string => {
 
 export const convertTo24HourFormat = (time12h: string): string => {
   const [time, modifier] = time12h.split(' ');
-  let [hours, minutes] = time.split(':').map(Number);
+  const [hStr, mStr] = time.split(':');
+  let hours = Number(hStr);
+  const minutes = Number(mStr);
 
   if (modifier.toLowerCase() === 'pm' && hours !== 12) {
     hours += 12;

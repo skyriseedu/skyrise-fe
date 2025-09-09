@@ -27,8 +27,18 @@ export const programsService = {
     return response.data;
   },
 
-  async searchPrograms(params: ProgramsSearchParams): Promise<ProgramsApiResponse> {
-    const { page = 1, limit = 10, q, degree, programs, fees, duration } = params;
+  async searchPrograms(
+    params: ProgramsSearchParams
+  ): Promise<ProgramsApiResponse> {
+    const {
+      page = 1,
+      limit = 10,
+      q,
+      degree,
+      programs,
+      fees,
+      duration,
+    } = params;
 
     const sp = new URLSearchParams({
       page: String(page),

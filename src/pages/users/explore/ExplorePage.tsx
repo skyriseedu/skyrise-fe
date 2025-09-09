@@ -5,6 +5,12 @@ import StickyHeader from '@/components/common/StickyHeader';
 import Pagination from '@/components/common/Pagination';
 import Loading from '@/components/common/Loading';
 import type { ExploreFilters } from '@/types/users/explore';
+import type {
+  ProgramsApiResponse,
+  ProgramsResponse,
+  ProgramListItemRaw,
+  Program,
+} from '@/types/users/program';
 import React, { useState, useMemo, useEffect } from 'react';
 import filterIcon from '@/assets/filter-alt.svg';
 import searchIcon from '@/assets/search.svg';
@@ -38,7 +44,7 @@ const ExplorePage: React.FC = () => {
     fetched,
     loading: loadingFilters,
   } = useProgramOptionsStore();
-  
+
   useEffect(() => {
     if (!fetched && !loadingFilters) fetchFilters();
   }, [fetched, loadingFilters, fetchFilters]);
@@ -110,7 +116,9 @@ const ExplorePage: React.FC = () => {
       : undefined;
     const programsParam = filters.programs.length
       ? filters.programs.map(
-          (p) => labelMaps.prog.get(p) || capitalizeFirstLetters(p.replace(/-/g, ' '))
+          (p) =>
+            labelMaps.prog.get(p) ||
+            capitalizeFirstLetters(p.replace(/-/g, ' '))
         )
       : undefined;
     const feesParam = filters.tuitionRanges.length
@@ -123,7 +131,13 @@ const ExplorePage: React.FC = () => {
         })
       : undefined;
     const q = debouncedSearch || undefined;
-    return { degree, programs: programsParam, fees: feesParam, duration: durationParam, q };
+    return {
+      degree,
+      programs: programsParam,
+      fees: feesParam,
+      duration: durationParam,
+      q,
+    };
   }, [usingSearch, filters, debouncedSearch, labelMaps]);
 
   const searchQueryResult = useProgramsSearch(
@@ -135,48 +149,66 @@ const ExplorePage: React.FC = () => {
     usingSearch
   );
 
-  const data = usingSearch ? searchQueryResult.data : listQuery.data;
+  const data: ProgramsApiResponse | ProgramsResponse | undefined = usingSearch
+    ? searchQueryResult.data
+    : listQuery.data;
   const isLoading = usingSearch
     ? searchQueryResult.isLoading
     : listQuery.isLoading;
   const isError = usingSearch ? searchQueryResult.isError : listQuery.isError;
   const error = usingSearch ? searchQueryResult.error : listQuery.error;
 
-  const allPrograms = useMemo(() => {
-    const apiPrograms = (data as any)?.data?.programs as any[] | undefined;
-    if (Array.isArray(apiPrograms)) return apiPrograms;
-    const flatPrograms = (data as any)?.programs as any[] | undefined;
-    if (Array.isArray(flatPrograms)) return flatPrograms;
-    return [];
+  const allPrograms: ProgramListItemRaw[] = useMemo(() => {
+    const nested = (data as ProgramsApiResponse | undefined)?.data?.programs;
+    if (Array.isArray(nested)) return nested;
+    const flat = (data as ProgramsResponse | undefined)?.programs;
+    if (Array.isArray(flat)) return flat as ProgramListItemRaw[];
+    return [] as ProgramListItemRaw[];
   }, [data]);
 
-  const mappedPrograms = useMemo(
+  const mappedPrograms: Program[] = useMemo(
     () =>
-      allPrograms.map((p: any) => ({
-        id: p.id || p._id,
-        slug: p.slug,
-        title: p.title || p.programName || 'Untitled Program',
-        university: p.university || p.universityName || 'Unknown University',
+      allPrograms?.map((p) => ({
+        id:
+          (p.id as string | undefined) ||
+          (p._id as string | undefined) ||
+          (p.slug as string | undefined) ||
+          ((p.programName as string | undefined) || 'unknown-id'),
+        slug:
+          (p.slug as string | undefined) ||
+          (p._id as string | undefined) ||
+          'unknown-slug',
+        title:
+          (p.title as string | undefined) ||
+          (p.programName as string | undefined) ||
+          'Untitled Program',
+        university:
+          (p.university as string | undefined) ||
+          (p.universityName as string | undefined) ||
+          'Unknown University',
         upcomingIntake:
-          p.upcomingIntake ||
+          (p.upcomingIntake as string | undefined) ||
           (Array.isArray(p?.keyInformation?.upcomingIntake)
-            ? p.keyInformation.upcomingIntake[0] || '—'
+            ? (p.keyInformation?.upcomingIntake?.[0] as string | undefined) || '—'
             : '—'),
-        duration: p.duration || p?.keyInformation?.duration || '—',
-        ranking: p.ranking || p.universityRanking || '—',
-        rankingYear: p.rankingYear || '',
+        duration: (p.duration as string | undefined) || (p?.keyInformation?.duration as string | undefined) || '—',
+        ranking: (p.ranking as string | undefined) || (p.universityRanking as string | undefined) || '—',
+        rankingYear: (p.rankingYear as string | undefined) || '',
         totalTuitionFees:
-          p.totalTuitionFees || p?.keyInformation?.totalTuitionFees || '—',
-        applicationDeadline: p.applicationDeadline || '—',
-      })),
+          (p.totalTuitionFees as string | undefined) || (p?.keyInformation?.totalTuitionFees as string | undefined) || '—',
+        applicationDeadline: (p.applicationDeadline as string | undefined) || '—',
+        description: undefined,
+        keyInfo: undefined,
+        programStructure: undefined,
+      } as Program)),
     [allPrograms]
   );
 
   const filteredPrograms = useMemo(() => {
-    if (usingSearch) return mappedPrograms; 
+    if (usingSearch) return mappedPrograms;
     const q = debouncedSearch.toLowerCase();
 
-    const matchesDegree = (raw: any) => {
+    const matchesDegree = (raw: ProgramListItemRaw) => {
       if (!filters.degrees.length) return true;
       const deg = (raw?.keyInformation?.degree || '').toString().toLowerCase();
       return filters.degrees.includes(deg);
@@ -194,17 +226,19 @@ const ExplorePage: React.FC = () => {
   }, [usingSearch, debouncedSearch, mappedPrograms, allPrograms, filters]);
 
   const totalPages = useMemo(() => {
-    const rootPagination = (data as any)?.pagination;
-    if (rootPagination?.pages) return rootPagination.pages;
-    const nested = (data as any)?.data?.pagination;
+    const nested = (data as { data?: { pagination?: { totalPages?: number } } } | undefined)?.data?.pagination;
     if (nested?.totalPages) return nested.totalPages;
-    const totalCount =
-      (data as any)?.total ?? nested?.totalPrograms ?? mappedPrograms.length;
-    return Math.max(1, Math.ceil((totalCount || 0) / ITEMS_PER_PAGE));
+    const total = (data as ProgramsResponse | undefined)?.total;
+    if (typeof total === 'number') return Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+    return Math.max(1, Math.ceil((mappedPrograms.length || 0) / ITEMS_PER_PAGE));
   }, [data, mappedPrograms]);
 
   const totalCount = useMemo(() => {
-    return (data as any)?.total ?? mappedPrograms.length;
+    const nested = (data as { data?: { pagination?: { totalPrograms?: number } } } | undefined)?.data?.pagination;
+    if (typeof nested?.totalPrograms === 'number') return nested.totalPrograms;
+    const flatTotal = (data as ProgramsResponse | undefined)?.total;
+    if (typeof flatTotal === 'number') return flatTotal;
+    return mappedPrograms.length;
   }, [data, mappedPrograms]);
 
   return (
@@ -219,8 +253,8 @@ const ExplorePage: React.FC = () => {
               {isLoading ? (
                 <div className="bg-secondary h-10 w-40 animate-pulse rounded"></div>
               ) : isError ? (
-                <p className="text-body-2 text-red-600 font-semibold">
-                  {(error as any)?.message || 'Failed to load programs'}
+                <p className="text-body-2 font-semibold text-red-600">
+                  {error instanceof Error ? error.message : 'Failed to load programs'}
                 </p>
               ) : (
                 <p className="text-body-2 text-text-primary font-semibold">
@@ -311,29 +345,29 @@ const ExplorePage: React.FC = () => {
 
         {/* Content Section */}
         <div className="px-4 pt-4 pb-8">
-              {isLoading ? (
-                <div className="flex h-64 items-center justify-center">
-                  <Loading size="lg" color="primary" />
-                </div>
-              ) : isError ? (
-                <div className="flex h-64 items-center justify-center">
-                  <p className="text-body-3 text-red-600">
-                    {(error as any)?.message || 'Failed to load programs.'}
-                  </p>
-                </div>
-              ) : filteredPrograms?.length === 0 ? (
-                <div className="flex h-64 items-center justify-center">
-                  <p className="text-primary text-h3 font-semibold">
-                    0 PROGRAM FOUND
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <div className="flex flex-col gap-4">
-                    {filteredPrograms.map((program) => (
+          {isLoading ? (
+            <div className="flex h-64 items-center justify-center">
+              <Loading size="lg" color="primary" />
+            </div>
+          ) : isError ? (
+            <div className="flex h-64 items-center justify-center">
+              <p className="text-body-3 text-red-600">
+                {error instanceof Error ? error.message : 'Failed to load programs.'}
+              </p>
+            </div>
+          ) : filteredPrograms?.length === 0 ? (
+            <div className="flex h-64 items-center justify-center">
+              <p className="text-primary text-h3 font-semibold">
+                0 PROGRAM FOUND
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-col gap-4">
+                {filteredPrograms?.map((program) => (
                   <ProgramCard
                     key={program.id}
-                    slug={(program as any).slug}
+                    slug={program.slug}
                     title={program.title}
                     university={program.university}
                     upcomingIntake={program.upcomingIntake}
@@ -387,7 +421,7 @@ const ExplorePage: React.FC = () => {
                 <div className="bg-secondary h-8 w-48 animate-pulse rounded"></div>
               ) : isError ? (
                 <p className="text-body-3 text-red-600">
-                  {(error as any)?.message || 'Failed to load programs.'}
+                  {error instanceof Error ? error.message : 'Failed to load programs.'}
                 </p>
               ) : (
                 <p className="text-h2 text-text-primary font-semibold">
@@ -419,7 +453,7 @@ const ExplorePage: React.FC = () => {
             ) : isError ? (
               <div className="flex h-[450px] items-center justify-center">
                 <p className="text-body-3 text-red-600">
-                  {(error as any)?.message || 'Failed to load programs.'}
+                  {error instanceof Error ? error.message : 'Failed to load programs.'}
                 </p>
               </div>
             ) : filteredPrograms.length === 0 ? (
@@ -435,7 +469,7 @@ const ExplorePage: React.FC = () => {
                     {filteredPrograms.map((program) => (
                       <ProgramCard
                         key={program.id}
-                        slug={(program as any).slug}
+                        slug={program.slug}
                         title={program.title}
                         university={program.university}
                         upcomingIntake={program.upcomingIntake}
