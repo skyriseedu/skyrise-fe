@@ -168,39 +168,54 @@ const ExplorePage: React.FC = () => {
 
   const mappedPrograms: Program[] = useMemo(
     () =>
-      allPrograms?.map((p) => ({
-        id:
-          (p.id as string | undefined) ||
-          (p._id as string | undefined) ||
-          (p.slug as string | undefined) ||
-          ((p.programName as string | undefined) || 'unknown-id'),
-        slug:
-          (p.slug as string | undefined) ||
-          (p._id as string | undefined) ||
-          'unknown-slug',
-        title:
-          (p.title as string | undefined) ||
-          (p.programName as string | undefined) ||
-          'Untitled Program',
-        university:
-          (p.university as string | undefined) ||
-          (p.universityName as string | undefined) ||
-          'Unknown University',
-        upcomingIntake:
-          (p.upcomingIntake as string | undefined) ||
-          (Array.isArray(p?.keyInformation?.upcomingIntake)
-            ? (p.keyInformation?.upcomingIntake?.[0] as string | undefined) || '—'
-            : '—'),
-        duration: (p.duration as string | undefined) || (p?.keyInformation?.duration as string | undefined) || '—',
-        ranking: (p.ranking as string | undefined) || (p.universityRanking as string | undefined) || '—',
-        rankingYear: (p.rankingYear as string | undefined) || '',
-        totalTuitionFees:
-          (p.totalTuitionFees as string | undefined) || (p?.keyInformation?.totalTuitionFees as string | undefined) || '—',
-        applicationDeadline: (p.applicationDeadline as string | undefined) || '—',
-        description: undefined,
-        keyInfo: undefined,
-        programStructure: undefined,
-      } as Program)),
+      allPrograms?.map(
+        (p) =>
+          ({
+            id:
+              (p.id as string | undefined) ||
+              (p._id as string | undefined) ||
+              (p.slug as string | undefined) ||
+              (p.programName as string | undefined) ||
+              'unknown-id',
+            slug:
+              (p.slug as string | undefined) ||
+              (p._id as string | undefined) ||
+              'unknown-slug',
+            title:
+              (p.title as string | undefined) ||
+              (p.programName as string | undefined) ||
+              'Untitled Program',
+            university:
+              (p.university as string | undefined) ||
+              (p.universityName as string | undefined) ||
+              'Unknown University',
+            upcomingIntake:
+              (p.upcomingIntake as string | undefined) ||
+              (Array.isArray(p?.keyInformation?.upcomingIntake)
+                ? (p.keyInformation?.upcomingIntake?.[0] as
+                    | string
+                    | undefined) || '—'
+                : '—'),
+            duration:
+              (p.duration as string | undefined) ||
+              (p?.keyInformation?.duration as string | undefined) ||
+              '—',
+            ranking:
+              (p.ranking as string | undefined) ||
+              (p.universityRanking as string | undefined) ||
+              '—',
+            rankingYear: (p.rankingYear as string | undefined) || '',
+            totalTuitionFees:
+              (p.totalTuitionFees as string | undefined) ||
+              (p?.keyInformation?.totalTuitionFees as string | undefined) ||
+              '—',
+            applicationDeadline:
+              (p.applicationDeadline as string | undefined) || '—',
+            description: undefined,
+            keyInfo: undefined,
+            programStructure: undefined,
+          }) as Program
+      ),
     [allPrograms]
   );
 
@@ -226,15 +241,23 @@ const ExplorePage: React.FC = () => {
   }, [usingSearch, debouncedSearch, mappedPrograms, allPrograms, filters]);
 
   const totalPages = useMemo(() => {
-    const nested = (data as { data?: { pagination?: { totalPages?: number } } } | undefined)?.data?.pagination;
+    const nested = (
+      data as { data?: { pagination?: { totalPages?: number } } } | undefined
+    )?.data?.pagination;
     if (nested?.totalPages) return nested.totalPages;
     const total = (data as ProgramsResponse | undefined)?.total;
-    if (typeof total === 'number') return Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
-    return Math.max(1, Math.ceil((mappedPrograms.length || 0) / ITEMS_PER_PAGE));
+    if (typeof total === 'number')
+      return Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+    return Math.max(
+      1,
+      Math.ceil((mappedPrograms.length || 0) / ITEMS_PER_PAGE)
+    );
   }, [data, mappedPrograms]);
 
   const totalCount = useMemo(() => {
-    const nested = (data as { data?: { pagination?: { totalPrograms?: number } } } | undefined)?.data?.pagination;
+    const nested = (
+      data as { data?: { pagination?: { totalPrograms?: number } } } | undefined
+    )?.data?.pagination;
     if (typeof nested?.totalPrograms === 'number') return nested.totalPrograms;
     const flatTotal = (data as ProgramsResponse | undefined)?.total;
     if (typeof flatTotal === 'number') return flatTotal;
@@ -254,7 +277,9 @@ const ExplorePage: React.FC = () => {
                 <div className="bg-secondary h-10 w-40 animate-pulse rounded"></div>
               ) : isError ? (
                 <p className="text-body-2 font-semibold text-red-600">
-                  {error instanceof Error ? error.message : 'Failed to load programs'}
+                  {error instanceof Error
+                    ? error.message
+                    : 'Failed to load programs'}
                 </p>
               ) : (
                 <p className="text-body-2 text-text-primary font-semibold">
@@ -352,7 +377,9 @@ const ExplorePage: React.FC = () => {
           ) : isError ? (
             <div className="flex h-64 items-center justify-center">
               <p className="text-body-3 text-red-600">
-                {error instanceof Error ? error.message : 'Failed to load programs.'}
+                {error instanceof Error
+                  ? error.message
+                  : 'Failed to load programs.'}
               </p>
             </div>
           ) : filteredPrograms?.length === 0 ? (
@@ -421,7 +448,9 @@ const ExplorePage: React.FC = () => {
                 <div className="bg-secondary h-8 w-48 animate-pulse rounded"></div>
               ) : isError ? (
                 <p className="text-body-3 text-red-600">
-                  {error instanceof Error ? error.message : 'Failed to load programs.'}
+                  {error instanceof Error
+                    ? error.message
+                    : 'Failed to load programs.'}
                 </p>
               ) : (
                 <p className="text-h2 text-text-primary font-semibold">
@@ -453,7 +482,9 @@ const ExplorePage: React.FC = () => {
             ) : isError ? (
               <div className="flex h-[450px] items-center justify-center">
                 <p className="text-body-3 text-red-600">
-                  {error instanceof Error ? error.message : 'Failed to load programs.'}
+                  {error instanceof Error
+                    ? error.message
+                    : 'Failed to load programs.'}
                 </p>
               </div>
             ) : filteredPrograms.length === 0 ? (
