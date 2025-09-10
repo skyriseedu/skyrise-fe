@@ -37,14 +37,12 @@ export const universityService = {
     }
 
     if (universityType) {
-      searchParams.append('universityType', universityType);
+      searchParams.append('type', universityType);
     }
 
-    console.log('Search Params before api call:', searchParams.toString());
     const response = await apiClient.get(
       `/universities/search?${searchParams}`
     );
-    console.log('API Response in search universities service:', response);
     return response.data;
   },
 
