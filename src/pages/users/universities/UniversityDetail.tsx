@@ -218,7 +218,13 @@ const UniversityDetail: React.FC = () => {
           </div>
         </div>
 
-        <ProgramStructure />
+        <ProgramStructure
+          engFoundation={university.englishFoundation}
+          bachelorRequirements={university.bachelor}
+          masterRequirements={university.master}
+          entryRequirements={university.entryRequirement}
+          scholarRequirements={university.scholarshipRequirements}
+        />
 
         <ReviewsSection title="Student Success Stories" />
       </div>

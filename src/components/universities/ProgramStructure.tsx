@@ -105,9 +105,10 @@ const ProgramStructure: React.FC<ProgramStructureProps> = ({
                     animate={{ y: 0 }}
                     transition={{ duration: 0.3, delay: 0.1 }}
                   >
-                    <p className="text-body-3 lg:text-body-3 text-text-secondary">
-                      {item.content}
-                    </p>
+                    <p
+                      className="text-body-3 lg:text-body-3 text-text-secondary"
+                      dangerouslySetInnerHTML={{ __html: item.content }}
+                    />
                   </motion.div>
                 </motion.div>
               )}

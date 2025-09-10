@@ -22,7 +22,7 @@ export interface KeyInfo {
 export interface ProgramStructureItem {
   id: string;
   title: string;
-  content: string | undefined;
+  content: string;
 }
 
 export interface ProgramsResponse {
