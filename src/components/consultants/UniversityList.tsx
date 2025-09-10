@@ -1,7 +1,8 @@
+import type { UniversityLogo } from '@/types/users/university-logos';
 import React from 'react';
 
 interface UniversityListProps {
-  logos?: { src: string; alt: string }[];
+  logos?: UniversityLogo[];
 }
 
 const UniversityList: React.FC<UniversityListProps> = ({ logos }) => {
@@ -32,9 +33,9 @@ const UniversityList: React.FC<UniversityListProps> = ({ logos }) => {
                 logos.map((logo, index) => (
                   <div key={`${index}-${setIndex}`} className="flex-shrink-0">
                     <img
-                      src={logo.src}
-                      alt={logo.alt}
-                      className="w-35 object-contain lg:w-48"
+                      src={logo.logoUrl}
+                      alt={logo.universityName}
+                      className="w-35 object-contain lg:w-54"
                     />
                   </div>
                 ))}
