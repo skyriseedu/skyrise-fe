@@ -37,7 +37,7 @@ export const universityService = {
     }
 
     if (universityType) {
-      searchParams.append('type', universityType);
+      searchParams.append('universityType', universityType);
     }
 
     const response = await apiClient.get(
