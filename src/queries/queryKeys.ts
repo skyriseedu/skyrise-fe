@@ -12,3 +12,12 @@ export const blogKeys = {
   paginated: (category?: string, page?: number, limit?: number) =>
     [...blogKeys.all, 'paginated', { category, page, limit }] as const,
 } as const;
+
+// Query key factory for consultants
+export const consultantKeys = {
+  all: ['consultants'] as const,
+  lists: () => [...consultantKeys.all, 'list'] as const,
+  list: () => [...consultantKeys.lists()] as const,
+  details: () => [...consultantKeys.all, 'detail'] as const,
+  detail: (id: string) => [...consultantKeys.details(), id] as const,
+} as const;

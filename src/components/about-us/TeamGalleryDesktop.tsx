@@ -73,15 +73,11 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({
               }}
             >
               {members?.map((member) => (
-                <div key={member.id} className="flex-shrink-0">
-                  <TeamCard
-                    image={member.image}
-                    name={member.name}
-                    position={member.position}
-                    department={member.department}
-                    university={member.university}
-                    profileLink={member.profileLink}
-                  />
+                <div
+                  key={String(member._id || member.slug)}
+                  className="flex-shrink-0"
+                >
+                  <TeamCard {...member} />
                 </div>
               ))}
             </motion.div>

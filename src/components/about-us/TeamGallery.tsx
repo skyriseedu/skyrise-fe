@@ -95,8 +95,9 @@ const TeamGallery: React.FC<TeamGalleryProps> = ({
 
   // visible indices
   const getVisibleIndices = () => {
-    const indices = [];
+    const indices: { index: number; offset: number }[] = [];
     const totalMembers = members.length;
+    if (totalMembers === 0) return indices;
 
     // show 7 cards: center + 3 on each side
     for (let i = -3; i <= 3; i++) {
@@ -171,24 +172,10 @@ const TeamGallery: React.FC<TeamGalleryProps> = ({
                   }}
                 >
                   {isCenter ? (
-                    <TeamCard
-                      image={member.image}
-                      name={member.name}
-                      position={member.position}
-                      department={member.department}
-                      university={member.university}
-                      profileLink={member.profileLink}
-                    />
+                    <TeamCard {...member} />
                   ) : (
                     <div className="pointer-events-none">
-                      <TeamCard
-                        image={member.image}
-                        name={member.name}
-                        position={member.position}
-                        department={member.department}
-                        university={member.university}
-                        profileLink={member.profileLink}
-                      />
+                      <TeamCard {...member} />
                     </div>
                   )}
                 </motion.div>
