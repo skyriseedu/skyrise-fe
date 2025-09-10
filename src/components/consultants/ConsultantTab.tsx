@@ -3,36 +3,10 @@ import JoinUsCard from './joinUsCard';
 import coverImage from '../../assets/images/consultant-cover.png';
 import { useConsultantCount } from '@/queries/consultants';
 import UniversityList from './UniversityList';
-import testLog from '../../assets/test-logo.png';
 import SuccessModal from '../common/SuccessModal';
 import ApplyConsultantForm from '../common/ApplyConsultantForm';
-
-const universityLogos = [
-  {
-    src: testLog,
-    alt: 'Rangsit University',
-  },
-  {
-    src: testLog,
-    alt: 'Bangkok University',
-  },
-  {
-    src: testLog,
-    alt: 'UTCC',
-  },
-  {
-    src: testLog,
-    alt: 'Raffles University',
-  },
-  {
-    src: testLog,
-    alt: 'AIHM',
-  },
-  {
-    src: testLog,
-    alt: 'Dusit Thani College',
-  },
-];
+import { useAllUniversityLogos } from '@/queries/university-logos';
+import Loading from '../common/Loading';
 
 const ConsultantTab: React.FC = () => {
   const { data: consultantCountResponse, isLoading: isLoadingConsultantCount } =
@@ -48,6 +22,12 @@ const ConsultantTab: React.FC = () => {
     setIsOpen(false);
     setShowSuccessModal(true);
   };
+
+  const { data: universityLogoData, isLoading: isLoadingUniversityLogos } =
+    useAllUniversityLogos();
+
+  console.log('University Logos:', universityLogoData);
+  const universityLogos = universityLogoData?.data?.logos || [];
 
   return (
     <div className="min-h-screen bg-white">
@@ -237,7 +217,11 @@ const ConsultantTab: React.FC = () => {
           <h3 className="text-h3 lg:text-h1 mb-6 font-semibold text-gray-900 lg:text-lg">
             Our Ambassadors from Leading Universities
           </h3>
-          <UniversityList logos={universityLogos} />
+          {isLoadingUniversityLogos ? (
+            <Loading />
+          ) : (
+            <UniversityList logos={universityLogos} />
+          )}
         </div>
       </div>
 
