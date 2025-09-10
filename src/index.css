@@ -185,14 +185,28 @@
     display: flex;
   }
 
+  .animate-scroll-logos {
+    animation: marquee 12s linear infinite;
+    will-change: transform;
+    display: flex;
+  }
+
   @media (min-width: 640px) {
     .animate-scroll-reviews {
       animation-duration: 15s;
+    }
+
+    .animate-scroll-logos {
+      animation-duration: 20s;
     }
   }
 
   /* Pause animation on hover */
   .animate-scroll-reviews:hover {
+    animation-play-state: paused;
+  }
+
+  .animate-scroll-logos:hover {
     animation-play-state: paused;
   }
 

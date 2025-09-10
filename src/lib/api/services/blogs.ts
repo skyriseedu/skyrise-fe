@@ -5,7 +5,7 @@ import type {
   CategoryBlogsApiResponse,
   SingleBlogApiResponse,
   UseBlogsParams,
-} from '@/types/blog';
+} from '@/types/users/blog';
 
 export const blogService = {
   async getBlogs(params: UseBlogsParams = {}): Promise<BlogsApiResponse> {

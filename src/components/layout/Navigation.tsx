@@ -14,7 +14,7 @@ const navigationItems = [
   { name: 'Home', path: '/' },
   { name: 'Explore', path: '/explore' },
   { name: 'About Us', path: '/about' },
-  { name: 'Universities & Consultants', path: '/universities' },
+  { name: 'Universities & Consultants', path: '/universities-and-consultants' },
   {
     name: 'Services',
     hasSubmenu: true,
