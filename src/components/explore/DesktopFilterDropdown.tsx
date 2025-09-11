@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import caretDownIcon from '@/assets/caret-down.svg';
 import Button from '@/components/common/Button';
 import type { ExploreFilters, FilterSection } from '@/types/users/explore';
+import { useProgramOptionsStore } from '@/store/useProgramOptionsStore';
 
 interface DesktopFilterDropdownProps {
   filters: ExploreFilters;
@@ -10,43 +11,24 @@ interface DesktopFilterDropdownProps {
   activeFiltersCount: number;
 }
 
-const filterSections: FilterSection[] = [
-  {
-    id: 'degrees',
-    label: 'Degrees',
-    options: [
-      { label: 'Bachelor', value: 'bachelor' },
-      { label: 'Master', value: 'master' },
-      { label: 'PhD', value: 'phd' },
-    ],
-  },
-  {
-    id: 'programs',
-    label: 'Programs',
-    options: [
-      { label: 'Information Technology', value: 'it' },
-      { label: 'Business Administration', value: 'business' },
-      { label: 'Engineering', value: 'engineering' },
-      { label: 'Medicine', value: 'medicine' },
-    ],
-  },
-  {
-    id: 'duration',
-    label: 'Duration',
-    options: [
-      { label: '1 year', value: '1' },
-      { label: '2 years', value: '2' },
-      { label: '3 years', value: '3' },
-      { label: '4 years', value: '4' },
-      { label: '5+ years', value: '5+' },
-    ],
-  },
-];
-
 const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
   filters: initialFilters,
   onApplyFilters,
 }) => {
+  const { degrees, programs, durations, fees, fetchFilters, fetched, loading } =
+    useProgramOptionsStore();
+
+  useEffect(() => {
+    if (!fetched && !loading) fetchFilters();
+  }, [fetched, loading, fetchFilters]);
+
+  const dynamicSections: FilterSection[] = useMemo(() => {
+    return [
+      { id: 'degrees', label: 'Degrees', options: degrees },
+      { id: 'programs', label: 'Programs', options: programs },
+      { id: 'duration', label: 'Duration', options: durations },
+    ];
+  }, [degrees, programs, durations]);
   const [expandedSections, setExpandedSections] = useState<string[]>([
     'degrees',
     'programs',
@@ -56,10 +38,14 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
   const [localFilters, setLocalFilters] =
     useState<ExploreFilters>(initialFilters);
 
+  useEffect(() => {
+    setLocalFilters(initialFilters);
+  }, [initialFilters]);
+
   const toggleSection = (sectionId: string) => {
     setExpandedSections((prev) =>
-      prev.includes(sectionId)
-        ? prev.filter((id) => id !== sectionId)
+      prev?.includes(sectionId)
+        ? prev?.filter((id) => id !== sectionId)
         : [...prev, sectionId]
     );
   };
@@ -94,7 +80,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
 
         {/* Filter Sections */}
         <div className="space-y-3">
-          {filterSections.map((section) => (
+          {dynamicSections.map((section) => (
             <div
               key={section.id}
               className="overflow-hidden rounded-lg bg-white"
@@ -181,89 +167,27 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                   className="overflow-hidden"
                 >
                   <div className="space-y-3 bg-white px-4 pb-4">
-                    <label className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50">
-                      <input
-                        type="checkbox"
-                        checked={
-                          localFilters.tuitionRanges?.includes('0-200000') ||
-                          false
-                        }
-                        onChange={() =>
-                          handleFilterChange('tuitionRanges', '0-200000')
-                        }
-                        className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
-                      />
-                      <span className="text-body-2 text-text-primary">
-                        0 - 200,000 THB
-                      </span>
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50">
-                      <input
-                        type="checkbox"
-                        checked={
-                          localFilters.tuitionRanges?.includes(
-                            '200000-400000'
-                          ) || false
-                        }
-                        onChange={() =>
-                          handleFilterChange('tuitionRanges', '200000-400000')
-                        }
-                        className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
-                      />
-                      <span className="text-body-2 text-text-primary">
-                        200,000 - 400,000 THB
-                      </span>
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50">
-                      <input
-                        type="checkbox"
-                        checked={
-                          localFilters.tuitionRanges?.includes(
-                            '400000-600000'
-                          ) || false
-                        }
-                        onChange={() =>
-                          handleFilterChange('tuitionRanges', '400000-600000')
-                        }
-                        className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
-                      />
-                      <span className="text-body-3 text-text-primary">
-                        400,000 - 600,000 THB
-                      </span>
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50">
-                      <input
-                        type="checkbox"
-                        checked={
-                          localFilters.tuitionRanges?.includes(
-                            '600000-800000'
-                          ) || false
-                        }
-                        onChange={() =>
-                          handleFilterChange('tuitionRanges', '600000-800000')
-                        }
-                        className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
-                      />
-                      <span className="text-body-3 text-text-primary">
-                        600,000 - 800,000 THB
-                      </span>
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50">
-                      <input
-                        type="checkbox"
-                        checked={
-                          localFilters.tuitionRanges?.includes('800000+') ||
-                          false
-                        }
-                        onChange={() =>
-                          handleFilterChange('tuitionRanges', '800000+')
-                        }
-                        className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
-                      />
-                      <span className="text-body-3 text-text-primary">
-                        800,000+ THB
-                      </span>
-                    </label>
+                    {fees.map((fee) => (
+                      <label
+                        key={fee.value}
+                        className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={
+                            localFilters.tuitionRanges?.includes(fee.value) ||
+                            false
+                          }
+                          onChange={() =>
+                            handleFilterChange('tuitionRanges', fee.value)
+                          }
+                          className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
+                        />
+                        <span className="text-body-2 text-text-primary">
+                          {fee.label}
+                        </span>
+                      </label>
+                    ))}
                   </div>
                 </motion.div>
               )}

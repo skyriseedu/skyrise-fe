@@ -1,30 +1,55 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import caretDown from '@/assets/caret-down.svg';
-import type { ProgramStructureItem } from '@/types/users/program';
 
-const ProgramStructure: React.FC = () => {
+interface ProgramStructureProps {
+  undergraduateEntryRequirement?: string;
+  creditDetails?: string;
+  careerPaths?: string;
+}
+
+type AccordionItem = {
+  id: string;
+  title: string;
+  content?: string;
+  htmlContent?: string;
+};
+
+const ProgramStructure: React.FC<ProgramStructureProps> = ({
+  undergraduateEntryRequirement,
+  creditDetails,
+  careerPaths,
+}) => {
   const [openItems, setOpenItems] = useState<string[]>([]);
 
-  const accordionData: ProgramStructureItem[] = [
-    {
-      id: 'credit',
-      title: 'Total Credit Requirement',
-      content:
-        'The program requires a total of 120 credits to graduate. This includes core courses (60 credits), major electives (30 credits), general education courses (24 credits), and free electives (6 credits).',
-    },
-    {
-      id: 'requirements',
-      title: 'Undergraduate Entry Requirements',
-      content:
-        'Applicants must have completed high school with a minimum GPA of 2.5. English proficiency (TOEFL 550 or IELTS 6.0) is required. Additional requirements include official transcripts, recommendation letters, and a personal statement.',
-    },
-    {
-      id: 'career',
-      title: 'Career Paths',
-      content:
-        'Graduates can pursue careers as Software Developers, Web Designers, Database Administrators, Network Engineers, IT Consultants, System Analysts, or pursue further studies in specialized ICT fields.',
-    },
+  const accordionData: AccordionItem[] = [
+    ...(creditDetails
+      ? [
+          {
+            id: 'credit',
+            title: 'Total Credit Requirement',
+            content: creditDetails,
+          } as AccordionItem,
+        ]
+      : []),
+    ...(undergraduateEntryRequirement
+      ? [
+          {
+            id: 'requirements',
+            title: 'Undergraduate Entry Requirements',
+            htmlContent: undergraduateEntryRequirement,
+          } as AccordionItem,
+        ]
+      : []),
+    ...(careerPaths
+      ? [
+          {
+            id: 'career',
+            title: 'Career Paths',
+            content: careerPaths,
+          } as AccordionItem,
+        ]
+      : []),
   ];
 
   const toggleItem = (id: string) => {
@@ -84,9 +109,16 @@ const ProgramStructure: React.FC = () => {
                     animate={{ y: 0 }}
                     transition={{ duration: 0.3, delay: 0.1 }}
                   >
-                    <p className="text-body-3 lg:text-body-3 text-text-secondary">
-                      {item.content}
-                    </p>
+                    {item?.htmlContent ? (
+                      <div
+                        className="text-body-3 lg:text-body-3 text-text-secondary"
+                        dangerouslySetInnerHTML={{ __html: item?.htmlContent }}
+                      />
+                    ) : (
+                      <p className="text-body-3 lg:text-body-3 text-text-secondary">
+                        {item.content}
+                      </p>
+                    )}
                   </motion.div>
                 </motion.div>
               )}

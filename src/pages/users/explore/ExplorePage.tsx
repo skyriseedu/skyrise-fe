@@ -5,176 +5,61 @@ import StickyHeader from '@/components/common/StickyHeader';
 import Pagination from '@/components/common/Pagination';
 import Loading from '@/components/common/Loading';
 import type { ExploreFilters } from '@/types/users/explore';
+import type {
+  ProgramsApiResponse,
+  ProgramListItem,
+} from '@/types/users/program';
 import React, { useState, useMemo, useEffect } from 'react';
 import filterIcon from '@/assets/filter-alt.svg';
 import searchIcon from '@/assets/search.svg';
 import { useFilterStore } from '@/store/useFilterStore';
+import { usePrograms, useProgramsSearch } from '@/queries';
+import { capitalizeFirstLetters } from '@/helpers';
+import { useProgramOptionsStore } from '@/store/useProgramOptionsStore';
+import ApplicationForm from '@/components/common/ApplicationForm';
+import SuccessModal from '@/components/common/SuccessModal';
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 10;
 
 const ExplorePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
   const { isMobileFilterOpen, setIsMobileFilterOpen } = useFilterStore();
+  const [isApplicationOpen, setIsApplicationOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [filters, setFilters] = useState<ExploreFilters>({
     degrees: [],
     programs: [],
     tuitionRanges: [],
     duration: [],
   });
+  const {
+    degrees: degreeOpts,
+    programs: programOpts,
+    durations: durationOpts,
+    fees: feeOpts,
+    fetchFilters,
+    fetched,
+    loading: loadingFilters,
+  } = useProgramOptionsStore();
 
   useEffect(() => {
-    // Simulate data fetching
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    if (!fetched && !loadingFilters) fetchFilters();
+  }, [fetched, loadingFilters, fetchFilters]);
+  const listQuery = usePrograms({ page: currentPage, limit: ITEMS_PER_PAGE });
 
-    return () => clearTimeout(timer);
-  }, []);
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedSearch(searchQuery.trim()), 250);
+    return () => clearTimeout(id);
+  }, [searchQuery]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch]);
 
-  const samplePrograms = [
-    {
-      id: '1',
-      title: 'Bachelor of Science in Information and Communication Technology',
-      university: 'Rangsit University',
-      upcomingIntake: 'Aug 2025',
-      duration: '4 years',
-      ranking: 'Public, 20th',
-      rankingYear: '2025',
-      totalTuitionFees: '600,000 THB',
-      applicationDeadline: 'July 23, 2025',
-      degree: 'bachelor',
-      program: 'it',
-      tuition: 600000,
-    },
-    {
-      id: '2',
-      title: 'Bachelor of Business Administration',
-      university: 'Chulalongkorn University',
-      upcomingIntake: 'Sep 2025',
-      duration: '4 years',
-      ranking: 'Public, 1st',
-      rankingYear: '2025',
-      totalTuitionFees: '800,000 THB',
-      applicationDeadline: 'August 15, 2025',
-      degree: 'bachelor',
-      program: 'business',
-      tuition: 800000,
-    },
-    {
-      id: '3',
-      title: 'Master of Engineering in Software Engineering',
-      university: 'Mahidol University',
-      upcomingIntake: 'Jan 2026',
-      duration: '2 years',
-      ranking: 'Public, 5th',
-      rankingYear: '2025',
-      totalTuitionFees: '450,000 THB',
-      applicationDeadline: 'December 1, 2025',
-      degree: 'master',
-      program: 'engineering',
-      tuition: 450000,
-    },
-    {
-      id: '4',
-      title: 'Bachelor of Medicine',
-      university: 'Siriraj Hospital Medical School',
-      upcomingIntake: 'June 2025',
-      duration: '6 years',
-      ranking: 'Public, 2nd',
-      rankingYear: '2025',
-      totalTuitionFees: '1,200,000 THB',
-      applicationDeadline: 'May 1, 2025',
-      degree: 'bachelor',
-      program: 'medicine',
-      tuition: 1200000,
-    },
-    {
-      id: '5',
-      title: 'Master of Business Administration (International Program)',
-      university: 'Thammasat University',
-      upcomingIntake: 'Aug 2025',
-      duration: '2 years',
-      ranking: 'Public, 8th',
-      rankingYear: '2025',
-      totalTuitionFees: '550,000 THB',
-      applicationDeadline: 'June 30, 2025',
-      degree: 'master',
-      program: 'business',
-      tuition: 550000,
-    },
-    {
-      id: '6',
-      title: 'Bachelor of Engineering in Computer Engineering',
-      university: "King Mongkut's University of Technology Thonburi",
-      upcomingIntake: 'Aug 2025',
-      duration: '4 years',
-      ranking: 'Public, 12th',
-      rankingYear: '2025',
-      totalTuitionFees: '520,000 THB',
-      applicationDeadline: 'July 15, 2025',
-      degree: 'bachelor',
-      program: 'engineering',
-      tuition: 520000,
-    },
-    {
-      id: '7',
-      title: 'Master of Science in Data Science',
-      university: 'Chiang Mai University',
-      upcomingIntake: 'Jan 2026',
-      duration: '2 years',
-      ranking: 'Public, 7th',
-      rankingYear: '2025',
-      totalTuitionFees: '380,000 THB',
-      applicationDeadline: 'November 30, 2025',
-      degree: 'master',
-      program: 'it',
-      tuition: 380000,
-    },
-    {
-      id: '8',
-      title: 'Bachelor of Arts in International Business',
-      university: 'Kasetsart University',
-      upcomingIntake: 'Aug 2025',
-      duration: '4 years',
-      ranking: 'Public, 10th',
-      rankingYear: '2025',
-      totalTuitionFees: '480,000 THB',
-      applicationDeadline: 'June 15, 2025',
-      degree: 'bachelor',
-      program: 'business',
-      tuition: 480000,
-    },
-    {
-      id: '9',
-      title: 'Doctor of Medicine',
-      university: 'Prince of Songkla University',
-      upcomingIntake: 'June 2025',
-      duration: '6 years',
-      ranking: 'Public, 4th',
-      rankingYear: '2025',
-      totalTuitionFees: '1,100,000 THB',
-      applicationDeadline: 'April 30, 2025',
-      degree: 'bachelor',
-      program: 'medicine',
-      tuition: 1100000,
-    },
-    {
-      id: '10',
-      title: 'Master of Engineering in Electrical Engineering',
-      university: 'Suranaree University of Technology',
-      upcomingIntake: 'Jan 2026',
-      duration: '2 years',
-      ranking: 'Public, 15th',
-      rankingYear: '2025',
-      totalTuitionFees: '350,000 THB',
-      applicationDeadline: 'December 15, 2025',
-      degree: 'master',
-      program: 'engineering',
-      tuition: 350000,
-    },
-  ];
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
 
   const activeFiltersCount = useMemo(() => {
     let count = 0;
@@ -197,15 +82,128 @@ const ExplorePage: React.FC = () => {
     setCurrentPage(1);
   };
 
-  const totalPages = Math.ceil(samplePrograms.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentPrograms = samplePrograms.slice(startIndex, endIndex);
+  const labelMaps = useMemo(() => {
+    const deg = new Map<string, string>();
+    const prog = new Map<string, string>();
+    const dur = new Map<string, string>();
+    const fees = new Map<string, string>();
+    degreeOpts.forEach((o) => deg.set(o.value, o.label));
+    programOpts.forEach((o) => prog.set(o.value, o.label));
+    durationOpts.forEach((o) => dur.set(o.value, o.label));
+    feeOpts.forEach((o) => fees.set(o.value, o.label));
+    return { deg, prog, dur, fees };
+  }, [degreeOpts, programOpts, durationOpts, feeOpts]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const handleApplyClick = () => setIsApplicationOpen(true);
+  const handleFormSuccess = () => {
+    setIsApplicationOpen(false);
+    setShowSuccessModal(true);
+  };
+
+  const usingSearch = hasActiveFilters || !!debouncedSearch;
+  const searchParams = useMemo(() => {
+    if (!usingSearch) return null;
+    const degreesParam = filters.degrees.length
+      ? filters.degrees?.map(
+          (d) =>
+            labelMaps.deg.get(d) ||
+            capitalizeFirstLetters(d.replace(/-/g, ' '))
+        )
+      : undefined;
+    const programsParam = filters.programs.length
+      ? filters.programs.map(
+          (p) =>
+            labelMaps.prog.get(p) ||
+            capitalizeFirstLetters(p.replace(/-/g, ' '))
+        )
+      : undefined;
+    const feesParam = filters.tuitionRanges.length
+      ? filters.tuitionRanges
+      : undefined;
+    const durationParam = filters.duration.length
+      ? filters.duration.map((d) => {
+          const match = d.match(/[0-9]+(\.[0-9]+)?/);
+          return match ? match[0] : d;
+        })
+      : undefined;
+    const q = debouncedSearch || undefined;
+    return {
+      degrees: degreesParam,
+      programs: programsParam,
+      fees: feesParam,
+      duration: durationParam,
+      q,
+    };
+  }, [usingSearch, filters, debouncedSearch, labelMaps]);
+
+  const searchQueryResult = useProgramsSearch(
+    {
+      page: currentPage,
+      limit: ITEMS_PER_PAGE,
+      ...(searchParams || {}),
+    },
+    usingSearch
+  );
+
+  const data: ProgramsApiResponse | undefined = usingSearch
+    ? searchQueryResult.data
+    : listQuery.data;
+  const isLoading = usingSearch
+    ? searchQueryResult.isLoading
+    : listQuery.isLoading;
+  const isError = usingSearch ? searchQueryResult.isError : listQuery.isError;
+  const error = usingSearch ? searchQueryResult.error : listQuery.error;
+
+  const allPrograms: ProgramListItem[] = useMemo(() => {
+    const nested = data?.data?.programs;
+    if (Array.isArray(nested)) return nested;
+    return [] as ProgramListItem[];
+  }, [data]);
+
+  const mappedPrograms: ProgramListItem[] = allPrograms;
+
+  const filteredPrograms = useMemo(() => {
+    if (usingSearch) return mappedPrograms;
+    const q = debouncedSearch.toLowerCase();
+
+    const matchesDegree = (raw: ProgramListItem) => {
+      if (!filters.degrees.length) return true;
+      const deg = (raw?.keyInformation?.degree || '').toString().toLowerCase();
+      return filters.degrees.includes(deg);
+    };
+
+    const paired = mappedPrograms?.map((raw) => ({ raw }));
+
+    const textFiltered = debouncedSearch
+      ? paired.filter(({ raw }) =>
+          (raw.programName || '')?.toLowerCase()?.includes(q)
+        )
+      : paired;
+
+    const structured = textFiltered?.filter(({ raw }) => matchesDegree(raw));
+
+    return structured?.map(({ raw }) => raw) ?? [];
+  }, [usingSearch, debouncedSearch, mappedPrograms, allPrograms, filters]);
+
+  const totalPages = useMemo(() => {
+    const pages = data?.pagination?.pages;
+    if (typeof pages === 'number' && pages > 0) return pages;
+    const total = data?.total;
+    if (typeof total === 'number')
+      return Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+    return Math.max(1, Math.ceil((mappedPrograms.length || 0) / ITEMS_PER_PAGE));
+  }, [data, mappedPrograms]);
+
+  const totalCount = useMemo(() => {
+    const total = data?.total;
+    if (typeof total === 'number') return total;
+    return mappedPrograms.length;
+  }, [data, mappedPrograms]);
 
   return (
     <div className="md:bg-secondary min-h-screen sm:bg-white">
@@ -218,9 +216,15 @@ const ExplorePage: React.FC = () => {
             <div className="mb-3 flex items-center justify-between">
               {isLoading ? (
                 <div className="bg-secondary h-10 w-40 animate-pulse rounded"></div>
+              ) : isError ? (
+                <p className="text-body-2 font-semibold text-red-600">
+                  {error instanceof Error
+                    ? error.message
+                    : 'Failed to load programs'}
+                </p>
               ) : (
                 <p className="text-body-2 text-text-primary font-semibold">
-                  Total {samplePrograms?.length} Programs Found
+                  Total {totalCount} Programs Found
                 </p>
               )}
 
@@ -263,50 +267,36 @@ const ExplorePage: React.FC = () => {
                       key={degree}
                       className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium"
                     >
-                      {degree.charAt(0).toUpperCase() + degree.slice(1)}
+                      {labelMaps.deg.get(degree) ||
+                        capitalizeFirstLetters(degree.replace(/-/g, ' '))}
                     </span>
                   ))}
-                  {filters.programs.map((program) => {
-                    const programLabels: Record<string, string> = {
-                      it: 'Information and Communication Technology',
-                      business: 'Business Administration',
-                      engineering: 'Engineering',
-                      medicine: 'Medicine',
-                    };
-                    return (
-                      <span
-                        key={program}
-                        className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium"
-                      >
-                        {programLabels[program] || program}
-                      </span>
-                    );
-                  })}
+                  {filters.programs.map((program) => (
+                    <span
+                      key={program}
+                      className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium"
+                    >
+                      {labelMaps.prog.get(program) ||
+                        capitalizeFirstLetters(program.replace(/-/g, ' '))}
+                    </span>
+                  ))}
                   {filters.duration.map((duration) => (
                     <span
                       key={duration}
                       className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium"
                     >
-                      {duration} year{duration !== '1' ? 's' : ''}
+                      {labelMaps.dur.get(duration) || duration}
                     </span>
                   ))}
-                  {filters.tuitionRanges.map((range) => {
-                    const rangeLabel = {
-                      '0-200000': '0 - 200,000 THB',
-                      '200000-400000': '200,000 - 400,000 THB',
-                      '400000-600000': '400,000 - 600,000 THB',
-                      '600000-800000': '600,000 - 800,000 THB',
-                      '800000+': '800,000+ THB',
-                    }[range];
-                    return (
-                      <span
-                        key={range}
-                        className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium"
-                      >
-                        {rangeLabel}
-                      </span>
-                    );
-                  })}
+                  {filters.tuitionRanges.map((range) => (
+                    <span
+                      key={range}
+                      className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium"
+                    >
+                      {labelMaps.fees.get(range) ||
+                        capitalizeFirstLetters(range.replace(/-/g, ' '))}
+                    </span>
+                  ))}
                 </div>
                 <button
                   onClick={handleClearFilters}
@@ -325,14 +315,28 @@ const ExplorePage: React.FC = () => {
             <div className="flex h-64 items-center justify-center">
               <Loading size="lg" color="primary" />
             </div>
+          ) : isError ? (
+            <div className="flex h-64 items-center justify-center">
+              <p className="text-body-3 text-red-600">
+                {error instanceof Error
+                  ? error.message
+                  : 'Failed to load programs.'}
+              </p>
+            </div>
+          ) : filteredPrograms?.length === 0 ? (
+            <div className="flex h-64 items-center justify-center">
+              <p className="text-primary text-h3 font-semibold">
+                0 PROGRAM FOUND
+              </p>
+            </div>
           ) : (
             <>
               <div className="flex flex-col gap-4">
-                {currentPrograms.map((program) => (
+                {filteredPrograms?.map((program) => (
                   <ProgramCard
-                    key={program.id}
-                    {...program}
-                    onApplyClick={() => console.log('Apply clicked')}
+                    key={program._id ?? program.slug}
+                    program={program}
+                    onApplyClick={handleApplyClick}
                   />
                 ))}
               </div>
@@ -355,8 +359,9 @@ const ExplorePage: React.FC = () => {
         <StickyHeader
           title="Explore"
           showBackButton={false}
-          desktopPadding="px-0"
-          mobilePadding="px-0"
+          mobilePadding="px-6"
+          desktopPadding="lg:px-15"
+          useContainer={false}
         />
 
         <div className="flex">
@@ -373,9 +378,15 @@ const ExplorePage: React.FC = () => {
             <div className="mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
               {isLoading ? (
                 <div className="bg-secondary h-8 w-48 animate-pulse rounded"></div>
+              ) : isError ? (
+                <p className="text-body-3 text-red-600">
+                  {error instanceof Error
+                    ? error.message
+                    : 'Failed to load programs.'}
+                </p>
               ) : (
                 <p className="text-h2 text-text-primary font-semibold">
-                  Total {samplePrograms.length} Programs Found
+                  Total {totalCount} Programs Found
                 </p>
               )}
 
@@ -400,15 +411,29 @@ const ExplorePage: React.FC = () => {
               <div className="flex h-[450px] items-center justify-center">
                 <Loading size="lg" color="primary" />
               </div>
+            ) : isError ? (
+              <div className="flex h-[450px] items-center justify-center">
+                <p className="text-body-3 text-red-600">
+                  {error instanceof Error
+                    ? error.message
+                    : 'Failed to load programs.'}
+                </p>
+              </div>
+            ) : filteredPrograms.length === 0 ? (
+              <div className="flex h-[450px] items-center justify-center">
+                <p className="text-primary text-h2 font-semibold">
+                  0 PROGRAM FOUND
+                </p>
+              </div>
             ) : (
               <>
                 <div className="scrollbar-hide relative h-[450px] overflow-y-auto">
                   <div className="flex flex-col gap-4 pb-20">
-                    {currentPrograms.map((program) => (
+                    {filteredPrograms.map((program, idx) => (
                       <ProgramCard
-                        key={program.id}
-                        {...program}
-                        onApplyClick={() => console.log('Apply clicked')}
+                        key={program._id ?? program.slug ?? idx}
+                        program={program}
+                        onApplyClick={handleApplyClick}
                       />
                     ))}
                   </div>
@@ -433,6 +458,28 @@ const ExplorePage: React.FC = () => {
         onClose={() => setIsMobileFilterOpen(false)}
         filters={filters}
         onApplyFilters={setFilters}
+      />
+
+      {/* Application Form Modal */}
+      {isApplicationOpen && (
+        <div
+          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-25"
+          onClick={() => setIsApplicationOpen(false)}
+        >
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <ApplicationForm
+              onClose={() => setIsApplicationOpen(false)}
+              onSuccess={handleFormSuccess}
+            />
+          </div>
+        </div>
+      )}
+
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Applied Successfully!"
+        message="Thank you for applying with us. We will contact you shortly via email to confirm your application details."
       />
     </div>
   );

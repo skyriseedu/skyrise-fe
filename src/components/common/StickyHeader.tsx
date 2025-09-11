@@ -11,6 +11,7 @@ interface StickyHeaderProps {
   showBackButton?: boolean;
   children?: React.ReactNode;
   isLoading?: boolean;
+  useContainer?: boolean;
 }
 
 const StickyHeader: React.FC<StickyHeaderProps> = ({
@@ -22,6 +23,7 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
   showBackButton = true,
   children,
   isLoading = false,
+  useContainer = true,
 }) => {
   const navigate = useNavigate();
 
@@ -30,7 +32,7 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
       className={`sticky top-[77px] z-40 border-b border-gray-200 bg-white will-change-transform ${className}`}
     >
       <div className={`${mobilePadding} ${desktopPadding} py-4`}>
-        <div className="lg:mx-auto lg:max-w-7xl">
+        <div className={useContainer ? 'lg:mx-auto lg:max-w-7xl' : ''}>
           <div className="flex items-start gap-3">
             {showBackButton && (
               <button
