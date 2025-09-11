@@ -1,76 +1,65 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../common/Button';
+import type { ProgramListItem } from '@/types/users/program';
 
 interface ProgramCardProps {
-  id?: string;
-  slug: string;
-  title: string;
-  university: string;
-  upcomingIntake: string;
-  duration: string;
-  ranking: string;
-  rankingYear: string;
-  totalTuitionFees: string;
-  applicationDeadline: string;
+  program: ProgramListItem;
   onApplyClick?: () => void;
   onReadDetailsClick?: () => void;
 }
 
 interface InfoFieldProps {
   label: string;
-  value: string;
+  value?: string | null;
   className?: string;
 }
 
-const InfoField: React.FC<InfoFieldProps> = ({
-  label,
-  value,
-  className = '',
-}) => (
-  <div className={className}>
-    <p className="text-body-5 lg:text-body-6 mb-1 font-semibold whitespace-nowrap text-[var(--color-text-secondary)]">
-      {label}
+const InfoField: React.FC<InfoFieldProps> = ({ label, value, className = '' }) => {
+  return (
+    <div className={className}>
+      <p className="text-body-5 lg:text-body-6 mb-1 font-semibold whitespace-nowrap text-[var(--color-text-secondary)]">
+        {label || '-'}
+      </p>
+      <p className="text-body-1 lg:text-h4 font-semibold whitespace-nowrap text-[var(--color-text-primary)]">
+        {value || '-'}
+      </p>
+    </div>
+  );
+};
+
+const UniversityBadge: React.FC<{ university?: string }> = ({ university }) => {
+  return (
+    <div className="text-body-6 mb-6 inline-block rounded-full bg-[var(--color-secondary)] px-4 py-1.5 font-semibold text-[var(--color-text-primary)] lg:mb-4 lg:py-1.5">
+      {university || '-'}
+    </div>
+  );
+};
+
+const ApplicationDeadline: React.FC<{ deadline?: string | null }> = ({ deadline }) => {
+  return (
+    <p className="text-body-4 mb-6 font-semibold text-[var(--color-text-secondary)] lg:mb-4">
+      Application deadline -{' '}
+      <span className="font-semibold text-[var(--color-text-important)]">{deadline}</span>
     </p>
-    <p className="text-body-1 lg:text-h4 font-semibold whitespace-nowrap text-[var(--color-text-primary)]">
-      {value}
-    </p>
-  </div>
-);
+  );
+};
 
-const UniversityBadge: React.FC<{ university: string }> = ({ university }) => (
-  <div className="text-body-6 mb-6 inline-block rounded-full bg-[var(--color-secondary)] px-4 py-1.5 font-medium text-[var(--color-text-primary)] lg:mb-4 lg:py-1.5">
-    {university}
-  </div>
-);
-
-const ApplicationDeadline: React.FC<{ deadline: string }> = ({ deadline }) => (
-  <p className="text-body-4 mb-6 font-semibold text-[var(--color-text-secondary)] lg:mb-4">
-    /* Application deadline -{' '}
-    <span className="font-medium text-[var(--color-text-important)]">
-      {deadline}
-    </span>
-  </p>
-);
-
-const ProgramCard: React.FC<ProgramCardProps> = ({
-  slug,
-  title,
-  university,
-  upcomingIntake,
-  duration,
-  ranking,
-  rankingYear,
-  totalTuitionFees,
-  applicationDeadline,
-  onApplyClick,
-  onReadDetailsClick,
-}) => {
+const ProgramCard: React.FC<ProgramCardProps> = ({ program, onApplyClick, onReadDetailsClick }) => {
   const navigate = useNavigate();
+  const title = program.programName;
+  const university = program.universityName;
+  const upcomingIntake = program.keyInformation?.upcomingIntake?.[0];
+  const duration = program.keyInformation?.duration;
+  const ranking = program.universityRanking;
+  const totalTuitionFees = program.keyInformation?.totalTuitionFees;
+  const applicationDeadline = program.applicationDeadline;
+  const slug = program.slug;
+  const rankingLabel = 'Thailand Ranking';
   const programInfo = [
     { label: 'Upcoming Intake', value: upcomingIntake },
     { label: 'Duration', value: duration },
-    { label: `Thailand Ranking ${rankingYear}`, value: ranking },
+    { label: rankingLabel, value: ranking ?? undefined },
     { label: 'Total Tuition Fees', value: totalTuitionFees },
   ];
 
@@ -105,8 +94,10 @@ const ProgramCard: React.FC<ProgramCardProps> = ({
             if (onReadDetailsClick) {
               onReadDetailsClick();
             } else {
-              const path = `/programs/${slug}`;
-              navigate(path);
+              if (slug) {
+                const path = `/programs/${slug}`;
+                navigate(path);
+              }
             }
           }}
           className="flex-1 !bg-[var(--color-primary)] whitespace-nowrap hover:!bg-[var(--color-primary)]/90 lg:flex-none lg:!px-8"

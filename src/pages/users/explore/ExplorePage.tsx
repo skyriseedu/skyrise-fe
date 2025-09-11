@@ -7,9 +7,7 @@ import Loading from '@/components/common/Loading';
 import type { ExploreFilters } from '@/types/users/explore';
 import type {
   ProgramsApiResponse,
-  ProgramsResponse,
-  ProgramListItemRaw,
-  Program,
+  ProgramListItem,
 } from '@/types/users/program';
 import React, { useState, useMemo, useEffect } from 'react';
 import filterIcon from '@/assets/filter-alt.svg';
@@ -149,7 +147,7 @@ const ExplorePage: React.FC = () => {
     usingSearch
   );
 
-  const data: ProgramsApiResponse | ProgramsResponse | undefined = usingSearch
+  const data: ProgramsApiResponse | undefined = usingSearch
     ? searchQueryResult.data
     : listQuery.data;
   const isLoading = usingSearch
@@ -158,109 +156,49 @@ const ExplorePage: React.FC = () => {
   const isError = usingSearch ? searchQueryResult.isError : listQuery.isError;
   const error = usingSearch ? searchQueryResult.error : listQuery.error;
 
-  const allPrograms: ProgramListItemRaw[] = useMemo(() => {
-    const nested = (data as ProgramsApiResponse | undefined)?.data?.programs;
+  const allPrograms: ProgramListItem[] = useMemo(() => {
+    const nested = data?.data?.programs;
     if (Array.isArray(nested)) return nested;
-    const flat = (data as ProgramsResponse | undefined)?.programs;
-    if (Array.isArray(flat)) return flat as ProgramListItemRaw[];
-    return [] as ProgramListItemRaw[];
+    return [] as ProgramListItem[];
   }, [data]);
 
-  const mappedPrograms: Program[] = useMemo(
-    () =>
-      allPrograms?.map(
-        (p) =>
-          ({
-            id:
-              (p.id as string | undefined) ||
-              (p._id as string | undefined) ||
-              (p.slug as string | undefined) ||
-              (p.programName as string | undefined) ||
-              'unknown-id',
-            slug:
-              (p.slug as string | undefined) ||
-              (p._id as string | undefined) ||
-              'unknown-slug',
-            title:
-              (p.title as string | undefined) ||
-              (p.programName as string | undefined) ||
-              'Untitled Program',
-            university:
-              (p.university as string | undefined) ||
-              (p.universityName as string | undefined) ||
-              'Unknown University',
-            upcomingIntake:
-              (p.upcomingIntake as string | undefined) ||
-              (Array.isArray(p?.keyInformation?.upcomingIntake)
-                ? (p.keyInformation?.upcomingIntake?.[0] as
-                    | string
-                    | undefined) || '—'
-                : '—'),
-            duration:
-              (p.duration as string | undefined) ||
-              (p?.keyInformation?.duration as string | undefined) ||
-              '—',
-            ranking:
-              (p.ranking as string | undefined) ||
-              (p.universityRanking as string | undefined) ||
-              '—',
-            rankingYear: (p.rankingYear as string | undefined) || '',
-            totalTuitionFees:
-              (p.totalTuitionFees as string | undefined) ||
-              (p?.keyInformation?.totalTuitionFees as string | undefined) ||
-              '—',
-            applicationDeadline:
-              (p.applicationDeadline as string | undefined) || '—',
-            description: undefined,
-            keyInfo: undefined,
-            programStructure: undefined,
-          }) as Program
-      ),
-    [allPrograms]
-  );
+  const mappedPrograms: ProgramListItem[] = allPrograms;
 
   const filteredPrograms = useMemo(() => {
     if (usingSearch) return mappedPrograms;
     const q = debouncedSearch.toLowerCase();
 
-    const matchesDegree = (raw: ProgramListItemRaw) => {
+    const matchesDegree = (raw: ProgramListItem) => {
       if (!filters.degrees.length) return true;
       const deg = (raw?.keyInformation?.degree || '').toString().toLowerCase();
       return filters.degrees.includes(deg);
     };
 
-    const paired = mappedPrograms?.map((m, i) => ({ m, raw: allPrograms[i] }));
+    const paired = mappedPrograms?.map((raw) => ({ raw }));
 
     const textFiltered = debouncedSearch
-      ? paired.filter(({ m }) => (m.title || '')?.toLowerCase()?.includes(q))
+      ? paired.filter(({ raw }) =>
+          (raw.programName || '')?.toLowerCase()?.includes(q)
+        )
       : paired;
 
     const structured = textFiltered?.filter(({ raw }) => matchesDegree(raw));
 
-    return structured?.map(({ m }) => m);
+    return structured?.map(({ raw }) => raw) ?? [];
   }, [usingSearch, debouncedSearch, mappedPrograms, allPrograms, filters]);
 
   const totalPages = useMemo(() => {
-    const nested = (
-      data as { data?: { pagination?: { totalPages?: number } } } | undefined
-    )?.data?.pagination;
-    if (nested?.totalPages) return nested.totalPages;
-    const total = (data as ProgramsResponse | undefined)?.total;
+    const pages = data?.pagination?.pages;
+    if (typeof pages === 'number' && pages > 0) return pages;
+    const total = data?.total;
     if (typeof total === 'number')
       return Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
-    return Math.max(
-      1,
-      Math.ceil((mappedPrograms.length || 0) / ITEMS_PER_PAGE)
-    );
+    return Math.max(1, Math.ceil((mappedPrograms.length || 0) / ITEMS_PER_PAGE));
   }, [data, mappedPrograms]);
 
   const totalCount = useMemo(() => {
-    const nested = (
-      data as { data?: { pagination?: { totalPrograms?: number } } } | undefined
-    )?.data?.pagination;
-    if (typeof nested?.totalPrograms === 'number') return nested.totalPrograms;
-    const flatTotal = (data as ProgramsResponse | undefined)?.total;
-    if (typeof flatTotal === 'number') return flatTotal;
+    const total = data?.total;
+    if (typeof total === 'number') return total;
     return mappedPrograms.length;
   }, [data, mappedPrograms]);
 
@@ -393,17 +331,8 @@ const ExplorePage: React.FC = () => {
               <div className="flex flex-col gap-4">
                 {filteredPrograms?.map((program) => (
                   <ProgramCard
-                    key={program.id}
-                    slug={program.slug}
-                    title={program.title}
-                    university={program.university}
-                    upcomingIntake={program.upcomingIntake}
-                    duration={program.duration}
-                    ranking={program.ranking}
-                    rankingYear={program.rankingYear}
-                    totalTuitionFees={program.totalTuitionFees}
-                    applicationDeadline={program.applicationDeadline}
-                    id={program.id}
+                    key={program._id ?? program.slug}
+                    program={program}
                     onApplyClick={handleApplyClick}
                   />
                 ))}
@@ -497,19 +426,10 @@ const ExplorePage: React.FC = () => {
               <>
                 <div className="scrollbar-hide relative h-[450px] overflow-y-auto">
                   <div className="flex flex-col gap-4 pb-20">
-                    {filteredPrograms.map((program) => (
+                    {filteredPrograms.map((program, idx) => (
                       <ProgramCard
-                        key={program.id}
-                        slug={program.slug}
-                        title={program.title}
-                        university={program.university}
-                        upcomingIntake={program.upcomingIntake}
-                        duration={program.duration}
-                        ranking={program.ranking}
-                        rankingYear={program.rankingYear}
-                        totalTuitionFees={program.totalTuitionFees}
-                        applicationDeadline={program.applicationDeadline}
-                        id={program.id}
+                        key={program._id ?? program.slug ?? idx}
+                        program={program}
                         onApplyClick={handleApplyClick}
                       />
                     ))}

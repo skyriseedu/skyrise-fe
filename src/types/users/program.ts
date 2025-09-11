@@ -1,66 +1,32 @@
 import type { Review } from './review';
 
-export interface Program {
-  id: string;
-  slug: string;
-  title: string;
-  university: string;
-  upcomingIntake: string;
-  duration: string;
-  ranking: string;
-  rankingYear: string;
-  totalTuitionFees: string;
-  applicationDeadline: string;
-  description?: string;
-  keyInfo?: KeyInfo[];
-  programStructure?: ProgramStructureItem[];
-}
-
-export interface KeyInfo {
-  icon: string;
-  label: string;
-  value: string;
-}
-
 export interface ProgramStructureItem {
   id: string;
   title: string;
   content: string;
 }
-
-export interface ProgramsResponse {
-  programs: Program[];
-  total: number;
-  page: number;
-  limit: number;
-}
-
-export interface ProgramDetailsResponse {
-  program: Program;
-}
-export interface ProgramListItemRaw {
-  id?: string;
-  _id?: string;
-  slug?: string;
-  programName?: string;
-  title?: string;
-  universityName?: string;
-  university?: string;
-  upcomingIntake?: string;
-  duration?: string;
-  ranking?: string;
-  rankingYear?: string;
-  universityRanking?: string;
-  totalTuitionFees?: string;
-  applicationDeadline?: string;
+export interface ProgramListItem {
+  _id: string;
+  slug: string;
+  programName: string;
+  universityName: string;
+  applicationDeadline: string | null;
+  universityRanking?: string | null;
   keyInformation?: {
     degree?: string;
     duration?: string;
     totalTuitionFees?: string;
     upcomingIntake?: string[];
   };
+  images?: ProgramImages;
+  about?: string;
+  status?: 'published' | 'draftsaved';
+  views?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  totalCredits?: number;
+  studentReviews?: Review[];
 }
-
 export interface ProgramsApiResponse {
   success: boolean;
   message?: string;
@@ -71,15 +37,13 @@ export interface ProgramsApiResponse {
     pages: number;
   };
   data: {
-    programs: ProgramListItemRaw[];
+    programs: ProgramListItem[];
   };
 }
-
 export interface UseProgramsParams {
   page?: number;
   limit?: number;
 }
-
 export interface ProgramsSearchParams extends UseProgramsParams {
   q?: string;
   degree?: string;
@@ -101,7 +65,6 @@ export interface ProgramKeyInformation {
   totalTuitionFees: string;
   upcomingIntake: string[];
 }
-
 export interface ProgramDetails {
   _id: string;
   slug: string;
