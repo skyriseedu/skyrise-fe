@@ -46,7 +46,7 @@ export interface UseProgramsParams {
 }
 export interface ProgramsSearchParams extends UseProgramsParams {
   q?: string;
-  degree?: string;
+  degrees?: string | string[];
   programs?: string | string[];
   fees?: string | string[];
   duration?: string | string[];

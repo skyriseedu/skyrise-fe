@@ -38,13 +38,13 @@ export function useProgramsSearch(
   params: ProgramsSearchParams,
   enabled: boolean
 ) {
-  const { page = 1, limit = 10, q, degree, programs, fees, duration } = params;
+  const { page = 1, limit = 10, q, degrees, programs, fees, duration } = params;
   return useQuery({
     queryKey: programKeys.search({
       page,
       limit,
       q,
-      degree,
+      degrees,
       programs,
       fees,
       duration,
@@ -54,7 +54,7 @@ export function useProgramsSearch(
         page,
         limit,
         q,
-        degree,
+        degrees,
         programs,
         fees,
         duration,

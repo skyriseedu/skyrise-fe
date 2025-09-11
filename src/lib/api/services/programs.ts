@@ -34,7 +34,7 @@ export const programsService = {
       page = 1,
       limit = 10,
       q,
-      degree,
+      degrees,
       programs,
       fees,
       duration,
@@ -46,10 +46,12 @@ export const programsService = {
     });
 
     if (q && q.trim()) sp.append('q', q.trim());
-    if (degree) sp.append('degree', degree);
 
     const toParam = (v?: string | string[]) =>
       Array.isArray(v) ? v.filter(Boolean).join(',') : v;
+
+    const degs = toParam(degrees);
+    if (degs) sp.append('degrees', degs);
 
     const progs = toParam(programs);
     if (progs) sp.append('programs', progs);

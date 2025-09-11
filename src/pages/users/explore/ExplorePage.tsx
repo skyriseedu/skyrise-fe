@@ -108,9 +108,12 @@ const ExplorePage: React.FC = () => {
   const usingSearch = hasActiveFilters || !!debouncedSearch;
   const searchParams = useMemo(() => {
     if (!usingSearch) return null;
-    const degree = filters.degrees[0]
-      ? labelMaps.deg.get(filters.degrees[0]) ||
-        capitalizeFirstLetters(filters.degrees[0].replace(/-/g, ' '))
+    const degreesParam = filters.degrees.length
+      ? filters.degrees?.map(
+          (d) =>
+            labelMaps.deg.get(d) ||
+            capitalizeFirstLetters(d.replace(/-/g, ' '))
+        )
       : undefined;
     const programsParam = filters.programs.length
       ? filters.programs.map(
@@ -130,7 +133,7 @@ const ExplorePage: React.FC = () => {
       : undefined;
     const q = debouncedSearch || undefined;
     return {
-      degree,
+      degrees: degreesParam,
       programs: programsParam,
       fees: feesParam,
       duration: durationParam,
