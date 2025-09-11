@@ -2,5 +2,6 @@
 export * from './blogs';
 export * from './home';
 export * from './forms';
+export * from './universities';
 export * from './queryKeys';
 export * from './programs';

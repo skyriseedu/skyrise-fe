@@ -4,7 +4,7 @@ import BlogCard from '@/components/blog/BlogCard';
 import BlogFilter from '@/components/blog/BlogFilter';
 import { BlogCardSkeleton } from '@/components/ui';
 import { useBlogs, useLatestBlogs } from '@/queries';
-import type { BlogCategory } from '@/types/blog';
+import type { BlogCategory } from '@/types/users/blog';
 import Pagination from '@/components/common/Pagination';
 import { capitalizeFirstLetters } from '@/helpers';
 
