@@ -1,13 +1,15 @@
+import type { StudentReview } from './review';
+
 export interface University {
   _id: string;
   id: string;
-  universityName: string;
-  universityType: 'Public' | 'Private' | 'International';
-  logoImage: string;
   coverImages: {
     image1: string;
     image2: string;
   };
+  universityName: string;
+  universityType: 'Public' | 'Private';
+  logoImage: string;
   aboutUniversity: string;
   englishFoundation: string;
   bachelor: string;
@@ -19,23 +21,20 @@ export interface University {
     creditTransfer: string;
     programs: number;
   };
-  studentReviews: Array<{
-    _id: string;
-    studentName: string;
-    major: string;
-    studentImage: string;
-    review: string;
-  }>;
+  numberOfCampus: number;
+  studentReviews: Array<StudentReview>;
   status: 'published' | 'draft' | 'archived';
   views: number;
+  intakes: string[];
   createdAt: string;
   updatedAt: string;
   slug: string;
+  entryRequirement?: string;
+  scholarshipRequirements?: string;
 }
 
 export interface UniversityCardProps {
   university: University;
-  onViewDetails?: (university: University) => void;
   onApply?: (university: University) => void;
   className?: string;
 }
