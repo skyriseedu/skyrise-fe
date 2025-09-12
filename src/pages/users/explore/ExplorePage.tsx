@@ -111,8 +111,7 @@ const ExplorePage: React.FC = () => {
     const degreesParam = filters.degrees.length
       ? filters.degrees?.map(
           (d) =>
-            labelMaps.deg.get(d) ||
-            capitalizeFirstLetters(d.replace(/-/g, ' '))
+            labelMaps.deg.get(d) || capitalizeFirstLetters(d.replace(/-/g, ' '))
         )
       : undefined;
     const programsParam = filters.programs.length
@@ -188,7 +187,7 @@ const ExplorePage: React.FC = () => {
     const structured = textFiltered?.filter(({ raw }) => matchesDegree(raw));
 
     return structured?.map(({ raw }) => raw) ?? [];
-  }, [usingSearch, debouncedSearch, mappedPrograms, allPrograms, filters]);
+  }, [usingSearch, debouncedSearch, mappedPrograms, filters]);
 
   const totalPages = useMemo(() => {
     const pages = data?.pagination?.pages;
@@ -196,7 +195,10 @@ const ExplorePage: React.FC = () => {
     const total = data?.total;
     if (typeof total === 'number')
       return Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
-    return Math.max(1, Math.ceil((mappedPrograms.length || 0) / ITEMS_PER_PAGE));
+    return Math.max(
+      1,
+      Math.ceil((mappedPrograms.length || 0) / ITEMS_PER_PAGE)
+    );
   }, [data, mappedPrograms]);
 
   const totalCount = useMemo(() => {

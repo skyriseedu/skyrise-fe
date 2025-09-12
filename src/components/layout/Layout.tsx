@@ -16,11 +16,14 @@ const LayoutContent: React.FC = () => {
     if (path === '/') return 'Home';
     if (path.startsWith('/explore')) return 'Explore';
     if (path === '/about') return 'About Us';
-    if (path === '/universities-and-consultants') return 'Universities & Consultants';
-    if (path.startsWith('/universities-and-consultants/')) return 'University Details';
+    if (path === '/universities-and-consultants')
+      return 'Universities & Consultants';
+    if (path.startsWith('/universities-and-consultants/'))
+      return 'University Details';
     if (path.startsWith('/programs/')) return 'Program Details';
     if (path.startsWith('/services/')) {
-      if (path.endsWith('/university-application')) return 'University Application';
+      if (path.endsWith('/university-application'))
+        return 'University Application';
       if (path.endsWith('/visa-assistance')) return 'Visa Assistance';
       if (path.endsWith('/consultation')) return 'Consultation';
       if (path.endsWith('/scholarships')) return 'Scholarships';
