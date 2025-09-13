@@ -10,7 +10,7 @@ import AboutPage from './pages/users/about/AboutPage';
 import BlogsPage from './pages/users/blogs/BlogsPage';
 import BlogDetailPage from './pages/users/blogs/BlogDetailPage';
 import UniversitiesAndConsultants from './pages/users/universities/UniversitiesAndConsultants';
-import UniversityApplicationPage from './pages/users/services/UniversityApplicationPage';
+import AdmissionProcessPage from './pages/users/services/AdmissionProcessPage';
 import VisaAssistancePage from './pages/users/services/VisaAssistancePage';
 import CounselingPage from './pages/users/services/CounselingPage';
 import ScholarshipsPage from './pages/users/services/ScholarshipsPage';
@@ -47,8 +47,8 @@ const App: React.FC = () => {
               element={<UniversityDetail />}
             />
             <Route
-              path="services/university-application"
-              element={<UniversityApplicationPage />}
+              path="services/admission-process-support"
+              element={<AdmissionProcessPage />}
             />
             <Route
               path="services/visa-assistance"

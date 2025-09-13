@@ -16,12 +16,14 @@ const ServicesShowcase: React.FC = () => {
       </h1>
 
       <div className="mt-3 flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
-        <div className="shrink-0 md:w-auto md:shrink">
-          <ServiceCard
-            title="Admission Process Support"
-            icon={admissionSupportIcon}
-          />
-        </div>
+        {location.pathname !== '/services/admission-process-support' && (
+          <div className="shrink-0 md:w-auto md:shrink">
+            <ServiceCard
+              title="Admission Process Support"
+              icon={admissionSupportIcon}
+            />
+          </div>
+        )}
         <div className="shrink-0 md:w-auto md:shrink">
           <ServiceCard title="Visa Assistance" icon={visaSupportIcon} />
         </div>

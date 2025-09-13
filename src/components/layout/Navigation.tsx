@@ -25,7 +25,7 @@ const navigationItems = [
       },
       {
         name: 'Admission Process Support',
-        path: '',
+        path: 'services/admission-process-support',
       },
       { name: 'Visa', path: '/services/visa' },
       {
