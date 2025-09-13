@@ -44,7 +44,7 @@ const AdmissionProcessPage: React.FC = () => {
 
           <div className="mb-8">
             <h2 className="text-h4 lg:text-h2 text-text-primary mb-6 font-semibold">
-              We Offer :
+              We assist with :
             </h2>
 
             <ul className="mb-8">
