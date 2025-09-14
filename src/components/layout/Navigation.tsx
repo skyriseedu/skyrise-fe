@@ -27,10 +27,10 @@ const navigationItems = [
         name: 'Admission Process Support',
         path: 'services/admission-process-support',
       },
-      { name: 'Visa', path: '/services/visa' },
+      { name: 'Visa', path: '/services/visa-assistance' },
       {
         name: 'Accommodation & Airport Pick-up',
-        path: '/services/accommodation',
+        path: '/services/accommodation-and-airport-pick-up',
       },
       { name: 'Pre-University Program', path: '/services/pre-university' },
     ],

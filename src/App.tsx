@@ -15,6 +15,7 @@ import VisaAssistancePage from './pages/users/services/VisaAssistancePage';
 import CounselingPage from './pages/users/services/CounselingPage';
 import ScholarshipsPage from './pages/users/services/ScholarshipsPage';
 import { UniversityDetail } from './pages/users/universities';
+import AccommodationPage from './pages/users/services/AccommodationPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,6 +47,7 @@ const App: React.FC = () => {
               path="universities-and-consultants/:slug"
               element={<UniversityDetail />}
             />
+            <Route path="services/consultation" element={<CounselingPage />} />
             <Route
               path="services/admission-process-support"
               element={<AdmissionProcessPage />}
@@ -54,9 +56,13 @@ const App: React.FC = () => {
               path="services/visa-assistance"
               element={<VisaAssistancePage />}
             />
-            <Route path="services/consultation" element={<CounselingPage />} />
             <Route
-              path="services/scholarships"
+              path="services/accommodation-and-airport-pick-up"
+              element={<AccommodationPage />}
+            />
+
+            <Route
+              path="services/pre-university"
               element={<ScholarshipsPage />}
             />
             <Route path="blogs" element={<BlogsPage />} />
