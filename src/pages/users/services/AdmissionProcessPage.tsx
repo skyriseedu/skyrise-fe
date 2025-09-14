@@ -42,7 +42,7 @@ const AdmissionProcessPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <section className="container mx-auto px-4 py-8">
+      <section className="container mx-auto px-4 md:px-8 py-8">
         <div>
           <p className="text-text-primary text-body-2 lg:text-body-3 mb-10">
             Applying to universities can feel overwhelming - forget submitting
@@ -60,7 +60,7 @@ const AdmissionProcessPage: React.FC = () => {
               We assist with :
             </h2>
 
-            <ul className="mb-8">
+            <ul className="mb-8 px-4">
               <li className="mb-3 flex items-start">
                 <span className="text-text-primary mr-2">•</span>
                 <span className="text-text-primary text-h4 lg:text-body-3">
@@ -96,7 +96,7 @@ const AdmissionProcessPage: React.FC = () => {
 
             <div className="flex gap-2">
               <Button
-                className="bg-primary cursor-pointer rounded-[20px] px-8 py-3 text-white shadow-lg"
+                className="bg-primary cursor-pointer rounded-[20px] px-4 md:px-8 lg:px-8 py-3 text-white shadow-lg"
                 primary={false}
                 onClick={() => setOpen(true)}
               >

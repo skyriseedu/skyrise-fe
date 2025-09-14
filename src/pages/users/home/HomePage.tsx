@@ -20,7 +20,7 @@ const HomePage: React.FC = () => {
       <OurServices />
       <StatsSection />
 
-      <div className="flex justify-center px-4 py-8">
+      <div className="flex justify-center px-6 md:px-8 py-8">
         <Button
           size="lg"
           className="text-body-5 lg:text-body-3 w-full rounded-[10px] font-semibold sm:w-auto sm:px-12"
