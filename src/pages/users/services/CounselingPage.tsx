@@ -4,6 +4,7 @@ import Button from '@/components/common/Button';
 import BookConsultationForm from '@/components/common/BookConsultationForm';
 import consultation from '@/assets/images/consultation.jpg';
 import { useNavigate } from 'react-router-dom';
+import StickyHeader from '@/components/common/StickyHeader';
 
 const CounselingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -11,6 +12,13 @@ const CounselingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen">
+      <StickyHeader
+        title="Consultation"
+        showBackButton={false}
+        mobilePadding="px-6"
+        desktopPadding="lg:px-15"
+        useContainer={false}
+      />
       <div className="relative w-full">
         <img
           src={consultation}

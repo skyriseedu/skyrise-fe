@@ -5,6 +5,7 @@ import BookConsultationForm from '@/components/common/BookConsultationForm';
 import ApplicationForm from '@/components/common/ApplicationForm';
 import SuccessModal from '@/components/common/SuccessModal';
 import support from '@/assets/images/admission-process-support.jpg';
+import StickyHeader from '@/components/common/StickyHeader';
 
 const AdmissionProcessPage: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -13,6 +14,13 @@ const AdmissionProcessPage: React.FC = () => {
 
   return (
     <div className="min-h-screen">
+      <StickyHeader
+        title="Admission Process Support"
+        showBackButton={false}
+        mobilePadding="px-6"
+        desktopPadding="lg:px-15"
+        useContainer={false}
+      />
       <div className="relative w-full">
         <img
           src={support}
