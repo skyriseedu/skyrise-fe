@@ -68,6 +68,7 @@ const ConsultantForm: React.FC<ConsultantFormProps> = ({
       <Formik
         initialValues={initialValues}
         validationSchema={applyConsultantSchema}
+        validateOnMount
         onSubmit={handleSubmit}
       >
         {({ setFieldValue, isSubmitting, errors, touched }) => (
@@ -224,7 +225,7 @@ const ConsultantForm: React.FC<ConsultantFormProps> = ({
 
             <button
               type="submit"
-              className="bg-primary text-h4 hover:bg-primary/90 mb-3 w-full rounded-lg py-2 font-semibold text-white transition-colors"
+              className="bg-primary text-h4 hover:bg-primary/90 mb-3 w-full cursor-pointer rounded-lg py-2 font-semibold text-white transition-colors"
               disabled={isSubmitting || consultantApplicationMutation.isPending}
             >
               Submit

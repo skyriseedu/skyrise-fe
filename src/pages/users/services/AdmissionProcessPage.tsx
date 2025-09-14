@@ -5,6 +5,7 @@ import BookConsultationForm from '@/components/common/BookConsultationForm';
 import ApplicationForm from '@/components/common/ApplicationForm';
 import SuccessModal from '@/components/common/SuccessModal';
 import support from '@/assets/images/admission-process-support.jpg';
+import StickyHeader from '@/components/common/StickyHeader';
 
 const AdmissionProcessPage: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -13,6 +14,13 @@ const AdmissionProcessPage: React.FC = () => {
 
   return (
     <div className="min-h-screen">
+      <StickyHeader
+        title="Admission Process Support"
+        showBackButton={false}
+        mobilePadding="px-6"
+        desktopPadding="lg:px-15"
+        useContainer={false}
+      />
       <div className="relative w-full">
         <img
           src={support}
@@ -33,7 +41,8 @@ const AdmissionProcessPage: React.FC = () => {
       <section className="container mx-auto px-4 py-8">
         <div>
           <p className="text-text-primary text-body-2 lg:text-body-3 mb-10">
-            Applying to universities can feel overwhelming - forget submitting required documents?
+            Applying to universities can feel overwhelming - forget submitting
+            required documents?
             <br />
             Lost track on further admission registration when you arrive at Uni?
           </p>
@@ -75,7 +84,8 @@ const AdmissionProcessPage: React.FC = () => {
               <li className="mb-3 flex items-start">
                 <span className="text-text-primary mr-2">•</span>
                 <span className="text-text-primary text-h4 lg:text-body-3">
-                  Further admission registration ( Student IDs, Health Insurance, Bank Account Applying and etc., )
+                  Further admission registration ( Student IDs, Health
+                  Insurance, Bank Account Applying and etc., )
                 </span>
               </li>
             </ul>

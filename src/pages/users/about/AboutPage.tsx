@@ -112,7 +112,10 @@ const AboutPage: React.FC = () => {
 
       <JoinUsCard />
       <AmbassadorSection />
-      <ReviewsSection title="Student Success Stories" />
+      <ReviewsSection
+        title="Student Success Stories"
+        containerClassName="mx-auto max-w-7xl px-6 lg:px-8"
+      />
     </div>
   );
 };

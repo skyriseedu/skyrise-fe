@@ -86,8 +86,29 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
     });
   };
 
+  const isToday = (day: number | null) => {
+    if (!day) return false;
+    const now = new Date();
+    return (
+      day === now.getDate() &&
+      currentDate.getMonth() === now.getMonth() &&
+      currentDate.getFullYear() === now.getFullYear()
+    );
+  };
+
+  const isPast = (day: number | null) => {
+    if (!day) return false;
+    const now = new Date();
+    const date = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      day
+    );
+    return date < new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  };
+
   const handleDateClick = (day: number | null) => {
-    if (day) {
+    if (day && !isPast(day)) {
       const newDate = new Date(
         currentDate.getFullYear(),
         currentDate.getMonth(),
@@ -129,12 +150,14 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
         </h2>
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={() => navigateMonth(-1)}
             className="bg-secondary hover:bg-primary/20 cursor-pointer rounded-full p-1.5 transition-colors"
           >
             <CaretLeft className="text-primary h-5 w-5" />
           </button>
           <button
+            type="button"
             onClick={() => navigateMonth(1)}
             className="bg-secondary hover:bg-primary/20 cursor-pointer rounded-full p-1.5 transition-colors"
           >
@@ -157,22 +180,35 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
 
       {/* Calendar grid */}
       <div className="grid grid-cols-7 gap-1">
-        {days.map((day, index) => (
-          <button
-            key={index}
-            onClick={() => handleDateClick(day)}
-            disabled={!day}
-            className={`h-8 w-8 rounded-full text-sm font-medium transition-all duration-200 ${
-              !day
-                ? 'invisible'
-                : isSelectedDate(day)
-                  ? 'bg-primary scale-105 transform text-white shadow-lg'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-            } ${day ? 'cursor-pointer' : ''} `}
-          >
-            {day}
-          </button>
-        ))}
+        {days.map((day, index) => {
+          const selected = isSelectedDate(day);
+          const today = isToday(day);
+          const past = isPast(day);
+          const disabled = !day || past;
+          const base =
+            'h-8 w-8 rounded-full text-sm font-medium transition-all duration-200';
+          const state = !day
+            ? 'invisible'
+            : selected
+              ? 'bg-primary text-white shadow-lg'
+              : past
+                ? 'text-gray-300 cursor-not-allowed'
+                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900';
+          const todayRing =
+            day && today && !selected
+              ? 'ring-2 ring-primary ring-offset-1'
+              : '';
+          return (
+            <button
+              key={index}
+              onClick={() => handleDateClick(day)}
+              disabled={disabled}
+              className={`${base} ${state} ${todayRing} ${!disabled ? 'cursor-pointer' : ''}`}
+            >
+              {day}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
