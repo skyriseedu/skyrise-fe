@@ -389,7 +389,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
 
             <button
               type="submit"
-              className="bg-primary text-h4 hover:bg-primary/90 mb-3 w-full rounded-lg py-2 font-semibold text-white transition-colors disabled:opacity-50"
+              className="bg-primary text-h4 hover:bg-primary/90 mb-3 w-full rounded-lg py-2 font-semibold text-white transition-colors disabled:opacity-50 cursor-pointer"
               disabled={isSubmitting || bookConsultationMutation.isPending}
             >
               {isSubmitting || bookConsultationMutation.isPending
