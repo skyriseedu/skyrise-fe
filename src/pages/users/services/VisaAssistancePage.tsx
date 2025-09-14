@@ -20,7 +20,7 @@ const VisaAssistancePage: React.FC = () => {
         <img
           src={visaImage}
           alt="Visa assistance cover"
-          className="sm-[70px] w-full object-cover lg:h-[450px]"
+          className="sm-[70px] h-55lg:h-[450px] w-full object-cover"
         />
         <div
           className="absolute inset-x-0 bottom-4 py-2 md:py-2 lg:bottom-8 lg:py-2"

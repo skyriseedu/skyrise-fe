@@ -13,9 +13,9 @@ import UniversitiesAndConsultants from './pages/users/universities/UniversitiesA
 import AdmissionProcessPage from './pages/users/services/AdmissionProcessPage';
 import VisaAssistancePage from './pages/users/services/VisaAssistancePage';
 import CounselingPage from './pages/users/services/CounselingPage';
-import ScholarshipsPage from './pages/users/services/ScholarshipsPage';
 import { UniversityDetail } from './pages/users/universities';
 import AccommodationPage from './pages/users/services/AccommodationPage';
+import PreUniversityPage from './pages/users/services/PreUniversityPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,7 +63,7 @@ const App: React.FC = () => {
 
             <Route
               path="services/pre-university"
-              element={<ScholarshipsPage />}
+              element={<PreUniversityPage />}
             />
             <Route path="blogs" element={<BlogsPage />} />
             <Route path="blogs/:slug" element={<BlogDetailPage />} />
