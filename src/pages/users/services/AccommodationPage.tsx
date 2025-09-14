@@ -1,0 +1,156 @@
+import ServicesShowcase from '@/components/services/consultation/ServicesShowcase';
+import support from '@/assets/images/admission-process-support.jpg';
+import StickyHeader from '@/components/common/StickyHeader';
+import AccommodationCard from '@/components/services/accommodation-and-airport-pickup/AccommodationCard';
+
+const accommodationChoices = [
+  {
+    imageUrl:
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
+    name: 'Grand Plaza Hotel',
+    location: 'Downtown Bangkok, Thailand',
+  },
+  {
+    imageUrl:
+      'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800',
+    name: 'Seaside Resort & Spa',
+    location: 'Phuket, Thailand',
+  },
+  {
+    imageUrl:
+      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800',
+    name: 'Mountain View Lodge',
+    location: 'Chiang Mai, Thailand',
+  },
+  {
+    imageUrl: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',
+    name: 'Urban Boutique Hotel',
+    location: 'Silom District, Bangkok',
+  },
+  {
+    imageUrl:
+      'https://images.unsplash.com/photo-1578774204375-826dc5d996ed?w=800',
+    name: 'Riverside Garden Resort',
+    location: 'Ayutthaya, Thailand',
+  },
+];
+
+const AdmissionProcessPage: React.FC = () => {
+  return (
+    <div className="min-h-screen">
+      <StickyHeader
+        title="Accommodation & Airport Pick-up"
+        subtitle=""
+        mobilePadding="px-8"
+        desktopPadding="lg:px-0 lg:-ml-20"
+      />
+      <div className="relative w-full">
+        <img
+          src={support}
+          alt="About us cover 1"
+          className="sm-[70px] w-full object-cover lg:h-[450px]"
+        />
+        <div
+          className="absolute inset-x-0 bottom-4 py-2 md:py-2 lg:bottom-8 lg:py-2"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        >
+          <div className="container mx-auto px-6 text-left lg:px-8">
+            <h1 className="text-h3 md:text-h2 lg:text-h2 font-semibold text-white">
+              “Feel at home and welcomed by the new heart-warming community!”
+            </h1>
+          </div>
+        </div>
+      </div>
+      <section className="w-full px-4 py-8 lg:px-15">
+        <p className="text-text-primary text-body-2 lg:text-body-3 mb-10">
+          Moving to a new country should feel exciting, not stressful. We help
+          you settle in from day one.
+        </p>
+
+        <div className="mb-8">
+          <h2 className="text-h4 lg:text-h2 text-text-primary mb-6 font-semibold">
+            Service Include:
+          </h2>
+
+          <ul className="mb-8">
+            <li className="mb-3 flex items-start">
+              <span className="text-text-primary mr-2">•</span>
+              <span className="text-text-primary text-h4 lg:text-body-3">
+                Assistance in booking student accommodation or hostels{' '}
+                <span className="font-bold">
+                  ( Those who do not apply admission with SkyRise team can also
+                  take it with CHARGES)
+                </span>
+              </span>
+            </li>
+            <li className="mb-3 flex items-start">
+              <span className="text-text-primary mr-2">•</span>
+              <span className="text-text-primary text-h4 lg:text-body-3">
+                Match and find roommate{' '}
+                <span className="font-bold">( if needed )</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h2 className="text-h4 lg:text-h2 text-text-primary mb-6 font-semibold">
+            Accommodation Choices:
+          </h2>
+
+          {/* Mobile: Horizontal scroll */}
+          <div className="lg:hidden">
+            <div className="scrollbar-hide flex gap-4 overflow-x-auto pb-4">
+              {accommodationChoices.map((choice) => (
+                <div key={choice.name} className="w-72 flex-shrink-0">
+                  <AccommodationCard
+                    imageUrl={choice.imageUrl}
+                    name={choice.name}
+                    location={choice.location}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop: Grid */}
+          <div className="hidden gap-6 lg:grid lg:grid-cols-5">
+            {accommodationChoices.map((choice) => (
+              <AccommodationCard
+                key={choice.name}
+                imageUrl={choice.imageUrl}
+                name={choice.name}
+                location={choice.location}
+              />
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <ul>
+              <li className="mb-3 flex items-start">
+                <span className="text-text-primary mr-2">•</span>
+                <span className="text-text-primary text-h4 lg:text-body-3">
+                  Pickup Service from the airport to your place{' '}
+                  <span className="font-bold">
+                    (EXCLUSIVE for those who apply with SkyRise EDU team )
+                  </span>
+                </span>
+              </li>
+            </ul>
+
+            <p className="text-text-primary text-h4 lg:text-body-3 mt-4">
+              (<span className="font-bold text-red-600">REMARK :</span> This
+              service is already included in our admission service!{' '}
+              <span className="font-bold">
+                EXCLUSIVE for those who apply with SkyRise EDU team
+              </span>{' '}
+              )
+            </p>
+          </div>
+        </div>
+      </section>
+      <ServicesShowcase />
+    </div>
+  );
+};
+
+export default AdmissionProcessPage;
