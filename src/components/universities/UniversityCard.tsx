@@ -23,7 +23,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
             />
           </div>
         )}
-        <h3 className="lg:text-h1 text-h3 mb-6 text-left font-semibold text-gray-900">
+        <h3 className="text-h3 lg:text-h3 mb-6 text-left font-semibold text-gray-900">
           {universityName}
         </h3>
       </div>
@@ -32,7 +32,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
         {/* First Row */}
         <div className="mb-4 grid grid-cols-2 gap-4">
           <div>
-            <div className="lg:text-h3 text-h5 mb-1 text-gray-600">
+            <div className="text-h5 lg:text-body-6 mb-1 text-gray-600">
               University Ranking
             </div>
             <div className="text-body-1 font-semibold text-gray-900">
@@ -40,7 +40,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
             </div>
           </div>
           <div>
-            <div className="lg:text-h3 text-h5 mb-1 text-gray-600">
+            <div className="text-h5 lg:text-body-6 mb-1 text-gray-600">
               No. of Campus
             </div>
             <div className="text-body-1 font-semibold text-gray-900">1</div>
@@ -50,7 +50,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
         {/* Second Row */}
         <div className="mb-6 grid grid-cols-2 gap-4">
           <div>
-            <div className="lg:text-h3 text-h5 mb-1 text-gray-600">
+            <div className="text-h5 lg:text-body-6 mb-1 text-gray-600">
               Programs
             </div>
             <div className="text-body-1 font-semibold text-gray-900">
@@ -58,7 +58,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
             </div>
           </div>
           <div>
-            <div className="lg:text-h3 text-h5 mb-1 text-gray-600">
+            <div className="text-h5 lg:text-body-6 mb-1 text-gray-600">
               Application Fees
             </div>
             <div className="text-body-1 font-semibold text-gray-900">Free</div>
