@@ -215,7 +215,10 @@ const ProgramDetailsPage: React.FC = () => {
         </div>
       )}
       {!isLoading && !isError && (
-        <ReviewsSection reviews={data?.data?.studentReviews} />
+        <ReviewsSection
+          reviews={data?.data?.studentReviews}
+          containerClassName="mx-auto max-w-7xl px-4 lg:px-6"
+        />
       )}
       {isConsultOpen && (
         <div

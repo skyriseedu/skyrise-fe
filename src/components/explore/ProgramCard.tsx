@@ -15,7 +15,11 @@ interface InfoFieldProps {
   className?: string;
 }
 
-const InfoField: React.FC<InfoFieldProps> = ({ label, value, className = '' }) => {
+const InfoField: React.FC<InfoFieldProps> = ({
+  label,
+  value,
+  className = '',
+}) => {
   return (
     <div className={className}>
       <p className="text-body-5 lg:text-body-6 mb-1 font-semibold whitespace-nowrap text-[var(--color-text-secondary)]">
@@ -36,16 +40,24 @@ const UniversityBadge: React.FC<{ university?: string }> = ({ university }) => {
   );
 };
 
-const ApplicationDeadline: React.FC<{ deadline?: string | null }> = ({ deadline }) => {
+const ApplicationDeadline: React.FC<{ deadline?: string | null }> = ({
+  deadline,
+}) => {
   return (
     <p className="text-body-4 mb-6 font-semibold text-[var(--color-text-secondary)] lg:mb-4">
       Application deadline -{' '}
-      <span className="font-semibold text-[var(--color-text-important)]">{deadline}</span>
+      <span className="font-semibold text-[var(--color-text-important)]">
+        {deadline}
+      </span>
     </p>
   );
 };
 
-const ProgramCard: React.FC<ProgramCardProps> = ({ program, onApplyClick, onReadDetailsClick }) => {
+const ProgramCard: React.FC<ProgramCardProps> = ({
+  program,
+  onApplyClick,
+  onReadDetailsClick,
+}) => {
   const navigate = useNavigate();
   const title = program.programName;
   const university = program.universityName;
