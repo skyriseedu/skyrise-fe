@@ -11,6 +11,10 @@ const AdmissionProcessPage: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [isApplicationOpen, setIsApplicationOpen] = useState<boolean>(false);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+  const [successTitle, setSuccessTitle] = useState<string>('Applied Successfully!');
+  const [successMessage, setSuccessMessage] = useState<string>(
+    'Thank you for applying with us. We will contact you shortly via email to confirm your application details.'
+  );
 
   return (
     <div className="min-h-screen">
@@ -119,7 +123,16 @@ const AdmissionProcessPage: React.FC = () => {
             onClick={() => setOpen(false)}
           />
           <div className="relative z-50 px-4">
-            <BookConsultationForm onClose={() => setOpen(false)} />
+            <BookConsultationForm
+              onSuccess={() => {
+                setSuccessTitle('Thank you for your submission');
+                setSuccessMessage(
+                  'You have successfully submitted the form. Please check your email for further notices.'
+                );
+                setShowSuccessModal(true);
+              }}
+              onClose={() => setOpen(false)}
+            />
           </div>
         </div>
       )}
@@ -132,7 +145,13 @@ const AdmissionProcessPage: React.FC = () => {
           <div className="relative" onClick={(e) => e.stopPropagation()}>
             <ApplicationForm
               onClose={() => setIsApplicationOpen(false)}
-              onSuccess={() => setShowSuccessModal(true)}
+              onSuccess={() => {
+                setSuccessTitle('Thank you for your submission');
+                setSuccessMessage(
+                  'You have successfully submitted the form. Please check your email for further notices.'
+                );
+                setShowSuccessModal(true);
+              }}
             />
           </div>
         </div>
@@ -141,8 +160,8 @@ const AdmissionProcessPage: React.FC = () => {
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
-        title="Applied Successfully!"
-        message="Thank you for applying with us. We will contact you shortly via email to confirm your application details."
+        title={successTitle}
+        message={successMessage}
       />
     </div>
   );

@@ -480,8 +480,8 @@ const ExplorePage: React.FC = () => {
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
-        title="Applied Successfully!"
-        message="Thank you for applying with us. We will contact you shortly via email to confirm your application details."
+        title="Thank you for your submission"
+        message="You have successfully submitted the form. Please check your email for further notices."
       />
     </div>
   );
