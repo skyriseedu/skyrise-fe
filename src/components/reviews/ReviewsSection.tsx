@@ -5,6 +5,7 @@ import type { Review as ApiReview } from '@/types/users/review';
 interface ReviewsSectionProps {
   title?: string;
   reviews?: ApiReview[];
+  containerClassName?: string;
 }
 
 type DisplayReview = {
@@ -18,6 +19,7 @@ type DisplayReview = {
 const ReviewsSection: React.FC<ReviewsSectionProps> = ({
   title = 'Student Reviews',
   reviews,
+  containerClassName = 'container',
 }) => {
   const [isPaused, setIsPaused] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
@@ -44,7 +46,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
 
   return (
     <section className="mb-4 w-full overflow-hidden py-2">
-      <div className="container">
+      <div className={containerClassName}>
         <h2 className="text-h3 lg:text-h2 mb-1 text-left font-semibold text-[var(--color-text-primary)]">
           {title}
         </h2>
