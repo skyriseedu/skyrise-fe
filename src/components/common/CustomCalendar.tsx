@@ -185,7 +185,8 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
           const today = isToday(day);
           const past = isPast(day);
           const disabled = !day || past;
-          const base = 'h-8 w-8 rounded-full text-sm font-medium transition-all duration-200';
+          const base =
+            'h-8 w-8 rounded-full text-sm font-medium transition-all duration-200';
           const state = !day
             ? 'invisible'
             : selected
@@ -193,7 +194,10 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
               : past
                 ? 'text-gray-300 cursor-not-allowed'
                 : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900';
-          const todayRing = day && today && !selected ? 'ring-2 ring-primary ring-offset-1' : '';
+          const todayRing =
+            day && today && !selected
+              ? 'ring-2 ring-primary ring-offset-1'
+              : '';
           return (
             <button
               key={index}

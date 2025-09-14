@@ -360,7 +360,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
               </div>
             </div>
 
-            <div className="relative mb-6 mt-2">
+            <div className="relative mt-2 mb-6">
               <label className="text-h5 absolute -top-2 left-3 bg-white px-1 font-semibold text-gray-500">
                 Your Question
               </label>
@@ -382,7 +382,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
 
             <button
               type="submit"
-              className="bg-primary text-h4 hover:bg-primary/90 mb-3 w-full rounded-lg py-2 font-semibold text-white transition-colors disabled:opacity-50 cursor-pointer"
+              className="bg-primary text-h4 hover:bg-primary/90 mb-3 w-full cursor-pointer rounded-lg py-2 font-semibold text-white transition-colors disabled:opacity-50"
               disabled={isSubmitting || submitApplicationMutation.isPending}
             >
               {isSubmitting || submitApplicationMutation.isPending
