@@ -68,6 +68,7 @@ const ConsultantForm: React.FC<ConsultantFormProps> = ({
       <Formik
         initialValues={initialValues}
         validationSchema={applyConsultantSchema}
+        validateOnMount
         onSubmit={handleSubmit}
       >
         {({ setFieldValue, isSubmitting, errors, touched }) => (

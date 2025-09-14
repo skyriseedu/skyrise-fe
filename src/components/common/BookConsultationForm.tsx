@@ -77,6 +77,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
       <Formik
         initialValues={initialValues}
         validationSchema={bookConsultationSchema}
+        validateOnMount
         onSubmit={handleSubmit}
       >
         {({ values, setFieldValue, isSubmitting, errors, touched }) => (
@@ -140,11 +141,12 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
                     <button
                       type="button"
                       className="flex h-full min-w-[70px] items-center justify-between px-3 py-2 text-left"
-                      onClick={() =>
+                      onClick={() => {
+                        setShowCalendar(false);
                         setOpenDropdown(
                           openDropdown === 'countryCode' ? null : 'countryCode'
-                        )
-                      }
+                        );
+                      }}
                     >
                       <span className="text-sm">{selectedCountryCode}</span>
                       {openDropdown === 'countryCode' ? (
@@ -215,9 +217,10 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
                       ? 'border-red-500'
                       : ''
                   }`}
-                  onClick={() =>
-                    setOpenDropdown(openDropdown === 'time' ? null : 'time')
-                  }
+                  onClick={() => {
+                    setShowCalendar(false);
+                    setOpenDropdown(openDropdown === 'time' ? null : 'time');
+                  }}
                 >
                   <span>{values.bookingTimeSchedule || 'Select time'}</span>
                   {openDropdown === 'time' ? (
@@ -271,12 +274,18 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
                     }
                     placeholder="dd/mm/yyyy"
                     readOnly
-                    onClick={() => setShowCalendar(!showCalendar)}
+                    onClick={() => {
+                      setOpenDropdown(null);
+                      setShowCalendar(!showCalendar);
+                    }}
                     required
                   />
                   <Calendar
                     className="text-primary absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
-                    onClick={() => setShowCalendar(!showCalendar)}
+                    onClick={() => {
+                      setOpenDropdown(null);
+                      setShowCalendar(!showCalendar);
+                    }}
                   />
                   {showCalendar && (
                     <div className="absolute top-full right-0 left-0 z-50 mt-1">
@@ -319,11 +328,12 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
                   className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left ${
                     errors.location && touched.location ? 'border-red-500' : ''
                   }`}
-                  onClick={() =>
+                  onClick={() => {
+                    setShowCalendar(false);
                     setOpenDropdown(
                       openDropdown === 'location' ? null : 'location'
-                    )
-                  }
+                    );
+                  }}
                 >
                   <span>{values.location || 'Select location'}</span>
                   {openDropdown === 'location' ? (
@@ -357,7 +367,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
               </div>
             </div>
 
-            <div className="relative mb-6">
+            <div className="relative mb-6 mt-2">
               <label className="text-h5 absolute -top-2 left-3 bg-white px-1 font-semibold text-gray-500">
                 Your Question
               </label>
