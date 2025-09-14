@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ServicesShowcase from '@/components/services/consultation/ServicesShowcase';
 import Button from '@/components/common/Button';
 import BookConsultationForm from '@/components/common/BookConsultationForm';
+import SuccessModal from '@/components/common/SuccessModal';
 import consultation from '@/assets/images/consultation.jpg';
 import { useNavigate } from 'react-router-dom';
 import StickyHeader from '@/components/common/StickyHeader';
@@ -9,6 +10,7 @@ import StickyHeader from '@/components/common/StickyHeader';
 const CounselingPage: React.FC = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
 
   return (
     <div className="min-h-screen">
@@ -89,10 +91,20 @@ const CounselingPage: React.FC = () => {
             onClick={() => setOpen(false)}
           />
           <div className="relative z-50 px-4">
-            <BookConsultationForm onClose={() => setOpen(false)} />
+            <BookConsultationForm
+              onSuccess={() => setShowSuccessModal(true)}
+              onClose={() => setOpen(false)}
+            />
           </div>
         </div>
       )}
+
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Thank you for your submission"
+        message="You have successfully submitted the form. Please check your email for further notices."
+      />
     </div>
   );
 };

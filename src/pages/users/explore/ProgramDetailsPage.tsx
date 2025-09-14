@@ -240,8 +240,8 @@ const ProgramDetailsPage: React.FC = () => {
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
-        title="Consultation Booked Successfully!"
-        message="Thank you for booking a consultation with us. We will contact you shortly via email to confirm your appointment details."
+        title="Thank you for your submission"
+        message="You have successfully submitted the form. Please check your email for further notices."
       />
     </div>
   );
