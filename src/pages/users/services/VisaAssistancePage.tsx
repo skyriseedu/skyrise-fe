@@ -11,8 +11,9 @@ const VisaAssistancePage: React.FC = () => {
       <StickyHeader
         title="Visa Assistance"
         subtitle=""
-        mobilePadding="px-8"
-        desktopPadding="lg:px-0 lg:-ml-20"
+        mobilePadding="px-8 "
+        desktopPadding="lg:-ml-20 lg:px-25"
+        showBackButton={false}
       />
 
       {/* Hero Section */}
@@ -20,7 +21,7 @@ const VisaAssistancePage: React.FC = () => {
         <img
           src={visaImage}
           alt="Visa assistance cover"
-          className="sm-[70px] h-55lg:h-[450px] w-full object-cover"
+          className="sm-[70px] h-55 w-full object-cover lg:h-[450px]"
         />
         <div
           className="absolute inset-x-0 bottom-4 py-2 md:py-2 lg:bottom-8 lg:py-2"

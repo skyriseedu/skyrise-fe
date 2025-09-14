@@ -15,28 +15,28 @@ const UniversitiesAndConsultants: React.FC = () => {
           <div className="py-2">
             {/* for mobile */}
             <div className="lg:hidden">
-              <h1 className="text-h2 lg:text-h1 mb-4 font-semibold text-black">
+              <h1 className="text-h2 lg:text-h1 text-text-primary mb-4 font-semibold">
                 Universities & Consultants
               </h1>
 
               <div className="flex space-x-4">
                 <button
                   onClick={() => setActiveTab('universities')}
-                 className={`cursor-pointer rounded-lg px-6 py-2 text-h4 md:text-h2 font-semibold transition-colors ${
-                      activeTab === 'universities'
-                        ? 'bg-primary text-white'
-                        : ' text-text-primary hover:bg-secondary'
-                    }`}
+                  className={`text-h4 md:text-h2 cursor-pointer rounded-lg px-6 py-2 font-semibold transition-colors ${
+                    activeTab === 'universities'
+                      ? 'bg-primary text-white'
+                      : 'text-text-primary hover:bg-secondary'
+                  }`}
                 >
                   University
                 </button>
                 <button
                   onClick={() => setActiveTab('consultants')}
-                  className={`cursor-pointer rounded-lg px-6 py-2 text-h4 md:text-h2 font-semibold transition-colors ${
-                      activeTab === 'consultants'
-                        ? 'bg-primary text-white'
-                        : ' text-text-primary hover:bg-secondary'
-                    }`}
+                  className={`text-h4 md:text-h2 cursor-pointer rounded-lg px-6 py-2 font-semibold transition-colors ${
+                    activeTab === 'consultants'
+                      ? 'bg-primary text-white'
+                      : 'text-text-primary hover:bg-secondary'
+                  }`}
                 >
                   Consultants
                 </button>
@@ -52,20 +52,20 @@ const UniversitiesAndConsultants: React.FC = () => {
                 <div className="ml-50 flex space-x-4">
                   <button
                     onClick={() => setActiveTab('universities')}
-                    className={`cursor-pointer rounded-lg px-6 py-2 text-h4 md:text-h2 font-semibold transition-colors ${
+                    className={`text-h4 md:text-h2 cursor-pointer rounded-lg px-6 py-2 font-semibold transition-colors ${
                       activeTab === 'universities'
                         ? 'bg-primary text-white'
-                        : ' text-text-primary hover:bg-secondary'
+                        : 'text-text-primary hover:bg-secondary'
                     }`}
                   >
                     University
                   </button>
                   <button
                     onClick={() => setActiveTab('consultants')}
-                    className={`cursor-pointer rounded-lg px-6 py-2 text-h4 md:text-h2 font-semibold transition-colors ${
+                    className={`text-h4 md:text-h2 cursor-pointer rounded-lg px-6 py-2 font-semibold transition-colors ${
                       activeTab === 'consultants'
                         ? 'bg-primary text-white'
-                        : ' text-text-primary hover:bg-secondary'
+                        : 'text-text-primary hover:bg-secondary'
                     }`}
                   >
                     Consultants
