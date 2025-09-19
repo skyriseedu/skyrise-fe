@@ -60,7 +60,7 @@ const FloatingChatButton: React.FC = () => {
           onClick={handleChatClick}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`bg-primary fixed border-white border-1 cursor-pointer right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl lg:right-10 lg:bottom-16 lg:h-14 lg:w-14 xl:right-13 xl:bottom-10 xl:h-16 xl:w-16 ${
+          className={`bg-primary fixed right-6 bottom-6 z-50 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-1 border-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl lg:right-10 lg:bottom-16 lg:h-14 lg:w-14 xl:right-13 xl:bottom-10 xl:h-16 xl:w-16 ${
             isHovered ? 'bg-primary/90' : 'bg-primary'
           }`}
           aria-label={isChatOpen ? 'Close chat' : 'Open chat'}
@@ -70,7 +70,9 @@ const FloatingChatButton: React.FC = () => {
           ) : (
             <MessageQuestion className="h-5 w-5 text-white xl:h-6 xl:w-6" />
           )}
-          {!isChatOpen && <div className="bg-primary absolute inset-0 animate-ping rounded-full opacity-20" />}
+          {!isChatOpen && (
+            <div className="bg-primary absolute inset-0 animate-ping rounded-full opacity-20" />
+          )}
         </button>
       )}
 

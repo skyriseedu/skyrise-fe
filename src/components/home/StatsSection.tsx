@@ -21,7 +21,7 @@ export default function StatsSection() {
     const isServerError = error?.message?.includes('status: 500');
     if (isServerError) {
       return (
-        <section className="bg-white px-6 md:px-8 py-9 sm:py-9 md:py-16 lg:py-16">
+        <section className="bg-white px-6 py-9 sm:py-9 md:px-8 md:py-16 lg:py-16">
           <div className="container mx-auto max-w-7xl">
             <div className="text-center">
               <p className="text-gray-600">Something went wrong..</p>
@@ -57,7 +57,7 @@ export default function StatsSection() {
   ];
 
   return (
-    <section className="bg-white px-6 md:px-8 py-9 sm:py-9 md:py-16 lg:py-16">
+    <section className="bg-white px-6 py-9 sm:py-9 md:px-8 md:py-16 lg:py-16">
       <div className="container mx-auto max-w-7xl">
         <div className="grid grid-cols-2 gap-4 sm:gap-10 md:grid-cols-4 md:gap-12 lg:grid-cols-4">
           {stats?.map((stat, index) => (
