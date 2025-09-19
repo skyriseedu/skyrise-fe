@@ -465,7 +465,7 @@ const ExplorePage: React.FC = () => {
       {/* Application Form Modal */}
       {isApplicationOpen && (
         <div
-          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-25"
+          className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 pt-4"
           onClick={() => setIsApplicationOpen(false)}
         >
           <div className="relative" onClick={(e) => e.stopPropagation()}>

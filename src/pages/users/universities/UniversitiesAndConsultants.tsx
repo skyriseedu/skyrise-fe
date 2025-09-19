@@ -15,7 +15,7 @@ const UniversitiesAndConsultants: React.FC = () => {
           <div className="py-2">
             {/* for mobile */}
             <div className="lg:hidden">
-              <h1 className="text-h2 lg:text-h1 mb-4 font-semibold text-black">
+              <h1 className="text-h2 lg:text-h1 text-text-primary mb-4 font-semibold">
                 Universities & Consultants
               </h1>
 

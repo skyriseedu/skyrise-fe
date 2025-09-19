@@ -59,7 +59,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
 
   return (
     <div
-      className="consultation-form-container relative"
+      className="application-form-container max-h-[90vh] overflow-y-auto"
       onClick={(e) => e.stopPropagation()}
     >
       <button
