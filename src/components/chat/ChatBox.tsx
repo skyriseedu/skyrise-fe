@@ -138,6 +138,15 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
             </StickyHeader>
           )}
 
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-primary absolute top-0 right-4 transition hover:opacity-80 lg:hidden"
+            aria-label="Close chat"
+          >
+            <CloseIcon className="h-5 w-5" />
+          </button>
+
           <div
             className={`flex-1 overflow-y-auto px-6 pb-20 ${messages.length > 0 ? 'pt-5 text-left' : 'pt-4 text-center'} lg:px-4 xl:px-6`}
           >
