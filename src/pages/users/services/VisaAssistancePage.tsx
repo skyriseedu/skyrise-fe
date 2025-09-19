@@ -1,9 +1,7 @@
 import React from 'react';
 import ServicesShowcase from '@/components/services/consultation/ServicesShowcase';
 import StickyHeader from '@/components/common/StickyHeader';
-
-const visaImage =
-  'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800';
+import visaImage from '@/assets/images/services-visa-page-cover.jpeg';
 
 const VisaAssistancePage: React.FC = () => {
   return (
