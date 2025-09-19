@@ -49,7 +49,7 @@ const ConsultantTab: React.FC = () => {
       <div className="w-full px-6 py-8 lg:px-16">
         <div className="mb-4 flex items-start gap-4">
           <div className="flex-1">
-            <h2 className="lg:text-h2 text-h3 mb-4 font-semibold text-text-primary">
+            <h2 className="lg:text-h2 text-h3 text-text-primary mb-4 font-semibold">
               Requirements for applying 'Consultant'
             </h2>
             <div className="lg:text-body-2 text-body-3 mb-4 text-gray-600">
@@ -65,7 +65,7 @@ const ConsultantTab: React.FC = () => {
         </div>
 
         <div className="mb-8">
-          <h3 className="lg:text-h2 mb-4 text-h3 font-semibold text-text-primary">
+          <h3 className="lg:text-h2 text-h3 text-text-primary mb-4 font-semibold">
             What We're Looking For:
           </h3>
           <ul className="text-body-2 lg:text-body-2 space-y-3 text-gray-700">
@@ -108,7 +108,7 @@ const ConsultantTab: React.FC = () => {
         </div>
 
         <div className="mb-8">
-          <h3 className="lg:text-h2 mb-6 text-h3 font-semibold text-text-primary">
+          <h3 className="lg:text-h2 text-h3 text-text-primary mb-6 font-semibold">
             Why Join Us?
           </h3>
           <div className="lg:text-body-2 mb-6 text-sm text-gray-600">
@@ -137,10 +137,10 @@ const ConsultantTab: React.FC = () => {
         </div>
 
         <div className="mb-8">
-          <h3 className="mb-4 text-h3 font-semibold text-text-primary">
+          <h3 className="text-h3 text-text-primary mb-4 font-semibold">
             What You'll do:
           </h3>
-          <ul className="space-y-3 text-text-secondary">
+          <ul className="text-text-secondary space-y-3">
             <li className="flex items-start gap-2">
               <span className="mt-1 text-red-500">•</span>
               <span>
@@ -191,7 +191,7 @@ const ConsultantTab: React.FC = () => {
           {/* Large Screen Layout - 3 columns */}
           <div className="hidden lg:grid lg:grid-cols-3 lg:items-center lg:gap-8">
             <div className="text-center">
-              <div className="text-h1 font-semibold text-text-primary">
+              <div className="text-h1 text-text-primary font-semibold">
                 {isLoadingConsultantCount ? (
                   <div className="flex justify-center">
                     <Loading size="lg" color="primary" />
@@ -224,7 +224,7 @@ const ConsultantTab: React.FC = () => {
         </div>
 
         <div className="mb-8">
-          <h3 className="text-h3 lg:text-h2 mb-6 font-semibold text-text-primary">
+          <h3 className="text-h3 lg:text-h2 text-text-primary mb-6 font-semibold">
             Our Ambassadors from Leading Universities
           </h3>
           {isLoadingUniversityLogos ? (
@@ -237,7 +237,7 @@ const ConsultantTab: React.FC = () => {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-25"
+          className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 pt-4"
           onClick={() => setIsOpen(false)}
         >
           <div className="relative" onClick={(e) => e.stopPropagation()}>

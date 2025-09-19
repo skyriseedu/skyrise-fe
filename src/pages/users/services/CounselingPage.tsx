@@ -38,7 +38,7 @@ const CounselingPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <section className="container mx-auto px-6 md:px-8 py-8">
+      <section className="container mx-auto px-6 py-8 md:px-8">
         <div>
           <p className="text-text-primary text-body-2 lg:text-body-3 mb-10">
             Not Sure where to start? Seniors from your dream universities are
@@ -64,7 +64,7 @@ const CounselingPage: React.FC = () => {
 
             <div className="flex gap-2">
               <Button
-                className="bg-primary cursor-pointer rounded-[20px] px-4 md:px-8 lg:px-8 py-3 text-white shadow-lg"
+                className="bg-primary cursor-pointer rounded-[20px] px-4 py-3 text-white shadow-lg md:px-8 lg:px-8"
                 primary={false}
                 onClick={() => setOpen(true)}
               >
@@ -73,7 +73,7 @@ const CounselingPage: React.FC = () => {
 
               <Button
                 secondary
-                className="text-text-primary cursor-pointer rounded-[20px] px-4 md:px-8 lg:px-8 py-3 shadow-lg"
+                className="text-text-primary cursor-pointer rounded-[20px] px-4 py-3 shadow-lg md:px-8 lg:px-8"
                 onClick={() => navigate('/explore')}
               >
                 Explore University

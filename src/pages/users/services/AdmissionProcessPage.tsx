@@ -11,7 +11,9 @@ const AdmissionProcessPage: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [isApplicationOpen, setIsApplicationOpen] = useState<boolean>(false);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
-  const [successTitle, setSuccessTitle] = useState<string>('Applied Successfully!');
+  const [successTitle, setSuccessTitle] = useState<string>(
+    'Applied Successfully!'
+  );
   const [successMessage, setSuccessMessage] = useState<string>(
     'Thank you for applying with us. We will contact you shortly via email to confirm your application details.'
   );
@@ -42,7 +44,7 @@ const AdmissionProcessPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <section className="container mx-auto px-4 md:px-8 py-8">
+      <section className="container mx-auto px-4 py-8 md:px-8">
         <div>
           <p className="text-text-primary text-body-2 lg:text-body-3 mb-10">
             Applying to universities can feel overwhelming - forget submitting
@@ -96,7 +98,7 @@ const AdmissionProcessPage: React.FC = () => {
 
             <div className="flex gap-2">
               <Button
-                className="bg-primary cursor-pointer rounded-[20px] px-4 md:px-8 lg:px-8 py-3 text-white shadow-lg"
+                className="bg-primary cursor-pointer rounded-[20px] px-4 py-3 text-white shadow-lg md:px-8 lg:px-8"
                 primary={false}
                 onClick={() => setOpen(true)}
               >
@@ -139,7 +141,7 @@ const AdmissionProcessPage: React.FC = () => {
 
       {isApplicationOpen && (
         <div
-          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-25"
+          className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 pt-4"
           onClick={() => setIsApplicationOpen(false)}
         >
           <div className="relative" onClick={(e) => e.stopPropagation()}>

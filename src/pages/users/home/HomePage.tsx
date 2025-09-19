@@ -20,7 +20,7 @@ const HomePage: React.FC = () => {
       <OurServices />
       <StatsSection />
 
-      <div className="flex justify-center px-6 md:px-8 py-8">
+      <div className="flex justify-center px-6 py-8 md:px-8">
         <Button
           size="lg"
           className="text-body-5 lg:text-body-3 w-full rounded-[10px] font-semibold sm:w-auto sm:px-12"
@@ -32,7 +32,7 @@ const HomePage: React.FC = () => {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-60 flex items-start justify-center bg-black/40 pt-25"
+          className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 pt-4"
           onClick={() => setIsOpen(false)}
         >
           <div className="relative" onClick={(e) => e.stopPropagation()}>
