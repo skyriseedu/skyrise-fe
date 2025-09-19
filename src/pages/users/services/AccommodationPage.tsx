@@ -1,37 +1,39 @@
 import ServicesShowcase from '@/components/services/consultation/ServicesShowcase';
-import support from '@/assets/images/admission-process-support.jpg';
+import support from '@/assets/images/services-accommodation-cover.jpeg';
 import StickyHeader from '@/components/common/StickyHeader';
 import AccommodationCard from '@/components/services/accommodation-and-airport-pickup/AccommodationCard';
+import BunditApartment from '@/assets/images/bundit-apartment-rangsit.jpeg';
+import KaveCondo from '@/assets/images/kave-condo-bangkok-uni.jpeg';
+import ElsaBlissCondo from '@/assets/images/elsa-biss-condo-stamford.jpeg';
+import BCondo from '@/assets/images/b-condo-raffle.jpeg';
+import PlumCondo from '@/assets/images/plum-condo.jpeg';
 
 const accommodationChoices = [
   {
-    imageUrl:
-      'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
-    name: 'Grand Plaza Hotel',
-    location: 'Downtown Bangkok, Thailand',
+    imageUrl: BunditApartment,
+    name: 'Bundit Apartment',
+    location: 'Near Rangsit University, Thailand',
   },
   {
-    imageUrl:
-      'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800',
-    name: 'Seaside Resort & Spa',
-    location: 'Phuket, Thailand',
+    imageUrl: KaveCondo,
+    name: 'Kave Condo',
+    location: 'Near Bangkok University, Thailand',
   },
   {
-    imageUrl:
-      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800',
-    name: 'Mountain View Lodge',
-    location: 'Chiang Mai, Thailand',
+    imageUrl: ElsaBlissCondo,
+    name: 'Elsa Bliss Condo',
+    location: 'Near Stamford University, Thailand',
   },
   {
-    imageUrl: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',
-    name: 'Urban Boutique Hotel',
-    location: 'Silom District, Bangkok',
+    imageUrl: BCondo,
+    name: 'B Condo',
+    location: 'Near Raffle University, Bangkok',
   },
+
   {
-    imageUrl:
-      'https://images.unsplash.com/photo-1578774204375-826dc5d996ed?w=800',
-    name: 'Riverside Garden Resort',
-    location: 'Ayutthaya, Thailand',
+    imageUrl: PlumCondo,
+    name: 'Plum Condo',
+    location: 'Near Rangsit University, Thailand',
   },
 ];
 
@@ -42,7 +44,8 @@ const AdmissionProcessPage: React.FC = () => {
         title="Accommodation & Airport Pick-up"
         subtitle=""
         mobilePadding="px-8"
-        desktopPadding="lg:px-0 lg:-ml-20"
+        desktopPadding="lg:px-25 lg:-ml-20"
+        showBackButton={false}
       />
       <div className="relative w-full">
         <img
