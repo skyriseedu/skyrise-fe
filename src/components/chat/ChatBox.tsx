@@ -22,19 +22,19 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 top-[88px] z-[60] flex items-start justify-center bg-white px-4 pb-4 sm:p-4 lg:inset-0 lg:items-center lg:justify-end lg:bg-transparent lg:p-0 lg:pr-24 lg:py-10 lg:pointer-events-none xl:pr-28"
+      className="fixed inset-x-0 bottom-0 top-[88px] z-[60] flex items-start justify-center bg-white px-4 pb-4 sm:p-4 lg:inset-0 lg:items-center lg:justify-end lg:bg-transparent lg:p-0 lg:pr-16 lg:py-8 lg:pointer-events-none xl:pr-24 xl:py-10"
       onClick={handleBackdropClick}
       role="presentation"
     >
       <div
-        className="relative flex h-full w-full flex-col overflow-hidden bg-white sm:h-auto sm:max-w-sm sm:rounded-3xl sm:shadow-2xl lg:max-w-lg lg:rounded-[32px] lg:border lg:border-neutral-200 lg:shadow-[0px_28px_60px_-20px_rgba(28,24,49,0.35)] lg:pointer-events-auto"
+        className="relative flex h-full w-full rounded-3xl shadow-3xl flex-col overflow-hidden bg-white md:w-[400px] md:h-[573px]"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby={headingId}
         aria-describedby={descriptionId}
       >
-        <div className="relative flex-1 overflow-y-auto px-6 pb-20 pt-8 text-center lg:px-12 lg:pt-12">
+        <div className="relative flex-1 overflow-y-auto px-6 pb-20 pt-8 text-center lg:px-8 lg:pt-10 xl:px-12 xl:pt-12">
           <button
             type="button"
             onClick={onClose}
@@ -44,28 +44,28 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
             <CloseIcon className="h-5 w-5" />
           </button>
 
-          <div className="mb-6 flex justify-center lg:mb-8">
-            <SkyRiseLogo className="h-20 w-20 lg:h-24 lg:w-24" />
+          <div className="mb-6 flex justify-center lg:mb-6 xl:mb-8">
+            <SkyRiseLogo className="h-20 w-20 lg:h-20 lg:w-20 xl:h-24 xl:w-24" />
           </div>
 
-          <h2 id={headingId} className="text-xl font-semibold text-neutral-900 lg:text-2xl">
+          <h2 id={headingId} className="text-xl font-semibold text-neutral-900 lg:text-xl xl:text-2xl">
             Hi! Good Morning!
             <br />
             What is your questions?
           </h2>
-          <p id={descriptionId} className="mt-3 text-sm text-neutral-500 lg:text-base">
+          <p id={descriptionId} className="mt-3 text-sm text-neutral-500 lg:text-sm xl:text-base">
             Choose sample questions below to start chatting with us.
           </p>
 
         </div>
 
-        <div className='px-6 pb-8'>
-          <div className="grid grid-cols-2 gap-3 lg:gap-4">
+        <div className='px-6 pb-8 lg:px-6'>
+          <div className="grid grid-cols-2 gap-3 lg:gap-3.5 xl:gap-4">
             {quickQuestions.map((label) => (
               <button
                 key={label}
                 type="button"
-                className="rounded-2xl bg-primary/10 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:bg-primary/20 lg:px-8"
+                className="rounded-2xl bg-primary/10 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:bg-primary/20 lg:px-6 lg:py-2.5 xl:px-8 xl:py-3"
               >
                 {label}
               </button>
@@ -73,7 +73,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
           </div>
           <button
             type="button"
-            className="mt-3 w-full rounded-2xl bg-primary/10 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:bg-primary/20 lg:mt-4 lg:px-8"
+            className="mt-3 w-full rounded-2xl bg-primary/10 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:bg-primary/20 lg:mt-3 lg:px-6 lg:py-2.5 xl:mt-4 xl:px-8 xl:py-3"
           >
             Question 5
           </button>
