@@ -22,26 +22,26 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-end justify-center bg-black/60 p-4 sm:items-center lg:items-center lg:justify-end lg:bg-transparent lg:p-0 lg:pr-24 lg:py-16 lg:pointer-events-none"
+      className="fixed inset-x-0 bottom-0 top-[88px] z-[60] flex items-start justify-center bg-white px-4 pb-4 sm:p-4 lg:inset-0 lg:items-center lg:justify-end lg:bg-transparent lg:p-0 lg:pr-24 lg:py-10 lg:pointer-events-none xl:pr-28"
       onClick={handleBackdropClick}
       role="presentation"
     >
       <div
-        className="relative w-full max-w-sm overflow-hidden rounded-3xl bg-white shadow-2xl lg:max-w-lg lg:rounded-[32px] lg:border lg:border-neutral-200 lg:shadow-[0px_28px_60px_-20px_rgba(28,24,49,0.35)] lg:pointer-events-auto"
+        className="relative flex h-full w-full flex-col overflow-hidden bg-white sm:h-auto sm:max-w-sm sm:rounded-3xl sm:shadow-2xl lg:max-w-lg lg:rounded-[32px] lg:border lg:border-neutral-200 lg:shadow-[0px_28px_60px_-20px_rgba(28,24,49,0.35)] lg:pointer-events-auto"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby={headingId}
         aria-describedby={descriptionId}
       >
-        <div className="relative px-6 pb-8 pt-8 text-center lg:px-12 lg:pb-12 lg:pt-12">
+        <div className="relative flex-1 overflow-y-auto px-6 pb-20 pt-8 text-center lg:px-12 lg:pt-12">
           <button
             type="button"
             onClick={onClose}
             className="absolute right-6 top-6 text-primary transition hover:opacity-80 lg:hidden"
             aria-label="Close chat"
           >
-            <CloseIcon className="h-6 w-6" />
+            <CloseIcon className="h-5 w-5" />
           </button>
 
           <div className="mb-6 flex justify-center lg:mb-8">
@@ -54,28 +54,29 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
             What is your questions?
           </h2>
           <p id={descriptionId} className="mt-3 text-sm text-neutral-500 lg:text-base">
-            Choose sample questions below or write on your own to start chatting with us.
+            Choose sample questions below to start chatting with us.
           </p>
 
-          <div className="mt-8 space-y-3 lg:mt-10">
-            <div className="grid grid-cols-2 gap-3 lg:gap-4">
-              {quickQuestions.map((label) => (
-                <button
-                  key={label}
-                  type="button"
-                  className="rounded-2xl bg-primary/10 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:bg-primary/20 lg:px-8"
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            <button
-              type="button"
-              className="w-full rounded-2xl bg-primary/10 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:bg-primary/20 lg:px-8"
-            >
-              Question 5
-            </button>
+        </div>
+
+        <div className='px-6 pb-8'>
+          <div className="grid grid-cols-2 gap-3 lg:gap-4">
+            {quickQuestions.map((label) => (
+              <button
+                key={label}
+                type="button"
+                className="rounded-2xl bg-primary/10 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:bg-primary/20 lg:px-8"
+              >
+                {label}
+              </button>
+            ))}
           </div>
+          <button
+            type="button"
+            className="mt-3 w-full rounded-2xl bg-primary/10 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:bg-primary/20 lg:mt-4 lg:px-8"
+          >
+            Question 5
+          </button>
         </div>
       </div>
     </div>
