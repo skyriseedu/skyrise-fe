@@ -72,7 +72,7 @@ const OurServices = () => {
   };
 
   return (
-    <section className="bg-white px-6 md:px-8 py-16">
+    <section className="bg-white px-6 py-16 md:px-8">
       <div className="mx-auto max-w-7xl">
         <h2 className="text-h1 text-text-primary lg:text-custom mb-12 text-center font-semibold">
           {t('home.services.title')}

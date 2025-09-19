@@ -226,7 +226,10 @@ const UniversityDetail: React.FC = () => {
           scholarRequirements={university.scholarshipRequirements}
         />
 
-        <ReviewsSection title="Student Success Stories" />
+        <ReviewsSection
+          title="Student Success Stories"
+          reviews={university.studentReviews}
+        />
       </div>
 
       {isOpen && (
