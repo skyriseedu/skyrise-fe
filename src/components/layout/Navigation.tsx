@@ -88,15 +88,15 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
               duration: 0.3,
             }}
           >
-            <nav className="relative z-10 px-6 py-4">
+            <nav className="relative z-10 px-6 py-2">
               <ul className="py-1">
                 {navigationItems.map((item) => (
-                  <li key={item.name}>
+                  <li key={item.name} className="relative">
                     {item.hasSubmenu ? (
                       <div>
                         <button
                           onClick={toggleServices}
-                          className={`text-h3 block w-full rounded-lg px-4 py-3 text-left font-semibold transition-colors ${
+                          className={`text-h3 block w-full rounded-lg px-4 py-2 text-left font-semibold transition-colors ${
                             isActiveMenuItem(item)
                               ? 'bg-primary text-white'
                               : 'text-text-primary hover:bg-secondary hover:text-primary'
@@ -133,7 +133,7 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
                                 <Link
                                   to={subItem.path}
                                   onClick={onClose}
-                                  className={`text-h3 block rounded-lg px-4 py-2 font-semibold transition-colors ${
+                                  className={`text-h3 block rounded-lg px-4 py-1 font-semibold transition-colors ${
                                     isActiveSubItem(subItem.path)
                                       ? 'bg-primary text-white'
                                       : 'text-text-primary hover:bg-secondary hover:text-primary'
