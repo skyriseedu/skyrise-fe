@@ -12,6 +12,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
   const headingId = 'chatbox-heading';
   const descriptionId = 'chatbox-description';
 
+  const [isVisible, setIsVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
   const handleBackdropClick = () => {
     if (typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches) {
       return;
@@ -27,7 +33,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
       role="presentation"
     >
       <div
-        className="relative flex h-full w-full rounded-3xl shadow-3xl flex-col overflow-hidden bg-white md:w-[400px] md:h-[573px]"
+        className={`relative flex h-full w-full flex-col overflow-hidden rounded-3xl bg-white shadow-3xl transition-all duration-300 ease-out md:h-[573px] md:w-[400px] ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-[0.98]'}`}
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
