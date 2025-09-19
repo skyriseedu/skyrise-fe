@@ -28,18 +28,18 @@
   },
   "home": {
     "hero": {
-      "title": "Study Without Limits. \nWe'll Show You How.",
-      "subtitle": "We aim to help every student find their suitable universities with honesty, heart, and real support.",
+      "title": "Limit မရှိလေ့လာဖို့ ဘယ်လိုလုပ်မလဲကြည့်ကြရအောင်",
+      "subtitle": "အကောင်းဆုံး တက္ကသိုလ် ရှာတွေနိုင်ဖို့ ၃မိနစ်အချိန်ပေးရုံပါပဲနော်",
       "videoFallback": "Your browser does not support the video tag."
     },
     "whyChooseUs": {
-      "title": "Why Choose Us",
-      "description": "We built this space because we're as tired of overrated reviews and sugar-coated promotions as you are. Instead, we focus on helping you discover...",
+      "title": "ဘာကြောင့် SKYRISE ကို ရွေးချယ်သင့်တာလဲ?",
+      "description": "ပုံမှန်ထက်ပိုကောင်းလွန်းနေတဲ့ review တွေ promotion တွေထက်၊ SKYRISE က တကယ့် အတွေ့အကြုံ တွေပေးဖို့ စခဲ့တာပါ",
       "points": {
-        "1": "Genuine experiences shared by seniors",
-        "2": "Clear path to your best-fit university",
-        "3": "Personal guidance you can rely on",
-        "4": "Inspiring community that grows with you"
+        "1": "Senior ကျောင်းသားတွေရဲ့ တကယ့်အတွေ့ကြုံတွေ",
+        "2": "သင့်တော်တဲ့ University လမ်းကြောင်းတွေ",
+        "3": "သေချာလမ်းပြပေးမဲ့ သူတွေ",
+        "4": "အတူတူအမြဲရှိပေးနေမဲ့ community တခု အနေနဲ့ ရှိနေဖို့ပါ"
       }
     },
     "admissionProcess": {
@@ -69,7 +69,7 @@
       }
     },
     "services": {
-      "title": "Our Services",
+      "title": "ဝန်ဆောင်မူများ",
       "consultation": {
         "badge": "CONSULTATION",
         "title": "Consultation",
