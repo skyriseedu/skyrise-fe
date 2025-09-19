@@ -1,6 +1,7 @@
 import React from 'react';
 import SkyRiseLogo from '../../assets/skyrise-logo-2.svg?react';
 import CloseIcon from '../../assets/chat-close.svg?react';
+import StickyHeader from '../common/StickyHeader';
 
 interface ChatBoxProps {
   onClose: () => void;
@@ -100,67 +101,81 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
         aria-labelledby={headingId}
         aria-describedby={descriptionId}
       >
-        <div className={`relative flex-1 overflow-y-auto px-6 pb-20 pt-8 ${messages.length > 0 ? 'text-left' : 'text-center'} lg:px-4 lg:pt-10 xl:px-6 xl:pt-10`}>
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute right-6 top-6 text-primary transition hover:opacity-80 lg:hidden"
-            aria-label="Close chat"
+        <div className="flex flex-1 flex-col overflow-hidden">
+          { messages.length > 0 && (<StickyHeader
+            showBackButton={false}
+            useContainer={false}
+            mobilePadding="px-6"
+            desktopPadding="px-6"
+            topClassName="top-0"
+            className="border-b-1 border-gray-200 shadow-sm"
           >
-            <CloseIcon className="h-5 w-5" />
-          </button>
+            <div className="text-left flex flex-row gap-2">
+              <SkyRiseLogo className="h-7 w-7" />
+              <p className="text-sm font-medium text-neutral-600 mt-1">SkyRise is answering for you...</p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="absolute right-4 top-0 text-primary transition hover:opacity-80 lg:hidden"
+              aria-label="Close chat"
+            >
+              <CloseIcon className="h-5 w-5" />
+            </button>
+          </StickyHeader>)}
 
-          {messages.length > 0 ? (
-            <div className="flex flex-col gap-6">
-              {messages?.map((message) => {
-                if (message.author === 'assistant') {
+          <div className={`flex-1 overflow-y-auto px-6 pb-20 ${messages.length > 0 ? 'pt-5 text-left' : 'pt-4 text-center'} lg:px-4 xl:px-6` }>
+            {messages.length > 0 ? (
+              <div className="flex flex-col gap-6">
+                {messages.map((message) => {
+                  if (message.author === 'assistant') {
+                    return (
+                      <div key={message.id} className="flex items-start gap-1">
+                        <SkyRiseLogo className="h-9 w-9 shrink-0" />
+                        <div className="relative max-w-[65%] rounded-xl bg-primary/10 px-2 py-2 text-sm text-text-primary shadow-sm">
+                          {message.text}
+                        </div>
+                      </div>
+                    );
+                  }
+
                   return (
-                    <div key={message.id} className="flex items-start gap-1">
-                      <SkyRiseLogo className="h-9 w-9 shrink-0" />
-                      <div className="relative max-w-[65%] h-auto rounded-xl bg-primary/10 px-2 py-3 text-sm text-text-primary shadow-sm">
+                    <div key={message.id} className="flex justify-end">
+                      <div className="relative max-w-[85%] rounded-xl bg-primary/10 px-2 py-3 text-sm text-text-primary shadow-sm">
                         {message.text}
                       </div>
                     </div>
                   );
-                }
-
-                return (
-                  <div key={message.id} className="flex justify-end">
-                    <div className="relative max-w-[85%] rounded-xl bg-primary/10 px-2 py-3 text-sm text-text-primary shadow-sm">
-                      {message.text}
-                    </div>
-                  </div>
-                );
-              })}
-              <div ref={messagesEndRef} />
-            </div>
-          ) : (
-            <>
-              <div className="mb-6 flex justify-center lg:mb-6 xl:mb-8">
-                <SkyRiseLogo className="h-20 w-20 lg:h-20 lg:w-20 xl:h-24 xl:w-24" />
+                })}
+                <div ref={messagesEndRef} />
               </div>
+            ) : (
+              <>
+                <div className="mb-6 flex justify-center lg:mb-6 xl:mb-8">
+                  <SkyRiseLogo className="h-20 w-20 lg:h-20 lg:w-20 xl:h-24 xl:w-24" />
+                </div>
 
-              <h2 id={headingId} className="text-xl font-semibold text-neutral-900 lg:text-xl xl:text-2xl">
-                Hi! Good Morning!
-                <br />
-                What is your questions?
-              </h2>
-              <p id={descriptionId} className="mt-3 text-sm text-neutral-500 lg:text-sm xl:text-base">
-                Choose sample questions below to start chatting with us.
-              </p>
-            </>
-          )}
-
+                <h2 id={headingId} className="text-xl font-semibold text-neutral-900 lg:text-xl xl:text-2xl">
+                  Hi! Good Morning!
+                  <br />
+                  What is your questions?
+                </h2>
+                <p id={descriptionId} className="mt-3 text-sm text-neutral-500 lg:text-sm xl:text-base">
+                  Choose sample questions below to start chatting with us.
+                </p>
+              </>
+            )}
+          </div>
         </div>
 
         <div className="px-6 pb-8 lg:px-6">
           <div className="grid grid-cols-2 gap-3 lg:gap-3.5 xl:gap-4">
-            {quickQuestions.slice(0, 4).map((conversation) => (
+            {quickQuestions?.slice(0, 4).map((conversation) => (
               <button
                 key={conversation.id}
                 type="button"
                 onClick={() => handleQuestionClick(conversation)}
-                className="rounded-2xl bg-primary/10 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:bg-primary/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:px-6 lg:py-2.5 xl:px-8 xl:py-3"
+                className="rounded-xl cursor-pointer bg-primary/10 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:bg-primary/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:px-6 lg:py-2.5 xl:px-8 xl:py-3"
               >
                 {conversation.label}
               </button>
@@ -170,7 +185,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
             <button
               type="button"
               onClick={() => handleQuestionClick(quickQuestions[4])}
-              className="mt-3 w-full rounded-2xl bg-primary/10 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:bg-primary/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:mt-3 lg:px-6 lg:py-2.5 xl:mt-4 xl:px-8 xl:py-3"
+              className="mt-3 w-full cursor-pointer rounded-xl bg-primary/10 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:bg-primary/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:mt-3 lg:px-6 lg:py-2.5 xl:mt-4 xl:px-8 xl:py-3"
             >
               {quickQuestions[4].label}
             </button>
