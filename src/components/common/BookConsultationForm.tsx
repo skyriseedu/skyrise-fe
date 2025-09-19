@@ -58,13 +58,13 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
   };
   return (
     <div
-      className="consultation-form-container max-h-[90vh] overflow-y-auto"
+      className="consultation-form-container max-h-[90vh] w-screen max-w-[35rem] px-4 overflow-y-auto lg:overflow-visible"
       onClick={(e) => e.stopPropagation()}
     >
       <button
         type="button"
         onClick={onClose}
-        className="bg-primary absolute -top-3 -right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-white hover:bg-red-600"
+        className="bg-primary absolute -top-3 right-0 z-10 flex h-8 w-8 items-center justify-center rounded-full text-white hover:bg-red-600"
         aria-label="Close"
       >
         <img
