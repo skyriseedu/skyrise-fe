@@ -21,27 +21,45 @@ const ServicesShowcase: React.FC = () => {
             <ServiceCard
               title="Admission Process Support"
               icon={admissionSupportIcon}
+              to="/services/admission-process-support"
             />
           </div>
         )}
-        <div className="shrink-0 md:w-auto md:shrink">
-          <ServiceCard title="Visa Assistance" icon={visaSupportIcon} />
-        </div>
-        <div className="shrink-0 md:w-auto md:shrink">
-          <ServiceCard
-            title="Accommodation & Airport Pick-up"
-            icon={airpotPickUp}
-          />
-        </div>
-        <div className="shrink-0 md:w-auto md:shrink">
-          <ServiceCard
-            title="Pre-University Programs"
-            icon={preUniversityHome}
-          />
-        </div>
+        {location.pathname !== '/services/visa-assistance' && (
+          <div className="shrink-0 md:w-auto md:shrink">
+            <ServiceCard
+              title="Visa Assistance"
+              icon={visaSupportIcon}
+              to="/services/visa-assistance"
+            />
+          </div>
+        )}
+        {location.pathname !==
+          '/services/accommodation-and-airport-pick-up' && (
+          <div className="shrink-0 md:w-auto md:shrink">
+            <ServiceCard
+              title="Accommodation & Airport Pick-up"
+              icon={airpotPickUp}
+              to="/services/accommodation-and-airport-pick-up"
+            />
+          </div>
+        )}
+        {location.pathname !== '/services/pre-university' && (
+          <div className="shrink-0 md:w-auto md:shrink">
+            <ServiceCard
+              title="Pre-University Programs"
+              icon={preUniversityHome}
+              to="/services/pre-university"
+            />
+          </div>
+        )}
         {location.pathname !== '/services/consultation' && (
           <div className="shrink-0 md:w-auto md:shrink">
-            <ServiceCard title="Consultation" icon={consultation} />
+            <ServiceCard
+              title="Consultation"
+              icon={consultation}
+              to="/services/consultation"
+            />
           </div>
         )}
       </div>
