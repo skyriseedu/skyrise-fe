@@ -7,8 +7,9 @@ const UniversitiesAndConsultants: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab =
     searchParams.get('tab') === 'consultants' ? 'consultants' : 'universities';
-  const [activeTab, setActiveTab] =
-    useState<'universities' | 'consultants'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'universities' | 'consultants'>(
+    initialTab
+  );
 
   useEffect(() => {
     const tabParam = searchParams.get('tab');

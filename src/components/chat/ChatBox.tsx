@@ -215,7 +215,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
 
         <div className="px-6 pb-8 lg:px-6">
           {showContactCard ? (
-            <div className="bg-[#FFE6E8] text-text-primary rounded-3xl px-6 py-6 text-center shadow-lg">
+            <div className="text-text-primary rounded-3xl bg-[#FFE6E8] px-6 py-6 text-center shadow-lg">
               <p className="text-body-3">
                 Please contact us{' '}
                 <a
@@ -228,11 +228,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
                 </a>{' '}
                 for further information
               </p>
-              <p className="text-body-3 mt-4 font-semibold text-neutral-700">OR</p>
+              <p className="text-body-3 mt-4 font-semibold text-neutral-700">
+                OR
+              </p>
               <button
                 type="button"
                 onClick={handleBookConsultation}
-                className="bg-primary hover:bg-primary/90 mt-4 inline-flex w-full cursor-pointer items-center justify-center rounded-[10px] px-6 py-3 text-lg font-semibold text-white "
+                className="bg-primary hover:bg-primary/90 mt-4 inline-flex w-full cursor-pointer items-center justify-center rounded-[10px] px-6 py-3 text-lg font-semibold text-white"
               >
                 Book Free Consultation
               </button>

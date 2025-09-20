@@ -19,9 +19,11 @@ const MissionVision: React.FC<MissionVisionProps> = ({
         <div className="space-y-2 lg:hidden">
           <article>
             <div className="flex items-start justify-between px-6 pt-6">
-              <h2 className="text-h3 text-text-primary font-semibold">Mission</h2>
+              <h2 className="text-h3 text-text-primary font-semibold">
+                Mission
+              </h2>
             </div>
-            <div className="px-6 pb-6 pt-4">
+            <div className="px-6 pt-4 pb-6">
               <div className="overflow-hidden rounded-2xl">
                 <img
                   src={founderImage}
@@ -37,9 +39,11 @@ const MissionVision: React.FC<MissionVisionProps> = ({
 
           <article>
             <div className="flex items-start justify-between px-6 pt-6">
-              <h2 className="text-h3 text-text-primary font-semibold">Vision</h2>
+              <h2 className="text-h3 text-text-primary font-semibold">
+                Vision
+              </h2>
             </div>
-            <div className="px-6 pb-6 pt-4">
+            <div className="px-6 pt-4 pb-6">
               <div className="overflow-hidden rounded-2xl">
                 <img
                   src={universityImage}

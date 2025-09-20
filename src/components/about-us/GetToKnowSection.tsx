@@ -64,7 +64,7 @@ const GetToKnowSection: React.FC = () => {
                 {t('aboutUs.storyOne')}
               </p>
 
-              <p className="text-body-2 lg:text-body-3 text-text-primary ">
+              <p className="text-body-2 lg:text-body-3 text-text-primary">
                 {t('aboutUs.storyTwo')}
               </p>
             </div>
