@@ -8,29 +8,28 @@ import CaretDown from '../../assets/caret-down.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
 import SuccessModal from '../common/SuccessModal';
 import ApplicationForm from '../common/ApplicationForm';
-// import ApplyConsultantForm from '../common/ApplyConsultantForm';
 
 const socialLinks = [
   {
     name: 'Facebook',
-    url: 'https://facebook.com',
+    url: 'https://www.facebook.com/sharingaboutthai',
     icon: <Facebook className="fill-primary text-primary h-5 w-5" />,
   },
 
   {
     name: 'YouTube',
-    url: 'https://youtube.com',
+    url: 'https://www.youtube.com/@skyriseedu105',
     icon: <YouTube className="fill-primary h-5 w-5" />,
   },
   {
     name: 'Messenger',
-    url: 'https://messenger.com',
+    url: 'http://m.me/sharingaboutthai',
     icon: <Messenger className="fill-primary h-5 w-5" />,
   },
 
   {
     name: 'Telegram',
-    url: 'https://telegram.org',
+    url: 'https://t.me/skyrise105',
     icon: <Telegram className="fill-primary h-5 w-5" />,
   },
 ];
@@ -39,7 +38,7 @@ const footerNavigation = [
   { name: 'Home', path: '/' },
   { name: 'Explore', path: '/explore' },
   { name: 'About Us', path: '/about' },
-  { name: 'Universities & Consultants', path: '/universities' },
+  { name: 'Universities & Consultants', path: '/universities-and-consultants' },
   {
     name: 'Services',
     hasSubmenu: true,
@@ -52,10 +51,10 @@ const footerNavigation = [
         name: 'Admission Process Support',
         path: '/services/admission-process-support',
       },
-      { name: 'Visa', path: '/services/visa' },
+      { name: 'Visa', path: '/services/visa-assistance' },
       {
         name: 'Accommodation & Airport Pick-up',
-        path: '/services/accommodation',
+        path: '/services/accommodation-and-airport-pick-up',
       },
       {
         name: 'Pre-University Program',
