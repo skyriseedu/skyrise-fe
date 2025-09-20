@@ -1,11 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import UniversityTab from '../../../components/universities/UniversityTab';
 import ConsultantTab from '../../../components/consultants/ConsultantTab';
 
 const UniversitiesAndConsultants: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'universities' | 'consultants'>(
-    'universities'
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab =
+    searchParams.get('tab') === 'consultants' ? 'consultants' : 'universities';
+  const [activeTab, setActiveTab] =
+    useState<'universities' | 'consultants'>(initialTab);
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'consultants' || tabParam === 'universities') {
+      setActiveTab((prev) => (prev === tabParam ? prev : tabParam));
+      return;
+    }
+
+    setActiveTab((prev) => (prev === 'universities' ? prev : 'universities'));
+
+    if (!tabParam) {
+      const params = new URLSearchParams(searchParams);
+      params.set('tab', 'universities');
+      setSearchParams(params);
+    }
+  }, [searchParams, setSearchParams]);
+
+  const handleTabChange = (tab: 'universities' | 'consultants') => {
+    if (tab === activeTab) {
+      return;
+    }
+
+    setActiveTab(tab);
+    const params = new URLSearchParams(searchParams);
+    params.set('tab', tab);
+    setSearchParams(params);
+  };
 
   return (
     <div className="min-h-screen w-full">
@@ -21,7 +51,7 @@ const UniversitiesAndConsultants: React.FC = () => {
 
               <div className="flex space-x-4">
                 <button
-                  onClick={() => setActiveTab('universities')}
+                  onClick={() => handleTabChange('universities')}
                   className={`text-h4 md:text-h2 cursor-pointer rounded-lg px-6 py-2 font-semibold transition-colors ${
                     activeTab === 'universities'
                       ? 'bg-primary text-white'
@@ -31,7 +61,7 @@ const UniversitiesAndConsultants: React.FC = () => {
                   University
                 </button>
                 <button
-                  onClick={() => setActiveTab('consultants')}
+                  onClick={() => handleTabChange('consultants')}
                   className={`text-h4 md:text-h2 cursor-pointer rounded-lg px-6 py-2 font-semibold transition-colors ${
                     activeTab === 'consultants'
                       ? 'bg-primary text-white'
@@ -51,7 +81,7 @@ const UniversitiesAndConsultants: React.FC = () => {
                 </h1>
                 <div className="ml-50 flex space-x-4">
                   <button
-                    onClick={() => setActiveTab('universities')}
+                    onClick={() => handleTabChange('universities')}
                     className={`text-h4 md:text-h2 cursor-pointer rounded-lg px-6 py-2 font-semibold transition-colors ${
                       activeTab === 'universities'
                         ? 'bg-primary text-white'
@@ -61,7 +91,7 @@ const UniversitiesAndConsultants: React.FC = () => {
                     University
                   </button>
                   <button
-                    onClick={() => setActiveTab('consultants')}
+                    onClick={() => handleTabChange('consultants')}
                     className={`text-h4 md:text-h2 cursor-pointer rounded-lg px-6 py-2 font-semibold transition-colors ${
                       activeTab === 'consultants'
                         ? 'bg-primary text-white'

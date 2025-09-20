@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface MissionVisionProps {
   founderImage: string;
@@ -9,6 +10,8 @@ const MissionVision: React.FC<MissionVisionProps> = ({
   founderImage,
   universityImage,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <section className="w-full bg-white py-2 lg:py-20">
       <div className="container mx-auto px-6 lg:px-8">
@@ -27,9 +30,7 @@ const MissionVision: React.FC<MissionVisionProps> = ({
                 />
               </div>
               <p className="text-body-3 text-text-primary mt-4">
-                At Skyrise Ed, we're on a mission to make studying abroad feel
-                possible, personal, and real by giving you honest guidance
-                without sugar-coating.
+                {t('aboutUs.mission')}
               </p>
             </div>
           </article>
@@ -47,11 +48,7 @@ const MissionVision: React.FC<MissionVisionProps> = ({
                 />
               </div>
               <p className="text-body-3 text-text-primary mt-4">
-                Our vision is to be the leading trusted platform in education
-                admissions, where every student finds not just guidance, but
-                also feels empowered and inspired. We believe in the joy of
-                learning, the power of growth, and the life-changing impact of
-                education—and we are here to help you experience it too.
+                {t('aboutUs.vision')}
               </p>
             </div>
           </article>
@@ -65,9 +62,7 @@ const MissionVision: React.FC<MissionVisionProps> = ({
                 Mission
               </h2>
               <p className="text-body-2 lg:text-body-3 text-text-primary">
-                At Skyrise Ed, we're on a mission to make studying abroad feel
-                possible, personal, and real by giving you honest guidance
-                without sugar-coating.
+                {t('aboutUs.mission')}
               </p>
             </div>
 
@@ -76,11 +71,7 @@ const MissionVision: React.FC<MissionVisionProps> = ({
                 Vision
               </h2>
               <p className="text-body-2 lg:text-body-3 text-text-primary">
-                Our vision is to be the leading trusted platform in education
-                admissions, where every student finds not just guidance, but
-                also feels empowered and inspired. We believe in the joy of
-                learning, the power of growth, and the life- changing impact of
-                education—and we are here to help you experience it too.
+                {t('aboutUs.vision')}
               </p>
             </div>
           </div>
