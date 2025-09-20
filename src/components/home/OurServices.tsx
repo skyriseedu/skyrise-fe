@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import FlipCard from './FlipCard';
 import preUniversityIcon from '@/assets/pre-university-home.svg';
 import airportPickupIcon from '@/assets/airport-pickup-home.svg';
@@ -14,10 +15,12 @@ interface ServiceCard {
   description: string;
   icon: string;
   iconAlt: string;
+  route: string;
 }
 
 const OurServices = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const services: ServiceCard[] = [
     {
@@ -28,6 +31,7 @@ const OurServices = () => {
       description: t('home.services.consultation.description'),
       icon: serviceIcon,
       iconAlt: t('home.services.consultation.iconAlt'),
+      route: '/services/consultation',
     },
     {
       id: 2,
@@ -37,6 +41,7 @@ const OurServices = () => {
       description: t('home.services.preUniversity.description'),
       icon: preUniversityIcon,
       iconAlt: t('home.services.preUniversity.iconAlt'),
+      route: '/services/pre-university',
     },
     {
       id: 3,
@@ -46,6 +51,7 @@ const OurServices = () => {
       description: t('home.services.visa.description'),
       icon: visaSupportIcon,
       iconAlt: t('home.services.visa.iconAlt'),
+      route: '/services/visa-assistance',
     },
     {
       id: 4,
@@ -55,6 +61,7 @@ const OurServices = () => {
       description: t('home.services.accommodation.description'),
       icon: airportPickupIcon,
       iconAlt: t('home.services.accommodation.iconAlt'),
+      route: '/services/accommodation-and-airport-pick-up',
     },
     {
       id: 5,
@@ -64,11 +71,12 @@ const OurServices = () => {
       description: t('home.services.admissionSupport.description'),
       icon: admissionSupportIcon,
       iconAlt: t('home.services.admissionSupport.iconAlt'),
+      route: '/services/admission-process-support',
     },
   ];
 
-  const handleServiceClick = (serviceTitle: string) => {
-    console.log(`Service clicked: ${serviceTitle}`);
+  const handleServiceClick = (route: string) => {
+    navigate(route);
   };
 
   return (
@@ -88,7 +96,7 @@ const OurServices = () => {
               description={service.description}
               icon={service.icon}
               iconAlt={service.iconAlt}
-              onButtonClick={() => handleServiceClick(service.title)}
+              onButtonClick={() => handleServiceClick(service.route)}
             />
           ))}
         </div>
