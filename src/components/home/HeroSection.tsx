@@ -51,28 +51,44 @@ const HeroSection: React.FC = () => {
             </p>
 
             <div className="flex items-center gap-4">
-              <a href="#" className="hover:opacity-80">
+              <a
+                href="https://www.facebook.com/share/15HjhMzHVKE/?mibextid=wwXIfr"
+                target="_blank"
+                className="hover:opacity-80"
+              >
                 <img
                   src={facebookWhite}
                   alt={t('common.social.facebook')}
                   className="h-8 w-8"
                 />
               </a>
-              <a href="#" className="hover:opacity-80">
+              <a
+                href="https://www.facebook.com/share/15HjhMzHVKE/?mibextid=wwXIfr"
+                target="_blank"
+                className="hover:opacity-80"
+              >
                 <img
                   src={messengerWhite}
                   alt={t('common.social.messenger')}
                   className="h-8 w-8"
                 />
               </a>
-              <a href="#" className="hover:opacity-80">
+              <a
+                href="https://youtube.com/@skyriseedu105?si=AqeuU5RykkNKnYb2"
+                target="_blank"
+                className="hover:opacity-80"
+              >
                 <img
                   src={youtubeWhite}
                   alt={t('common.social.youtube')}
                   className="h-8 w-8"
                 />
               </a>
-              <a href="#" className="hover:opacity-80">
+              <a
+                href="https://t.me/skyrise105"
+                target="_blank"
+                className="hover:opacity-80"
+              >
                 <img
                   src={telegramWhite}
                   alt={t('common.social.telegram')}

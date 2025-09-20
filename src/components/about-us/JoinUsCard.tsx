@@ -28,7 +28,7 @@ const JoinUsCard: React.FC = () => {
 
               <div className="mt-8 mb-4">
                 <Link
-                  to="/universities"
+                  to="/universities-and-consultants?tab=consultants"
                   className="text-h3 lg:text-h3 text-text-primary relative inline-block cursor-pointer font-semibold hover:opacity-90"
                 >
                   Become our ambassador!

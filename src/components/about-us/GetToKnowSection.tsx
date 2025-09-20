@@ -4,9 +4,11 @@ import Button from '@/components/common/Button';
 import aboutCover1 from '@/assets/images/about-us-cover-one.jpg';
 import aboutCover2 from '@/assets/images/about-us-cover-two.jpg';
 import aboutCover3 from '@/assets/images/about-us-cover-three.jpg';
+import { useTranslation } from 'react-i18next';
 
 const GetToKnowSection: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <section className="w-full">
@@ -58,19 +60,12 @@ const GetToKnowSection: React.FC = () => {
             </h2>
 
             <div className="space-y-6">
-              <p className="text-body-2 lg:text-body-3 text-text-primary font-normal">
-                Founded in 2023 in Thailand, SKYRISE Education was created by
-                passionate students from Rangsit University who firmly believe
-                that education is transformational for personal growth and
-                unlocking limitless opportunities.
+              <p className="text-body-2 lg:text-body-3 text-text-primary">
+                {t('aboutUs.storyOne')}
               </p>
 
-              <p className="text-body-2 lg:text-body-3 text-text-primary font-normal">
-                Driven by this vision, we created a dedicated team to empower
-                students and provide a supportive, inclusive community. At
-                SKYRISE, we are committed to guiding every student toward
-                achieving their dreams of studying abroad and building a
-                brighter future.
+              <p className="text-body-2 lg:text-body-3 text-text-primary">
+                {t('aboutUs.storyTwo')}
               </p>
             </div>
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface MissionVisionProps {
   founderImage: string;
@@ -9,57 +10,52 @@ const MissionVision: React.FC<MissionVisionProps> = ({
   founderImage,
   universityImage,
 }) => {
+  const { t } = useTranslation();
+
   return (
-    <section className="w-full bg-white py-10 lg:py-20">
+    <section className="w-full bg-white py-2 lg:py-20">
       <div className="container mx-auto px-6 lg:px-8">
         {/* Mobile Layout */}
-        <div className="space-y-6 lg:hidden">
-          <div className="overflow-hidden">
-            <div className="flex">
-              <div className="flex w-1/2 flex-col justify-center p-6">
-                <h2 className="text-h3 lg:text-h2 text-text-primary mb-3 font-semibold">
-                  Mission
-                </h2>
-                <p className="text-body-2 lg:text-body-3 text-text-primary">
-                  At Skyrise Ed, we're on a mission to make studying abroad feel
-                  possible, personal, and real by giving you honest guidance
-                  without sugar-coating.
-                </p>
-              </div>
-              <div className="w-1/2 p-4">
+        <div className="space-y-2 lg:hidden">
+          <article>
+            <div className="flex items-start justify-between px-6 pt-6">
+              <h2 className="text-h3 text-text-primary font-semibold">
+                Mission
+              </h2>
+            </div>
+            <div className="px-6 pt-4 pb-6">
+              <div className="overflow-hidden rounded-2xl">
                 <img
                   src={founderImage}
                   alt="Skyrise Ed Founder"
-                  className="h-full w-full rounded-2xl object-cover"
+                  className="h-[212px] w-full object-cover"
                 />
               </div>
+              <p className="text-body-3 text-text-primary mt-4">
+                {t('aboutUs.mission')}
+              </p>
             </div>
-          </div>
+          </article>
 
-          {/* Vision Section - Mobile */}
-          <div className="overflow-hidden">
-            <div className="flex">
-              <div className="w-1/2 p-2">
+          <article>
+            <div className="flex items-start justify-between px-6 pt-6">
+              <h2 className="text-h3 text-text-primary font-semibold">
+                Vision
+              </h2>
+            </div>
+            <div className="px-6 pt-4 pb-6">
+              <div className="overflow-hidden rounded-2xl">
                 <img
                   src={universityImage}
                   alt="Rangsit University"
-                  className="h-full w-full rounded-2xl object-cover"
+                  className="h-[212px] w-full object-cover"
                 />
               </div>
-              <div className="flex w-1/2 flex-col justify-center p-6">
-                <h2 className="text-h3 lg:text-h2 text-text-primary mb-3 font-semibold">
-                  Vision
-                </h2>
-                <p className="text-body-2 lg:text-body-3 text-text-primary">
-                  Our vision is to be the leading trusted platform in education
-                  admissions, where every student finds not just guidance, but
-                  also feels empowered and inspired. We believe in the joy of
-                  learning, the power of growth, and the life- changing impact
-                  of education—and we are here to help you experience it too.
-                </p>
-              </div>
+              <p className="text-body-3 text-text-primary mt-4">
+                {t('aboutUs.vision')}
+              </p>
             </div>
-          </div>
+          </article>
         </div>
 
         {/* Desktop Layout */}
@@ -70,9 +66,7 @@ const MissionVision: React.FC<MissionVisionProps> = ({
                 Mission
               </h2>
               <p className="text-body-2 lg:text-body-3 text-text-primary">
-                At Skyrise Ed, we're on a mission to make studying abroad feel
-                possible, personal, and real by giving you honest guidance
-                without sugar-coating.
+                {t('aboutUs.mission')}
               </p>
             </div>
 
@@ -81,11 +75,7 @@ const MissionVision: React.FC<MissionVisionProps> = ({
                 Vision
               </h2>
               <p className="text-body-2 lg:text-body-3 text-text-primary">
-                Our vision is to be the leading trusted platform in education
-                admissions, where every student finds not just guidance, but
-                also feels empowered and inspired. We believe in the joy of
-                learning, the power of growth, and the life- changing impact of
-                education—and we are here to help you experience it too.
+                {t('aboutUs.vision')}
               </p>
             </div>
           </div>

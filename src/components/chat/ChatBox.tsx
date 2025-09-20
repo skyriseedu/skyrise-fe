@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import SkyRiseLogo from '../../assets/skyrise-logo-2.svg?react';
 import CloseIcon from '../../assets/chat-close.svg?react';
 import StickyHeader from '../common/StickyHeader';
@@ -54,7 +55,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
 
   const [isVisible, setIsVisible] = React.useState(false);
   const [messages, setMessages] = React.useState<Message[]>([]);
+  const [showContactCard, setShowContactCard] = React.useState(false);
   const messagesEndRef = React.useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     setIsVisible(true);
@@ -71,19 +74,30 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
   const handleQuestionClick = (
     conversation: (typeof quickQuestions)[number]
   ) => {
+    if (conversation.id === 'question-5') {
+      setShowContactCard(true);
+      return;
+    }
+
+    setShowContactCard(false);
     setMessages((previous) => [
       ...previous,
-      {
-        id: `${conversation.id}-answer-${previous.length}`,
-        author: 'assistant',
-        text: conversation.answer,
-      },
       {
         id: `${conversation.id}-question-${previous.length}`,
         author: 'user',
         text: conversation.label,
       },
+      {
+        id: `${conversation.id}-answer-${previous.length}`,
+        author: 'assistant',
+        text: conversation.answer,
+      },
     ]);
+  };
+
+  const handleBookConsultation = () => {
+    navigate('/services/consultation');
+    onClose();
   };
 
   const handleBackdropClick = () => {
@@ -200,26 +214,55 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
         </div>
 
         <div className="px-6 pb-8 lg:px-6">
-          <div className="grid grid-cols-2 gap-3 lg:gap-3.5 xl:gap-4">
-            {quickQuestions?.slice(0, 4).map((conversation) => (
+          {showContactCard ? (
+            <div className="text-text-primary rounded-3xl bg-[#FFE6E8] px-6 py-6 text-center shadow-lg">
+              <p className="text-body-3">
+                Please contact us{' '}
+                <a
+                  href="https://www.facebook.com/share/15HjhMzHVKE/?mibextid=wwXIfr"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary underline"
+                >
+                  here (SkyRise Corner Facebook Page)
+                </a>{' '}
+                for further information
+              </p>
+              <p className="text-body-3 mt-4 font-semibold text-neutral-700">
+                OR
+              </p>
               <button
-                key={conversation.id}
                 type="button"
-                onClick={() => handleQuestionClick(conversation)}
-                className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary cursor-pointer rounded-xl px-6 py-3 text-sm font-medium text-neutral-700 transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:px-6 lg:py-2.5 xl:px-8 xl:py-3"
+                onClick={handleBookConsultation}
+                className="bg-primary hover:bg-primary/90 mt-4 inline-flex w-full cursor-pointer items-center justify-center rounded-[10px] px-6 py-3 text-lg font-semibold text-white"
               >
-                {conversation.label}
+                Book Free Consultation
               </button>
-            ))}
-          </div>
-          {quickQuestions[4] && (
-            <button
-              type="button"
-              onClick={() => handleQuestionClick(quickQuestions[4])}
-              className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary mt-3 w-full cursor-pointer rounded-xl px-6 py-3 text-sm font-medium text-neutral-700 transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:mt-3 lg:px-6 lg:py-2.5 xl:mt-4 xl:px-8 xl:py-3"
-            >
-              {quickQuestions[4].label}
-            </button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-3 lg:gap-3.5 xl:gap-4">
+                {quickQuestions?.slice(0, 4).map((conversation) => (
+                  <button
+                    key={conversation.id}
+                    type="button"
+                    onClick={() => handleQuestionClick(conversation)}
+                    className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary cursor-pointer rounded-xl px-6 py-3 text-sm font-medium text-neutral-700 transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:px-6 lg:py-2.5 xl:px-8 xl:py-3"
+                  >
+                    {conversation.label}
+                  </button>
+                ))}
+              </div>
+              {quickQuestions[4] && (
+                <button
+                  type="button"
+                  onClick={() => handleQuestionClick(quickQuestions[4])}
+                  className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary mt-3 w-full cursor-pointer rounded-xl px-6 py-3 text-sm font-medium text-neutral-700 transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:mt-3 lg:px-6 lg:py-2.5 xl:mt-4 xl:px-8 xl:py-3"
+                >
+                  {quickQuestions[4].label}
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>
