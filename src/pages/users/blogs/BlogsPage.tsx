@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import BlogCard from '@/components/blog/BlogCard';
 import BlogFilter from '@/components/blog/BlogFilter';
 import { BlogCardSkeleton } from '@/components/ui';
@@ -9,7 +8,6 @@ import Pagination from '@/components/common/Pagination';
 import { capitalizeFirstLetters } from '@/helpers';
 
 const BlogsPage: React.FC = () => {
-  const { t } = useTranslation();
   const [selectedCategory, setSelectedCategory] =
     useState<BlogCategory>('All Categories');
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,18 +79,14 @@ const BlogsPage: React.FC = () => {
   return (
     <div className="min-h-screen pb-16">
       <div className="flex items-center bg-white px-5 pb-3 shadow-md lg:px-15">
-        <div className="flex items-start gap-4 lg:justify-start">
-          <div className="flex items-center text-center lg:text-left">
-            <h1 className="lg:text-h1 text-h2 text-text-primary font-bold">
-              {t('nav.blogs')}
-            </h1>
-          </div>
-          <div className="flex items-center justify-center lg:justify-start lg:pt-2">
-            <BlogFilter
-              selectedCategory={selectedCategory}
-              onCategoryChange={handleCategoryChange}
-            />
-          </div>
+        <h1 className="lg:text-h2 text-h2 text-text-primary font-semibold">
+          Blogs
+        </h1>
+        <div className="ml-4 flex-shrink-0">
+          <BlogFilter
+            selectedCategory={selectedCategory}
+            onCategoryChange={handleCategoryChange}
+          />
         </div>
       </div>
 
@@ -101,9 +95,7 @@ const BlogsPage: React.FC = () => {
         {hasError && (
           <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4">
             <div className="text-red-800">
-              <p className="font-medium">
-                {t('blogs.errorLoading', 'Error loading blogs')}
-              </p>
+              <p className="font-medium">{'Error loading blogs'}</p>
               <p className="text-sm">{errorMessage}</p>
             </div>
           </div>
@@ -124,9 +116,7 @@ const BlogsPage: React.FC = () => {
           <div className="flex items-center justify-center py-16">
             <div className="text-center">
               <div className="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
-              <p className="text-text-secondary">
-                {t('blogs.loading', 'Loading blogs...')}
-              </p>
+              <p className="text-text-secondary">{'Loading blogs'}</p>
             </div>
           </div>
         )}
@@ -136,9 +126,9 @@ const BlogsPage: React.FC = () => {
             {latestBlog && (
               <section className="mb-10">
                 <div className="mt-2 mb-8 flex items-center justify-between">
-                  <h2 className="text-h3 lg:text-h1 text-text-primary font-bold">
+                  <h2 className="text-h3 lg:text-h2 text-text-primary font-bold">
                     {selectedCategory === 'All Categories'
-                      ? t('blogs.latestBlog', 'Latest Blog')
+                      ? 'Latest Blog'
                       : capitalizeFirstLetters(selectedCategory.toString())}
                   </h2>
                 </div>
@@ -151,8 +141,8 @@ const BlogsPage: React.FC = () => {
             {selectedCategory === 'All Categories' &&
               featuredBlogs.length > 0 && (
                 <section className="mb-10">
-                  <h2 className="text-h3 lg:text-h1 text-text-primary mb-8 font-bold">
-                    {t('blogs.featuredBlogs', 'Featured Blogs')}
+                  <h2 className="text-h3 lg:text-h2 text-text-primary mb-8 font-bold">
+                    {'Featured Blogs'}
                   </h2>
                   <div className="scrollbar-hide overflow-x-auto scroll-smooth">
                     <div
@@ -172,7 +162,7 @@ const BlogsPage: React.FC = () => {
             <section ref={allBlogsRef}>
               {selectedCategory === 'All Categories' && (
                 <h2 className="text-h2 text-text-primary mb-8 font-bold">
-                  {t('blogs.allBlogs', 'All Blogs')}
+                  {'All Blogs'}
                 </h2>
               )}
 
@@ -197,13 +187,13 @@ const BlogsPage: React.FC = () => {
                 !isLoading && (
                   <div className="py-12 text-center">
                     <div className="text-h3 text-text-secondary mb-4">
-                      {t('blogs.noBlogs', 'No blogs found in this category')}
+                      {'No blogs found in this category'}
                     </div>
                     <button
                       onClick={() => setSelectedCategory('All Categories')}
                       className="text-primary hover:text-primary/80 text-h4 font-medium transition-colors"
                     >
-                      {t('blogs.viewAll', 'View All Blogs')} →
+                      {'View All Blogs'} →
                     </button>
                   </div>
                 )
