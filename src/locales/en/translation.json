@@ -123,14 +123,5 @@
         "title": "Scholarship"
       }
     }
-  },
-  "blogs": {
-    "errorLoading": "Error loading blogs",
-    "loading": "Loading blogs...",
-    "latestBlog": "Latest Blog",
-    "featuredBlogs": "Featured Blogs",
-    "allBlogs": "All Blogs",
-    "noBlogs": "No blogs found in this category",
-    "viewAll": "View All Blogs"
   }
 }

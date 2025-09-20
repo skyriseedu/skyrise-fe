@@ -37,7 +37,7 @@ const VisaAssistancePage: React.FC = () => {
       <section className="w-full px-6 py-8 lg:px-15">
         {/* What's Included Section */}
         <div className="mb-8">
-          <h2 className="text-h4 lg:text-h1 text-text-primary mb-6 font-semibold">
+          <h2 className="text-h4 lg:text-h2 text-text-primary mb-6 font-semibold">
             What's Included :
           </h2>
 
@@ -52,7 +52,7 @@ const VisaAssistancePage: React.FC = () => {
 
             <li className="flex items-start">
               <span className="text-text-primary mr-2">•</span>
-              <span className="text-text-primary text-body-2 lg:text-body-1">
+              <span className="text-text-primary text-body-2 lg:text-body-3">
                 <span className="font-bold">Visa Fees</span> - Government
                 Immigration visa fee (2,000 THB) included.
               </span>
@@ -60,7 +60,7 @@ const VisaAssistancePage: React.FC = () => {
 
             <li className="flex items-start">
               <span className="text-text-primary mr-2">•</span>
-              <span className="text-text-primary text-body-2 lg:text-body-1">
+              <span className="text-text-primary text-body-2 lg:text-body-3">
                 <span className="font-bold">Guide Team Assistance</span> - Our
                 experienced team member will accompany you and assist throughout
                 the visa application process.
@@ -69,7 +69,7 @@ const VisaAssistancePage: React.FC = () => {
 
             <li className="flex items-start">
               <span className="text-text-primary mr-2">•</span>
-              <span className="text-text-primary text-body-2 lg:text-body-1">
+              <span className="text-text-primary text-body-2 lg:text-body-3">
                 <span className="font-bold">Return Train Ticket</span> - From
                 Laos to Thailand for your convenience.
               </span>
@@ -79,14 +79,14 @@ const VisaAssistancePage: React.FC = () => {
 
         {/* Important Notes Section */}
         <div className="mb-8">
-          <h3 className="text-h4 lg:text-h1 text-text-important mb-4 font-bold">
+          <h3 className="text-h4 lg:text-h2 text-text-important mb-4 font-bold">
             Important Note :
           </h3>
 
           <ul className="mb-6 space-y-3">
             <li className="flex items-start">
               <span className="text-text-primary mr-2">•</span>
-              <span className="text-text-primary text-body-2 lg:text-body-1">
+              <span className="text-text-primary text-body-2 lg:text-body-3">
                 Due to current border conditions, we recommend students travel
                 to Laos immigration
                 <span className="font-bold"> by one-way flight.</span>
@@ -95,9 +95,9 @@ const VisaAssistancePage: React.FC = () => {
 
             <li className="flex items-start">
               <span className="text-text-primary mr-2">•</span>
-              <span className="text-text-primary text-body-2 lg:text-body-1">
+              <span className="text-text-primary text-body-2 lg:text-body-3">
                 <span className="font-bold">
-                  Flight ticket is NOT included in our service
+                  Flight ticket is NOT included in our service{' '}
                 </span>
                 package and must be booked and paid by the student separately.
               </span>

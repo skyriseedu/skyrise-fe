@@ -19,7 +19,7 @@ type DisplayReview = {
 const ReviewsSection: React.FC<ReviewsSectionProps> = ({
   title = 'Student Reviews',
   reviews,
-  containerClassName = 'container',
+  containerClassName = '',
 }) => {
   const [isPaused, setIsPaused] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
