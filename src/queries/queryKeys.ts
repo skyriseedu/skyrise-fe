@@ -48,3 +48,10 @@ export const faqKeys = {
   paginated: (page?: number, limit?: number) =>
     [...faqKeys.lists(), { page, limit }] as const,
 } as const;
+
+export const teamMemberKeys = {
+  all: ['team-members'] as const,
+  lists: () => [...teamMemberKeys.all, 'list'] as const,
+  paginated: (page?: number, limit?: number) =>
+    [...teamMemberKeys.lists(), { page, limit }] as const,
+} as const;
