@@ -41,3 +41,10 @@ export const universityKeys = {
   paginated: (page?: number, limit?: number) =>
     [...universityKeys.all, 'paginated', { page, limit }] as const,
 } as const;
+
+export const faqKeys = {
+  all: ['faqs'] as const,
+  lists: () => [...faqKeys.all, 'list'] as const,
+  paginated: (page?: number, limit?: number) =>
+    [...faqKeys.lists(), { page, limit }] as const,
+} as const;

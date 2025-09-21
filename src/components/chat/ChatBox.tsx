@@ -1,5 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { useFaqs } from '@/queries';
+import type { FaqItem } from '@/types/users/faqs';
+
 import SkyRiseLogo from '../../assets/skyrise-logo-2.svg?react';
 import CloseIcon from '../../assets/chat-close.svg?react';
 import StickyHeader from '../common/StickyHeader';
@@ -7,39 +11,6 @@ import StickyHeader from '../common/StickyHeader';
 interface ChatBoxProps {
   onClose: () => void;
 }
-
-const quickQuestions = [
-  {
-    id: 'question-1',
-    label: 'Question 1',
-    answer:
-      "Q1's answer goes here. You can replace this copy with the real response you want to surface when the user taps Question 1.",
-  },
-  {
-    id: 'question-2',
-    label: 'Question 2',
-    answer:
-      'Placeholder answer for Question 2. Expand this with your actual FAQ content.',
-  },
-  {
-    id: 'question-3',
-    label: 'Question 3',
-    answer:
-      'Placeholder answer for Question 3. Expand this with your actual FAQ content.',
-  },
-  {
-    id: 'question-4',
-    label: 'Question 4',
-    answer:
-      'Placeholder answer for Question 4. Expand this with your actual FAQ content.',
-  },
-  {
-    id: 'question-5',
-    label: 'Question 5',
-    answer:
-      'Placeholder answer for Question 5. Expand this with your actual FAQ content.',
-  },
-];
 
 type MessageAuthor = 'assistant' | 'user';
 
@@ -58,6 +29,15 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
   const [showContactCard, setShowContactCard] = React.useState(false);
   const messagesEndRef = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
+  const { data: faqsResponse, isPending: isFaqsLoading } = useFaqs(1, 10);
+
+  const faqs = React.useMemo(
+    () => faqsResponse?.data?.faqs ?? [],
+    [faqsResponse]
+  );
+
+  const gridQuestions = faqs.slice(0, 4);
+  const bottomQuestion = faqs.slice(4, 5)[0];
 
   React.useEffect(() => {
     setIsVisible(true);
@@ -71,29 +51,26 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleQuestionClick = (
-    conversation: (typeof quickQuestions)[number]
-  ) => {
-    if (conversation.id === 'question-5') {
-      setShowContactCard(true);
-      return;
-    }
-
-    setShowContactCard(false);
+  const handleQuestionClick = (conversation: FaqItem, openContactCard = false) => {
+    setShowContactCard(openContactCard);
     setMessages((previous) => [
       ...previous,
       {
-        id: `${conversation.id}-question-${previous.length}`,
+        id: `${conversation._id}-question-${previous.length}`,
         author: 'user',
-        text: conversation.label,
+        text: conversation.question,
       },
       {
-        id: `${conversation.id}-answer-${previous.length}`,
+        id: `${conversation._id}-answer-${previous.length}`,
         author: 'assistant',
         text: conversation.answer,
       },
     ]);
   };
+
+  // const handleContactClick = () => {
+  //   setShowContactCard(true);
+  // };
 
   const handleBookConsultation = () => {
     navigate('/services/consultation');
@@ -166,12 +143,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
           >
             {messages.length > 0 ? (
               <div className="flex flex-col gap-6">
-                {messages.map((message) => {
+                {messages?.map((message) => {
                   if (message.author === 'assistant') {
                     return (
                       <div key={message.id} className="flex items-start gap-1">
                         <SkyRiseLogo className="h-9 w-9 shrink-0" />
-                        <div className="bg-primary/10 text-text-primary relative max-w-[65%] rounded-xl px-2 py-2 text-sm shadow-sm">
+                        <div className="bg-primary/10 text-text-primary relative max-w-[65%] rounded-xl px-2 py-2 text-sm shadow-sm whitespace-pre-line">
                           {message.text}
                         </div>
                       </div>
@@ -180,7 +157,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
 
                   return (
                     <div key={message.id} className="flex justify-end">
-                      <div className="bg-primary/10 text-text-primary relative max-w-[85%] rounded-xl px-2 py-3 text-sm shadow-sm">
+                      <div className="bg-primary/10 text-text-primary relative max-w-[85%] rounded-xl px-2 py-3 text-sm shadow-sm whitespace-pre-line">
                         {message.text}
                       </div>
                     </div>
@@ -213,7 +190,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
           </div>
         </div>
 
-        <div className="px-6 pb-8 lg:px-6">
+        <div className="px-6 pb-6 lg:px-6">
           {showContactCard ? (
             <div className="text-text-primary rounded-3xl bg-[#FFE6E8] px-6 py-6 text-center shadow-lg">
               <p className="text-body-3">
@@ -228,39 +205,51 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
                 </a>{' '}
                 for further information
               </p>
-              <p className="text-body-3 mt-4 font-semibold text-neutral-700">
+              <p className="text-body-4 mt-4 font-semibold text-neutral-700">
                 OR
               </p>
               <button
                 type="button"
                 onClick={handleBookConsultation}
-                className="bg-primary hover:bg-primary/90 mt-4 inline-flex w-full cursor-pointer items-center justify-center rounded-[10px] px-6 py-3 text-lg font-semibold text-white"
+                className="bg-primary hover:bg-primary/90 mt-4 inline-flex w-full cursor-pointer items-center justify-center rounded-[10px] px-6 py-3 text-body-h4 font-semibold text-white"
               >
                 Book Free Consultation
               </button>
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-3 lg:gap-3.5 xl:gap-4">
-                {quickQuestions?.slice(0, 4).map((conversation) => (
-                  <button
-                    key={conversation.id}
-                    type="button"
-                    onClick={() => handleQuestionClick(conversation)}
-                    className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary cursor-pointer rounded-xl px-6 py-3 text-sm font-medium text-neutral-700 transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:px-6 lg:py-2.5 xl:px-8 xl:py-3"
-                  >
-                    {conversation.label}
-                  </button>
-                ))}
-              </div>
-              {quickQuestions[4] && (
-                <button
-                  type="button"
-                  onClick={() => handleQuestionClick(quickQuestions[4])}
-                  className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary mt-3 w-full cursor-pointer rounded-xl px-6 py-3 text-sm font-medium text-neutral-700 transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:mt-3 lg:px-6 lg:py-2.5 xl:mt-4 xl:px-8 xl:py-3"
-                >
-                  {quickQuestions[4].label}
-                </button>
+              {isFaqsLoading ? (
+                <p className="text-center text-sm text-neutral-500">
+                  Loading quick questions...
+                </p>
+              ) : faqs.length > 0 ? (
+                <>
+                  <div className="flex flex-wrap gap-3 pt-1 lg:gap-3.5 xl:gap-2">
+                    {gridQuestions?.map((conversation) => (
+                      <button
+                        key={conversation._id}
+                        type="button"
+                        onClick={() => handleQuestionClick(conversation)}
+                        className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary w-auto lg:max-w-[165px] cursor-pointer rounded-xl px-2 py-3 lg:text-xs font-semibold text-text-primary transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:px-4 lg:py-2.5 xl:px-4 xl:py-2"
+                      >
+                        {conversation.question}
+                      </button>
+                    ))}
+                  </div>
+                  {bottomQuestion && (
+                    <button
+                      type="button"
+                      onClick={() => handleQuestionClick(bottomQuestion, true)}
+                      className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary mt-3 w-full cursor-pointer rounded-xl px-6 py-3 text-sm font-semibold lg:text-xs text-text-primary transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:mt-2 lg:px-6 lg:py-2.5 xl:mt-2 xl:px-4 xl:py-3"
+                    >
+                      {bottomQuestion.question}
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p className="text-center text-sm text-neutral-500">
+                  No quick questions available right now.
+                </p>
               )}
             </>
           )}
