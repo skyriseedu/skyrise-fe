@@ -35,11 +35,3 @@ export function useBlogBySlug(slug: string) {
     enabled: !!slug,
   });
 }
-
-export function useBlogById(id: string) {
-  return useQuery({
-    queryKey: blogKeys.detail(id),
-    queryFn: () => blogService.getBlogById(id),
-    enabled: !!id,
-  });
-}

@@ -50,9 +50,4 @@ export const universityService = {
     const response = await apiClient.get(`/universities/${slug}`);
     return response.data;
   },
-
-  async getUniversityById(id: string): Promise<SingleUniversityResponse> {
-    const response = await apiClient.get(`/universities/${id}`);
-    return response.data;
-  },
 };
