@@ -4,6 +4,9 @@ import type {
   Ambassador,
   AmbassadorSectionProps,
 } from '@/types/users/about-us';
+import { useAmbassadors } from '@/queries';
+
+import type { AmbassadorApiItem } from '@/types/users/ambassadors';
 
 const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
   title = 'Student Ambassadors',
@@ -11,6 +14,32 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState({ width: 30, left: 0 });
+  const {
+    data: ambassadorsResponse,
+    isPending: isAmbassadorsLoading,
+    isError: isAmbassadorsError,
+  } = useAmbassadors(1, 20);
+
+  const apiAmbassadors = React.useMemo(
+    () => ambassadorsResponse?.data?.ambassadors ?? [],
+    [ambassadorsResponse]
+  );
+
+  const ambassadors: Ambassador[] = React.useMemo(() => {
+    if (!apiAmbassadors.length) {
+      return [];
+    }
+
+    return apiAmbassadors.map((ambassador: AmbassadorApiItem) => ({
+      id: ambassador.id ?? ambassador._id,
+      image: ambassador.profileImage,
+      name: ambassador.ambassadorName,
+      department: ambassador.major,
+      university: ambassador.university,
+    } satisfies Ambassador));
+  }, [apiAmbassadors]);
+
+  const hasAmbassadors = ambassadors.length > 0;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,66 +67,7 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
     return () => {
       container?.removeEventListener('scroll', handleScroll);
     };
-  }, []);
-
-  const list: Ambassador[] = [
-    {
-      id: 1,
-      image:
-        'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop',
-      name: 'Kay Thwe San',
-      department: 'International Business',
-      university: 'Rangsit University',
-    },
-    {
-      id: 2,
-      image:
-        'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop',
-      name: 'Kay Thwe San',
-      department: 'International Business',
-      university: 'Rangsit University',
-    },
-    {
-      id: 3,
-      image:
-        'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop',
-      name: 'Kay Thwe San',
-      department: 'International Business',
-      university: 'Rangsit University',
-    },
-    {
-      id: 4,
-      image:
-        'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop',
-      name: 'Kay Thwe San',
-      department: 'International Business',
-      university: 'Rangsit University',
-    },
-    {
-      id: 5,
-      image:
-        'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop',
-      name: 'Kay Thwe San',
-      department: 'International Business',
-      university: 'Rangsit University',
-    },
-    {
-      id: 6,
-      image:
-        'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop',
-      name: 'Kay Thwe San',
-      department: 'International Business',
-      university: 'Rangsit University',
-    },
-    {
-      id: 7,
-      image:
-        'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop',
-      name: 'Kay Thwe San',
-      department: 'International Business',
-      university: 'Rangsit University',
-    },
-  ];
+  }, [ambassadors.length]);
 
   return (
     <section className={`w-full px-2 py-12 lg:py-20 ${className}`}>
@@ -108,37 +78,57 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
       </div>
 
       <div className="mx-auto max-w-[1200px]">
-        <div className="relative">
-          <div
-            ref={scrollContainerRef}
-            className="scrollbar-hide overflow-x-auto"
-          >
-            <div className="flex gap-3 px-8">
-              {list?.map((data) => (
-                <AmbassadorCard
-                  key={data.id}
-                  image={data.image}
-                  name={data.name}
-                  department={data.department}
-                  university={data.university}
-                />
-              ))}
-            </div>
-          </div>
+        {isAmbassadorsLoading && (
+          <p className="text-center text-sm text-neutral-500">
+            Loading ambassadors...
+          </p>
+        )}
 
-          {/* custom scrollbar indicator - desktop */}
-          <div className="mt-6 hidden px-90 lg:block">
-            <div className="bg-secondary relative h-1.5 rounded-full">
-              <div
-                className="bg-primary absolute h-full rounded-full transition-all duration-300"
-                style={{
-                  width: `${scrollProgress.width}%`,
-                  left: `${scrollProgress.left}%`,
-                }}
-              />
+        {isAmbassadorsError && !isAmbassadorsLoading && (
+          <p className="text-center text-sm text-red-500">
+            We could not load ambassadors at the moment. Please try again later.
+          </p>
+        )}
+
+        {!isAmbassadorsLoading && !isAmbassadorsError && !hasAmbassadors && (
+          <p className="text-center text-sm text-neutral-500">
+            Ambassador information will be available soon.
+          </p>
+        )}
+
+        {hasAmbassadors && (
+          <div className="relative">
+            <div
+              ref={scrollContainerRef}
+              className="scrollbar-hide overflow-x-auto"
+            >
+              <div className="flex gap-3 px-8">
+                {ambassadors.map((data) => (
+                  <AmbassadorCard
+                    key={data.id}
+                    image={data.image}
+                    name={data.name}
+                    department={data.department}
+                    university={data.university}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* custom scrollbar indicator - desktop */}
+            <div className="mt-6 hidden px-90 lg:block">
+              <div className="bg-secondary relative h-1.5 rounded-full">
+                <div
+                  className="bg-primary absolute h-full rounded-full transition-all duration-300"
+                  style={{
+                    width: `${scrollProgress.width}%`,
+                    left: `${scrollProgress.left}%`,
+                  }}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

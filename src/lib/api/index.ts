@@ -10,3 +10,4 @@ export { formsService } from './services/forms';
 export { programsService } from './services/programs';
 export { faqsService } from './services/faqs';
 export { teamMembersService } from './services/team-members';
+export { ambassadorsService } from './services/ambassadors';

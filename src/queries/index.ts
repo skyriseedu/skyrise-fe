@@ -7,3 +7,4 @@ export * from './queryKeys';
 export * from './programs';
 export * from './faqs';
 export * from './team-members';
+export * from './ambassadors';

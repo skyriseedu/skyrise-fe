@@ -55,3 +55,10 @@ export const teamMemberKeys = {
   paginated: (page?: number, limit?: number) =>
     [...teamMemberKeys.lists(), { page, limit }] as const,
 } as const;
+
+export const ambassadorKeys = {
+  all: ['ambassadors'] as const,
+  lists: () => [...ambassadorKeys.all, 'list'] as const,
+  paginated: (page?: number, limit?: number) =>
+    [...ambassadorKeys.lists(), { page, limit }] as const,
+} as const;
