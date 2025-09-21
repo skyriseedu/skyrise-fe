@@ -51,7 +51,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleQuestionClick = (conversation: FaqItem, openContactCard = false) => {
+  const handleQuestionClick = (
+    conversation: FaqItem,
+    openContactCard = false
+  ) => {
     setShowContactCard(openContactCard);
     setMessages((previous) => [
       ...previous,
@@ -148,7 +151,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
                     return (
                       <div key={message.id} className="flex items-start gap-1">
                         <SkyRiseLogo className="h-9 w-9 shrink-0" />
-                        <div className="bg-primary/10 text-text-primary relative max-w-[65%] rounded-xl px-2 py-2 text-sm shadow-sm whitespace-pre-line">
+                        <div className="bg-primary/10 text-text-primary relative max-w-[65%] rounded-xl px-2 py-2 text-sm whitespace-pre-line shadow-sm">
                           {message.text}
                         </div>
                       </div>
@@ -157,7 +160,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
 
                   return (
                     <div key={message.id} className="flex justify-end">
-                      <div className="bg-primary/10 text-text-primary relative max-w-[85%] rounded-xl px-2 py-3 text-sm shadow-sm whitespace-pre-line">
+                      <div className="bg-primary/10 text-text-primary relative max-w-[85%] rounded-xl px-2 py-3 text-sm whitespace-pre-line shadow-sm">
                         {message.text}
                       </div>
                     </div>
@@ -211,7 +214,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
               <button
                 type="button"
                 onClick={handleBookConsultation}
-                className="bg-primary hover:bg-primary/90 mt-4 inline-flex w-full cursor-pointer items-center justify-center rounded-[10px] px-6 py-3 text-body-h4 font-semibold text-white"
+                className="bg-primary hover:bg-primary/90 text-body-h4 mt-4 inline-flex w-full cursor-pointer items-center justify-center rounded-[10px] px-6 py-3 font-semibold text-white"
               >
                 Book Free Consultation
               </button>
@@ -230,7 +233,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
                         key={conversation._id}
                         type="button"
                         onClick={() => handleQuestionClick(conversation)}
-                        className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary w-auto lg:max-w-[165px] cursor-pointer rounded-xl px-2 py-3 lg:text-xs font-semibold text-text-primary transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:px-4 lg:py-2.5 xl:px-4 xl:py-2"
+                        className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary text-text-primary w-auto cursor-pointer rounded-xl px-2 py-3 font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:max-w-[165px] lg:px-4 lg:py-2.5 lg:text-xs xl:px-4 xl:py-2"
                       >
                         {conversation.question}
                       </button>
@@ -240,7 +243,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
                     <button
                       type="button"
                       onClick={() => handleQuestionClick(bottomQuestion, true)}
-                      className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary mt-3 w-full cursor-pointer rounded-xl px-6 py-3 text-sm font-semibold lg:text-xs text-text-primary transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:mt-2 lg:px-6 lg:py-2.5 xl:mt-2 xl:px-4 xl:py-3"
+                      className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary text-text-primary mt-3 w-full cursor-pointer rounded-xl px-6 py-3 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:mt-2 lg:px-6 lg:py-2.5 lg:text-xs xl:mt-2 xl:px-4 xl:py-3"
                     >
                       {bottomQuestion.question}
                     </button>

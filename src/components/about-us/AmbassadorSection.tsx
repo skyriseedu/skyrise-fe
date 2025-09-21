@@ -30,13 +30,16 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
       return [];
     }
 
-    return apiAmbassadors.map((ambassador: AmbassadorApiItem) => ({
-      id: ambassador.id ?? ambassador._id,
-      image: ambassador.profileImage,
-      name: ambassador.ambassadorName,
-      department: ambassador.major,
-      university: ambassador.university,
-    } satisfies Ambassador));
+    return apiAmbassadors.map(
+      (ambassador: AmbassadorApiItem) =>
+        ({
+          id: ambassador.id ?? ambassador._id,
+          image: ambassador.profileImage,
+          name: ambassador.ambassadorName,
+          department: ambassador.major,
+          university: ambassador.university,
+        }) satisfies Ambassador
+    );
   }, [apiAmbassadors]);
 
   const hasAmbassadors = ambassadors.length > 0;

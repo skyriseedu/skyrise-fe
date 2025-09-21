@@ -34,7 +34,11 @@ const AboutPage: React.FC = () => {
     return [...apiTeamMembers]
       .sort((memberA, memberB) => memberA.order - memberB.order)
       .map((member: TeamMemberApiItem) => {
-        const facebookLink = member.socialMediaLinks?.facebook?.trim() || member.socialMediaLinks?.linkedin?.trim() || member.socialMediaLinks?.twitter?.trim() || member.socialMediaLinks?.youtube?.trim();
+        const facebookLink =
+          member.socialMediaLinks?.facebook?.trim() ||
+          member.socialMediaLinks?.linkedin?.trim() ||
+          member.socialMediaLinks?.twitter?.trim() ||
+          member.socialMediaLinks?.youtube?.trim();
 
         return {
           id: member.id ?? member._id,
