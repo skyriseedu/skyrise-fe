@@ -36,11 +36,6 @@ export const blogService = {
     return response.data;
   },
 
-  async getBlogById(id: string): Promise<SingleBlogApiResponse> {
-    const response = await apiClient.get(`/blogs/${id}`);
-    return response.data;
-  },
-
   async getBlogBySlug(slug: string): Promise<SingleBlogApiResponse> {
     const response = await apiClient.get(`/blogs/${slug}`);
     return response.data;

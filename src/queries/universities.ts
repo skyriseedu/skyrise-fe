@@ -33,11 +33,3 @@ export function useUniversityBySlug(slug: string) {
     enabled: !!slug,
   });
 }
-
-export function useUniversityById(id: string) {
-  return useQuery({
-    queryKey: universityKeys.detail(id),
-    queryFn: () => universityService.getUniversityById(id),
-    enabled: !!id,
-  });
-}
