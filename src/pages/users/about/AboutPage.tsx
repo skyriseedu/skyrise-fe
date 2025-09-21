@@ -10,80 +10,49 @@ import ReviewsSection from '@/components/reviews/ReviewsSection';
 import StickyHeader from '@/components/common/StickyHeader';
 import JoinUsCard from '@/components/about-us/JoinUsCard';
 import AmbassadorSection from '@/components/about-us/AmbassadorSection';
+import { useTeamMembers } from '@/queries';
+
+import type { TeamMemberApiItem } from '@/types/users/team';
 
 const AboutPage: React.FC = () => {
-  const teamMembers: TeamMember[] = [
-    {
-      id: 1,
-      image:
-        'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop',
-      name: 'Kay Thwe San',
-      position: 'Founder & Director',
-      department: 'International Business',
-      university: 'Rangsit University',
-      profileLink: 'https://linkedin.com/in/kaythwesan',
-    },
-    {
-      id: 2,
-      image:
-        'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=500&fit=crop',
-      name: 'Sarah Johnson',
-      position: 'Chief Technology Officer',
-      department: 'Computer Science',
-      university: 'MIT',
-      profileLink: 'https://linkedin.com/in/sarahjohnson',
-    },
-    {
-      id: 3,
-      image:
-        'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=500&fit=crop',
-      name: 'Michael Chen',
-      position: 'Head of Operations',
-      department: 'Business Administration',
-      university: 'Stanford University',
-      profileLink: 'https://linkedin.com/in/michaelchen',
-    },
-    {
-      id: 4,
-      image:
-        'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&h=500&fit=crop',
-      name: 'Emily Wang',
-      position: 'Lead Designer',
-      department: 'Digital Arts',
-      university: 'RISD',
-      profileLink: 'https://linkedin.com/in/emilywang',
-    },
-    {
-      id: 5,
-      image:
-        'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=400&h=500&fit=crop',
-      name: 'David Kim',
-      position: 'Marketing Director',
-      department: 'Marketing',
-      university: 'NYU Stern',
-      profileLink: 'https://linkedin.com/in/davidkim',
-    },
-    {
-      id: 6,
-      image:
-        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=crop',
-      name: 'Lisa Zhang',
-      position: 'Data Scientist',
-      department: 'Computer Science',
-      university: 'Carnegie Mellon',
-      profileLink: 'https://linkedin.com/in/lisazhang',
-    },
-    {
-      id: 7,
-      image:
-        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop',
-      name: 'James Wilson',
-      position: 'Product Manager',
-      department: 'Business',
-      university: 'Harvard Business School',
-      profileLink: 'https://linkedin.com/in/jameswilson',
-    },
-  ];
+  const {
+    data: teamMembersResponse,
+    isPending: isTeamMembersLoading,
+    isError: isTeamMembersError,
+  } = useTeamMembers(1, 20);
+
+  const apiTeamMembers = React.useMemo(
+    () => teamMembersResponse?.data?.teamMembers ?? [],
+    [teamMembersResponse]
+  );
+
+  const mappedTeamMembers: TeamMember[] = React.useMemo(() => {
+    if (!apiTeamMembers.length) {
+      return [];
+    }
+
+    return [...apiTeamMembers]
+      .sort((memberA, memberB) => memberA.order - memberB.order)
+      .map((member: TeamMemberApiItem) => {
+        const facebookLink =
+          member.socialMediaLinks?.facebook?.trim() ||
+          member.socialMediaLinks?.linkedin?.trim() ||
+          member.socialMediaLinks?.twitter?.trim() ||
+          member.socialMediaLinks?.youtube?.trim();
+
+        return {
+          id: member.id ?? member._id,
+          image: member.profilePicture,
+          name: member.memberName,
+          position: member.role,
+          department: member.major,
+          university: member.university,
+          profileLink: facebookLink || undefined,
+        } satisfies TeamMember;
+      });
+  }, [apiTeamMembers]);
+
+  const hasTeamMembers = mappedTeamMembers.length > 0;
 
   return (
     <div className="min-h-screen bg-white">
@@ -100,15 +69,40 @@ const AboutPage: React.FC = () => {
         universityImage={rangsitImage}
       />
 
-      {/* Gallery Mobile View */}
-      <div className="block lg:hidden">
-        <TeamGallery members={teamMembers} />
-      </div>
+      <section className="mx-auto max-w-7xl px-6 lg:px-8">
+        {isTeamMembersLoading && (
+          <p className="text-center text-sm text-neutral-500">
+            Loading our team members...
+          </p>
+        )}
 
-      {/* Gallery Desktop View */}
-      <div className="hidden lg:block">
-        <TeamGalleryDesktop members={teamMembers} />
-      </div>
+        {isTeamMembersError && !isTeamMembersLoading && (
+          <p className="text-center text-sm text-red-500">
+            We could not load the team members right now. Please try again
+            later.
+          </p>
+        )}
+
+        {!isTeamMembersLoading && !isTeamMembersError && !hasTeamMembers && (
+          <p className="text-center text-sm text-neutral-500">
+            Team member information will be available soon.
+          </p>
+        )}
+      </section>
+
+      {hasTeamMembers && (
+        <>
+          {/* Gallery Mobile View */}
+          <div className="block lg:hidden">
+            <TeamGallery members={mappedTeamMembers} />
+          </div>
+
+          {/* Gallery Desktop View */}
+          <div className="hidden lg:block">
+            <TeamGalleryDesktop members={mappedTeamMembers} />
+          </div>
+        </>
+      )}
 
       <JoinUsCard />
       <AmbassadorSection />

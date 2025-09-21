@@ -1,5 +1,5 @@
 export interface TeamMember {
-  id: number;
+  id: string | number;
   image: string;
   name: string;
   position: string;
@@ -24,7 +24,7 @@ export interface TeamCardProps {
 
 // Ambassador types
 export interface Ambassador {
-  id: number;
+  id: string | number;
   image: string;
   name: string;
   department: string;
