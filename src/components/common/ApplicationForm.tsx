@@ -65,7 +65,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
       <button
         type="button"
         onClick={onClose}
-        className="bg-primary absolute -top-3 -right-3 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-white hover:bg-red-600"
+        className="bg-primary absolute -top-3 right-0 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-white hover:bg-red-600"
         aria-label="Close"
       >
         <img
