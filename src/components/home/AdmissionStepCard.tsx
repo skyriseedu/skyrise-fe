@@ -32,7 +32,7 @@ const AdmissionStepCard = ({ number, title }: AdmissionStepCardProps) => {
           alt={t('home.admissionProcess.icons.rectangle')}
           className="absolute inset-0 h-full w-full object-fill"
         />
-        <span className="text-body-5 lg:text-body-3 relative z-10 px-2 text-center leading-tight font-semibold whitespace-pre-line text-white sm:px-4 md:px-6">
+        <span className="text-body-5 lg:text-sm relative z-10 px-2 text-center leading-tight font-semibold whitespace-pre-line text-white sm:px-4 lg:px-4">
           {title}
         </span>
       </div>

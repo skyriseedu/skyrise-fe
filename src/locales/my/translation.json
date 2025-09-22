@@ -22,7 +22,7 @@
       "telegram": "Telegram"
     },
     "buttons": {
-      "getStarted": "Get Started",
+      "getStarted": "ကျောင်းတွေ စ ရှာမယ်",
       "bookFreeConsultation": "Book Free Consultation"
     }
   },
@@ -47,19 +47,19 @@
       "steps": {
         "1": {
           "number": "1",
-          "title": "Explore \nUniversity"
+          "title": "ရည်မှန်းချက်နဲ. ကိုက်ညီမယ့်\n တဣသိုလ် တွေကို ရှာဖွေမယ်"
         },
         "2": {
           "number": "2",
-          "title": "Consult with \nSkyRise"
+          "title": "SKYRISE ကအကူညီယူပီး"
         },
         "3": {
           "number": "3",
-          "title": "Apply with \nSkyRise"
+          "title": "အလွယ်တကူ လျောက်နိုင်မယ်"
         },
         "4": {
           "number": "4",
-          "title": "Take Visa &\n Accommodation \nServices"
+          "title": " Visa အတွက် စိတ်ပူစရာမလို \n တဲ့အပြင် ကျောင်းတက်နေစဥ် လိုအပ်ချက်အားလုံးကိုလည်း \n ကူညီ ပေးသွားမှာပါ"
         }
       },
       "icons": {
@@ -74,35 +74,35 @@
         "badge": "CONSULTATION",
         "title": "Consultation",
         "subtitle": "Admission Consultation",
-        "description": "Talk with current senior students & Get Advice!",
+        "description": "Senior ကျောင်းသား တွေနဲ့ တိုက်ရိုက် ပြောပြီး အကြံဉာဏ် ရယူနိုင်မယ်!",
         "iconAlt": "Consultation service icon"
       },
       "preUniversity": {
         "badge": "PRE-UNIVERSITY",
         "title": "Pre-University",
         "subtitle": "Pre-University Programs",
-        "description": "Explore (ED Visa supported) GED, IGCSE, OSSD, and Language courses!",
+        "description": "GED, IGCSE, OSSD, နဲ ့ Language school (ED Visa ပံ့ပိုးထားပြီးသား)တက် ေရာက်နိုင်မယ်!",
         "iconAlt": "Pre-University service icon"
       },
       "visa": {
         "badge": "VISA",
         "title": "Visa",
         "subtitle": "Visa Services",
-        "description": "Skip the stress, we get your Ed Visa with ease (Ygn / Laos)",
+        "description": "Visa လျောက်ထားမှုကို အခက်မ တွေ့ ရ အောင် အလွယ်တကူ  ဖြေရှင်း ပေးမယ်! (ရန်ကုန်/လာအို)",
         "iconAlt": "Visa service icon"
       },
       "accommodation": {
         "badge": "ACCOMMODATION & AIRPORT PICK-UP",
         "title": "Accommodation & Airport Pick-up",
         "subtitle": "Accommodation & Airport Pick-up",
-        "description": "Settle with our +100 accommodation options upon arrival!",
+        "description": "ရောက်လာချ ိန်မှာ အဆင် ပြေပြေ နေဖို့ ၁၀၀+ အ ေဆာင် တွေထဲက အသင့် နေစရာရှိ နေမယ်!",
         "iconAlt": "Accommodation service icon"
       },
       "admissionSupport": {
         "badge": "ADMISSION PROCESS SUPPORT",
         "title": "Admission Process Support",
         "subtitle": "University Application Support",
-        "description": "Apply with clarity and confidence—you are the future!",
+        "description": "ယုံ ကြည်စိတ်ချစွာ  လျောက်ထားနိုင်ပြီး ကိုယ့်အနာဂတ်ကိုစိတ်တိုင်းကျ ပုံ ေဖာ်နိုင်မယ်!",
         "iconAlt": "Admission support service icon"
       },
       "checkService": "Check service",
