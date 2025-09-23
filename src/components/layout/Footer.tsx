@@ -7,7 +7,7 @@ import Telegram from '../../assets/telegram.svg?react';
 import CaretDown from '../../assets/caret-down.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
 import SuccessModal from '../common/SuccessModal';
-import ApplicationForm from '../common/ApplicationForm';
+import ConsultantForm from '../common/ApplyConsultantForm';
 
 const socialLinks = [
   {
@@ -118,7 +118,7 @@ const Footer: React.FC = () => {
             className="bg-primary text-h3 hover:bg-primary/80 lg:text-h4 w-full cursor-pointer rounded-lg px-6 py-2 font-medium text-white transition-colors lg:font-bold"
             onClick={() => setIsOpen(true)}
           >
-            Apply with SkyRise
+            Join With Us
           </button>
         </div>
 
@@ -185,7 +185,7 @@ const Footer: React.FC = () => {
           onClick={() => setIsOpen(false)}
         >
           <div className="relative" onClick={(e) => e.stopPropagation()}>
-            <ApplicationForm
+            <ConsultantForm
               onClose={() => setIsOpen(false)}
               onSuccess={handleFormSuccess}
             />
