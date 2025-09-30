@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { SVGProps } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 
 import GraduationCapIcon from '@/assets/graduation-cap.svg?react';
@@ -8,6 +8,8 @@ import BuildingIcon from '@/assets/building.svg?react';
 import BookOpenIcon from '@/assets/book-open.svg?react';
 import MessageQuestionIcon from '@/assets/message-question.svg?react';
 import CalendarIcon from '@/assets/calendar.svg?react';
+import SkyriseLogoPrimary from '@/assets/skyrise-logo.svg';
+import SkyriseLogoMark from '@/assets/skyrise-logo-2.svg';
 
 type IconComponent = React.ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -125,6 +127,25 @@ const navigationSections: Array<{ title: string; items: SidebarItem[] }> = [
 ];
 
 const AdminLayout: React.FC = () => {
+  const location = useLocation();
+
+  const allNavItems = useMemo(
+    () => [
+      dashboardItem,
+      ...navigationSections.flatMap((section) => section.items),
+    ],
+    []
+  );
+
+  const activeItem = allNavItems.find((item) => {
+    if (item.to === '/admin') {
+      return location.pathname === '/admin';
+    }
+    return location.pathname.startsWith(item.to);
+  });
+
+  const headerTitle = (activeItem?.label || 'Dashboard').toUpperCase();
+
   const renderNavLink = (
     item: SidebarItem,
     options?: { exact?: boolean }
@@ -133,20 +154,18 @@ const AdminLayout: React.FC = () => {
       {({ isActive }) => (
         <span
           className={clsx(
-            'group relative flex items-center gap-3 rounded-md px-6 py-3 text-base font-semibold transition-colors',
+            'group relative flex items-center gap-3 rounded-sm px-5 py-3 text-sm font-semibold transition-all',
             isActive
-              ? 'bg-secondary text-gray-900 shadow-[0_6px_20px_rgba(222,88,91,0.12)] border-l-6 border-primary'
+              ? 'bg-[#FFE6E7] text-gray-900 shadow-[0_10px_22px_rgba(222,88,91,0.12)] border-l-8 border-primary'
               : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
           )}
         >
-          <span
+          <item.Icon
             className={clsx(
-              'relative z-10 flex h-2 w-9 items-center justify-center rounded-md text-gray-400 transition-colors',
+              'relative z-10 h-5 w-5 text-gray-400 transition-colors',
               isActive ? 'text-primary' : 'group-hover:text-primary'
             )}
-          >
-            <item.Icon className="h-5 w-5" />
-          </span>
+          />
           <span className="relative z-10">{item.label}</span>
         </span>
       )}
@@ -157,12 +176,18 @@ const AdminLayout: React.FC = () => {
     <div className="min-h-screen bg-neutral-100 text-sm text-gray-700">
       <div className="flex min-h-screen">
         <aside className="flex w-[320px] shrink-0 flex-col border-r border-gray-200 bg-white">
-    
-          <nav className="flex flex-1 flex-col gap-3 overflow-y-auto px-8 py-10">
+          <div className="border-b border-gray-200 px-8 py-4">
+            <img
+              src={SkyriseLogoPrimary}
+              alt="SkyRise Corner Education Agency"
+              className="h-12 w-auto"
+            />
+          </div>
+          <nav className="flex flex-1 flex-col gap-2 overflow-y-auto px-6 py-2">
             <div>{renderNavLink(dashboardItem, { exact: true })}</div>
-            {navigationSections?.map((section) => (
-              <div key={section.title} className="space-y-3">
-                <p className="text-h4 font-regular uppercase text-text-primary">
+            {navigationSections.map((section) => (
+              <div key={section.title} className="space-y-2">
+                <p className="text-h4 font-regular uppercase pt-2  text-text-primary">
                   {section.title}
                 </p>
                 <div className="space-y-2">
@@ -174,56 +199,31 @@ const AdminLayout: React.FC = () => {
         </aside>
 
         <div className="flex flex-1 flex-col">
-          <header className="flex flex-col gap-3 border-b border-gray-200 bg-white px-10 py-5 shadow-sm">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-gray-400">
-                  Dashboard
-                </p>
-                <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-              </div>
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  className="relative flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-500 transition hover:text-gray-900"
-                  aria-label="Notifications"
-                >
-                  <span className="absolute right-2 top-2 inline-flex h-2 w-2 rounded-full bg-primary"></span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    className="h-5 w-5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V4a1 1 0 10-2 0v1.083A6 6 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                    />
-                  </svg>
-                </button>
-                <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-lg font-semibold text-white">
-                    K
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900">Kay Thwe San</p>
-                    <p className="text-xs text-gray-500">Head Admin</p>
-                  </div>
-                </div>
-              </div>
+          <header className="flex items-center justify-between border-b border-gray-200 bg-white px-12 py-4 shadow-[0_8px_20px_rgba(0,0,0,0.04)]">
+            <div className="flex items-center gap-5">
+              <h1 className="text-[24px] font-semibold uppercase text-gray-800">
+                {headerTitle}
+              </h1>
             </div>
-            <div className="flex items-center gap-2 text-xs text-gray-500">
-              <span className="inline-flex h-2 w-2 rounded-full bg-primary"></span>
-              <span>SkyRise Career Consulting</span>
-              <span className="text-gray-300">/</span>
-              <span className="font-medium text-gray-700">Dashboard Overview</span>
+
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center">
+               <img
+                src={SkyriseLogoMark}
+                alt="SkyRise Corner Education Agency"
+                className="h-12 w-auto"
+              />
+              </div>
+              <div className="text-right">
+                <p className="text-base font-semibold text-gray-900">Kay Thwe San</p>
+                <p className="text-[10px] uppercase tracking-[0.38em] text-gray-400">
+                  Head Admin
+                </p>
+              </div>
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto bg-neutral-100 px-10 py-6">
+          <main className="flex-1 overflow-y-auto bg-white px-10 py-6">
             <Outlet />
           </main>
         </div>
