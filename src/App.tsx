@@ -1,7 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './contexts/AuthContext';
 import { Layout } from './components/layout';
+import AdminLayout from './components/layout/AdminLayout';
+import AdminRoute from './components/auth/AdminRoute';
 import ScrollToTop from './components/common/ScrollToTop';
 import HomePage from './pages/users/home/HomePage';
 import ExplorePage from './pages/users/explore/ExplorePage';
@@ -16,6 +19,8 @@ import CounselingPage from './pages/users/services/CounselingPage';
 import { UniversityDetail } from './pages/users/universities';
 import AccommodationPage from './pages/users/services/AccommodationPage';
 import PreUniversityPage from './pages/users/services/PreUniversityPage';
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,59 +36,81 @@ const queryClient = new QueryClient({
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<HomePage />} />
-            <Route path="explore" element={<ExplorePage />} />
-            <Route path="programs/:slug" element={<ProgramDetailsPage />} />
-            <Route path="about" element={<AboutPage />} />
-            <Route
-              path="universities-and-consultants"
-              element={<UniversitiesAndConsultants />}
-            />
-            <Route
-              path="universities-and-consultants/:slug"
-              element={<UniversityDetail />}
-            />
-            <Route path="services/consultation" element={<CounselingPage />} />
-            <Route
-              path="services/admission-process-support"
-              element={<AdmissionProcessPage />}
-            />
-            <Route
-              path="services/visa-assistance"
-              element={<VisaAssistancePage />}
-            />
-            <Route
-              path="services/accommodation-and-airport-pick-up"
-              element={<AccommodationPage />}
-            />
+      <AuthProvider>
+        <Router>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
-            <Route
-              path="services/pre-university"
-              element={<PreUniversityPage />}
-            />
-            <Route path="blogs" element={<BlogsPage />} />
-            <Route path="blogs/:slug" element={<BlogDetailPage />} />
-          </Route>
+            {/* Public user routes */}
+            <Route path="/" element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="explore" element={<ExplorePage />} />
+              <Route path="programs/:slug" element={<ProgramDetailsPage />} />
+              <Route path="about" element={<AboutPage />} />
+              <Route
+                path="universities-and-consultants"
+                element={<UniversitiesAndConsultants />}
+              />
+              <Route
+                path="universities-and-consultants/:slug"
+                element={<UniversityDetail />}
+              />
+              <Route
+                path="services/consultation"
+                element={<CounselingPage />}
+              />
+              <Route
+                path="services/admission-process-support"
+                element={<AdmissionProcessPage />}
+              />
+              <Route
+                path="services/visa-assistance"
+                element={<VisaAssistancePage />}
+              />
+              <Route
+                path="services/accommodation-and-airport-pick-up"
+                element={<AccommodationPage />}
+              />
+              <Route
+                path="services/pre-university"
+                element={<PreUniversityPage />}
+              />
+              <Route path="blogs" element={<BlogsPage />} />
+              <Route path="blogs/:slug" element={<BlogDetailPage />} />
+            </Route>
 
-          <Route
-            path="*"
-            element={
-              <div className="p-6">
-                <h1 className="text-h1 font-fustat font-bold">
-                  Page Not Found
-                </h1>
-                <p className="text-body-3 text-text-secondary mt-4">
-                  The page you are looking for does not exist.
-                </p>
-              </div>
-            }
-          />
-        </Routes>
-      </Router>
+            {/* Admin routes */}
+            <Route
+              path="/admin/*"
+              element={
+                <AdminRoute>
+                  <AdminLayout />
+                </AdminRoute>
+              }
+            >
+              {/* <Route index element={<AdminDashboard />} /> */}
+              {/* Add more admin routes here later */}
+            </Route>
+
+            {/* 404 page */}
+            <Route
+              path="*"
+              element={
+                <div className="p-6">
+                  <h1 className="text-h1 font-fustat font-bold">
+                    Page Not Found
+                  </h1>
+                  <p className="text-body-3 text-text-secondary mt-4">
+                    The page you are looking for does not exist.
+                  </p>
+                </div>
+              }
+            />
+          </Routes>
+        </Router>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };
