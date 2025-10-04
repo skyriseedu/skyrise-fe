@@ -4,6 +4,7 @@ import type { QuillOptions, Range } from 'quill';
 import clsx from 'clsx';
 import 'quill/dist/quill.snow.css';
 import './TextEditor.css';
+import caretDown from '@/assets/caret-down.svg';
 
 type TextEditorProps = {
   value?: string;
@@ -119,6 +120,24 @@ export const TextEditor = ({
     });
 
     quillRef.current = quill;
+
+    const appendCaretIcon = (selector: string) => {
+      const labels = mountNode.querySelectorAll(selector);
+      labels.forEach((label) => {
+        if (label.querySelector('.text-editor__caret-icon')) {
+          return;
+        }
+
+        const icon = document.createElement('img');
+        icon.src = caretDown;
+        icon.alt = 'caret down';
+        icon.className = 'text-editor__caret-icon';
+        label.append(icon);
+      });
+    };
+
+    appendCaretIcon('.ql-picker.ql-font .ql-picker-label');
+    appendCaretIcon('.ql-picker.ql-size .ql-picker-label');
 
     const initialValue = initialValueRef.current ?? '';
 
