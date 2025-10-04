@@ -114,17 +114,25 @@
   display: none;
 }
 
-
 .text-editor .ql-snow .ql-picker.ql-size .ql-picker-label::before,
-.text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=""]::before {
+.text-editor
+  .ql-snow
+  .ql-picker.ql-size
+  .ql-picker-item[data-value='']::before {
   content: 'Regular';
 }
 
-.text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="small"]::before {
+.text-editor
+  .ql-snow
+  .ql-picker.ql-size
+  .ql-picker-item[data-value='small']::before {
   content: 'Small';
 }
 
-.text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="large"]::before {
+.text-editor
+  .ql-snow
+  .ql-picker.ql-size
+  .ql-picker-item[data-value='large']::before {
   content: 'Large';
 }
 
@@ -133,13 +141,25 @@
   font-family: 'Fustat', 'Inter', sans-serif;
 }
 
-.text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="fustat"]::before,
-.text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="fustat"]::before {
+.text-editor
+  .ql-snow
+  .ql-picker.ql-font
+  .ql-picker-label[data-value='fustat']::before,
+.text-editor
+  .ql-snow
+  .ql-picker.ql-font
+  .ql-picker-item[data-value='fustat']::before {
   content: 'Fustat';
 }
 
-.text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="roboto"]::before,
-.text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="roboto"]::before {
+.text-editor
+  .ql-snow
+  .ql-picker.ql-font
+  .ql-picker-label[data-value='roboto']::before,
+.text-editor
+  .ql-snow
+  .ql-picker.ql-font
+  .ql-picker-item[data-value='roboto']::before {
   content: 'Roboto';
   font-family: 'Roboto', 'Inter', sans-serif;
 }
@@ -159,12 +179,10 @@
   pointer-events: none;
 }
 
-
 .text-editor .ql-snow .ql-picker.ql-color .ql-picker-label {
   padding: 0 12px;
   border: 1px solid transparent;
 }
-
 
 .text-editor .ql-snow .ql-picker.ql-color .ql-picker-label::after {
   display: none;
@@ -208,7 +226,7 @@
 
 .text-editor .ql-editor {
   min-height: 260px;
-  border: 1px solid #85868A;
+  border: 1px solid #85868a;
   border-radius: 15px;
   padding: 20px;
   width: 900px;

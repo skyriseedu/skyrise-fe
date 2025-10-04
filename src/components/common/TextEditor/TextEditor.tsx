@@ -162,7 +162,10 @@ export const TextEditor = ({
     const initialValue = initialValueRef.current ?? '';
 
     if (initialValue) {
-      quill.setContents(quill.clipboard.convert({ html: initialValue }), 'silent');
+      quill.setContents(
+        quill.clipboard.convert({ html: initialValue }),
+        'silent'
+      );
     } else {
       quill.setText('', 'silent');
     }
@@ -176,7 +179,10 @@ export const TextEditor = ({
       handler(extractHTML(quill));
     };
 
-    const handleSelectionChange = (range: Range | null, oldRange: Range | null) => {
+    const handleSelectionChange = (
+      range: Range | null,
+      oldRange: Range | null
+    ) => {
       if (range && !oldRange) {
         onFocusRef.current?.();
       }
@@ -209,7 +215,10 @@ export const TextEditor = ({
     }
 
     if (normalizedValue) {
-      quill.setContents(quill.clipboard.convert({ html: normalizedValue }), 'silent');
+      quill.setContents(
+        quill.clipboard.convert({ html: normalizedValue }),
+        'silent'
+      );
     } else {
       quill.setText('', 'silent');
     }
