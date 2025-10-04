@@ -119,6 +119,28 @@ export const TextEditor = ({
 
     quillRef.current = quill;
 
+    const prependFontLabel = () => {
+      const fontPicker = mountNode.querySelector(
+        '.ql-toolbar .ql-formats .ql-picker.ql-font'
+      );
+      if (!fontPicker) {
+        return;
+      }
+
+      const parent = fontPicker.parentElement;
+      if (!parent || parent.querySelector('.text-editor__font-label')) {
+        return;
+      }
+
+      const label = document.createElement('div');
+      label.className = 'text-editor__font-label';
+      label.textContent = 'T';
+
+      parent.prepend(label);
+    };
+
+    prependFontLabel();
+
     const appendCaretIcon = (selector: string) => {
       const labels = mountNode.querySelectorAll(selector);
       labels.forEach((label) => {

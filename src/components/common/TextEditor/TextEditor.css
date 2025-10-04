@@ -67,6 +67,13 @@
   width: auto;
 }
 
+.text-editor__font-label {
+  font-size: 20px;
+  font-weight: 600;
+  color: #0b0b0b;
+  margin-left: 10px;
+}
+
 .text-editor .ql-snow .ql-picker-label {
   border: none;
   outline: none;
@@ -203,8 +210,8 @@
   min-height: 260px;
   border: 1px solid #85868A;
   border-radius: 15px;
-  padding:10px;
-  width: 930px;
+  padding: 20px;
+  width: 900px;
   font-size: 16px;
   line-height: 1.8;
   color: #475569;
@@ -214,5 +221,5 @@
   left: 0;
   color: #94a3b8;
   font-style: normal;
-  padding: 10px;
+  padding: 20px;
 }
