@@ -24,17 +24,15 @@ const DEFAULT_PLACEHOLDER = 'Description about university';
 
 const DEFAULT_MODULES: NonNullable<QuillOptions['modules']> = {
   toolbar: [
-    [{ header: [false, 1, 2, 3] }],
     [{ font: FONT_WHITELIST }],
     [{ size: ['small', false, 'large'] }],
     ['bold', 'italic', 'underline'],
-    [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'left' }],
+    [{ align: '' }, { align: 'center' }, { align: 'right' }],
     [{ list: 'bullet' }, { list: 'ordered' }],
   ],
 };
 
 const DEFAULT_FORMATS = [
-  'header',
   'font',
   'size',
   'bold',
