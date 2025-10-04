@@ -18,18 +18,17 @@ type TextEditorProps = {
   theme?: QuillOptions['theme'];
 };
 
-const FONT_WHITELIST = ['fustat', 'inter', 'serif', 'monospace'] as const;
-const DEFAULT_PLACEHOLDER = 'Add Bachelor Program List , example :';
+const FONT_WHITELIST = ['fustat', 'roboto'] as const;
+const DEFAULT_PLACEHOLDER = 'Description about university';
 
 const DEFAULT_MODULES: NonNullable<QuillOptions['modules']> = {
   toolbar: [
     [{ header: [false, 1, 2, 3] }],
     [{ font: FONT_WHITELIST }],
     [{ size: ['small', false, 'large'] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{ align: '' }, { align: 'center' }, { align: 'right' }],
+    ['bold', 'italic', 'underline'],
+    [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'left' }],
     [{ list: 'bullet' }, { list: 'ordered' }],
-    [{ color: [] }],
   ],
 };
 
@@ -40,10 +39,8 @@ const DEFAULT_FORMATS = [
   'bold',
   'italic',
   'underline',
-  'strike',
   'list',
   'align',
-  'color',
 ];
 
 const EMPTY_HTML = '<p><br></p>';

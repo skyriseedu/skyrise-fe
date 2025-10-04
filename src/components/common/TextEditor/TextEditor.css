@@ -130,7 +130,7 @@
 .text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="inter"]::before,
 .text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="inter"]::before {
   content: 'Regular';
-  font-family: 'Inter', sans-serif;
+  font-family: 'Fustat', 'Inter', sans-serif;
 }
 
 .text-editor .ql-font-fustat {
@@ -138,36 +138,15 @@
 }
 
 .text-editor .ql-font-inter {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Fustat', 'Inter', sans-serif;
 }
 
-.text-editor .ql-font-serif {
-  font-family: 'Georgia', 'Times New Roman', serif;
-}
-
-.text-editor .ql-font-monospace {
-  font-family: 'Menlo', 'Courier New', monospace;
-}
 
 .text-editor .ql-snow .ql-picker.ql-color .ql-picker-label {
   padding: 0 12px;
   border: 1px solid transparent;
 }
 
-.text-editor .ql-snow .ql-picker.ql-color .ql-picker-label::before {
-  content: '';
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  background: conic-gradient(
-    from 180deg at 50% 50%,
-    #ff6b6b 0deg,
-    #feca57 120deg,
-    #54a0ff 240deg,
-    #5efc8d 360deg
-  );
-  border: 2px solid #f1f5f9;
-}
 
 .text-editor .ql-snow .ql-picker.ql-color .ql-picker-label::after {
   display: none;
