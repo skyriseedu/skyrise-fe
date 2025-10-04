@@ -1,21 +1,20 @@
 .text-editor {
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
   border-radius: 26px;
   padding: 28px;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
 }
 
-.text-editor > .ql-toolbar.ql-snow {
-  border: none;
-  padding: 12px 20px;
-  border-radius: 999px;
+.ql-toolbar.ql-snow {
+  border: solid 1px whitesmoke;
+  padding: 9px 8px;
+  border-radius: 15px;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
+  align-items: start;
+  justify-content: flex-start;
+  gap: 9px;
   background-color: #ffffff;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.14);
+  box-shadow: 0 10px 10px rgba(15, 23, 42, 0.14);
   margin-bottom: 24px;
 }
 
@@ -157,9 +156,9 @@
 .text-editor .ql-toolbar button.ql-active,
 .text-editor .ql-snow .ql-picker-label:hover,
 .text-editor .ql-snow .ql-picker-label.ql-active {
-  background: rgba(37, 99, 235, 0.12);
-  border-color: rgba(37, 99, 235, 0.12);
-  color: #1d4ed8;
+  background: var(--color-secondary);
+  border-color: var(--color-secondary);
+  color: var(--color-text-primary);
 }
 
 .text-editor .ql-snow .ql-picker-options {
@@ -189,7 +188,9 @@
 
 .text-editor .ql-editor {
   min-height: 260px;
-  padding: 0;
+  border: 1px solid #85868A;
+  border-radius: 15px;
+  padding:20px;
   font-size: 16px;
   line-height: 1.8;
   color: #475569;
@@ -198,5 +199,7 @@
 .text-editor .ql-editor.ql-blank::before {
   left: 0;
   color: #94a3b8;
-  font-style: normal;
+  font-style: normal;  
+  padding:20px;
+
 }
