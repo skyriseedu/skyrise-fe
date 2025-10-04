@@ -3,21 +3,16 @@ import type { SVGProps } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 
-import GraduationCapIcon from '@/assets/graduation-cap.svg?react';
-import BuildingIcon from '@/assets/building.svg?react';
-import BookOpenIcon from '@/assets/book-open.svg?react';
-import MessageQuestionIcon from '@/assets/message-question.svg?react';
+import BookOpenIcon from '@/assets/book-open-admin.svg?react';
 import CalendarIcon from '@/assets/calendar.svg?react';
 import SkyriseLogoPrimary from '@/assets/skyrise-logo.svg';
 import SkyriseLogoMark from '@/assets/skyrise-logo-2.svg';
+import DashboardIcon from '@/assets/dashboard.svg?react';
+import BlogSetup from '@/assets/blogSetUp.svg?react';
+import GraduationCap from '@/assets/graduation-cap-admin.svg?react';
+import MessageHelp from '@/assets/message-help.svg?react';
 
 type IconComponent = React.ComponentType<SVGProps<SVGSVGElement>>;
-
-const DashboardGlyph: IconComponent = ({ className, ...props }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} {...props}>
-    <path d="M4 3.5h7.5V11H4zM12.5 3.5H20V11h-7.5zM4 12.5h7.5V20H4zM12.5 12.5H20V20h-7.5z" />
-  </svg>
-);
 
 const TeamGlyph: IconComponent = ({ className, ...props }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className} {...props}>
@@ -61,7 +56,7 @@ type SidebarItem = {
 const dashboardItem: SidebarItem = {
   label: 'Dashboard',
   to: '/admin',
-  Icon: DashboardGlyph,
+  Icon: DashboardIcon,
 };
 
 const navigationSections: Array<{ title: string; items: SidebarItem[] }> = [
@@ -71,18 +66,18 @@ const navigationSections: Array<{ title: string; items: SidebarItem[] }> = [
       {
         label: 'Program Setup',
         to: '/admin/program-setup',
-        Icon: GraduationCapIcon,
+        Icon: GraduationCap,
       },
       {
         label: 'University Setup',
         to: '/admin/university-setup',
-        Icon: BuildingIcon,
+        Icon: BookOpenIcon,
       },
-      { label: 'Blog Setup', to: '/admin/blog-setup', Icon: BookOpenIcon },
+      { label: 'Blog Setup', to: '/admin/blog-setup', Icon: BlogSetup },
       {
         label: 'FAQs Setup',
         to: '/admin/faqs-setup',
-        Icon: MessageQuestionIcon,
+        Icon: MessageHelp,
       },
     ],
   },
@@ -163,7 +158,7 @@ const AdminLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-neutral-100 text-sm text-gray-700">
       <div className="flex min-h-screen">
-        <aside className="flex w-[320px] shrink-0 flex-col border-r border-gray-200 bg-white">
+        <aside className="flex w-[280px] shrink-0 flex-col border-r border-gray-200 bg-white">
           <div className="border-b border-gray-200 px-8 py-4">
             <img
               src={SkyriseLogoPrimary}
