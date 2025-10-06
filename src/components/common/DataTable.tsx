@@ -9,6 +9,9 @@ type SortDirection = 'asc' | 'desc';
 type TableColumn<T> = {
   key: keyof T | string;
   header: string;
+  headerClassName?: string;
+  headerContentClassName?: string;
+  cellClassName?: string;
   minWidth?: number | string;
   width?: number | string;
   align?: 'left' | 'center' | 'right';
@@ -96,8 +99,6 @@ function DataTable<T extends Record<string, unknown>>({
   data,
   getRowId,
   selectable = false,
-  isAllSelected = false,
-  onSelectAll,
   isRowSelected,
   onSelectRow,
   renderActions,
@@ -116,10 +117,6 @@ function DataTable<T extends Record<string, unknown>>({
   const hasRows = data.length > 0;
   const showActionsColumn = Boolean(renderActions);
 
-  const handleToggleAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onSelectAll?.(event.target.checked);
-  };
-
   const handleSort = (column: TableColumn<T>) => {
     if (!column.sortable || !onSortChange) return;
 
@@ -137,7 +134,7 @@ function DataTable<T extends Record<string, unknown>>({
   return (
     <div
       className={clsx(
-        'overflow-hidden rounded-2xl border border-[#F5DADA] bg-white shadow-[0_12px_40px_rgba(222,88,91,0.08)]',
+        'overflow-hidden rounded-xl bg-white ',
         className
       )}
     >
@@ -149,22 +146,13 @@ function DataTable<T extends Record<string, unknown>>({
           style={scrollContainerStyle}
         >
           <table className="min-w-full border-collapse">
-            <thead className="bg-[#FFE6E7]">
-              <tr>
-                {selectable && (
-                  <th className="w-12 px-6 py-4 align-middle">
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300 accent-[#DE585B]"
-                        checked={isAllSelected}
-                        onChange={handleToggleAll}
-                        aria-label="Select all rows"
-                      />
-                    </div>
+            <thead className="bg-secondary overflow-x-scroll">
+              <tr>  
+                  <th
+                    className="sticky top-0 z-10 w-10 px-6 py-4 align-middle bg-secondary first:rounded-tl-2xl first:rounded-bl-2xl"
+                  >
                   </th>
-                )}
-                {columns.map((column) => {
+                {columns?.map((column) => {
                   const alignment = getAlignClass(column.align);
                   const widthStyle = getDimensionValue(column.width);
                   const minWidthStyle = getDimensionValue(column.minWidth);
@@ -172,7 +160,12 @@ function DataTable<T extends Record<string, unknown>>({
                   const isActive = sortState?.key === key;
                   const justify = getJustifyClass(column.align);
                   const headerContent = (
-                    <span className="font-semibold text-gray-700">
+                    <span
+                      className={clsx(
+                        'font-semibold text-text-primary',
+                        column.headerContentClassName
+                      )}
+                    >
                       {column.header}
                     </span>
                   );
@@ -181,8 +174,9 @@ function DataTable<T extends Record<string, unknown>>({
                     <th
                       key={key}
                       className={clsx(
-                        'px-6 py-4 text-sm font-medium uppercase tracking-wide text-gray-600',
-                        alignment
+                        'sticky top-0 z-10 px-6 py-4 text-sm font-medium uppercase tracking-wide text-gray-600 bg-secondary first:rounded-bl-2xl first:rounded-tl-2xl last:rounded-br-2xl last:rounded-tr-2xl',
+                        alignment,
+                        column.headerClassName
                       )}
                       scope="col"
                       style={{
@@ -196,7 +190,8 @@ function DataTable<T extends Record<string, unknown>>({
                           onClick={() => handleSort(column)}
                           className={clsx(
                             'flex w-full items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0',
-                            justify
+                            justify,
+                            column.headerContentClassName
                           )}
                         >
                           {headerContent}
@@ -212,7 +207,10 @@ function DataTable<T extends Record<string, unknown>>({
                   );
                 })}
                 {showActionsColumn && (
-                  <th className="w-12 px-6 py-4" scope="col" />
+                  <th
+                    className="sticky top-0 z-10 w-12 px-6 py-4 border-b border-[#F8CED3] bg-[#FFE6E7] last:rounded-br-2xl last:rounded-tr-2xl"
+                    scope="col"
+                  />
                 )}
               </tr>
             </thead>
@@ -251,7 +249,8 @@ function DataTable<T extends Record<string, unknown>>({
                             key={`${rowId}-${key}`}
                             className={clsx(
                               'px-6 py-5 text-sm text-gray-700',
-                              alignment
+                              alignment,
+                              column.cellClassName
                             )}
                           >
                             {column.render
@@ -271,7 +270,9 @@ function DataTable<T extends Record<string, unknown>>({
               ) : (
                 <tr>
                   <td
-                    colSpan={columns.length + (selectable ? 1 : 0) + (showActionsColumn ? 1 : 0)}
+                    colSpan={
+                      columns.length + (selectable ? 1 : 0) + (showActionsColumn ? 1 : 0)
+                    }
                     className="px-6 py-12 text-center text-sm text-gray-500"
                   >
                     {emptyMessage}

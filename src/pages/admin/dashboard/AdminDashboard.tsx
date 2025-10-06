@@ -48,12 +48,18 @@ const columns: TableColumn<ProgramRow>[] = [
     key: 'publishedOn',
     header: 'Published Date',
     sortable: true,
+    headerClassName: 'whitespace-nowrap',
+    headerContentClassName: 'whitespace-nowrap',
+    cellClassName: 'whitespace-nowrap',
     render: (row) => formatDisplayDate(row.publishedOn),
   },
   {
     key: 'modifiedOn',
     header: 'Modified Date',
     sortable: true,
+    headerClassName: 'whitespace-nowrap',
+    headerContentClassName: 'whitespace-nowrap',
+    cellClassName: 'whitespace-nowrap',
     render: (row) => formatDisplayDate(row.modifiedOn),
   },
 ];
