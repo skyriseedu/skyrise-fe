@@ -149,7 +149,7 @@ function DataTable<T extends Record<string, unknown>>({
             <thead className="bg-secondary overflow-x-scroll">
               <tr>  
                   <th
-                    className="sticky top-0 z-10 w-10 px-6 py-4 align-middle bg-secondary first:rounded-tl-2xl first:rounded-bl-2xl"
+                    className="sticky top-0 z-10 w-10 px-4 py-4 align-middle bg-secondary first:rounded-tl-2xl first:rounded-bl-2xl"
                   >
                   </th>
                 {columns?.map((column) => {
@@ -174,7 +174,7 @@ function DataTable<T extends Record<string, unknown>>({
                     <th
                       key={key}
                       className={clsx(
-                        'sticky top-0 z-10 px-6 py-4 text-sm font-medium uppercase tracking-wide text-gray-600 bg-secondary first:rounded-bl-2xl first:rounded-tl-2xl last:rounded-br-2xl last:rounded-tr-2xl',
+                        'sticky top-0 z-10 px-4 py-4 text-sm font-medium uppercase tracking-wide text-gray-600 bg-secondary first:rounded-bl-2xl first:rounded-tl-2xl last:rounded-br-2xl last:rounded-tr-2xl',
                         alignment,
                         column.headerClassName
                       )}
@@ -208,7 +208,7 @@ function DataTable<T extends Record<string, unknown>>({
                 })}
                 {showActionsColumn && (
                   <th
-                    className="sticky top-0 z-10 w-12 px-6 py-4 border-b border-[#F8CED3] bg-[#FFE6E7] last:rounded-br-2xl last:rounded-tr-2xl"
+                    className="sticky top-0 z-10 w-12 px-4 py-4 border-b border-[#F8CED3] bg-[#FFE6E7] last:rounded-br-2xl last:rounded-tr-2xl"
                     scope="col"
                   />
                 )}
@@ -226,7 +226,7 @@ function DataTable<T extends Record<string, unknown>>({
                       className="border-b border-[#E9E9E9] last:border-b-0 hover:bg-[#FFF5F5]"
                     >
                       {selectable && (
-                        <td className="px-6 py-5 align-middle">
+                        <td className="px-4 py-5 align-middle">
                           <input
                             type="checkbox"
                             className="h-4 w-4 rounded border-gray-300 accent-[#DE585B]"
@@ -248,7 +248,7 @@ function DataTable<T extends Record<string, unknown>>({
                           <td
                             key={`${rowId}-${key}`}
                             className={clsx(
-                              'px-6 py-5 text-sm text-gray-700',
+                              'px-4 py-5 text-sm text-gray-700',
                               alignment,
                               column.cellClassName
                             )}
@@ -260,7 +260,7 @@ function DataTable<T extends Record<string, unknown>>({
                         );
                       })}
                       {showActionsColumn && (
-                        <td className="px-6 py-5 text-right">
+                        <td className="px-4 py-5 text-right">
                           {renderActions?.(row, rowIndex)}
                         </td>
                       )}
@@ -273,7 +273,7 @@ function DataTable<T extends Record<string, unknown>>({
                     colSpan={
                       columns.length + (selectable ? 1 : 0) + (showActionsColumn ? 1 : 0)
                     }
-                    className="px-6 py-12 text-center text-sm text-gray-500"
+                    className="px-4 py-12 text-center text-sm text-gray-500"
                   >
                     {emptyMessage}
                   </td>
