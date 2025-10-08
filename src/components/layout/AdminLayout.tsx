@@ -181,7 +181,7 @@ const AdminLayout: React.FC = () => {
           </nav>
         </aside>
 
-        <div className="flex flex-1 flex-col">
+        <div className="flex flex-1 min-w-0 flex-col">
           <header className="flex items-center justify-between border-b border-gray-200 bg-white px-12 py-4 shadow-[0_8px_20px_rgba(0,0,0,0.04)]">
             <div className="flex items-center gap-5">
               <h1 className="text-[24px] font-semibold text-gray-800 uppercase">
@@ -208,7 +208,7 @@ const AdminLayout: React.FC = () => {
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto bg-white px-10 py-6">
+          <main className="flex-1 min-w-0 overflow-y-auto bg-white px-10 py-6">
             <Outlet />
           </main>
         </div>
