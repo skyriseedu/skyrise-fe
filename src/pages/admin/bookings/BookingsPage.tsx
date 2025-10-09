@@ -8,8 +8,10 @@ import DataTable, {
 import Button from '@/components/common/Button';
 import SearchIcon from '@/assets/search.svg?react';
 import FilterIcon from '@/assets/filter-alt.svg?react';
-
-type BookingStatus = 'Scheduled' | 'Pending' | 'Completed' | 'Cancelled';
+import AddBookingDrawer, {
+  type AddBookingFormValues,
+} from '@/components/bookings/AddBookingDrawer';
+import type { BookingStatus } from '@/types/bookings';
 
 type BookingRecord = {
   id: string;
@@ -19,6 +21,7 @@ type BookingRecord = {
   name: string;
   email: string;
   phoneNumber: string;
+  facebookAccount?: string;
 };
 
 type BookingTab = 'consultation' | 'admission';
@@ -128,7 +131,8 @@ const consultationBookings: BookingRecord[] = [
     submittedDate: '2025-06-24',
     name: 'May Khit Thar',
     email: 'maykhit@gmail.com',
-    phoneNumber: '096 234 5623',
+    phoneNumber: '+95 96 234 5623',
+    facebookAccount: 'facebook.com/maykhit',
   },
 ];
 
@@ -137,6 +141,10 @@ const BookingsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortState, setSortState] = useState<SortState>();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [consultationRows, setConsultationRows] = useState<BookingRecord[]>(
+    () => consultationBookings
+  );
+  const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
 
   const tabs: Array<{ key: BookingTab; label: string }> = useMemo(
     () => [
@@ -145,8 +153,6 @@ const BookingsPage: React.FC = () => {
     ],
     []
   );
-
-  const consultationRows = useMemo(() => consultationBookings, []);
 
   const filteredConsultationRows = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -259,6 +265,40 @@ const BookingsPage: React.FC = () => {
     ? 'No bookings match your search criteria.'
     : 'No bookings available for this tab yet.';
 
+  const handleOpenAddDrawer = () => {
+    setIsAddDrawerOpen(true);
+  };
+
+  const handleCloseAddDrawer = () => {
+    setIsAddDrawerOpen(false);
+  };
+
+  const handleAddConsultationBooking = (values: AddBookingFormValues) => {
+    const isoDate = new Date().toISOString().split('T')[0];
+    const trimmedPhone = values.phoneNumber.trim();
+    const trimmedDialCode = values.countryDialCode.trim();
+    const phoneDisplay = [trimmedDialCode, trimmedPhone]
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+
+    const newBooking: BookingRecord = {
+      id: `booking-${Date.now()}`,
+      status: values.status,
+      submittedPlatform: values.submittedPlatform,
+      submittedDate: isoDate,
+      name: values.name.trim() || 'Unknown',
+      email: values.email.trim(),
+      phoneNumber: phoneDisplay,
+      facebookAccount: values.facebookAccount.trim() || undefined,
+    };
+
+    setConsultationRows((prev) => [newBooking, ...prev]);
+    setSelectedIds([]);
+    setSortState(undefined);
+    handleCloseAddDrawer();
+  };
+
   return (
     <div className="space-y-8 text-gray-700">
       <section className="space-y-6">
@@ -318,7 +358,11 @@ const BookingsPage: React.FC = () => {
             >
               Remove
             </Button>
-            <Button type="button" className="rounded-full px-5">
+            <Button
+              type="button"
+              className="rounded-full px-5"
+              onClick={handleOpenAddDrawer}
+            >
               + Consultation Record
             </Button>
           </div>
@@ -339,6 +383,12 @@ const BookingsPage: React.FC = () => {
           maxBodyHeight={460}
         />
       </section>
+
+      <AddBookingDrawer
+        open={isAddDrawerOpen}
+        onClose={handleCloseAddDrawer}
+        onSubmit={handleAddConsultationBooking}
+      />
     </div>
   );
 };
