@@ -299,12 +299,12 @@ const BookingsPage: React.FC = () => {
                 value={searchTerm}
                 onChange={handleSearchChange}
                 placeholder="Search Name, Status, Facebook account"
-                className="w-full rounded-full border border-[#F8CED3] bg-white py-2 pl-10 pr-4 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+                className="w-full rounded-md border  bg-white py-2 pl-10 pr-4 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none"
               />
             </div>
             <button
               type="button"
-              className="inline-flex items-center gap-2 rounded-full border border-[#F8CED3] bg-white px-4 py-2 text-sm font-semibold text-gray-600 transition-colors hover:bg-[#FFE6E7] hover:text-primary"
+              className="inline-flex items-center gap-2 cursor-pointer rounded-md borderpx-4 py-2 px-4 text-sm font-semibold text-gray-600 transition-colors bg-secondary "
             >
               <FilterIcon className="h-4 w-4" />
               Status
@@ -313,8 +313,7 @@ const BookingsPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <Button
               type="button"
-              secondary
-              className="rounded-full px-5"
+              className="rounded-full px-5 bg-secondary "
               disabled={selectedIds.length === 0}
             >
               Remove
@@ -337,7 +336,6 @@ const BookingsPage: React.FC = () => {
           sortState={sortState}
           onSortChange={handleSortChange}
           emptyMessage={emptyMessage}
-          className="shadow-sm"
           maxBodyHeight={460}
         />
       </section>
