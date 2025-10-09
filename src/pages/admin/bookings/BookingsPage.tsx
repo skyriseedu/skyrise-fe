@@ -50,10 +50,6 @@ const statusBadgeStyles: Record<BookingStatus, { container: string; dot: string 
     container: 'bg-[#E6F4FF] text-[#0B74C4] border-[#B3DCF9]',
     dot: 'bg-[#0B74C4]',
   },
-  Pending: {
-    container: 'bg-[#FFF7E6] text-[#C26B00] border-[#F5D6A1]',
-    dot: 'bg-[#C26B00]',
-  },
   Completed: {
     container: 'bg-[#E8F6EF] text-[#2D7D46] border-[#B5E3C6]',
     dot: 'bg-[#2D7D46]',

@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import CloseIcon from '@/assets/close.svg?react';
+import CalendarTimeIcon from '@/assets/calendar-time.svg?react';
+import CheckboxCheckedIcon from '@/assets/checkbox-checked.svg?react';
+import CloseSquareIcon from '@/assets/close-square.svg?react';
+import CaretDownIcon from '@/assets/caret-down.svg?react';
 import Button from '@/components/common/Button';
 import { bookingStatusOptions, type BookingStatus } from '@/types/bookings';
 
@@ -48,6 +52,8 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
   } = props;
 
   const [values, setValues] = useState<AddBookingFormValues>(initialFormValues);
+  const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
+  const statusDropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -83,18 +89,64 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
     };
   }, [open]);
 
+  useEffect(() => {
+    if (!open) {
+      setIsStatusMenuOpen(false);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (!isStatusMenuOpen) {
+      return undefined;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!statusDropdownRef.current) return;
+      if (!statusDropdownRef.current.contains(event.target as Node)) {
+        setIsStatusMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isStatusMenuOpen]);
+
   if (typeof document === 'undefined') {
     return null;
   }
 
-  const handleFieldChange = (
-    field: keyof AddBookingFormValues,
-    value: string
+  const handleFieldChange = <K extends keyof AddBookingFormValues>(
+    field: K,
+    value: AddBookingFormValues[K]
   ) => {
     setValues((prev) => ({
       ...prev,
       [field]: value,
     }));
+  };
+
+  const statusVisuals: Record<BookingStatus, {
+    Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    iconClassName: string;
+    textClassName: string;
+  }> = {
+    Scheduled: {
+      Icon: CalendarTimeIcon,
+      iconClassName: 'text-gray-600',
+      textClassName: 'text-gray-600',
+    },
+    Completed: {
+      Icon: CheckboxCheckedIcon,
+      iconClassName: 'text-primary',
+      textClassName: 'text-primary',
+    },
+    Cancelled: {
+      Icon: CloseSquareIcon,
+      iconClassName: 'text-white',
+      textClassName: 'text-gray-900',
+    },
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -106,7 +158,7 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
     <AnimatePresence>
       {open ? (
         <motion.div
-          className="fixed inset-0 z-[60] flex items-center justify-end px-4 sm:px-6"
+          className="fixed inset-0 z-[60] flex items-center justify-end px-4 py-6 sm:px-6"
           initial={false}
         >
           <motion.div
@@ -120,7 +172,7 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
           />
 
           <motion.aside
-            className="relative z-10 flex max-h-[650px] w-full max-w-[450px] px-3 flex-col overflow-y-scroll rounded-bl-xl rounded-tl-xl -mr-6  bg-white shadow-2xl "
+            className="relative z-10 flex h-[650px] w-full px-4 max-w-[420px] flex-col overflow-y-hidden rounded-bl-[32px] rounded-tl-[32px] -mr-7 bg-white shadow-2xl max-h-[calc(100vh-48px)] sm:max-h-[calc(100vh-64px)]"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -131,6 +183,7 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
           >
             <div className="flex items-start justify-between border-b border-gray-100 px-6 py-4">
               <div className="flex items-center gap-3">
+              
                 <div>
                   <p
                     id="add-booking-title"
@@ -138,6 +191,7 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
                   >
                     Add Consultation Booking
                   </p>
+              
                 </div>
               </div>
 
@@ -161,38 +215,84 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
                     <label htmlFor="booking-status" className="text-sm font-medium text-gray-700">
                       Status
                     </label>
-                    <div className="relative">
-                      <select
+                    <div ref={statusDropdownRef} className="relative">
+                      <button
                         id="booking-status"
-                        value={values.status}
-                        onChange={(event) =>
-                          handleFieldChange('status', event.target.value)
-                        }
-                        className="w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2 pr-9 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+                        type="button"
+                        onClick={() => setIsStatusMenuOpen((prev) => !prev)}
+                        className="flex w-full items-center justify-between gap-4 rounded-full  bg-white px-5 py-3 text-sm font-medium text-gray-700 transition focus:outline-none "
+                        aria-haspopup="listbox"
+                        aria-expanded={isStatusMenuOpen}
                       >
-                        {statusOptions.map((status) => (
-                          <option key={status} value={status}>
-                            {status}
-                          </option>
-                        ))}
-                      </select>
-                      <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
+                        <span className="flex items-center gap-3">
+                          {(() => {
+                            const { Icon, iconClassName } =
+                              statusVisuals[values.status];
+                            return (
+                              <span
+                                className={`flex h-9 w-9 items-center justify-center rounded-full `}
+                              >
+                                <Icon className={`h-5 w-5 ${iconClassName}`} />
+                              </span>
+                            );
+                          })()}
+                          <span
+                            className={`text-base font-semibold ${statusVisuals[values.status].textClassName}`}
+                          >
+                            {values.status}
+                          </span>
+                        </span>
+                        <CaretDownIcon
+                          className={`h-4 w-4 text-gray-500 transition-transform ${
+                            isStatusMenuOpen ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+
+                      {isStatusMenuOpen ? (
+                        <div
+                          role="listbox"
+                          aria-labelledby="booking-status"
+                          className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-xl"
                         >
-                          <path
-                            d="M4 6L8 10L12 6"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </span>
+                          <div className="py-2">
+                            {statusOptions.map((status) => {
+                              const { Icon, iconClassName, textClassName } =
+                                statusVisuals[status];
+                              const isSelected = values.status === status;
+
+                              return (
+                                <button
+                                  key={status}
+                                  type="button"
+                                  role="option"
+                                  aria-selected={isSelected}
+                                  onClick={() => {
+                                    handleFieldChange('status', status);
+                                    setIsStatusMenuOpen(false);
+                                  }}
+                                  className={`flex w-full items-center gap-3 px-5 py-3 text-left transition hover:bg-gray-50 ${
+                                    isSelected ? 'bg-gray-50' : ''
+                                  }`}
+                                >
+                                  <span
+                                    className={`flex h-9 w-9 items-center justify-center rounded-full`}
+                                  >
+                                    <Icon className={`h-5 w-5 ${iconClassName}`} />
+                                  </span>
+                                  <span
+                                    className={`text-base ${textClassName} ${
+                                      isSelected ? 'font-semibold' : 'font-medium'
+                                    }`}
+                                  >
+                                    {status}
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
 
