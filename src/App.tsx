@@ -7,6 +7,7 @@ import AdminLayout from './components/layout/AdminLayout';
 import AdminRoute from './components/auth/AdminRoute';
 import AdminDashboard from './pages/admin/dashboard/AdminDashboard';
 import BookingsPage from './pages/admin/bookings/BookingsPage';
+import ProgramSetup from './pages/admin/programs/ProgramSetup';
 import ScrollToTop from './components/common/ScrollToTop';
 import HomePage from './pages/users/home/HomePage';
 import ExplorePage from './pages/users/explore/ExplorePage';
@@ -93,6 +94,7 @@ const App: React.FC = () => {
               }
             >
               <Route index element={<AdminDashboard />} />
+              <Route path="program-setup" element={<ProgramSetup />} />
               <Route path="bookings" element={<BookingsPage />} />
             </Route>
 
