@@ -236,7 +236,7 @@ const ProgramSetup: React.FC = () => {
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="mb-6 text-2xl font-bold text-gray-900">
+          <h1 className="text-h2 mb-6 font-semibold text-gray-900">
             Total Programs {mockPrograms.length}
           </h1>
 
@@ -253,7 +253,7 @@ const ProgramSetup: React.FC = () => {
                   className="focus:ring-primary w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2"
                 />
               </div>
-              <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">
+              <button className="bg-secondary flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700 hover:bg-red-200">
                 <Filter />
                 Status
               </button>
@@ -264,7 +264,7 @@ const ProgramSetup: React.FC = () => {
               {selectedPrograms.size > 0 && (
                 <button
                   onClick={handleRemoveSelected}
-                  className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50"
+                  className="bg-secondary flex items-center gap-2 rounded-xl px-4 py-2 text-gray-700 hover:bg-red-200"
                 >
                   <RemoveIcon className="h-4 w-4" />
                   Remove
@@ -273,9 +273,9 @@ const ProgramSetup: React.FC = () => {
 
               <button
                 onClick={handleCreateNew}
-                className="flex items-center gap-2 rounded-lg bg-[#DE585B] px-4 py-2 text-white hover:bg-[#c94649]"
+                className="bg-primary flex items-center gap-2 rounded-xl px-4 py-2 text-white hover:bg-red-600"
               >
-                <span className="text-2xl">+</span>New Program
+                <span>+</span>New Program
               </button>
             </div>
           </div>

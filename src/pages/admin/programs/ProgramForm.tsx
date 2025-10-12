@@ -579,7 +579,7 @@ const ProgramForm: React.FC = () => {
                           type="button"
                           onClick={() => handleRemoveIntake(index)}
                         >
-                          <RemoveIcon className="h-5 w-5 text-red-500" />
+                          <RemoveIcon className="text-text-primary h-5 w-5 hover:text-red-500" />
                         </button>
                       )}
                     </div>

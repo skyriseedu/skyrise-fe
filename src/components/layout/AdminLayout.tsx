@@ -279,7 +279,7 @@ const AdminLayout: React.FC = () => {
                   <ArrowLeft className="h-5 w-5" />
                 </button>
               )}
-              <h1 className="text-[24px] font-semibold text-gray-800 uppercase">
+              <h1 className="text-h2 font-semibold text-gray-800 uppercase">
                 {headerTitle}
               </h1>
             </div>

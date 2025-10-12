@@ -41,60 +41,60 @@ const StudentReview: React.FC<StudentReviewProps> = ({
         <table className="w-full">
           <thead>
             <tr>
-              <th className="border-r border-gray-500 px-4 py-3 text-left text-sm font-medium text-gray-700">
+              <th className="w-2/12 border-r border-gray-500 px-4 py-3 text-left text-sm font-medium text-gray-700">
                 Student Name
               </th>
-              <th className="border-r border-gray-500 px-4 py-3 text-left text-sm font-medium text-gray-700">
+              <th className="w-2/12 border-r border-gray-500 px-4 py-3 text-left text-sm font-medium text-gray-700">
                 Major
               </th>
-              <th className="border-r border-gray-500 px-4 py-3 text-left text-sm font-medium text-gray-700">
+              <th className="w-5/12 border-r border-gray-500 px-4 py-3 text-left text-sm font-medium text-gray-700">
                 Reviews
               </th>
-              <th className="border-r border-gray-500 px-4 py-3 text-left text-sm font-medium text-gray-700">
+              <th className="w-2/12 border-r border-gray-500 px-4 py-3 text-left text-sm font-medium text-gray-700">
                 Images
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700"></th>
+              <th className="w-1/12 px-4 py-3 text-left text-sm font-medium text-gray-700"></th>
             </tr>
           </thead>
           <tbody>
             {reviews.map((review, index) => (
               <tr key={index} className="border-t border-gray-500">
-                <td className="border-r border-gray-500">
+                <td className="border-r border-gray-500 align-top">
                   <input
                     type="text"
                     value={review.studentName}
                     onChange={(e) =>
                       onReviewChange(index, 'studentName', e.target.value)
                     }
-                    className="w-full border-0 bg-transparent px-2 text-sm focus:ring-0 focus:outline-none"
+                    className="w-full border-0 bg-transparent px-2 pt-3 text-sm focus:ring-0 focus:outline-none"
                     placeholder="Student Name"
                   />
                 </td>
-                <td className="border-r border-gray-500">
+                <td className="border-r border-gray-500 align-top">
                   <input
                     type="text"
                     value={review.major}
                     onChange={(e) =>
                       onReviewChange(index, 'major', e.target.value)
                     }
-                    className="w-full border-0 bg-transparent px-2 py-1 text-sm focus:ring-0 focus:outline-none"
+                    className="w-full border-0 bg-transparent px-2 pt-3 text-sm focus:ring-0 focus:outline-none"
                     placeholder="Major"
                   />
                 </td>
-                <td className="border-r border-gray-500">
-                  <div className="flex h-full items-center">
+                <td className="border-r border-gray-500 align-top">
+                  <div>
                     <textarea
                       value={review.review}
                       onChange={(e) =>
                         onReviewChange(index, 'review', e.target.value)
                       }
-                      className="w-full resize-none border-0 bg-transparent px-2 py-1 text-center text-sm focus:ring-0 focus:outline-none"
+                      className="w-full resize-none border-0 bg-transparent px-2 pt-3 text-sm focus:ring-0 focus:outline-none"
                       rows={3}
                       placeholder="Review text..."
                     />
                   </div>
                 </td>
-                <td className="border-r border-gray-500">
+                <td className="border-r border-gray-500 align-top">
                   <div className="flex items-center gap-2 px-2">
                     <input
                       type="file"
@@ -109,7 +109,7 @@ const StudentReview: React.FC<StudentReviewProps> = ({
                     />
                     <label
                       htmlFor={`file-upload-${index}`}
-                      className="flex cursor-pointer items-center gap-1 px-2 py-1 text-xs text-gray-600 hover:text-red-400"
+                      className="flex cursor-pointer items-center gap-1 px-2 pt-3 text-xs text-gray-600 hover:text-red-400"
                     >
                       <ImportImage className="h-4 w-4" />
                       Import png
@@ -125,10 +125,10 @@ const StudentReview: React.FC<StudentReviewProps> = ({
                     )}
                   </div>
                 </td>
-                <td className="px-4">
+                <td className="px-4 align-top">
                   <button
                     type="button"
-                    className="text-text-primary text-sm hover:text-red-700"
+                    className="text-text-primary pt-3 text-sm hover:text-red-700"
                     onClick={() => onRemoveReview(index)}
                   >
                     <Remove className="h-4 w-4" />
