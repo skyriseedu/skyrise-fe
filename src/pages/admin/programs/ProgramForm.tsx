@@ -6,10 +6,11 @@ import {
   StudentReview,
   type StudentReviewData,
 } from '@/components/program-setup/StudentReview';
-import ImageUpload from '@/assets/img-upload.svg?react';
+import ImageUpload from '@/components/program-setup/ImageUpload';
 import Calendar from '@/assets/calendar.svg?react';
 import CaretDown from '@/assets/caret-down.svg?react';
 import CaretUp from '@/assets/caret-up.svg?react';
+import RemoveIcon from '@/assets/bin.svg?react';
 
 type ProgramFormData = {
   programName: string;
@@ -22,7 +23,7 @@ type ProgramFormData = {
   duration: string;
   location: string;
   applicationFee: string;
-  upcomingIntakes: Array<{ year: string }>;
+  upcomingIntakes: Array<{ year: string; month: string }>;
   totalCreditRequirement: string;
   programStructure: string;
   undergraduateEntryRequirement: string;
@@ -45,7 +46,7 @@ const initialFormData: ProgramFormData = {
   duration: '1 year',
   location: '',
   applicationFee: 'Free',
-  upcomingIntakes: [{ year: '' }],
+  upcomingIntakes: [{ year: '', month: '' }],
   totalCreditRequirement: '',
   programStructure: '',
   undergraduateEntryRequirement: '',
@@ -58,6 +59,21 @@ const ProgramForm: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditing = Boolean(id);
+
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
 
   const [formData, setFormData] = useState<ProgramFormData>(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
@@ -119,16 +135,27 @@ const ProgramForm: React.FC = () => {
   const handleAddIntake = () => {
     setFormData((prev) => ({
       ...prev,
-      upcomingIntakes: [...prev.upcomingIntakes, { year: '' }],
+      upcomingIntakes: [...prev.upcomingIntakes, { year: '', month: '' }],
     }));
   };
 
-  const handleIntakeChange = (index: number, year: string) => {
+  const handleIntakeChange = (
+    index: number,
+    field: 'year' | 'month',
+    value: string
+  ) => {
     setFormData((prev) => ({
       ...prev,
       upcomingIntakes: prev.upcomingIntakes.map((intake, i) =>
-        i === index ? { year } : intake
+        i === index ? { ...intake, [field]: value } : intake
       ),
+    }));
+  };
+
+  const handleRemoveIntake = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      upcomingIntakes: prev.upcomingIntakes.filter((_, i) => i !== index),
     }));
   };
 
@@ -137,7 +164,7 @@ const ProgramForm: React.FC = () => {
       ...prev,
       studentReviews: [
         ...prev.studentReviews,
-        { studentName: '', major: '', review: '' },
+        { studentName: '', major: '', review: '', image: undefined },
       ],
     }));
   };
@@ -155,6 +182,22 @@ const ProgramForm: React.FC = () => {
     }));
   };
 
+  const handleReviewImageChange = (index: number, file: File) => {
+    setFormData((prev) => ({
+      ...prev,
+      studentReviews: prev.studentReviews.map((review, i) =>
+        i === index ? { ...review, image: file } : review
+      ),
+    }));
+  };
+
+  const handleRemoveStudentReview = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      studentReviews: prev.studentReviews.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleImageUpload = (type: 'primary' | 'secondary', file: File) => {
     setFormData((prev) => ({
       ...prev,
@@ -168,8 +211,15 @@ const ProgramForm: React.FC = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
+      const formattedData = {
+        ...formData,
+        upcomingIntakes: formData.upcomingIntakes.map(
+          (intake) => `${intake.month} ${intake.year}`
+        ),
+      };
+
       // In a real app, this would submit to an API
-      console.log('Submitting program data:', formData);
+      console.log('Submitting program data:', formattedData);
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -188,10 +238,10 @@ const ProgramForm: React.FC = () => {
 
   return (
     <div className="min-h-screen px-6">
-      <div className="mx-auto max-w-5xl">
+      <div className="">
         {/* Form */}
         <div className="bg-white p-8">
-          <h1 className="mb-8 text-2xl font-bold text-gray-900">
+          <h1 className="text-h2 mb-4 font-semibold">
             {isEditing ? 'Edit Program' : 'New Program'}
           </h1>
 
@@ -199,7 +249,7 @@ const ProgramForm: React.FC = () => {
             {/* Basic Information */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+                <label className="text-h3 block font-semibold text-gray-700">
                   Program Name
                 </label>
                 <input
@@ -209,12 +259,12 @@ const ProgramForm: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange('programName', e.target.value)
                   }
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2"
                 />
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+                <label className="text-h3 mb-2 block font-semibold">
                   Application Deadline
                 </label>
                 <div
@@ -237,7 +287,7 @@ const ProgramForm: React.FC = () => {
                       setShowRankingDropdown(false);
                       setShowCalendar(!showCalendar);
                     }}
-                    className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 pr-10 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 pr-10"
                   />
                   <Calendar
                     className="absolute top-1/2 right-3 h-5 w-5 -translate-y-1/2 cursor-pointer text-black"
@@ -274,7 +324,7 @@ const ProgramForm: React.FC = () => {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+                <label className="text-h3 mb-2 block font-semibold">
                   University Name
                 </label>
                 <input
@@ -284,12 +334,12 @@ const ProgramForm: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange('universityName', e.target.value)
                   }
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2"
                 />
               </div>
 
               <div>
-                <label className="mb-2 flex justify-between text-sm font-medium text-gray-700">
+                <label className="text-h3 mb-2 flex justify-between font-semibold">
                   <span>University Ranking</span>
                 </label>
                 <div
@@ -368,67 +418,22 @@ const ProgramForm: React.FC = () => {
 
             {/* Cover Images */}
             <div>
-              <label className="mb-4 block text-sm font-medium text-gray-700">
-                Cover Images
-              </label>
+              <h2 className="text-h3 mb-3 font-semibold">Cover Images</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {/* Primary Image */}
-                <div className="rounded-lg border-1 p-8 text-center">
-                  <div className="flex flex-col items-center">
-                    <div className="mb-2">
-                      <ImageUpload className="h-12 w-12" />
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      Click to upload or drag and drop
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Maximum size 5MB
-                      <br />
-                      Supported: JPG, JPEG
-                    </p>
-                  </div>
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/jpg"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleImageUpload('primary', file);
-                    }}
-                    className="hidden"
-                  />
-                </div>
-
-                {/* Secondary Image */}
-                <div className="rounded-lg border-1 p-8 text-center">
-                  <div className="flex flex-col items-center">
-                    <div className="mb-2 text-gray-400">
-                      <ImageUpload className="h-12 w-12" />
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      Click to upload or drag and drop
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Maximum size 5MB
-                      <br />
-                      Supported: JPG, JPEG
-                    </p>
-                  </div>
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/jpg"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleImageUpload('secondary', file);
-                    }}
-                    className="hidden"
-                  />
-                </div>
+                <ImageUpload
+                  image={formData.coverImages.primary}
+                  onImageUpload={(file) => handleImageUpload('primary', file)}
+                />
+                <ImageUpload
+                  image={formData.coverImages.secondary}
+                  onImageUpload={(file) => handleImageUpload('secondary', file)}
+                />
               </div>
             </div>
 
             {/* About Program */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="text-h3 mb-2 block font-semibold text-gray-700">
                 About Program
               </label>
               <div className="w-full rounded-lg">
@@ -436,19 +441,19 @@ const ProgramForm: React.FC = () => {
                   value={formData.aboutProgram}
                   onChange={(value) => handleInputChange('aboutProgram', value)}
                   placeholder="Description about program"
-                  className="-mx-5"
+                  className=""
                 />
               </div>
             </div>
 
             {/* Key Information */}
             <div>
-              <label className="mb-4 block text-sm font-medium text-gray-700">
+              <label className="text-h3 mb-4 block font-semibold text-gray-700">
                 Key Information
               </label>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <div>
-                  <label className="mb-1 block text-xs text-gray-500">
+                  <label className="text-h5 mb-1 block text-gray-500">
                     Degree
                   </label>
                   <select
@@ -456,7 +461,7 @@ const ProgramForm: React.FC = () => {
                     onChange={(e) =>
                       handleInputChange('degree', e.target.value)
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2"
                   >
                     <option value="Bachelor">Bachelor</option>
                     <option value="Master">Master</option>
@@ -465,7 +470,7 @@ const ProgramForm: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs text-gray-500">
+                  <label className="text-h5 mb-1 block text-gray-500">
                     Duration
                   </label>
                   <select
@@ -473,7 +478,7 @@ const ProgramForm: React.FC = () => {
                     onChange={(e) =>
                       handleInputChange('duration', e.target.value)
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2"
                   >
                     <option value="1 year">1 year</option>
                     <option value="1.5 years">1.5 years</option>
@@ -487,7 +492,7 @@ const ProgramForm: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs text-gray-500">
+                  <label className="text-h5 mb-1 block text-gray-500">
                     Location
                   </label>
                   <input
@@ -497,12 +502,12 @@ const ProgramForm: React.FC = () => {
                     onChange={(e) =>
                       handleInputChange('location', e.target.value)
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs text-gray-500">
+                  <label className="text-h5 mb-1 block text-gray-500">
                     Application fee
                   </label>
                   <select
@@ -510,7 +515,7 @@ const ProgramForm: React.FC = () => {
                     onChange={(e) =>
                       handleInputChange('applicationFee', e.target.value)
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2"
                   >
                     <option value="Free">Free</option>
                     <option value="Paid">Charged</option>
@@ -521,26 +526,65 @@ const ProgramForm: React.FC = () => {
 
             {/* Upcoming Intakes */}
             <div>
-              <label className="mb-4 block text-sm font-medium text-gray-700">
+              <label className="text-h3 mb-4 block font-semibold text-gray-700">
                 Upcoming Intakes
               </label>
               <div className="space-y-2">
-                {formData.upcomingIntakes.map((intake, index) => (
-                  <div key={index} className="flex gap-2">
-                    <label className="flex items-center text-xs text-gray-500">
-                      Year
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Year"
-                      value={intake.year}
-                      onChange={(e) =>
-                        handleIntakeChange(index, e.target.value)
-                      }
-                      className="rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                ))}
+                {formData.upcomingIntakes.map((intake, index) => {
+                  const selectedMonths = formData.upcomingIntakes.map(
+                    (i) => i.month
+                  );
+                  return (
+                    <div key={index} className="flex items-center gap-2">
+                      <label className="flex items-center text-xs text-gray-500">
+                        Year
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Year"
+                        value={intake.year}
+                        onChange={(e) =>
+                          handleIntakeChange(index, 'year', e.target.value)
+                        }
+                        className="w-24 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      />
+                      <label className="flex items-center text-xs text-gray-500">
+                        Month
+                      </label>
+                      <select
+                        value={intake.month}
+                        onChange={(e) =>
+                          handleIntakeChange(index, 'month', e.target.value)
+                        }
+                        className="w-32 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      >
+                        <option value="" disabled>
+                          Select Month
+                        </option>
+                        {months.map((month) => (
+                          <option
+                            key={month}
+                            value={month}
+                            disabled={
+                              selectedMonths.includes(month) &&
+                              intake.month !== month
+                            }
+                          >
+                            {month}
+                          </option>
+                        ))}
+                      </select>
+                      {formData.upcomingIntakes.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveIntake(index)}
+                        >
+                          <RemoveIcon className="h-5 w-5 text-red-500" />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
                 <button
                   type="button"
                   onClick={handleAddIntake}
@@ -553,11 +597,11 @@ const ProgramForm: React.FC = () => {
 
             {/* Program Structure */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="text-h3 mb-2 block font-semibold text-gray-700">
                 Program Structure
               </label>
               <div className="mb-4">
-                <label className="mb-1 block text-xs text-gray-500">
+                <label className="text-h5 mb-1 block text-gray-500">
                   Total Credit Requirement
                 </label>
                 <div className="flex gap-2">
@@ -591,7 +635,7 @@ const ProgramForm: React.FC = () => {
 
             {/* Undergraduate Entry Requirement */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="text-h3 mb-2 block font-semibold text-gray-700">
                 Undergraduate Entry Requirement
               </label>
               <div className="">
@@ -607,7 +651,7 @@ const ProgramForm: React.FC = () => {
 
             {/* Career Paths */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="text-h3 mb-2 block font-semibold text-gray-700">
                 Career Paths (if any)
               </label>
               <div className="">
@@ -623,22 +667,24 @@ const ProgramForm: React.FC = () => {
             <StudentReview
               reviews={formData.studentReviews}
               onReviewChange={handleStudentReviewChange}
+              onReviewImageChange={handleReviewImageChange}
               onAddReview={handleAddStudentReview}
+              onRemoveReview={handleRemoveStudentReview}
             />
           </div>
 
           {/* Action Buttons */}
-          <div className="mt-8 flex justify-end gap-4">
+          <div className="mt-8 flex justify-between gap-4">
             <button
               onClick={handleCancel}
-              className="rounded-lg border border-gray-300 px-6 py-2 text-gray-700 hover:bg-gray-50"
+              className="bg-secondary text-text-primary rounded-lg px-6 py-2 hover:bg-red-200"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="rounded-lg bg-red-500 px-6 py-2 text-white hover:bg-red-600 disabled:opacity-50"
+              className="bg-primary rounded-lg px-6 py-2 text-white hover:bg-red-600 disabled:opacity-50"
             >
               {isLoading ? 'Publishing...' : 'Publish'}
             </button>

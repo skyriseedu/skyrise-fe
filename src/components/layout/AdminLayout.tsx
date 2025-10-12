@@ -303,7 +303,7 @@ const AdminLayout: React.FC = () => {
             </div>
           </header>
 
-          <main className="min-w-0 flex-1 overflow-y-auto bg-white px-10 py-6">
+          <main className="min-w-0 flex-1 overflow-y-auto bg-white px-10 py-2">
             <Outlet />
           </main>
         </div>

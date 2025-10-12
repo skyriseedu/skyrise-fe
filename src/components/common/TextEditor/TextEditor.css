@@ -1,7 +1,7 @@
 .text-editor {
   background-color: #ffffff;
   border-radius: 26px;
-  padding: 20px;
+  padding: 5px;
 }
 
 .ql-toolbar.ql-snow {
@@ -229,7 +229,7 @@
   border: 1px solid #85868a;
   border-radius: 15px;
   padding: 20px;
-  width: 900px;
+  width: 100%;
   font-size: 16px;
   line-height: 1.8;
   color: #475569;
@@ -239,5 +239,5 @@
   left: 0;
   color: #94a3b8;
   font-style: normal;
-  padding: 20px;
+  padding: 1px 20px;
 }
