@@ -2,7 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TextEditor } from '@/components/common/TextEditor/TextEditor';
 import CustomCalendar from '@/components/common/CustomCalendar';
-import ArrowLeft from '@/assets/arrow-left.svg?react';
+import {
+  StudentReview,
+  type StudentReviewData,
+} from '@/components/program-setup/StudentReview';
 import ImageUpload from '@/assets/img-upload.svg?react';
 import Calendar from '@/assets/calendar.svg?react';
 import CaretDown from '@/assets/caret-down.svg?react';
@@ -24,12 +27,7 @@ type ProgramFormData = {
   programStructure: string;
   undergraduateEntryRequirement: string;
   careerPaths: string;
-  studentReviews: Array<{
-    studentName: string;
-    major: string;
-    review: string;
-    image?: string;
-  }>;
+  studentReviews: Array<StudentReviewData>;
   coverImages: {
     primary?: File | string;
     secondary?: File | string;
@@ -146,7 +144,7 @@ const ProgramForm: React.FC = () => {
 
   const handleStudentReviewChange = (
     index: number,
-    field: keyof ProgramFormData['studentReviews'][0],
+    field: keyof StudentReviewData,
     value: string
   ) => {
     setFormData((prev) => ({
@@ -189,25 +187,10 @@ const ProgramForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="mx-auto">
-        {/* Header */}
-        <div className="mb-6 flex items-center gap-4">
-          <button
-            onClick={handleCancel}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            PROGRAM SETUP
-          </button>
-          <span className="text-gray-400">—</span>
-          <span className="font-medium text-gray-900">
-            {isEditing ? 'EDIT' : 'CREATE'}
-          </span>
-        </div>
-
+    <div className="min-h-screen px-6">
+      <div className="mx-auto max-w-5xl">
         {/* Form */}
-        <div className="rounded-lg bg-white p-8 shadow-sm">
+        <div className="bg-white p-8">
           <h1 className="mb-8 text-2xl font-bold text-gray-900">
             {isEditing ? 'Edit Program' : 'New Program'}
           </h1>
@@ -306,7 +289,7 @@ const ProgramForm: React.FC = () => {
               </div>
 
               <div>
-                <label className="mb-2 block flex justify-between text-sm font-medium text-gray-700">
+                <label className="mb-2 flex justify-between text-sm font-medium text-gray-700">
                   <span>University Ranking</span>
                 </label>
                 <div
@@ -332,7 +315,7 @@ const ProgramForm: React.FC = () => {
                       )}
                     </button>
                     {showRankingDropdown && (
-                      <div className="absolute top-full left-0 z-[100] mt-1 w-full rounded-lg border border-gray-200 shadow-lg">
+                      <div className="absolute top-full left-0 z-[100] mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg">
                         <button
                           type="button"
                           className={`w-full px-3 py-2 text-left first:rounded-t-lg hover:bg-gray-100 ${formData.universityRankingType === 'Public' ? 'bg-gray-100 font-medium' : ''}`}
@@ -390,9 +373,9 @@ const ProgramForm: React.FC = () => {
               </label>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {/* Primary Image */}
-                <div className="rounded-lg border-2 border-dashed border-blue-300 bg-blue-50 p-8 text-center">
+                <div className="rounded-lg border-1 p-8 text-center">
                   <div className="flex flex-col items-center">
-                    <div className="mb-2 text-blue-500">
+                    <div className="mb-2">
                       <ImageUpload className="h-12 w-12" />
                     </div>
                     <p className="text-sm text-gray-600">
@@ -416,7 +399,7 @@ const ProgramForm: React.FC = () => {
                 </div>
 
                 {/* Secondary Image */}
-                <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+                <div className="rounded-lg border-1 p-8 text-center">
                   <div className="flex flex-col items-center">
                     <div className="mb-2 text-gray-400">
                       <ImageUpload className="h-12 w-12" />
@@ -477,7 +460,7 @@ const ProgramForm: React.FC = () => {
                   >
                     <option value="Bachelor">Bachelor</option>
                     <option value="Master">Master</option>
-                    <option value="PhD">PhD</option>
+                    <option value="PhD">Foundation</option>
                   </select>
                 </div>
 
@@ -493,9 +476,13 @@ const ProgramForm: React.FC = () => {
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="1 year">1 year</option>
+                    <option value="1.5 years">1.5 years</option>
                     <option value="2 years">2 years</option>
+                    <option value="2.5 years">2.5 years</option>
                     <option value="3 years">3 years</option>
+                    <option value="3.5 years">3.5 years</option>
                     <option value="4 years">4 years</option>
+                    <option value="4.5 years">4.5 years</option>
                   </select>
                 </div>
 
@@ -526,7 +513,7 @@ const ProgramForm: React.FC = () => {
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="Free">Free</option>
-                    <option value="Paid">Paid</option>
+                    <option value="Paid">Charged</option>
                   </select>
                 </div>
               </div>
@@ -557,7 +544,7 @@ const ProgramForm: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleAddIntake}
-                  className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700"
+                  className="bg-secondary text-text-primary hover:text-text-primary-700 flex items-center gap-2 rounded-xl px-3 py-1 text-sm hover:bg-red-200"
                 >
                   <span className="text-lg">+</span> Intake
                 </button>
@@ -584,14 +571,14 @@ const ProgramForm: React.FC = () => {
                         e.target.value
                       )
                     }
-                    className="rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="rounded-lg border border-gray-300 px-3 py-2"
                   />
                   <span className="flex items-center text-sm text-gray-500">
                     CREDITS
                   </span>
                 </div>
               </div>
-              <div className="rounded-lg border border-gray-300">
+              <div className="">
                 <TextEditor
                   value={formData.programStructure}
                   onChange={(value) =>
@@ -607,7 +594,7 @@ const ProgramForm: React.FC = () => {
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 Undergraduate Entry Requirement
               </label>
-              <div className="rounded-lg border border-gray-300">
+              <div className="">
                 <TextEditor
                   value={formData.undergraduateEntryRequirement}
                   onChange={(value) =>
@@ -623,7 +610,7 @@ const ProgramForm: React.FC = () => {
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 Career Paths (if any)
               </label>
-              <div className="rounded-lg border border-gray-300">
+              <div className="">
                 <TextEditor
                   value={formData.careerPaths}
                   onChange={(value) => handleInputChange('careerPaths', value)}
@@ -633,86 +620,11 @@ const ProgramForm: React.FC = () => {
             </div>
 
             {/* Student Review */}
-            <div>
-              <label className="mb-4 block text-sm font-medium text-gray-700">
-                Student Review
-              </label>
-              <div className="space-y-4">
-                {formData.studentReviews.map((review, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-1 gap-4 rounded-lg border border-gray-200 p-4 md:grid-cols-4"
-                  >
-                    <div>
-                      <label className="mb-1 block text-xs text-gray-500">
-                        Student Name
-                      </label>
-                      <input
-                        type="text"
-                        value={review.studentName}
-                        onChange={(e) =>
-                          handleStudentReviewChange(
-                            index,
-                            'studentName',
-                            e.target.value
-                          )
-                        }
-                        className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1 block text-xs text-gray-500">
-                        Major
-                      </label>
-                      <input
-                        type="text"
-                        value={review.major}
-                        onChange={(e) =>
-                          handleStudentReviewChange(
-                            index,
-                            'major',
-                            e.target.value
-                          )
-                        }
-                        className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
-                      />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="mb-1 block text-xs text-gray-500">
-                        Reviews
-                      </label>
-                      <textarea
-                        value={review.review}
-                        onChange={(e) =>
-                          handleStudentReviewChange(
-                            index,
-                            'review',
-                            e.target.value
-                          )
-                        }
-                        className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
-                        rows={2}
-                      />
-                    </div>
-                    <div className="md:col-span-4">
-                      <label className="mb-1 block text-xs text-gray-500">
-                        Images
-                      </label>
-                      <button className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-600 hover:bg-gray-50">
-                        Upload .png
-                      </button>
-                    </div>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={handleAddStudentReview}
-                  className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700"
-                >
-                  <span className="text-lg">+</span> Student
-                </button>
-              </div>
-            </div>
+            <StudentReview
+              reviews={formData.studentReviews}
+              onReviewChange={handleStudentReviewChange}
+              onAddReview={handleAddStudentReview}
+            />
           </div>
 
           {/* Action Buttons */}

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import type { SVGProps } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 
 import BookOpenIcon from '@/assets/book-open-admin.svg?react';
@@ -11,6 +11,7 @@ import DashboardIcon from '@/assets/dashboard.svg?react';
 import BlogSetup from '@/assets/blogSetUp.svg?react';
 import GraduationCap from '@/assets/graduation-cap-admin.svg?react';
 import MessageHelp from '@/assets/message-help.svg?react';
+import ArrowLeft from '@/assets/arrow-left.svg?react';
 
 type IconComponent = React.ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -109,6 +110,7 @@ const navigationSections: Array<{ title: string; items: SidebarItem[] }> = [
 
 const AdminLayout: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const allNavItems = useMemo(
     () => [
@@ -125,7 +127,92 @@ const AdminLayout: React.FC = () => {
     return location.pathname.startsWith(item.to);
   });
 
-  const headerTitle = (activeItem?.label || 'Dashboard').toUpperCase();
+  // Dynamic header title logic with custom route mappings
+  const getHeaderTitle = () => {
+    const pathname = location.pathname;
+
+    // Define custom route patterns and their titles
+    const customRouteTitles: Array<{
+      pattern: RegExp | string;
+      title: string;
+    }> = [
+      {
+        pattern: '/admin/program-setup/create',
+        title: 'PROGRAM SETUP - CREATE',
+      },
+      {
+        pattern: /^\/admin\/program-setup\/edit\/.*/,
+        title: 'PROGRAM SETUP - EDIT',
+      },
+      // Add more custom routes here as needed
+      // { pattern: '/admin/university-setup/create', title: 'UNIVERSITY SETUP - CREATE' },
+      // { pattern: /^\/admin\/university-setup\/edit\/.*/, title: 'UNIVERSITY SETUP - EDIT' },
+    ];
+
+    // Check for custom route matches
+    for (const route of customRouteTitles) {
+      if (typeof route.pattern === 'string') {
+        if (pathname === route.pattern) {
+          return route.title;
+        }
+      } else {
+        if (route.pattern.test(pathname)) {
+          return route.title;
+        }
+      }
+    }
+
+    // Default to active nav item label
+    return (activeItem?.label || 'Dashboard').toUpperCase();
+  };
+
+  const headerTitle = getHeaderTitle();
+
+  // Back arrow logic
+  const getBackArrowConfig = () => {
+    const pathname = location.pathname;
+
+    // Define routes that should have back arrows and their destinations
+    const backArrowRoutes: Array<{
+      pattern: RegExp | string;
+      backTo: string;
+    }> = [
+      {
+        pattern: '/admin/program-setup/create',
+        backTo: '/admin/program-setup',
+      },
+      {
+        pattern: /^\/admin\/program-setup\/edit\/.*/,
+        backTo: '/admin/program-setup',
+      },
+      // Add more back arrow routes here as needed
+      // { pattern: '/admin/university-setup/create', backTo: '/admin/university-setup', label: 'UNIVERSITY SETUP' },
+      // { pattern: /^\/admin\/university-setup\/edit\/.*/, backTo: '/admin/university-setup', label: 'UNIVERSITY SETUP' },
+    ];
+
+    // Check for back arrow route matches
+    for (const route of backArrowRoutes) {
+      if (typeof route.pattern === 'string') {
+        if (pathname === route.pattern) {
+          return { shouldShow: true, backTo: route.backTo };
+        }
+      } else {
+        if (route.pattern.test(pathname)) {
+          return { shouldShow: true, backTo: route.backTo };
+        }
+      }
+    }
+
+    return { shouldShow: false, backTo: '', label: '' };
+  };
+
+  const backArrowConfig = getBackArrowConfig();
+
+  const handleBackClick = () => {
+    if (backArrowConfig.backTo) {
+      navigate(backArrowConfig.backTo);
+    }
+  };
 
   const renderNavLink = (item: SidebarItem, options?: { exact?: boolean }) => (
     <NavLink
@@ -181,9 +268,17 @@ const AdminLayout: React.FC = () => {
           </nav>
         </aside>
 
-        <div className="flex flex-1 min-w-0 flex-col">
+        <div className="flex min-w-0 flex-1 flex-col">
           <header className="flex items-center justify-between border-b border-gray-200 bg-white px-12 py-4 shadow-[0_8px_20px_rgba(0,0,0,0.04)]">
             <div className="flex items-center gap-5">
+              {backArrowConfig.shouldShow && (
+                <button
+                  onClick={handleBackClick}
+                  className="flex items-center gap-2 text-gray-600 transition-colors hover:text-gray-900"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
+              )}
               <h1 className="text-[24px] font-semibold text-gray-800 uppercase">
                 {headerTitle}
               </h1>
@@ -208,7 +303,7 @@ const AdminLayout: React.FC = () => {
             </div>
           </header>
 
-          <main className="flex-1 min-w-0 overflow-y-auto bg-white px-10 py-6">
+          <main className="min-w-0 flex-1 overflow-y-auto bg-white px-10 py-6">
             <Outlet />
           </main>
         </div>
