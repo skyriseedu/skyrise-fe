@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DataTable, {
   type TableColumn,
   type SortState,
@@ -6,6 +7,8 @@ import DataTable, {
 import Filter from '@/assets/filter-alt.svg?react';
 import Search from '@/assets/search.svg?react';
 import RemoveIcon from '@/assets/bin.svg?react';
+import EditIcon from '@/assets/edit.svg?react';
+import ViewIcon from '@/assets/view.svg?react';
 
 // Mock data type
 type Program = {
@@ -56,6 +59,7 @@ const mockPrograms: Program[] = [
 ];
 
 const ProgramSetup: React.FC = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPrograms, setSelectedPrograms] = useState<Set<string>>(
     new Set()
@@ -64,6 +68,7 @@ const ProgramSetup: React.FC = () => {
     key: 'title',
     direction: 'asc',
   });
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   // Filter programs based on search query
   const filteredPrograms = useMemo(() => {
@@ -110,6 +115,92 @@ const ProgramSetup: React.FC = () => {
     setSelectedPrograms(new Set());
   };
 
+  const handleView = (program: Program) => {
+    navigate(`/admin/programs/view/${program.id}`);
+    setOpenDropdown(null);
+  };
+
+  const handleEdit = (program: Program) => {
+    navigate(`/admin/programs/edit/${program.id}`);
+    setOpenDropdown(null);
+  };
+
+  const handleRemove = (program: Program) => {
+    // In a real app, this would call an API to delete the program
+    console.log('Remove program:', program.id);
+    setOpenDropdown(null);
+  };
+
+  const handleCreateNew = () => {
+    navigate('/admin/program-setup/create');
+  };
+
+  // Dropdown component
+  const ActionDropdown: React.FC<{ program: Program }> = ({ program }) => {
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          dropdownRef.current &&
+          !dropdownRef.current.contains(event.target as Node)
+        ) {
+          setOpenDropdown(null);
+        }
+      };
+
+      if (openDropdown === program.id) {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+          document.removeEventListener('mousedown', handleClickOutside);
+        };
+      }
+    }, [program.id]);
+
+    return (
+      <div className="relative" ref={dropdownRef}>
+        <button
+          className="p-1 text-gray-500 hover:text-gray-700"
+          onClick={() =>
+            setOpenDropdown(openDropdown === program.id ? null : program.id)
+          }
+        >
+          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+          </svg>
+        </button>
+
+        {openDropdown === program.id && (
+          <div className="absolute right-0 z-10 mt-1 w-38 rounded-lg border border-gray-200 bg-white shadow-lg">
+            <div className="py-1">
+              <button
+                onClick={() => handleView(program)}
+                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+              >
+                <ViewIcon className="h-4 w-4 text-gray-500" />
+                View
+              </button>
+              <button
+                onClick={() => handleEdit(program)}
+                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+              >
+                <EditIcon className="h-4 w-4 text-gray-500" />
+                Edit
+              </button>
+              <button
+                onClick={() => handleRemove(program)}
+                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+              >
+                <RemoveIcon className="h-4 w-4 text-red-600" />
+                Remove
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const columns: TableColumn<Program>[] = [
     {
       key: 'title',
@@ -137,16 +228,7 @@ const ProgramSetup: React.FC = () => {
   ];
 
   const renderActions = (program: Program) => (
-    <div className="flex justify-end">
-      <button
-        className="p-1 text-gray-500 hover:text-gray-700"
-        onClick={() => console.log('Actions for program:', program.id)}
-      >
-        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-        </svg>
-      </button>
-    </div>
+    <ActionDropdown program={program} />
   );
 
   return (
@@ -189,7 +271,10 @@ const ProgramSetup: React.FC = () => {
                 </button>
               )}
 
-              <button className="flex items-center gap-2 rounded-lg bg-[#DE585B] px-4 py-2 text-white hover:bg-[#c94649]">
+              <button
+                onClick={handleCreateNew}
+                className="flex items-center gap-2 rounded-lg bg-[#DE585B] px-4 py-2 text-white hover:bg-[#c94649]"
+              >
                 <span className="text-2xl">+</span>New Program
               </button>
             </div>
