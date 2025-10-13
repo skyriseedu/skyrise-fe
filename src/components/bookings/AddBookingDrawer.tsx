@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -20,15 +20,25 @@ export type AddBookingFormValues = {
   facebookAccount: string;
 };
 
+type PlatformOption =
+  | {
+      value: string;
+      label: string;
+    }
+  | string;
+
 interface AddBookingDrawerProps {
   open: boolean;
   onClose: () => void;
   onSubmit?: (values: AddBookingFormValues) => void;
   statusOptions?: BookingStatus[];
-  platformOptions?: string[];
+  platformOptions?: PlatformOption[];
 }
 
-const defaultPlatforms = ['Website', 'Facebook', 'Messenger', 'Phone', 'Walk-in'];
+const defaultPlatforms: PlatformOption[] = [
+  { value: 'Website', label: 'Website'},
+  { value: 'Social Media', label: 'Social Media' },
+];
 
 const initialFormValues: AddBookingFormValues = {
   status: 'Scheduled',
@@ -53,7 +63,9 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
 
   const [values, setValues] = useState<AddBookingFormValues>(initialFormValues);
   const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
+  const [isPlatformMenuOpen, setIsPlatformMenuOpen] = useState(false);
   const statusDropdownRef = useRef<HTMLDivElement | null>(null);
+  const platformDropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -92,6 +104,7 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
   useEffect(() => {
     if (!open) {
       setIsStatusMenuOpen(false);
+      setIsPlatformMenuOpen(false);
     }
   }, [open]);
 
@@ -113,9 +126,23 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
     };
   }, [isStatusMenuOpen]);
 
-  if (typeof document === 'undefined') {
-    return null;
-  }
+  useEffect(() => {
+    if (!isPlatformMenuOpen) {
+      return undefined;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!platformDropdownRef.current) return;
+      if (!platformDropdownRef.current.contains(event.target as Node)) {
+        setIsPlatformMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isPlatformMenuOpen]);
 
   const handleFieldChange = <K extends keyof AddBookingFormValues>(
     field: K,
@@ -153,6 +180,22 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
     event.preventDefault();
     onSubmit?.(values);
   };
+
+  const normalizedPlatformOptions = useMemo(() => {
+    return platformOptions.map((option) =>
+      typeof option === 'string'
+        ? { value: option, label: option }
+        : option
+    );
+  }, [platformOptions]);
+
+  const selectedPlatformOption = normalizedPlatformOptions.find(
+    (option) => option.value === values.submittedPlatform
+  ) ?? { value: values.submittedPlatform, label: values.submittedPlatform };
+
+  if (typeof document === 'undefined') {
+    return null;
+  }
 
   return createPortal(
     <AnimatePresence>
@@ -300,38 +343,70 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
                     <label htmlFor="booking-platform" className="text-sm font-medium text-gray-700">
                       Submitted Platform
                     </label>
-                    <div className="relative">
-                      <select
+                    <div ref={platformDropdownRef} className="relative">
+                      <button
                         id="booking-platform"
-                        value={values.submittedPlatform}
-                        onChange={(event) =>
-                          handleFieldChange('submittedPlatform', event.target.value)
-                        }
-                        className="w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2 pr-9 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+                        type="button"
+                        onClick={() => setIsPlatformMenuOpen((prev) => !prev)}
+                        className="flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none"
+                        aria-haspopup="listbox"
+                        aria-expanded={isPlatformMenuOpen}
                       >
-                        {platformOptions.map((platform) => (
-                          <option key={platform} value={platform}>
-                            {platform}
-                          </option>
-                        ))}
-                      </select>
-                      <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
+                        <span className="flex flex-col text-sm">
+                          <span className="text-base font-semibold text-gray-900">
+                            {selectedPlatformOption.label}
+                          </span>
+                        </span>
+                        <CaretDownIcon
+                          className={`h-4 w-4 text-gray-500 transition-transform ${
+                            isPlatformMenuOpen ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+
+                      {isPlatformMenuOpen ? (
+                        <div
+                          role="listbox"
+                          aria-labelledby="booking-platform"
+                          className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-xl"
                         >
-                          <path
-                            d="M4 6L8 10L12 6"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </span>
+                          <div className="py-2">
+                            {normalizedPlatformOptions.map((platform) => {
+                              const isSelected =
+                                values.submittedPlatform === platform.value;
+
+                              return (
+                                <button
+                                  key={platform.value}
+                                  type="button"
+                                  role="option"
+                                  aria-selected={isSelected}
+                                  onClick={() => {
+                                    handleFieldChange(
+                                      'submittedPlatform',
+                                      platform.value
+                                    );
+                                    setIsPlatformMenuOpen(false);
+                                  }}
+                                  className={`flex w-full items-center justify-between gap-3 px-5 py-3 text-left transition hover:bg-gray-50 ${
+                                    isSelected ? 'bg-gray-50' : ''
+                                  }`}
+                                >
+                                  <span>
+                                    <span className="block text-base font-medium text-gray-900">
+                                      {platform.label}
+                                    </span>
+                                   
+                                  </span>
+                                  {isSelected ? (
+                                    <span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
+                                  ) : null}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
 
