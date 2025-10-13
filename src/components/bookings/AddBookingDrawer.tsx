@@ -26,20 +26,12 @@ export type AddBookingFormValues = {
   question: string;
 };
 
-type PlatformOption =
+export type PlatformOption =
   | {
       value: string;
       label: string;
     }
   | string;
-
-interface AddBookingDrawerProps {
-  open: boolean;
-  onClose: () => void;
-  onSubmit?: (values: AddBookingFormValues) => void;
-  statusOptions?: BookingStatus[];
-  platformOptions?: PlatformOption[];
-}
 
 const defaultPlatforms: PlatformOption[] = [
   { value: 'Website', label: 'Website' },
@@ -48,6 +40,21 @@ const defaultPlatforms: PlatformOption[] = [
 
 const bookingTimeOptions = ['08:00 a.m', '12:00 p.m', '03:00 p.m', '08:00 p.m'];
 const bookingLocationOptions = ['Myanmar', 'Thailand', 'Singapore'];
+
+export interface BookingDrawerBaseProps {
+  open: boolean;
+  onClose: () => void;
+  onSubmit?: (values: AddBookingFormValues) => void;
+  statusOptions?: BookingStatus[];
+  platformOptions?: PlatformOption[];
+  initialValues: AddBookingFormValues;
+  title: string;
+  submitLabel: string;
+}
+
+const cloneFormValues = (input: AddBookingFormValues): AddBookingFormValues => ({
+  ...input,
+});
 
 const initialFormValues: AddBookingFormValues = {
   status: 'Scheduled',
@@ -63,7 +70,7 @@ const initialFormValues: AddBookingFormValues = {
   question: '',
 };
 
-const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
+const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
   props
 ) => {
   const {
@@ -72,9 +79,14 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
     onSubmit,
     statusOptions = bookingStatusOptions,
     platformOptions = defaultPlatforms,
+    initialValues,
+    title,
+    submitLabel,
   } = props;
 
-  const [values, setValues] = useState<AddBookingFormValues>(initialFormValues);
+  const [values, setValues] = useState<AddBookingFormValues>(() =>
+    cloneFormValues(initialValues)
+  );
   const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
   const [isPlatformMenuOpen, setIsPlatformMenuOpen] = useState(false);
   const [isTimeMenuOpen, setIsTimeMenuOpen] = useState(false);
@@ -88,9 +100,9 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
 
   useEffect(() => {
     if (open) {
-      setValues(initialFormValues);
+      setValues(cloneFormValues(initialValues));
     }
-  }, [open]);
+  }, [open, initialValues]);
 
   useEffect(() => {
     if (!open) return;
@@ -304,24 +316,24 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
           />
 
           <motion.aside
-            className="relative z-10 flex h-[650px] w-full px-4 max-w-[420px] flex-col overflow-y-hidden rounded-bl-[32px] rounded-tl-[32px] -mr-7 bg-white shadow-2xl max-h-[calc(100vh-48px)] sm:max-h-[calc(100vh-64px)]"
+            className="relative z-10 flex h-[650px] w-full px-4 max-w-[420px] flex-col  rounded-bl-[32px] rounded-tl-[32px] -mr-7 bg-white shadow-2xl max-h-[calc(100vh-48px)] sm:max-h-[calc(100vh-64px)]"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ duration: 0.28, ease: 'easeInOut' }}
             role="dialog"
             aria-modal="true"
-            aria-labelledby="add-booking-title"
+            aria-labelledby="booking-drawer-title"
           >
             <div className="flex items-start justify-between border-b border-gray-100 px-6 py-4">
               <div className="flex items-center gap-3">
               
                 <div>
                   <p
-                    id="add-booking-title"
+                    id="booking-drawer-title"
                     className="text-base font-semibold text-gray-900"
                   >
-                    Add Consultation Booking
+                    {title}
                   </p>
               
                 </div>
@@ -339,9 +351,9 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
 
             <form
               onSubmit={handleSubmit}
-              className="flex h-full flex-col"
+              className="flex max-h-[600px] flex-col overflow-y-scroll"
             >
-              <div className="flex-1 overflow-y-auto px-6 pt-5 pb-8">
+              <div className="flex-1 px-6 pt-5 pb-8">
                 <div className="space-y-5">
                   <div className="space-y-2">
                     <label htmlFor="booking-status" className="text-sm font-medium text-gray-700">
@@ -767,18 +779,18 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
                 </div>
               </div>
 
-              <div className="border-t border-gray-100 px-6 py-4">
+              <div className="px-6 py-4">
                 <div className="flex justify-end gap-3">
-                  <Button
+                  {/* <Button
                     type="button"
                     outline
                     className="min-w-[96px] border-gray-200 text-gray-600 hover:text-white"
                     onClick={onClose}
                   >
                     Cancel
-                  </Button>
-                  <Button type="submit" className="min-w-[96px]">
-                    Add
+                  </Button> */}
+                  <Button type="submit" className="min-w-[120px]">
+                    {submitLabel}
                   </Button>
                 </div>
               </div>
@@ -791,4 +803,16 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
   );
 };
 
+type AddBookingDrawerProps = Omit<BookingDrawerBaseProps, 'initialValues' | 'title' | 'submitLabel'>;
+
+const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (props) => (
+  <BookingDrawerBase
+    {...props}
+    initialValues={initialFormValues}
+    title="Add Consultation Booking"
+    submitLabel="Add"
+  />
+);
+
 export default AddBookingDrawer;
+export { BookingDrawerBase };
