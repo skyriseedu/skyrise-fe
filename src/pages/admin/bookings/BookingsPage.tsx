@@ -22,6 +22,10 @@ type BookingRecord = {
   email: string;
   phoneNumber: string;
   facebookAccount?: string;
+  bookingTimeSchedule?: string;
+  bookingDateSchedule?: string;
+  location?: string;
+  question?: string;
 };
 
 type BookingTab = 'consultation' | 'admission';
@@ -129,6 +133,10 @@ const consultationBookings: BookingRecord[] = [
     email: 'maykhit@gmail.com',
     phoneNumber: '+95 96 234 5623',
     facebookAccount: 'facebook.com/maykhit',
+    bookingTimeSchedule: '08:00 a.m',
+    bookingDateSchedule: '2025-06-24T12:00:00.000Z',
+    location: 'Myanmar',
+    question: 'Interested in scholarship information.',
   },
 ];
 
@@ -287,6 +295,10 @@ const BookingsPage: React.FC = () => {
       email: values.email.trim(),
       phoneNumber: phoneDisplay,
       facebookAccount: values.facebookAccount.trim() || undefined,
+      bookingTimeSchedule: values.bookingTimeSchedule || undefined,
+      bookingDateSchedule: values.bookingDateSchedule || undefined,
+      location: values.location.trim() || undefined,
+      question: values.question.trim() || undefined,
     };
 
     setConsultationRows((prev) => [newBooking, ...prev]);

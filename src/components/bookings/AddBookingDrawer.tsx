@@ -7,7 +7,9 @@ import CalendarTimeIcon from '@/assets/calendar-time.svg?react';
 import CheckboxCheckedIcon from '@/assets/checkbox-checked.svg?react';
 import CloseSquareIcon from '@/assets/close-square.svg?react';
 import CaretDownIcon from '@/assets/caret-down.svg?react';
+import CalendarIcon from '@/assets/calendar.svg?react';
 import Button from '@/components/common/Button';
+import CustomCalendar from '@/components/common/CustomCalendar';
 import { bookingStatusOptions, type BookingStatus } from '@/types/bookings';
 
 export type AddBookingFormValues = {
@@ -18,6 +20,10 @@ export type AddBookingFormValues = {
   countryDialCode: string;
   phoneNumber: string;
   facebookAccount: string;
+  bookingTimeSchedule: string;
+  bookingDateSchedule: string;
+  location: string;
+  question: string;
 };
 
 type PlatformOption =
@@ -36,9 +42,12 @@ interface AddBookingDrawerProps {
 }
 
 const defaultPlatforms: PlatformOption[] = [
-  { value: 'Website', label: 'Website'},
+  { value: 'Website', label: 'Website' },
   { value: 'Social Media', label: 'Social Media' },
 ];
+
+const bookingTimeOptions = ['08:00 a.m', '12:00 p.m', '03:00 p.m', '08:00 p.m'];
+const bookingLocationOptions = ['Myanmar', 'Thailand', 'Singapore'];
 
 const initialFormValues: AddBookingFormValues = {
   status: 'Scheduled',
@@ -48,6 +57,10 @@ const initialFormValues: AddBookingFormValues = {
   countryDialCode: '+95',
   phoneNumber: '',
   facebookAccount: '',
+  bookingTimeSchedule: '',
+  bookingDateSchedule: '',
+  location: 'Myanmar',
+  question: '',
 };
 
 const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
@@ -64,8 +77,14 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
   const [values, setValues] = useState<AddBookingFormValues>(initialFormValues);
   const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
   const [isPlatformMenuOpen, setIsPlatformMenuOpen] = useState(false);
+  const [isTimeMenuOpen, setIsTimeMenuOpen] = useState(false);
+  const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const statusDropdownRef = useRef<HTMLDivElement | null>(null);
   const platformDropdownRef = useRef<HTMLDivElement | null>(null);
+  const timeDropdownRef = useRef<HTMLDivElement | null>(null);
+  const locationDropdownRef = useRef<HTMLDivElement | null>(null);
+  const calendarRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -105,6 +124,9 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
     if (!open) {
       setIsStatusMenuOpen(false);
       setIsPlatformMenuOpen(false);
+      setIsTimeMenuOpen(false);
+      setIsLocationMenuOpen(false);
+      setIsCalendarOpen(false);
     }
   }, [open]);
 
@@ -143,6 +165,60 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isPlatformMenuOpen]);
+
+  useEffect(() => {
+    if (!isTimeMenuOpen) {
+      return undefined;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!timeDropdownRef.current) return;
+      if (!timeDropdownRef.current.contains(event.target as Node)) {
+        setIsTimeMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isTimeMenuOpen]);
+
+  useEffect(() => {
+    if (!isLocationMenuOpen) {
+      return undefined;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!locationDropdownRef.current) return;
+      if (!locationDropdownRef.current.contains(event.target as Node)) {
+        setIsLocationMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isLocationMenuOpen]);
+
+  useEffect(() => {
+    if (!isCalendarOpen) {
+      return undefined;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!calendarRef.current) return;
+      if (!calendarRef.current.contains(event.target as Node)) {
+        setIsCalendarOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isCalendarOpen]);
 
   const handleFieldChange = <K extends keyof AddBookingFormValues>(
     field: K,
@@ -192,6 +268,19 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
   const selectedPlatformOption = normalizedPlatformOptions.find(
     (option) => option.value === values.submittedPlatform
   ) ?? { value: values.submittedPlatform, label: values.submittedPlatform };
+
+  const parsedSelectedDate = values.bookingDateSchedule
+    ? new Date(values.bookingDateSchedule)
+    : undefined;
+
+  const safeSelectedDate =
+    parsedSelectedDate && !Number.isNaN(parsedSelectedDate.getTime())
+      ? parsedSelectedDate
+      : undefined;
+
+  const formattedBookingDate = safeSelectedDate
+    ? safeSelectedDate.toLocaleDateString('en-GB')
+    : '';
 
   if (typeof document === 'undefined') {
     return null;
@@ -252,7 +341,7 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
               onSubmit={handleSubmit}
               className="flex h-full flex-col"
             >
-              <div className="flex-1 overflow-y-auto px-6 py-5">
+              <div className="flex-1 overflow-y-auto px-6 pt-5 pb-8">
                 <div className="space-y-5">
                   <div className="space-y-2">
                     <label htmlFor="booking-status" className="text-sm font-medium text-gray-700">
@@ -262,7 +351,13 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
                       <button
                         id="booking-status"
                         type="button"
-                        onClick={() => setIsStatusMenuOpen((prev) => !prev)}
+                        onClick={() => {
+                          setIsStatusMenuOpen((prev) => !prev);
+                          setIsPlatformMenuOpen(false);
+                          setIsTimeMenuOpen(false);
+                          setIsLocationMenuOpen(false);
+                          setIsCalendarOpen(false);
+                        }}
                         className="flex w-full items-center justify-between gap-4 rounded-full  bg-white px-5 py-3 text-sm font-medium text-gray-700 transition focus:outline-none "
                         aria-haspopup="listbox"
                         aria-expanded={isStatusMenuOpen}
@@ -347,7 +442,13 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
                       <button
                         id="booking-platform"
                         type="button"
-                        onClick={() => setIsPlatformMenuOpen((prev) => !prev)}
+                        onClick={() => {
+                          setIsPlatformMenuOpen((prev) => !prev);
+                          setIsStatusMenuOpen(false);
+                          setIsTimeMenuOpen(false);
+                          setIsLocationMenuOpen(false);
+                          setIsCalendarOpen(false);
+                        }}
                         className="flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none"
                         aria-haspopup="listbox"
                         aria-expanded={isPlatformMenuOpen}
@@ -473,6 +574,194 @@ const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (
                       }
                       placeholder="Link or account name"
                       className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="booking-time" className="text-sm font-medium text-gray-700">
+                      Booking Time Schedule
+                    </label>
+                    <div ref={timeDropdownRef} className="relative">
+                      <button
+                        id="booking-time"
+                        type="button"
+                        onClick={() => {
+                          setIsTimeMenuOpen((prev) => !prev);
+                          setIsStatusMenuOpen(false);
+                          setIsPlatformMenuOpen(false);
+                          setIsLocationMenuOpen(false);
+                          setIsCalendarOpen(false);
+                        }}
+                        className="flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none"
+                        aria-haspopup="listbox"
+                        aria-expanded={isTimeMenuOpen}
+                      >
+                        <span className="text-base font-semibold text-gray-900">
+                          {values.bookingTimeSchedule || 'Select time'}
+                        </span>
+                        <CaretDownIcon
+                          className={`h-4 w-4 text-gray-500 transition-transform ${
+                            isTimeMenuOpen ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+
+                      {isTimeMenuOpen ? (
+                        <div
+                          role="listbox"
+                          aria-labelledby="booking-time"
+                          className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-xl"
+                        >
+                          <div className="py-2">
+                            {bookingTimeOptions.map((option) => {
+                              const isSelected = values.bookingTimeSchedule === option;
+
+                              return (
+                                <button
+                                  key={option}
+                                  type="button"
+                                  role="option"
+                                  aria-selected={isSelected}
+                                  onClick={() => {
+                                    handleFieldChange('bookingTimeSchedule', option);
+                                    setIsTimeMenuOpen(false);
+                                  }}
+                                  className={`flex w-full items-center justify-between gap-3 px-5 py-3 text-left transition hover:bg-gray-50 ${
+                                    isSelected ? 'bg-gray-50' : ''
+                                  }`}
+                                >
+                                  <span className="text-base font-medium text-gray-900">
+                                    {option}
+                                  </span>
+                                  {isSelected ? (
+                                    <span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
+                                  ) : null}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="booking-date" className="text-sm font-medium text-gray-700">
+                      Booking Date Schedule
+                    </label>
+                    <div ref={calendarRef} className="relative">
+                      <button
+                        id="booking-date"
+                        type="button"
+                        onClick={() => {
+                          setIsCalendarOpen((prev) => !prev);
+                          setIsStatusMenuOpen(false);
+                          setIsPlatformMenuOpen(false);
+                          setIsTimeMenuOpen(false);
+                          setIsLocationMenuOpen(false);
+                        }}
+                        className="flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none"
+                        aria-haspopup="dialog"
+                        aria-expanded={isCalendarOpen}
+                      >
+                        <span className="text-base font-semibold text-gray-900">
+                          {formattedBookingDate || 'dd / mm / yyyy'}
+                        </span>
+                        <CalendarIcon className="h-5 w-5 text-gray-500" />
+                      </button>
+
+                      {isCalendarOpen ? (
+                        <div className="absolute left-1/2 top-full z-30 mt-2 -translate-x-1/2">
+                          <CustomCalendar
+                            selectedDate={safeSelectedDate}
+                            onDateSelect={(date) => {
+                              handleFieldChange('bookingDateSchedule', date.toISOString());
+                              setIsCalendarOpen(false);
+                            }}
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="booking-location" className="text-sm font-medium text-gray-700">
+                      Location
+                    </label>
+                    <div ref={locationDropdownRef} className="relative">
+                      <button
+                        id="booking-location"
+                        type="button"
+                        onClick={() => {
+                          setIsLocationMenuOpen((prev) => !prev);
+                          setIsStatusMenuOpen(false);
+                          setIsPlatformMenuOpen(false);
+                          setIsTimeMenuOpen(false);
+                          setIsCalendarOpen(false);
+                        }}
+                        className="flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none"
+                        aria-haspopup="listbox"
+                        aria-expanded={isLocationMenuOpen}
+                      >
+                        <span className="text-base font-semibold text-gray-900">
+                          {values.location}
+                        </span>
+                        <CaretDownIcon
+                          className={`h-4 w-4 text-gray-500 transition-transform ${
+                            isLocationMenuOpen ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+
+                      {isLocationMenuOpen ? (
+                        <div
+                          role="listbox"
+                          aria-labelledby="booking-location"
+                          className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-xl"
+                        >
+                          <div className="py-2">
+                            {bookingLocationOptions.map((option) => {
+                              const isSelected = values.location === option;
+
+                              return (
+                                <button
+                                  key={option}
+                                  type="button"
+                                  role="option"
+                                  aria-selected={isSelected}
+                                  onClick={() => {
+                                    handleFieldChange('location', option);
+                                    setIsLocationMenuOpen(false);
+                                  }}
+                                  className={`flex w-full items-center justify-between gap-3 px-5 py-3 text-left transition hover:bg-gray-50 ${
+                                    isSelected ? 'bg-gray-50' : ''
+                                  }`}
+                                >
+                                  <span className="text-base font-medium text-gray-900">
+                                    {option}
+                                  </span>
+                                  {isSelected ? (
+                                    <span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
+                                  ) : null}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="booking-question" className="text-sm font-medium text-gray-700">
+                      Question
+                    </label>
+                    <textarea
+                      id="booking-question"
+                      value={values.question}
+                      onChange={(event) => handleFieldChange('question', event.target.value)}
+                      placeholder="Questions asked by student"
+                      className="min-h-[120px] w-full resize-none rounded-3xl border border-gray-200 px-4 py-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                     />
                   </div>
                 </div>
