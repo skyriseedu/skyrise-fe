@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import DropdownInput from '@/components/common/DropdownInput';
 import { TextEditor } from '@/components/common/TextEditor/TextEditor';
 import CustomCalendar from '@/components/common/CustomCalendar';
 import {
@@ -95,7 +96,6 @@ const ProgramForm: React.FC = () => {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
-
       // Handle ranking dropdown
       if (
         rankingDropdownRef.current &&
@@ -282,9 +282,7 @@ const ProgramForm: React.FC = () => {
                         : ''
                     }
                     placeholder="dd/mm/yyyy"
-                    readOnly
                     onClick={() => {
-                      setShowRankingDropdown(false);
                       setShowCalendar(!showCalendar);
                     }}
                     className="w-full cursor-pointer rounded-lg border border-gray-300 px-4 py-2 pr-10"
@@ -292,7 +290,6 @@ const ProgramForm: React.FC = () => {
                   <Calendar
                     className="absolute top-1/2 right-3 h-5 w-5 -translate-y-1/2 cursor-pointer text-black"
                     onClick={() => {
-                      setShowRankingDropdown(false);
                       setShowCalendar(!showCalendar);
                     }}
                   />
@@ -456,39 +453,37 @@ const ProgramForm: React.FC = () => {
                   <label className="text-h5 mb-1 block text-gray-500">
                     Degree
                   </label>
-                  <select
+                  <DropdownInput
+                    options={[
+                      { value: 'Bachelor', label: 'Bachelor' },
+                      { value: 'Master', label: 'Master' },
+                      { value: 'PhD', label: 'Foundation' },
+                    ]}
                     value={formData.degree}
-                    onChange={(e) =>
-                      handleInputChange('degree', e.target.value)
-                    }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2"
-                  >
-                    <option value="Bachelor">Bachelor</option>
-                    <option value="Master">Master</option>
-                    <option value="PhD">Foundation</option>
-                  </select>
+                    onChange={(value) => handleInputChange('degree', value)}
+                    placeholder="Select Degree"
+                  />
                 </div>
 
                 <div>
                   <label className="text-h5 mb-1 block text-gray-500">
                     Duration
                   </label>
-                  <select
+                  <DropdownInput
+                    options={[
+                      { value: '1 year', label: '1 year' },
+                      { value: '1.5 years', label: '1.5 years' },
+                      { value: '2 years', label: '2 years' },
+                      { value: '2.5 years', label: '2.5 years' },
+                      { value: '3 years', label: '3 years' },
+                      { value: '3.5 years', label: '3.5 years' },
+                      { value: '4 years', label: '4 years' },
+                      { value: '4.5 years', label: '4.5 years' },
+                    ]}
                     value={formData.duration}
-                    onChange={(e) =>
-                      handleInputChange('duration', e.target.value)
-                    }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2"
-                  >
-                    <option value="1 year">1 year</option>
-                    <option value="1.5 years">1.5 years</option>
-                    <option value="2 years">2 years</option>
-                    <option value="2.5 years">2.5 years</option>
-                    <option value="3 years">3 years</option>
-                    <option value="3.5 years">3.5 years</option>
-                    <option value="4 years">4 years</option>
-                    <option value="4.5 years">4.5 years</option>
-                  </select>
+                    onChange={(value) => handleInputChange('duration', value)}
+                    placeholder="Select Duration"
+                  />
                 </div>
 
                 <div>
@@ -510,16 +505,17 @@ const ProgramForm: React.FC = () => {
                   <label className="text-h5 mb-1 block text-gray-500">
                     Application fee
                   </label>
-                  <select
+                  <DropdownInput
+                    options={[
+                      { value: 'Free', label: 'Free' },
+                      { value: 'Paid', label: 'Charged' },
+                    ]}
                     value={formData.applicationFee}
-                    onChange={(e) =>
-                      handleInputChange('applicationFee', e.target.value)
+                    onChange={(value) =>
+                      handleInputChange('applicationFee', value)
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2"
-                  >
-                    <option value="Free">Free</option>
-                    <option value="Paid">Charged</option>
-                  </select>
+                    placeholder="Select Application Fee"
+                  />
                 </div>
               </div>
             </div>
@@ -551,29 +547,21 @@ const ProgramForm: React.FC = () => {
                       <label className="flex items-center text-xs text-gray-500">
                         Month
                       </label>
-                      <select
+                      <DropdownInput
+                        options={months.map((month) => ({
+                          value: month,
+                          label: month,
+                          disabled:
+                            selectedMonths.includes(month) &&
+                            intake.month !== month,
+                        }))}
                         value={intake.month}
-                        onChange={(e) =>
-                          handleIntakeChange(index, 'month', e.target.value)
+                        onChange={(value) =>
+                          handleIntakeChange(index, 'month', value)
                         }
-                        className="w-32 rounded-lg border border-gray-300 px-3 py-2"
-                      >
-                        <option value="" disabled>
-                          Select Month
-                        </option>
-                        {months.map((month) => (
-                          <option
-                            key={month}
-                            value={month}
-                            disabled={
-                              selectedMonths.includes(month) &&
-                              intake.month !== month
-                            }
-                          >
-                            {month}
-                          </option>
-                        ))}
-                      </select>
+                        placeholder="Select Month"
+                        className="w-34"
+                      />
                       {formData.upcomingIntakes.length > 1 && (
                         <button
                           type="button"
