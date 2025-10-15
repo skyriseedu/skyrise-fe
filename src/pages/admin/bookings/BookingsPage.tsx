@@ -12,6 +12,8 @@ import AddBookingDrawer, {
   type AddBookingFormValues,
 } from '@/components/bookings/AddBookingDrawer';
 import type { BookingStatus } from '@/types/bookings';
+import { useConsultations, useCreateConsultation } from '@/queries';
+import type { Consultation, CreateConsultationRequest } from '@/types/bookings';
 
 type BookingRecord = {
   id: string;
@@ -121,34 +123,125 @@ const bookingColumns: TableColumn<BookingRecord>[] = [
     header: 'Phone Number',
     minWidth: 160,
   },
-];
-
-const consultationBookings: BookingRecord[] = [
   {
-    id: 'booking-1',
-    status: 'Scheduled',
-    submittedPlatform: 'Website',
-    submittedDate: '2025-06-24',
-    name: 'May Khit Thar',
-    email: 'maykhit@gmail.com',
-    phoneNumber: '+95 96 234 5623',
-    facebookAccount: 'facebook.com/maykhit',
-    bookingTimeSchedule: '08:00 a.m',
-    bookingDateSchedule: '2025-06-24T12:00:00.000Z',
-    location: 'Myanmar',
-    question: 'Interested in scholarship information.',
+    key: 'bookingTimeSchedule',
+    header: 'Booking Time',
+    minWidth: 140,
+    sortable: true,
+    headerClassName: 'whitespace-nowrap',
+    headerContentClassName: 'whitespace-nowrap',
+    cellClassName: 'whitespace-nowrap',
+  },
+  {
+    key: 'location',
+    header: 'Location',
+    minWidth: 120,
+    sortable: true,
+  },
+  {
+    key: 'question',
+    header: 'Question',
+    minWidth: 200,
+    render: (row) => (
+      <div className="max-w-xs truncate" title={row.question}>
+        {row.question}
+      </div>
+    ),
   },
 ];
+
+// Transform Consultation data from backend to BookingRecord format for the table
+const transformConsultationToBookingRecord = (consultation: Consultation): BookingRecord => {
+  // Transform status from backend (lowercase) to frontend format (capitalized)
+  const statusMap: Record<string, BookingStatus> = {
+    'scheduled': 'Scheduled',
+    'completed': 'Completed',
+    'cancelled': 'Cancelled',
+  };
+  
+  const frontendStatus = statusMap[consultation.status.toLowerCase()] || consultation.status as BookingStatus;
+  
+  console.log('Transforming consultation:', {
+    backendStatus: consultation.status,
+    frontendStatus: frontendStatus,
+    consultationId: consultation.id,
+    consultationObject: consultation,
+    hasUser: !!consultation.user,
+    userName: consultation.user?.name,
+    userEmail: consultation.user?.email,
+    userPhone: consultation.user?.phone,
+    directName: (consultation as any).name,
+    directEmail: (consultation as any).email,
+    directPhoneNumber: (consultation as any).phoneNumber,
+    directLocation: (consultation as any).location,
+    directQuestion: (consultation as any).question,
+    directSubmittedPlatform: (consultation as any).submittedPlatform,
+    directBookingTimeSchedule: (consultation as any).bookingTimeSchedule,
+    consultationTime: consultation.time,
+    consultationNotes: consultation.notes,
+  });
+  
+  return {
+    id: consultation.id,
+    status: frontendStatus,
+    submittedPlatform: (consultation as any).submittedPlatform || 'Website', // Try to get from API, fallback to default
+    submittedDate: consultation.createdAt,
+    name: consultation.user?.name || (consultation as any).name || 'N/A',
+    email: consultation.user?.email || (consultation as any).email || 'N/A',
+    phoneNumber: consultation.user?.phone || (consultation as any).phoneNumber || 'N/A',
+    facebookAccount: undefined, 
+    bookingTimeSchedule: (consultation as any).bookingTimeSchedule || consultation.time || 'N/A',
+    bookingDateSchedule: consultation.date,
+    location: (consultation as any).location || 'N/A',
+    question: (consultation as any).question || consultation.notes || 'N/A',
+  };
+};
 
 const BookingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<BookingTab>('consultation');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortState, setSortState] = useState<SortState>();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [consultationRows, setConsultationRows] = useState<BookingRecord[]>(
-    () => consultationBookings
-  );
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState<BookingStatus>('Scheduled');
+
+  // console.log('Current statusFilter:', statusFilter);
+
+  const {
+    data: consultationsData,
+    isLoading,
+    error,
+    isError,
+  } = useConsultations({
+    status: statusFilter,
+    page: currentPage,
+    limit: 10,
+  });
+
+  // console.log('Current filter parameters:', {
+  //   status: statusFilter,
+  //   page: currentPage,
+  //   limit: 10,
+  //   isLoading,
+  //   isError,
+  //   error,
+  // });
+  
+
+  const createConsultationMutation = useCreateConsultation();
+
+  // Transform backend data to table format
+  const consultationRows = useMemo(() => {
+    if (!consultationsData?.data) {
+      console.log('No consultations data found, returning empty array');
+      return [];
+    }
+    
+    const transformedRows = consultationsData.data.map(transformConsultationToBookingRecord);
+    console.log('Transformed consultation rows:', transformedRows);
+    return transformedRows;
+  }, [consultationsData]);
 
   const tabs: Array<{ key: BookingTab; label: string }> = useMemo(
     () => [
@@ -172,6 +265,9 @@ const BookingsPage: React.FC = () => {
         row.name,
         row.email,
         row.phoneNumber,
+        row.bookingTimeSchedule,
+        row.location,
+        row.question,
       ]
         .join(' ')
         .toLowerCase()
@@ -191,6 +287,9 @@ const BookingsPage: React.FC = () => {
       name: 'name',
       email: 'email',
       phoneNumber: 'phoneNumber',
+      bookingTimeSchedule: 'bookingTimeSchedule',
+      location: 'location',
+      question: 'question',
     };
 
     const key = sortableKeys[sortState.key];
@@ -219,7 +318,7 @@ const BookingsPage: React.FC = () => {
   }, [filteredConsultationRows, sortState]);
 
   const tableData = activeTab === 'consultation' ? sortedConsultationRows : [];
-
+  
   useEffect(() => {
     setSelectedIds([]);
     setSortState(undefined);
@@ -257,17 +356,28 @@ const BookingsPage: React.FC = () => {
   const handleTabChange = (tabKey: BookingTab) => {
     setActiveTab(tabKey);
     setSearchTerm('');
+    setCurrentPage(1); 
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const totalBookings = activeTab === 'consultation' ? consultationRows.length : 0;
+  const handleStatusFilterChange = (status: BookingStatus) => {
+    setStatusFilter(status);
+    setCurrentPage(1); 
+    setSelectedIds([]);
+  };
 
-  const emptyMessage = searchTerm
+  const totalBookings = consultationsData?.total || 0;
+
+  const emptyMessage = isLoading 
+    ? 'Loading consultations...' 
+    : searchTerm
     ? 'No bookings match your search criteria.'
-    : 'No bookings available for this tab yet.';
+    : `No ${statusFilter} consultations available.`;
+
+  const pagination = consultationsData?.pagination;
 
   const handleOpenAddDrawer = () => {
     setIsAddDrawerOpen(true);
@@ -277,35 +387,121 @@ const BookingsPage: React.FC = () => {
     setIsAddDrawerOpen(false);
   };
 
-  const handleAddConsultationBooking = (values: AddBookingFormValues) => {
-    const isoDate = new Date().toISOString().split('T')[0];
-    const trimmedPhone = values.phoneNumber.trim();
-    const trimmedDialCode = values.countryDialCode.trim();
-    const phoneDisplay = [trimmedDialCode, trimmedPhone]
-      .filter(Boolean)
-      .join(' ')
-      .trim();
+  const handleAddConsultationBooking = async (values: AddBookingFormValues) => {
+    try {
+      const transformBookingTime = (timeString: string): string => {
+        return timeString.replace(/\s+(a\.m|p\.m)$/i, '');
+      };
 
-    const newBooking: BookingRecord = {
-      id: `booking-${Date.now()}`,
-      status: values.status,
-      submittedPlatform: values.submittedPlatform,
-      submittedDate: isoDate,
-      name: values.name.trim() || 'Unknown',
-      email: values.email.trim(),
-      phoneNumber: phoneDisplay,
-      facebookAccount: values.facebookAccount.trim() || undefined,
-      bookingTimeSchedule: values.bookingTimeSchedule || undefined,
-      bookingDateSchedule: values.bookingDateSchedule || undefined,
-      location: values.location.trim() || undefined,
-      question: values.question.trim() || undefined,
-    };
+      const consultationData: CreateConsultationRequest = {
+        name: values.name.trim(),
+        email: values.email.trim(),
+        phoneNumber: `${values.countryDialCode.trim()} ${values.phoneNumber.trim()}`.trim(),
+        bookingTimeSchedule: transformBookingTime(values.bookingTimeSchedule),
+        bookingDateSchedule: values.bookingDateSchedule,
+        location: values.location.trim() || undefined,
+        question: values.question.trim() || undefined,
+      };
 
-    setConsultationRows((prev) => [newBooking, ...prev]);
-    setSelectedIds([]);
-    setSortState(undefined);
-    handleCloseAddDrawer();
+      console.log('Creating consultation with data:', consultationData);
+      console.log('Time transformed from:', values.bookingTimeSchedule, 'to:', consultationData.bookingTimeSchedule);
+      
+      await createConsultationMutation.mutateAsync(consultationData);
+      
+      handleCloseAddDrawer();
+      setSelectedIds([]);
+      setSortState(undefined);      
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create consultation booking';
+      console.error(`Error: ${errorMessage}`);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8 text-gray-700">
+        <section className="space-y-6">
+          <div className="flex flex-wrap items-center gap-6 pb-3">
+            {tabs?.map((tab) => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  className={clsx(
+                    "relative pb-3 text-h3 font-semibold text-gray-500 transition-colors after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
+                    isActive
+                      ? 'text-primary after:bg-primary'
+                      : 'after:bg-transparent hover:text-primary'
+                  )}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+          
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
+            <div className="h-12 bg-gray-200 rounded mb-4"></div>
+            <div className="space-y-3">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-16 bg-gray-200 rounded"></div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  if (isError) {
+    console.log('Component is in error state, showing error UI');
+    return (
+      <div className="space-y-8 text-gray-700">
+        <section className="space-y-6">
+          <div className="flex flex-wrap items-center gap-6 pb-3">
+            {tabs?.map((tab) => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  className={clsx(
+                    "relative pb-3 text-h3 font-semibold text-gray-500 transition-colors after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
+                    isActive
+                      ? 'text-primary after:bg-primary'
+                      : 'after:bg-transparent hover:text-primary'
+                  )}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+          
+          <div className="text-center py-12">
+            <div className="text-red-500 mb-4">
+              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Bookings</h3>
+            <p className="text-gray-600 mb-4">{error?.message || 'Failed to load consultation bookings'}</p>
+            <button 
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  console.log('Rendering main content - not in loading or error state');
+  console.log('Final check - tableData:', tableData, 'length:', tableData.length);
 
   return (
     <div className="space-y-8 text-gray-700">
@@ -346,17 +542,24 @@ const BookingsPage: React.FC = () => {
                 type="search"
                 value={searchTerm}
                 onChange={handleSearchChange}
-                placeholder="Search Name, Status, Facebook account"
-                className="w-full rounded-md border  bg-white py-2 pl-10 pr-4 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none"
+                placeholder="Search Name, Email, Status..."
+                className="w-full rounded-md border bg-white py-2 pl-10 pr-4 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none"
               />
             </div>
-            <button
-              type="button"
-              className="inline-flex items-center gap-2 cursor-pointer rounded-md borderpx-4 py-2 px-4 text-sm font-semibold text-gray-600 transition-colors bg-secondary "
-            >
-              <FilterIcon className="h-4 w-4" />
-              Status
-            </button>
+            
+            {/* Status Filter Dropdown */}
+            <div className="relative">
+              <select
+                value={statusFilter}
+                onChange={(e) => handleStatusFilterChange(e.target.value as BookingStatus)}
+                className="appearance-none rounded-md border bg-white py-2 pl-4 pr-8 text-sm font-medium text-gray-700 focus:outline-none cursor-pointer"
+              >
+                <option value="Scheduled">Scheduled</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+              <FilterIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 pointer-events-none text-gray-400" />
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <Button
@@ -370,8 +573,9 @@ const BookingsPage: React.FC = () => {
               type="button"
               className="rounded-full px-5"
               onClick={handleOpenAddDrawer}
+              disabled={createConsultationMutation.isPending}
             >
-              + Consultation Record
+              {createConsultationMutation.isPending ? 'Creating...' : '+ Consultation Record'}
             </Button>
           </div>
         </div>
@@ -390,6 +594,60 @@ const BookingsPage: React.FC = () => {
           emptyMessage={emptyMessage}
           maxBodyHeight={460}
         />
+
+        {/* Pagination Controls */}
+        {pagination && pagination.totalPages > 1 && (
+          <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+            <div className="flex justify-between flex-1 sm:hidden">
+              <button
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage <= 1}
+                className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setCurrentPage(Math.min(pagination.totalPages, currentPage + 1))}
+                disabled={currentPage >= pagination.totalPages}
+                className="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-gray-700">
+                  Showing <span className="font-medium">{((currentPage - 1) * 10) + 1}</span> to{' '}
+                  <span className="font-medium">
+                    {Math.min(currentPage * 10, pagination.total)}
+                  </span>{' '}
+                  of <span className="font-medium">{pagination.total}</span> results
+                </p>
+              </div>
+              <div>
+                <nav className="inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                  <button
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage <= 1}
+                    className="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Previous
+                  </button>
+                  <span className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300">
+                    Page {currentPage} of {pagination.totalPages}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage(Math.min(pagination.totalPages, currentPage + 1))}
+                    disabled={currentPage >= pagination.totalPages}
+                    className="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                  </button>
+                </nav>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       <AddBookingDrawer

@@ -38,7 +38,7 @@ const defaultPlatforms: PlatformOption[] = [
   { value: 'Social Media', label: 'Social Media' },
 ];
 
-const bookingTimeOptions = ['08:00 a.m', '12:00 p.m', '03:00 p.m', '08:00 p.m'];
+const bookingTimeOptions = ['08:00 a.m', '12:00 p.m', '15:00 p.m', '20:00 p.m'];
 const bookingLocationOptions = ['Myanmar', 'Thailand', 'Singapore'];
 
 export interface BookingDrawerBaseProps {
@@ -87,6 +87,7 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
   const [values, setValues] = useState<AddBookingFormValues>(() =>
     cloneFormValues(initialValues)
   );
+  const [errors, setErrors] = useState<Partial<Record<keyof AddBookingFormValues, string>>>({});
   const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
   const [isPlatformMenuOpen, setIsPlatformMenuOpen] = useState(false);
   const [isTimeMenuOpen, setIsTimeMenuOpen] = useState(false);
@@ -101,6 +102,7 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
   useEffect(() => {
     if (open) {
       setValues(cloneFormValues(initialValues));
+      setErrors({}); // Clear all errors when drawer opens
     }
   }, [open, initialValues]);
 
@@ -240,6 +242,14 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
       ...prev,
       [field]: value,
     }));
+    
+    // Clear error for this field when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: undefined,
+      }));
+    }
   };
 
   const statusVisuals: Record<BookingStatus, {
@@ -249,8 +259,8 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
   }> = {
     Scheduled: {
       Icon: CalendarTimeIcon,
-      iconClassName: 'text-gray-600',
-      textClassName: 'text-gray-600',
+      iconClassName: 'text-yellow-600',
+      textClassName: 'text-yellow-600',
     },
     Completed: {
       Icon: CheckboxCheckedIcon,
@@ -264,8 +274,68 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
     },
   };
 
+  const validateForm = (): boolean => {
+    const newErrors: Partial<Record<keyof AddBookingFormValues, string>> = {};
+
+    if (!values.status) {
+      newErrors.status = 'Status is required';
+    }
+
+    if (!values.submittedPlatform.trim()) {
+      newErrors.submittedPlatform = 'Platform is required';
+    }
+
+    if (!values.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    
+    if (!values.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(values.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    
+    if (!values.phoneNumber.trim()) {
+      newErrors.phoneNumber = 'Phone number is required';
+    } else {
+      const phoneRegex = /^[\d\s\-\+\(\)]{7,}$/;
+      if (!phoneRegex.test(values.phoneNumber.trim())) {
+        newErrors.phoneNumber = 'Please provide a valid phone number';
+      }
+    }
+    
+    if (!values.bookingTimeSchedule) {
+      newErrors.bookingTimeSchedule = 'Time is required';
+    } else {
+      const validTimeOptions = ['08:00 a.m', '12:00 p.m', '15:00 p.m', '20:00 p.m'];
+      if (!validTimeOptions.includes(values.bookingTimeSchedule)) {
+        newErrors.bookingTimeSchedule = 'Please select a valid time slot';
+      }
+    }
+    
+    if (!values.bookingDateSchedule) {
+      newErrors.bookingDateSchedule = 'Date is required';
+    }
+    
+    if (!values.location.trim()) {
+      newErrors.location = 'Location is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    
+    // Clear previous errors
+    setErrors({});
+    
+    // Validate form
+    if (!validateForm()) {
+      return;
+    }
+    
     onSubmit?.(values);
   };
 
@@ -370,7 +440,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                           setIsLocationMenuOpen(false);
                           setIsCalendarOpen(false);
                         }}
-                        className="flex w-full items-center justify-between gap-4 rounded-full  bg-white px-5 py-3 text-sm font-medium text-gray-700 transition focus:outline-none "
+                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-sm font-medium text-gray-700 transition focus:outline-none border ${
+                          errors.status ? 'border-red-500' : 'border-gray-200'
+                        }`}
                         aria-haspopup="listbox"
                         aria-expanded={isStatusMenuOpen}
                       >
@@ -444,6 +516,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                         </div>
                       ) : null}
                     </div>
+                    {errors.status && (
+                      <p className="text-sm text-red-500">{errors.status}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -461,7 +536,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                           setIsLocationMenuOpen(false);
                           setIsCalendarOpen(false);
                         }}
-                        className="flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none"
+                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none border ${
+                          errors.submittedPlatform ? 'border-red-500' : 'border-gray-200'
+                        }`}
                         aria-haspopup="listbox"
                         aria-expanded={isPlatformMenuOpen}
                       >
@@ -521,6 +598,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                         </div>
                       ) : null}
                     </div>
+                    {errors.submittedPlatform && (
+                      <p className="text-sm text-red-500">{errors.submittedPlatform}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -532,9 +612,14 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                       value={values.name}
                       onChange={(event) => handleFieldChange('name', event.target.value)}
                       placeholder="Enter full name"
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      className={`w-full rounded-lg border px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 ${
+                        errors.name ? 'border-red-500' : 'border-gray-200'
+                      }`}
                       required
                     />
+                    {errors.name && (
+                      <p className="text-sm text-red-500">{errors.name}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -547,8 +632,13 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                       value={values.email}
                       onChange={(event) => handleFieldChange('email', event.target.value)}
                       placeholder="example@email.com"
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      className={`w-full rounded-lg border px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 ${
+                        errors.email ? 'border-red-500' : 'border-gray-200'
+                      }`}
                     />
+                    {errors.email && (
+                      <p className="text-sm text-red-500">{errors.email}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -569,9 +659,14 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                         value={values.phoneNumber}
                         onChange={(event) => handleFieldChange('phoneNumber', event.target.value)}
                         placeholder="Enter phone number"
-                        className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+                        className={`flex-1 rounded-lg border px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 ${
+                          errors.phoneNumber ? 'border-red-500' : 'border-gray-200'
+                        }`}
                       />
                     </div>
+                    {errors.phoneNumber && (
+                      <p className="text-sm text-red-500">{errors.phoneNumber}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -604,7 +699,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                           setIsLocationMenuOpen(false);
                           setIsCalendarOpen(false);
                         }}
-                        className="flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none"
+                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none border ${
+                          errors.bookingTimeSchedule ? 'border-red-500' : 'border-gray-200'
+                        }`}
                         aria-haspopup="listbox"
                         aria-expanded={isTimeMenuOpen}
                       >
@@ -655,6 +752,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                         </div>
                       ) : null}
                     </div>
+                    {errors.bookingTimeSchedule && (
+                      <p className="text-sm text-red-500">{errors.bookingTimeSchedule}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -672,7 +772,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                           setIsTimeMenuOpen(false);
                           setIsLocationMenuOpen(false);
                         }}
-                        className="flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none"
+                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none border ${
+                          errors.bookingDateSchedule ? 'border-red-500' : 'border-gray-200'
+                        }`}
                         aria-haspopup="dialog"
                         aria-expanded={isCalendarOpen}
                       >
@@ -694,6 +796,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                         </div>
                       ) : null}
                     </div>
+                    {errors.bookingDateSchedule && (
+                      <p className="text-sm text-red-500">{errors.bookingDateSchedule}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -711,7 +816,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                           setIsTimeMenuOpen(false);
                           setIsCalendarOpen(false);
                         }}
-                        className="flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none"
+                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none border ${
+                          errors.location ? 'border-red-500' : 'border-gray-200'
+                        }`}
                         aria-haspopup="listbox"
                         aria-expanded={isLocationMenuOpen}
                       >
@@ -762,6 +869,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                         </div>
                       ) : null}
                     </div>
+                    {errors.location && (
+                      <p className="text-sm text-red-500">{errors.location}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">

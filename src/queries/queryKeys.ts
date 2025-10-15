@@ -62,3 +62,10 @@ export const ambassadorKeys = {
   paginated: (page?: number, limit?: number) =>
     [...ambassadorKeys.lists(), { page, limit }] as const,
 } as const;
+
+export const bookingKeys = {
+  all: ['bookings'] as const,
+  consultations: () => [...bookingKeys.all, 'consultations'] as const,
+  consultationsList: (filters: Record<string, unknown>) =>
+    [...bookingKeys.consultations(), 'list', { filters }] as const,
+} as const;
