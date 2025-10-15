@@ -25,6 +25,8 @@ import AccommodationPage from './pages/users/services/AccommodationPage';
 import PreUniversityPage from './pages/users/services/PreUniversityPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import UniversitySetup from './pages/admin/universities/UniversitySetup';
+import UniversityForm from './pages/admin/universities/UniversityForm';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -98,6 +100,17 @@ const App: React.FC = () => {
               <Route path="program-setup" element={<ProgramSetup />} />
               <Route path="program-setup/create" element={<ProgramForm />} />
               <Route path="program-setup/edit/:id" element={<ProgramForm />} />
+
+              <Route path="university-setup" element={<UniversitySetup />} />
+              <Route
+                path="university-setup/create"
+                element={<UniversityForm />}
+              />
+              <Route
+                path="university-setup/edit/:id"
+                element={<UniversityForm />}
+              />
+
               <Route path="bookings" element={<BookingsPage />} />
             </Route>
 
