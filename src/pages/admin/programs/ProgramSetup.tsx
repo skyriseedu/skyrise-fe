@@ -69,6 +69,40 @@ const ProgramSetup: React.FC = () => {
     direction: 'asc',
   });
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [showStatusFilter, setShowStatusFilter] = useState(false);
+  const [selectedStatuses, setSelectedStatuses] = useState<Set<string>>(
+    new Set()
+  );
+  const statusFilterRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside status filter
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        statusFilterRef.current &&
+        !statusFilterRef.current.contains(event.target as Node)
+      ) {
+        setShowStatusFilter(false);
+      }
+    };
+
+    if (showStatusFilter) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [showStatusFilter]);
+
+  const handleStatusToggle = (status: string) => {
+    const newStatuses = new Set(selectedStatuses);
+    if (newStatuses.has(status)) {
+      newStatuses.delete(status);
+    } else {
+      newStatuses.add(status);
+    }
+    setSelectedStatuses(newStatuses);
+  };
 
   // Filter programs based on search query
   const filteredPrograms = useMemo(() => {
@@ -205,13 +239,13 @@ const ProgramSetup: React.FC = () => {
     {
       key: 'title',
       header: 'Program Title',
-      sortable: true,
+      sortable: false,
       cellClassName: 'font-medium',
     },
     {
       key: 'universityName',
       header: 'University Name',
-      sortable: true,
+      sortable: false,
     },
     {
       key: 'publishedDate',
@@ -242,7 +276,7 @@ const ProgramSetup: React.FC = () => {
 
           <div className="flex items-center justify-between gap-4">
             {/* Search */}
-            <div className="flex max-w-md justify-between space-x-5">
+            <div className="relative z-50 flex max-w-md justify-between space-x-5">
               <div className="relative">
                 <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                 <input
@@ -250,13 +284,54 @@ const ProgramSetup: React.FC = () => {
                   placeholder="Search Program, University"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="focus:ring-primary w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2"
+                  className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10"
                 />
               </div>
-              <button className="bg-secondary flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700 hover:bg-red-200">
-                <Filter />
-                Status
-              </button>
+
+              {/* Status Filter Dropdown */}
+              <div className="relative" ref={statusFilterRef}>
+                <button
+                  onClick={() => setShowStatusFilter(!showStatusFilter)}
+                  className="bg-secondary flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700 hover:bg-red-200"
+                >
+                  <Filter />
+                  Status
+                </button>
+
+                {showStatusFilter && (
+                  <div className="absolute top-full left-0 z-[100] mt-2 w-64 rounded-lg border border-gray-200 bg-white shadow-lg">
+                    <div className="p-4">
+                      {/* Draft Option */}
+                      <label className="mb-3 flex cursor-pointer items-center gap-3 rounded p-2 hover:bg-gray-50">
+                        <input
+                          type="checkbox"
+                          checked={selectedStatuses.has('draft')}
+                          onChange={() => handleStatusToggle('draft')}
+                          className="h-5 w-5 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500"
+                        />
+                        <span className="inline-flex items-center gap-2 rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800">
+                          <span className="h-2 w-2 rounded-full bg-yellow-500"></span>
+                          Draft
+                        </span>
+                      </label>
+
+                      {/* Published Option */}
+                      <label className="flex cursor-pointer items-center gap-3 rounded p-2 hover:bg-gray-50">
+                        <input
+                          type="checkbox"
+                          checked={selectedStatuses.has('published')}
+                          onChange={() => handleStatusToggle('published')}
+                          className="h-5 w-5 rounded border-gray-300 text-green-500 focus:ring-green-500"
+                        />
+                        <span className="inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+                          <span className="h-2 w-2 rounded-full bg-green-500"></span>
+                          Published
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Action buttons */}

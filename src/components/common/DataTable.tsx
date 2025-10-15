@@ -1,8 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 
-import CaretUpIcon from '@/assets/caret-up.svg?react';
-import CaretDownIcon from '@/assets/caret-down.svg?react';
+import SortIndicator from '@/assets/sort-indicator.svg?react';
 
 type SortDirection = 'asc' | 'desc';
 
@@ -41,31 +40,6 @@ type DataTableProps<T> = {
   className?: string;
   maxBodyHeight?: number | string;
 };
-
-type HeaderCellButtonProps = {
-  active: boolean;
-  direction?: SortDirection;
-};
-
-const SortIndicator: React.FC<HeaderCellButtonProps> = ({
-  active,
-  direction,
-}) => (
-  <span className="relative flex flex-col text-gray-300" aria-hidden="true">
-    <CaretUpIcon
-      className={clsx(
-        'h-2.5 w-2.5',
-        active && direction === 'asc' ? 'text-primary' : 'text-gray-400'
-      )}
-    />
-    <CaretDownIcon
-      className={clsx(
-        'h-2.5 w-2.5 -mt-0.5',
-        active && direction === 'desc' ? 'text-primary' : 'text-gray-400'
-      )}
-    />
-  </span>
-);
 
 const getAlignClass = (align: TableColumn<unknown>['align']) => {
   switch (align) {
@@ -132,12 +106,7 @@ function DataTable<T extends Record<string, unknown>>({
   };
 
   return (
-    <div
-      className={clsx(
-        'overflow-hidden rounded-xl bg-white ',
-        className
-      )}
-    >
+    <div className={clsx('overflow-hidden rounded-xl bg-white', className)}>
       <div className="overflow-x-auto">
         <div
           className={clsx('min-w-full', {
@@ -147,22 +116,18 @@ function DataTable<T extends Record<string, unknown>>({
         >
           <table className="min-w-full border-collapse">
             <thead className="bg-secondary overflow-x-scroll">
-              <tr>  
-                  <th
-                    className="sticky top-0 z-10 w-10 px-4 py-4 align-middle bg-secondary first:rounded-tl-2xl first:rounded-bl-2xl"
-                  >
-                  </th>
+              <tr>
+                <th className="bg-secondary sticky top-0 z-10 w-10 py-2 align-middle first:rounded-tl-2xl first:rounded-bl-2xl"></th>
                 {columns?.map((column) => {
                   const alignment = getAlignClass(column.align);
                   const widthStyle = getDimensionValue(column.width);
                   const minWidthStyle = getDimensionValue(column.minWidth);
                   const key = column.sortKey ?? String(column.key);
-                  const isActive = sortState?.key === key;
                   const justify = getJustifyClass(column.align);
                   const headerContent = (
                     <span
                       className={clsx(
-                        'font-semibold text-text-primary',
+                        'text-text-primary font-semibold',
                         column.headerContentClassName
                       )}
                     >
@@ -174,7 +139,7 @@ function DataTable<T extends Record<string, unknown>>({
                     <th
                       key={key}
                       className={clsx(
-                        'sticky top-0 z-10 px-4 py-4 text-sm font-medium uppercase tracking-wide text-gray-600 bg-secondary first:rounded-bl-2xl first:rounded-tl-2xl last:rounded-br-2xl last:rounded-tr-2xl',
+                        'bg-secondary text-h4 sticky top-0 z-10 py-2 font-semibold tracking-wide text-gray-600 uppercase first:rounded-tl-2xl first:rounded-bl-2xl last:rounded-tr-2xl last:rounded-br-2xl',
                         alignment,
                         column.headerClassName
                       )}
@@ -189,16 +154,13 @@ function DataTable<T extends Record<string, unknown>>({
                           type="button"
                           onClick={() => handleSort(column)}
                           className={clsx(
-                            'flex w-full items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0',
+                            'focus-visible:ring-primary/40 flex w-full cursor-pointer items-center gap-2 tracking-wide text-gray-700 uppercase focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-0',
                             justify,
                             column.headerContentClassName
                           )}
                         >
                           {headerContent}
-                          <SortIndicator
-                            active={isActive}
-                            direction={isActive ? sortState?.direction : undefined}
-                          />
+                          <SortIndicator className={clsx('h-4 w-4')} />
                         </button>
                       ) : (
                         headerContent
@@ -208,7 +170,7 @@ function DataTable<T extends Record<string, unknown>>({
                 })}
                 {showActionsColumn && (
                   <th
-                    className="sticky top-0 z-10 w-12 px-4 py-4 border-b border-[#F8CED3] bg-[#FFE6E7] last:rounded-br-2xl last:rounded-tr-2xl"
+                    className="sticky top-0 z-10 w-12 border-b border-[#F8CED3] bg-[#FFE6E7] px-4 py-4 last:rounded-tr-2xl last:rounded-br-2xl"
                     scope="col"
                   />
                 )}
@@ -241,8 +203,9 @@ function DataTable<T extends Record<string, unknown>>({
                       {columns.map((column) => {
                         const alignment = getAlignClass(column.align);
                         const key = String(column.key);
-                        const defaultValue =
-                          (row as Record<string, React.ReactNode | undefined>)[key];
+                        const defaultValue = (
+                          row as Record<string, React.ReactNode | undefined>
+                        )[key];
 
                         return (
                           <td
@@ -255,7 +218,7 @@ function DataTable<T extends Record<string, unknown>>({
                           >
                             {column.render
                               ? column.render(row, rowIndex)
-                              : (defaultValue as React.ReactNode) ?? null}
+                              : ((defaultValue as React.ReactNode) ?? null)}
                           </td>
                         );
                       })}
@@ -271,7 +234,9 @@ function DataTable<T extends Record<string, unknown>>({
                 <tr>
                   <td
                     colSpan={
-                      columns.length + (selectable ? 1 : 0) + (showActionsColumn ? 1 : 0)
+                      columns.length +
+                      (selectable ? 1 : 0) +
+                      (showActionsColumn ? 1 : 0)
                     }
                     className="px-4 py-12 text-center text-sm text-gray-500"
                   >

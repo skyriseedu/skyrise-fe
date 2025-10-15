@@ -546,7 +546,7 @@ const ProgramForm: React.FC = () => {
                         onChange={(e) =>
                           handleIntakeChange(index, 'year', e.target.value)
                         }
-                        className="w-24 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                        className="w-24 rounded-lg border border-gray-300 px-3 py-2"
                       />
                       <label className="flex items-center text-xs text-gray-500">
                         Month
@@ -556,7 +556,7 @@ const ProgramForm: React.FC = () => {
                         onChange={(e) =>
                           handleIntakeChange(index, 'month', e.target.value)
                         }
-                        className="w-32 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                        className="w-32 rounded-lg border border-gray-300 px-3 py-2"
                       >
                         <option value="" disabled>
                           Select Month
