@@ -4,6 +4,7 @@ import type {
   UseConsultationsParams,
   CreateConsultationRequest,
   CreateConsultationResponse,
+  DeleteConsultationResponse,
 } from '@/types/bookings';
 
 export const bookingsService = {
@@ -40,6 +41,19 @@ export const bookingsService = {
       return response.data;
     } catch (error) {
       console.error('Create consultation API error:', error);
+      throw error;
+    }
+  },
+
+  async deleteConsultation(consultationId: string): Promise<DeleteConsultationResponse> {
+    console.log('Deleting consultation with ID:', consultationId);
+    
+    try {
+      const response = await apiClient.delete(`/consultations/${consultationId}`);
+      console.log('Delete consultation API response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Delete consultation API error:', error);
       throw error;
     }
   },

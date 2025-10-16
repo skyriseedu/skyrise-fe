@@ -26,3 +26,18 @@ export function useCreateConsultation() {
     },
   });
 }
+
+export function useDeleteConsultation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (consultationId: string) => bookingsService.deleteConsultation(consultationId),
+    onSuccess: () => {
+      // Invalidate and refetch consultations queries to remove the deleted consultation
+      queryClient.invalidateQueries({ queryKey: bookingKeys.all });
+    },
+    onError: (error) => {
+      console.error('Failed to delete consultation:', error);
+    },
+  });
+}

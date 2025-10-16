@@ -7,7 +7,7 @@ import CaretUp from '../../assets/caret-up.svg?react';
 import Calendar from '../../assets/calendar.svg?react';
 import closeIcon from '@/assets/close.svg';
 import { useSubmitApplication } from '@/queries';
-import type { BookConsultationFormValues } from '@/types/users/forms';
+import type { ApplicationFormValues } from '@/types/users/forms';
 import { convertTo24HourFormat, convertToISODate } from '@/helpers';
 import { applicationSchema } from '@/schemas/validation';
 
@@ -30,7 +30,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
   const [showCalendar, setShowCalendar] = useState(false);
   const [phoneInput, setPhoneInput] = useState('');
 
-  const initialValues: BookConsultationFormValues = {
+  const initialValues: ApplicationFormValues = {
     name: '',
     email: '',
     phoneNumber: '',
@@ -40,9 +40,9 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
     question: '',
   };
 
-  const handleSubmit = async (values: BookConsultationFormValues) => {
+  const handleSubmit = async (values: ApplicationFormValues) => {
     try {
-      const transformedData: BookConsultationFormValues = {
+      const transformedData: ApplicationFormValues = {
         ...values,
         bookingTimeSchedule: convertTo24HourFormat(values.bookingTimeSchedule),
         bookingDateSchedule: convertToISODate(values.bookingDateSchedule),

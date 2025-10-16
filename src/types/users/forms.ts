@@ -1,3 +1,5 @@
+import type { BookingStatusApi } from '@/types/bookings';
+
 export interface BookConsultationFormValues {
   name: string;
   email: string;
@@ -6,6 +8,9 @@ export interface BookConsultationFormValues {
   bookingDateSchedule: string; // ISO date string
   location: string;
   question: string;
+  submittedPlatform?: string;
+  status?: BookingStatusApi;
+  facebookAccount?: string;
 }
 
 export interface ApplicationFormValues {

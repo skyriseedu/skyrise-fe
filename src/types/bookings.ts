@@ -50,14 +50,19 @@ export interface UseConsultationsParams {
   limit?: number;
 }
 
+export type BookingStatusApi = Lowercase<BookingStatus>;
+
 export interface CreateConsultationRequest {
   name: string;
   email: string;
   phoneNumber: string;
   bookingTimeSchedule: string; // Format: "14:30"
-  bookingDateSchedule: string; // Format: "2025-03-15T00:00:00.000Z"
+  bookingDateSchedule: string; // ISO string e.g. "2025-03-15T00:00:00.000Z"
+  submittedPlatform: string;
+  status: BookingStatusApi;
   location?: string;
   question?: string;
+  facebookAccount?: string;
 }
 
 export interface CreateConsultationResponse {
@@ -66,4 +71,9 @@ export interface CreateConsultationResponse {
   data: {
     consultation: Consultation;
   };
+}
+
+export interface DeleteConsultationResponse {
+  success: boolean;
+  message: string;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import clsx from 'clsx';
 
 import DataTable, {
@@ -12,8 +12,8 @@ import AddBookingDrawer, {
   type AddBookingFormValues,
 } from '@/components/bookings/AddBookingDrawer';
 import type { BookingStatus } from '@/types/bookings';
-import { useConsultations, useCreateConsultation } from '@/queries';
-import type { Consultation, CreateConsultationRequest } from '@/types/bookings';
+import { useConsultations, useCreateConsultation, useDeleteConsultation } from '@/queries';
+import type { Consultation, CreateConsultationRequest, BookingStatusApi } from '@/types/bookings';
 
 type BookingRecord = {
   id: string;
@@ -229,7 +229,60 @@ const BookingsPage: React.FC = () => {
   // });
   
 
+  // Create consultation mutation
   const createConsultationMutation = useCreateConsultation();
+  
+  // Delete consultation mutation
+  const deleteConsultationMutation = useDeleteConsultation();
+
+  // Delete consultation handler
+  const handleDeleteConsultation = useCallback(async (consultationId: string) => {
+    // Show confirmation dialog
+    const isConfirmed = window.confirm('Are you sure you want to delete this consultation booking? This action cannot be undone.');
+    
+    if (!isConfirmed) {
+      return;
+    }
+
+    try {
+      console.log('Deleting consultation with ID:', consultationId);
+      
+      // Call the API to delete the consultation
+      await deleteConsultationMutation.mutateAsync(consultationId);
+      
+      // Remove from selected IDs if it was selected
+      setSelectedIds(prev => prev.filter(id => id !== consultationId));
+      
+      console.log('Consultation deleted successfully!');
+      
+    } catch (error) {
+      console.error('Failed to delete consultation:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete consultation booking';
+      console.error(`Error: ${errorMessage}`);
+    }
+  }, [deleteConsultationMutation]);
+
+  // Define table columns with access to mutations
+  const bookingColumnsWithActions = useMemo((): TableColumn<BookingRecord>[] => [
+    ...bookingColumns,
+    {
+      key: 'actions',
+      header: 'Actions',
+      minWidth: 100,
+      render: (row) => (
+        <div className="flex gap-2">
+          <button
+            onClick={() => handleDeleteConsultation(row.id)}
+            disabled={deleteConsultationMutation.isPending}
+            className="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+            title="Delete consultation"
+          >
+            {deleteConsultationMutation.isPending ? 'Deleting...' : 'Delete'}
+          </button>
+        </div>
+      ),
+    },
+  ], [deleteConsultationMutation.isPending]);
 
   // Transform backend data to table format
   const consultationRows = useMemo(() => {
@@ -327,26 +380,44 @@ const BookingsPage: React.FC = () => {
   const isAllSelected =
     tableData.length > 0 && tableData.every((row) => selectedIds.includes(row.id));
 
+  // Debug selection state
+  console.log('Selection state:', {
+    selectedIds,
+    tableDataLength: tableData.length,
+    isAllSelected,
+    tableDataIds: tableData.map(row => row.id),
+  });
+
   const handleSelectRow = (
     row: BookingRecord,
     _rowIndex: number,
     selected: boolean
   ) => {
+    console.log('handleSelectRow called:', { rowId: row.id, selected, currentSelectedIds: selectedIds });
+    
     setSelectedIds((prev) => {
       if (selected) {
-        return Array.from(new Set([...prev, row.id]));
+        const newSelection = Array.from(new Set([...prev, row.id]));
+        console.log('Adding row to selection:', { rowId: row.id, newSelection });
+        return newSelection;
       }
-      return prev.filter((id) => id !== row.id);
+      const newSelection = prev.filter((id) => id !== row.id);
+      console.log('Removing row from selection:', { rowId: row.id, newSelection });
+      return newSelection;
     });
   };
 
   const handleSelectAll = (selected: boolean) => {
+    console.log('handleSelectAll called:', { selected, tableDataLength: tableData.length });
+    
     if (!selected) {
       setSelectedIds([]);
       return;
     }
 
-    setSelectedIds(tableData.map((row) => row.id));
+    const allIds = tableData.map((row) => row.id);
+    console.log('Selecting all rows:', allIds);
+    setSelectedIds(allIds);
   };
 
   const handleSortChange = (state: SortState) => {
@@ -393,14 +464,22 @@ const BookingsPage: React.FC = () => {
         return timeString.replace(/\s+(a\.m|p\.m)$/i, '');
       };
 
+      const normalizePhoneNumber = () => {
+        const parts = [values.countryDialCode.trim(), values.phoneNumber.trim()].filter(Boolean);
+        return parts.join('').replace(/\s+/g, '');
+      };
+
       const consultationData: CreateConsultationRequest = {
         name: values.name.trim(),
         email: values.email.trim(),
-        phoneNumber: `${values.countryDialCode.trim()} ${values.phoneNumber.trim()}`.trim(),
+        phoneNumber: normalizePhoneNumber(),
         bookingTimeSchedule: transformBookingTime(values.bookingTimeSchedule),
         bookingDateSchedule: values.bookingDateSchedule,
+        submittedPlatform: values.submittedPlatform.trim(),
+        status: values.status.toLowerCase() as BookingStatusApi,
         location: values.location.trim() || undefined,
         question: values.question.trim() || undefined,
+        facebookAccount: values.facebookAccount.trim() || undefined,
       };
 
       console.log('Creating consultation with data:', consultationData);
@@ -416,7 +495,7 @@ const BookingsPage: React.FC = () => {
       console.error(`Error: ${errorMessage}`);
     }
   };
-
+  // Show loading state
   if (isLoading) {
     return (
       <div className="space-y-8 text-gray-700">
@@ -581,7 +660,7 @@ const BookingsPage: React.FC = () => {
         </div>
 
         <DataTable
-          columns={bookingColumns}
+          columns={bookingColumnsWithActions}
           data={tableData}
           getRowId={(row) => row.id}
           selectable

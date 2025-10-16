@@ -34,8 +34,8 @@ export type PlatformOption =
   | string;
 
 const defaultPlatforms: PlatformOption[] = [
-  { value: 'Website', label: 'Website' },
-  { value: 'Social Media', label: 'Social Media' },
+  { value: 'website', label: 'Website' },
+  { value: 'social media', label: 'Social Media' },
 ];
 
 const bookingTimeOptions = ['08:00 a.m', '12:00 p.m', '15:00 p.m', '20:00 p.m'];

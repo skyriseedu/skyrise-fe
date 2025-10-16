@@ -38,6 +38,9 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
     bookingDateSchedule: '',
     location: '',
     question: '',
+    submittedPlatform: 'website',
+    status: 'scheduled',
+    facebookAccount: '',
   };
 
   const handleSubmit = async (values: BookConsultationFormValues) => {
@@ -47,6 +50,11 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
         bookingTimeSchedule: convertTo24HourFormat(values.bookingTimeSchedule),
         bookingDateSchedule: convertToISODate(values.bookingDateSchedule),
         phoneNumber: values.phoneNumber.replace(/\s+/g, ''), // Remove all spaces
+        submittedPlatform: values.submittedPlatform?.trim() || 'website',
+        status: values.status ?? 'scheduled',
+        facebookAccount: values.facebookAccount
+          ? values.facebookAccount.trim()
+          : undefined,
       };
 
       await bookConsultationMutation.mutateAsync(transformedData);
