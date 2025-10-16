@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 
 import DataTable, {
@@ -12,7 +12,7 @@ import AddBookingDrawer, {
   type AddBookingFormValues,
 } from '@/components/bookings/AddBookingDrawer';
 import type { BookingStatus } from '@/types/bookings';
-import { useConsultations, useCreateConsultation, useDeleteConsultation } from '@/queries';
+import { useConsultations, useCreateConsultation } from '@/queries';
 import type { Consultation, CreateConsultationRequest, BookingStatusApi } from '@/types/bookings';
 
 type BookingRecord = {
@@ -229,62 +229,7 @@ const BookingsPage: React.FC = () => {
   // });
   
 
-  // Create consultation mutation
   const createConsultationMutation = useCreateConsultation();
-  
-  // Delete consultation mutation
-  const deleteConsultationMutation = useDeleteConsultation();
-
-  // Delete consultation handler
-  const handleDeleteConsultation = useCallback(async (consultationId: string) => {
-    // Show confirmation dialog
-    const isConfirmed = window.confirm('Are you sure you want to delete this consultation booking? This action cannot be undone.');
-    
-    if (!isConfirmed) {
-      return;
-    }
-
-    try {
-      console.log('Deleting consultation with ID:', consultationId);
-      
-      // Call the API to delete the consultation
-      await deleteConsultationMutation.mutateAsync(consultationId);
-      
-      // Remove from selected IDs if it was selected
-      setSelectedIds(prev => prev.filter(id => id !== consultationId));
-      
-      console.log('Consultation deleted successfully!');
-      
-    } catch (error) {
-      console.error('Failed to delete consultation:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete consultation booking';
-      console.error(`Error: ${errorMessage}`);
-    }
-  }, [deleteConsultationMutation]);
-
-  // Define table columns with access to mutations
-  const bookingColumnsWithActions = useMemo((): TableColumn<BookingRecord>[] => [
-    ...bookingColumns,
-    {
-      key: 'actions',
-      header: 'Actions',
-      minWidth: 100,
-      render: (row) => (
-        <div className="flex gap-2">
-          <button
-            onClick={() => handleDeleteConsultation(row.id)}
-            disabled={deleteConsultationMutation.isPending}
-            className="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
-            title="Delete consultation"
-          >
-            {deleteConsultationMutation.isPending ? 'Deleting...' : 'Delete'}
-          </button>
-        </div>
-      ),
-    },
-  ], [deleteConsultationMutation.isPending]);
-
-  // Transform backend data to table format
   const consultationRows = useMemo(() => {
     if (!consultationsData?.data) {
       console.log('No consultations data found, returning empty array');
@@ -660,7 +605,7 @@ const BookingsPage: React.FC = () => {
         </div>
 
         <DataTable
-          columns={bookingColumnsWithActions}
+          columns={bookingColumns}
           data={tableData}
           getRowId={(row) => row.id}
           selectable
