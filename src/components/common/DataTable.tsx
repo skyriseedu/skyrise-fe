@@ -117,7 +117,7 @@ function DataTable<T extends Record<string, unknown>>({
           <table className="min-w-full border-collapse">
             <thead className="bg-secondary overflow-x-scroll">
               <tr>
-                <th className="bg-secondary sticky top-0 z-10 w-10 py-6 align-middle first:rounded-tl-xl"></th>
+                <th className="bg-secondary sticky top-0 z-10 w-10 px-4 py-6 align-middle first:rounded-tl-xl"></th>
                 {columns?.map((column) => {
                   const alignment = getAlignClass(column.align);
                   const widthStyle = getDimensionValue(column.width);
@@ -139,7 +139,7 @@ function DataTable<T extends Record<string, unknown>>({
                     <th
                       key={key}
                       className={clsx(
-                        'bg-secondary text-h5 sticky top-0 z-10 py-2 font-semibold tracking-wide text-gray-600 first:rounded-tl-2xl first:rounded-bl-2xl last:rounded-tr-2xl last:rounded-br-2xl',
+                        'bg-secondary text-h5 sticky top-0 z-10 px-4 py-2 font-semibold tracking-wide text-gray-600 first:rounded-tl-xl last:rounded-tr-xl',
                         alignment,
                         column.headerClassName
                       )}

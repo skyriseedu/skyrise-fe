@@ -150,9 +150,7 @@ const bookingColumns: TableColumn<BookingRecord>[] = [
   },
 ];
 
-// Transform Consultation data from backend to BookingRecord format for the table
 const transformConsultationToBookingRecord = (consultation: Consultation): BookingRecord => {
-  // Transform status from backend (lowercase) to frontend format (capitalized)
   const statusMap: Record<string, BookingStatus> = {
     'scheduled': 'Scheduled',
     'completed': 'Completed',
@@ -160,27 +158,7 @@ const transformConsultationToBookingRecord = (consultation: Consultation): Booki
   };
   
   const frontendStatus = statusMap[consultation.status.toLowerCase()] || consultation.status as BookingStatus;
-  
-  console.log('Transforming consultation:', {
-    backendStatus: consultation.status,
-    frontendStatus: frontendStatus,
-    consultationId: consultation.id,
-    consultationObject: consultation,
-    hasUser: !!consultation.user,
-    userName: consultation.user?.name,
-    userEmail: consultation.user?.email,
-    userPhone: consultation.user?.phone,
-    directName: (consultation as any).name,
-    directEmail: (consultation as any).email,
-    directPhoneNumber: (consultation as any).phoneNumber,
-    directLocation: (consultation as any).location,
-    directQuestion: (consultation as any).question,
-    directSubmittedPlatform: (consultation as any).submittedPlatform,
-    directBookingTimeSchedule: (consultation as any).bookingTimeSchedule,
-    consultationTime: consultation.time,
-    consultationNotes: consultation.notes,
-  });
-  
+    
   return {
     id: consultation.id,
     status: frontendStatus,
@@ -219,16 +197,6 @@ const BookingsPage: React.FC = () => {
     limit: 10,
   });
 
-  // console.log('Current filter parameters:', {
-  //   status: statusFilter,
-  //   page: currentPage,
-  //   limit: 10,
-  //   isLoading,
-  //   isError,
-  //   error,
-  // });
-  
-
   const createConsultationMutation = useCreateConsultation();
   const consultationRows = useMemo(() => {
     if (!consultationsData?.data) {
@@ -237,7 +205,6 @@ const BookingsPage: React.FC = () => {
     }
     
     const transformedRows = consultationsData.data.map(transformConsultationToBookingRecord);
-    console.log('Transformed consultation rows:', transformedRows);
     return transformedRows;
   }, [consultationsData]);
 
@@ -440,7 +407,7 @@ const BookingsPage: React.FC = () => {
       console.error(`Error: ${errorMessage}`);
     }
   };
-  // Show loading state
+
   if (isLoading) {
     return (
       <div className="space-y-8 text-gray-700">
@@ -453,7 +420,7 @@ const BookingsPage: React.FC = () => {
                   key={tab.key}
                   type="button"
                   className={clsx(
-                    "relative pb-3 text-h3 font-semibold text-gray-500 transition-colors after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
+                    "cursor-pointer relative pb-3 text-h4 font-semibold text-gray-500 transition-colors after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
                     isActive
                       ? 'text-primary after:bg-primary'
                       : 'after:bg-transparent hover:text-primary'
@@ -492,7 +459,7 @@ const BookingsPage: React.FC = () => {
                   key={tab.key}
                   type="button"
                   className={clsx(
-                    "relative pb-3 text-h3 font-semibold text-gray-500 transition-colors after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
+                    "cursor-pointer relative pb-3 text-h4 font-semibold text-gray-500 transition-colors after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
                     isActive
                       ? 'text-primary after:bg-primary'
                       : 'after:bg-transparent hover:text-primary'
@@ -524,9 +491,6 @@ const BookingsPage: React.FC = () => {
     );
   }
 
-  console.log('Rendering main content - not in loading or error state');
-  console.log('Final check - tableData:', tableData, 'length:', tableData.length);
-
   return (
     <div className="space-y-8 text-gray-700">
       <section className="space-y-6">
@@ -539,7 +503,7 @@ const BookingsPage: React.FC = () => {
                 type="button"
                 onClick={() => handleTabChange(tab.key)}
                 className={clsx(
-                  "relative pb-3 text-h3 font-semibold text-gray-500 transition-colors after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
+                  "cursor-pointer relative pb-3 text-h4 font-semibold text-gray-500 transition-colors after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
                   isActive
                     ? 'text-primary after:bg-primary'
                     : 'after:bg-transparent hover:text-primary'

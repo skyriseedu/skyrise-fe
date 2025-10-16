@@ -4,7 +4,6 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 
 import BookOpenIcon from '@/assets/book-open-admin.svg?react';
-import CalendarIcon from '@/assets/calendar.svg?react';
 import SkyriseLogoPrimary from '@/assets/skyrise-logo.svg';
 import SkyriseLogoMark from '@/assets/skyrise-logo-2.svg';
 import DashboardIcon from '@/assets/dashboard.svg?react';
@@ -12,41 +11,13 @@ import BlogSetup from '@/assets/blogSetUp.svg?react';
 import GraduationCap from '@/assets/graduation-cap-admin.svg?react';
 import MessageHelp from '@/assets/message-help.svg?react';
 import ArrowLeft from '@/assets/arrow-left.svg?react';
+import Team from '@/assets/user-group.svg?react';
+import Calender from '@/assets/calendar-time.svg?react';
+import UserSetting from '@/assets/user-settings.svg?react';
+import Milestone from '@/assets/milestone.svg?react';
+import Logout from '@/assets/logout.svg?react';
 
 type IconComponent = React.ComponentType<SVGProps<SVGSVGElement>>;
-
-const TeamGlyph: IconComponent = ({ className, ...props }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} {...props}>
-    <path d="M7.5 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM17 14.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
-    <path d="M1.5 20.25c0-3.59 2.91-6.5 6.5-6.5h1c3.59 0 6.5 2.91 6.5 6.5v.75h-14v-.75ZM13.5 17.528a7.55 7.55 0 0 1 3.75-.978c3.175 0 5.75 2.575 5.75 5.75V21h-5.75v-.75c0-1.762-.648-3.372-1.75-4.722Z" />
-  </svg>
-);
-
-const ChartGlyph: IconComponent = ({ className, ...props }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} {...props}>
-    <path d="M4 20.5h3.25v-7.5H4zm5.25 0h3.25V9.5H9.25zm5.25 0h3.25V15H14.5zm5.25 0H22V6h-2.75z" />
-  </svg>
-);
-
-const WorkflowGlyph: IconComponent = ({ className, ...props }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} {...props}>
-    <path d="M7 4.5h10a2.5 2.5 0 0 1 0 5h-3.75v2h2.5a2.5 2.5 0 0 1 0 5h-1.75v1.5a2.5 2.5 0 0 1-5 0V16.5H7a2.5 2.5 0 0 1 0-5h3.75v-2H7a2.5 2.5 0 0 1 0-5Zm10 3a.5.5 0 0 0 0-1H7a.5.5 0 0 0 0 1h10Zm-1.25 7H7a.5.5 0 0 0 0 1h8.75a.5.5 0 0 0 0-1Zm-4.25 5a.5.5 0 0 0 1 0V16.5h-1V19.5Z" />
-  </svg>
-);
-
-const ShieldGlyph: IconComponent = ({ className, ...props }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} {...props}>
-    <path d="M12 2.5 20 5.5V12c0 5.148-3.625 9.89-8 11.5-4.375-1.61-8-6.352-8-11.5V5.5z" />
-    <path d="M11 9a1 1 0 0 1 2 0v3.586l1.707 1.707a1 1 0 1 1-1.414 1.414l-2-2A1 1 0 0 1 11 13V9Z" />
-  </svg>
-);
-
-const LogoutGlyph: IconComponent = ({ className, ...props }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} {...props}>
-    <path d="M13.25 4a.75.75 0 0 0-1.5 0v4.25H6.5C5.12 8.25 4 9.37 4 10.75v2.5c0 1.38 1.12 2.5 2.5 2.5h5.25V20a.75.75 0 0 0 1.5 0V4Z" />
-    <path d="M18.53 8.47a.75.75 0 0 0-1.06 1.06l1.72 1.72H11.5a.75.75 0 0 0 0 1.5h7.69l-1.72 1.72a.75.75 0 1 0 1.06 1.06l3.25-3.25a.75.75 0 0 0 0-1.06Z" />
-  </svg>
-);
 
 type SidebarItem = {
   label: string;
@@ -85,13 +56,13 @@ const navigationSections: Array<{ title: string; items: SidebarItem[] }> = [
   {
     title: 'Organized',
     items: [
-      { label: 'Team & Consultants', to: '/admin/team', Icon: TeamGlyph },
-      { label: 'Bookings', to: '/admin/bookings', Icon: CalendarIcon },
-      { label: 'User Analysis', to: '/admin/user-analysis', Icon: ChartGlyph },
+      { label: 'Team & Consultants', to: '/admin/team', Icon: Team },
+      { label: 'Bookings', to: '/admin/bookings', Icon: Calender },
+      { label: 'User Analysis', to: '/admin/user-analysis', Icon: UserSetting },
       {
         label: 'Application Process Tracking',
         to: '/admin/application-tracking',
-        Icon: WorkflowGlyph,
+        Icon: Milestone,
       },
     ],
   },
@@ -101,9 +72,9 @@ const navigationSections: Array<{ title: string; items: SidebarItem[] }> = [
       {
         label: 'Roles & Permission',
         to: '/admin/roles-permissions',
-        Icon: ShieldGlyph,
+        Icon: UserSetting,
       },
-      { label: 'Logout', to: '/logout', Icon: LogoutGlyph },
+      { label: 'Logout', to: '/logout', Icon: Logout },
     ],
   },
 ];
