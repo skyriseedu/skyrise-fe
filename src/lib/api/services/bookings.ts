@@ -5,6 +5,7 @@ import type {
   CreateConsultationRequest,
   CreateConsultationResponse,
   DeleteConsultationResponse,
+  BulkDeleteConsultationsResponse,
 } from '@/types/bookings';
 
 export const bookingsService = {
@@ -54,6 +55,19 @@ export const bookingsService = {
       return response.data;
     } catch (error) {
       console.error('Delete consultation API error:', error);
+      throw error;
+    }
+  },
+
+  async bulkDeleteConsultations(ids: string[]): Promise<BulkDeleteConsultationsResponse> {
+    console.log('Bulk deleting consultations with IDs:', ids);
+
+    try {
+      const response = await apiClient.post('/consultations/bulk-delete', { ids });
+      console.log('Bulk delete consultations API response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Bulk delete consultations API error:', error);
       throw error;
     }
   },

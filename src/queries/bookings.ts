@@ -41,3 +41,17 @@ export function useDeleteConsultation() {
     },
   });
 }
+
+export function useBulkDeleteConsultations() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (ids: string[]) => bookingsService.bulkDeleteConsultations(ids),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: bookingKeys.all });
+    },
+    onError: (error) => {
+      console.error('Failed to bulk delete consultations:', error);
+    },
+  });
+}

@@ -7,7 +7,8 @@ export const bookingStatusOptions: BookingStatus[] = [
 ];
 
 export interface Consultation {
-  id: string;
+  id?: string;
+  _id?: string;
   userId: string;
   consultantId: string;
   date: string;
@@ -76,4 +77,14 @@ export interface CreateConsultationResponse {
 export interface DeleteConsultationResponse {
   success: boolean;
   message: string;
+}
+
+export interface BulkDeleteConsultationsRequest {
+  ids: string[];
+}
+
+export interface BulkDeleteConsultationsResponse {
+  success: boolean;
+  message: string;
+  deletedCount?: number;
 }

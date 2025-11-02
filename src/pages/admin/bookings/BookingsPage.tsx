@@ -18,6 +18,7 @@ import {
   useConsultations,
   useCreateConsultation,
   useDeleteConsultation,
+  useBulkDeleteConsultations,
 } from '@/queries';
 import type { Consultation, CreateConsultationRequest, BookingStatusApi } from '@/types/bookings';
 
@@ -188,8 +189,22 @@ const transformConsultationToBookingRecord = (consultation: Consultation): Booki
   const frontendStatus =
     statusMap[consultation.status.toLowerCase()] ?? consultation.status;
 
+  const resolvedId = (() => {
+    const primaryId = pickString('id');
+    if (primaryId && primaryId.trim().length > 0) {
+      return primaryId.trim();
+    }
+
+    const fallbackId = pickString('_id');
+    if (fallbackId && fallbackId.trim().length > 0) {
+      return fallbackId.trim();
+    }
+
+    return undefined;
+  })();
+
   return {
-    id: consultation.id,
+    id: resolvedId ?? '',
     status: frontendStatus,
     submittedPlatform: pickString('submittedPlatform') ?? 'Website',
     submittedDate: consultation.createdAt,
@@ -370,6 +385,11 @@ const BookingsPage: React.FC = () => {
 
   const handleSelectRow = useCallback(
     (row: BookingRecord, rowIndex: number, selected: boolean) => {
+      if (typeof row.id !== 'string' || row.id.trim().length === 0) {
+        console.warn('Cannot select consultation row without a valid id.', row);
+        return;
+      }
+
       setSelectedRowKeys((prev) => {
         const next = new Set(prev);
         const key = getRowKey(row, rowIndex);
@@ -408,10 +428,28 @@ const BookingsPage: React.FC = () => {
         return;
       }
 
-      setSelectedRowKeys(
-        new Set(tableData.map((row, index) => getRowKey(row, index)))
-      );
-      setSelectedConsultationIds(new Set(tableData.map((row) => row.id)));
+      const nextRowKeys = new Set<string>();
+      const nextIds = new Set<string>();
+
+      tableData.forEach((row, index) => {
+        if (typeof row.id !== 'string' || row.id.trim().length === 0) {
+          console.warn('Skipping consultation row without a valid id.', row);
+          return;
+        }
+
+        nextRowKeys.add(getRowKey(row, index));
+        nextIds.add(row.id);
+      });
+
+      if (nextIds.size === 0) {
+        console.warn('No rows with valid consultation ids are available to select.');
+        setSelectedRowKeys(new Set());
+        setSelectedConsultationIds(new Set());
+        return;
+      }
+
+      setSelectedRowKeys(nextRowKeys);
+      setSelectedConsultationIds(nextIds);
     },
     [getRowKey, tableData]
   );
@@ -420,6 +458,7 @@ const BookingsPage: React.FC = () => {
     tableData.length > 0 &&
     tableData.every((row, index) => selectedRowKeys.has(getRowKey(row, index)));
 
+  const bulkDeleteConsultationsMutation = useBulkDeleteConsultations();
   const deleteConsultationMutation = useDeleteConsultation();
 
   const handleDeleteSelected = useCallback(async () => {
@@ -427,18 +466,44 @@ const BookingsPage: React.FC = () => {
       return;
     }
 
+    const rawIds = Array.from(selectedConsultationIds);
+    const ids = rawIds.filter(
+      (value): value is string =>
+        typeof value === 'string' && value.trim().length > 0
+    );
+
+    if (ids.length === 0) {
+      console.warn('No valid consultation IDs selected for deletion.', rawIds);
+      return;
+    }
+
+    if (ids.length < rawIds.length) {
+      console.warn('Skipping consultation IDs that are invalid or empty.', rawIds);
+    }
+
     try {
-      for (const consultationId of selectedConsultationIds) {
-        // Sequential deletes to keep mutation state predictable
-        // eslint-disable-next-line no-await-in-loop
-        await deleteConsultationMutation.mutateAsync(consultationId);
-      }
+      await bulkDeleteConsultationsMutation.mutateAsync(ids);
       setSelectedRowKeys(new Set());
       setSelectedConsultationIds(new Set());
     } catch (error) {
       console.error('Failed to delete consultation booking:', error);
+      try {
+        // Fallback to individual deletes if the bulk endpoint is unavailable
+        for (const consultationId of ids) {
+          // eslint-disable-next-line no-await-in-loop
+          await deleteConsultationMutation.mutateAsync(consultationId);
+        }
+        setSelectedRowKeys(new Set());
+        setSelectedConsultationIds(new Set());
+      } catch (singleDeleteError) {
+        console.error('Fallback single delete failed:', singleDeleteError);
+      }
     }
-  }, [deleteConsultationMutation, selectedConsultationIds]);
+  }, [
+    bulkDeleteConsultationsMutation,
+    deleteConsultationMutation,
+    selectedConsultationIds,
+  ]);
 
   const handleSortChange = (state: SortState) => {
     setSortState(state);
@@ -711,14 +776,20 @@ const BookingsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleDeleteSelected}
-                disabled={deleteConsultationMutation.isPending}
+                disabled={
+                  bulkDeleteConsultationsMutation.isPending ||
+                  deleteConsultationMutation.isPending
+                }
                 className={clsx(
                   'bg-secondary flex items-center gap-2 rounded-xl px-4 py-2 text-gray-700 transition-colors hover:bg-red-200',
-                  deleteConsultationMutation.isPending && 'cursor-wait opacity-70'
+                  (bulkDeleteConsultationsMutation.isPending ||
+                    deleteConsultationMutation.isPending) &&
+                    'cursor-wait opacity-70'
                 )}
               >
                 <RemoveIcon className="h-4 w-4" />
-                {deleteConsultationMutation.isPending
+                {bulkDeleteConsultationsMutation.isPending ||
+                deleteConsultationMutation.isPending
                   ? 'Deleting...'
                   : `Remove (${selectedConsultationIds.size})`}
               </button>
