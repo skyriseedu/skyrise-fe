@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 
 import DataTable, {
@@ -8,11 +8,17 @@ import DataTable, {
 import Button from '@/components/common/Button';
 import SearchIcon from '@/assets/search.svg?react';
 import FilterIcon from '@/assets/filter-alt.svg?react';
+import RemoveIcon from '@/assets/bin.svg?react';
 import AddBookingDrawer, {
   type AddBookingFormValues,
 } from '@/components/bookings/AddBookingDrawer';
 import type { BookingStatus } from '@/types/bookings';
-import { useConsultations, useCreateConsultation } from '@/queries';
+import { bookingStatusOptions } from '@/types/bookings';
+import {
+  useConsultations,
+  useCreateConsultation,
+  useDeleteConsultation,
+} from '@/queries';
 import type { Consultation, CreateConsultationRequest, BookingStatusApi } from '@/types/bookings';
 
 type BookingRecord = {
@@ -62,6 +68,21 @@ const statusBadgeStyles: Record<BookingStatus, { container: string; dot: string 
   },
   Cancelled: {
     container: 'bg-[#FFF0F0] text-[#D13B3B] border-[#F5B3B3]',
+    dot: 'bg-[#D13B3B]',
+  },
+};
+
+const statusFilterOptionStyles: Record<BookingStatus, { container: string; dot: string }> = {
+  Scheduled: {
+    container: 'bg-[#E6F4FF] text-[#0B74C4]',
+    dot: 'bg-[#0B74C4]',
+  },
+  Completed: {
+    container: 'bg-[#E8F6EF] text-[#2D7D46]',
+    dot: 'bg-[#2D7D46]',
+  },
+  Cancelled: {
+    container: 'bg-[#FFF0F0] text-[#D13B3B]',
     dot: 'bg-[#D13B3B]',
   },
 };
@@ -152,26 +173,34 @@ const bookingColumns: TableColumn<BookingRecord>[] = [
 
 const transformConsultationToBookingRecord = (consultation: Consultation): BookingRecord => {
   const statusMap: Record<string, BookingStatus> = {
-    'scheduled': 'Scheduled',
-    'completed': 'Completed',
-    'cancelled': 'Cancelled',
+    scheduled: 'Scheduled',
+    completed: 'Completed',
+    cancelled: 'Cancelled',
   };
-  
-  const frontendStatus = statusMap[consultation.status.toLowerCase()] || consultation.status as BookingStatus;
-    
+
+  const extras = consultation as unknown as Record<string, unknown>;
+
+  const pickString = (key: string) => {
+    const value = extras[key];
+    return typeof value === 'string' ? value : undefined;
+  };
+
+  const frontendStatus =
+    statusMap[consultation.status.toLowerCase()] ?? consultation.status;
+
   return {
     id: consultation.id,
     status: frontendStatus,
-    submittedPlatform: (consultation as any).submittedPlatform || 'Website', // Try to get from API, fallback to default
+    submittedPlatform: pickString('submittedPlatform') ?? 'Website',
     submittedDate: consultation.createdAt,
-    name: consultation.user?.name || (consultation as any).name || 'N/A',
-    email: consultation.user?.email || (consultation as any).email || 'N/A',
-    phoneNumber: consultation.user?.phone || (consultation as any).phoneNumber || 'N/A',
-    facebookAccount: undefined, 
-    bookingTimeSchedule: (consultation as any).bookingTimeSchedule || consultation.time || 'N/A',
+    name: consultation.user?.name ?? pickString('name') ?? 'N/A',
+    email: consultation.user?.email ?? pickString('email') ?? 'N/A',
+    phoneNumber: consultation.user?.phone ?? pickString('phoneNumber') ?? 'N/A',
+    facebookAccount: pickString('facebookAccount'),
+    bookingTimeSchedule: pickString('bookingTimeSchedule') ?? consultation.time ?? 'N/A',
     bookingDateSchedule: consultation.date,
-    location: (consultation as any).location || 'N/A',
-    question: (consultation as any).question || consultation.notes || 'N/A',
+    location: pickString('location') ?? 'N/A',
+    question: pickString('question') ?? consultation.notes ?? 'N/A',
   };
 };
 
@@ -179,12 +208,21 @@ const BookingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<BookingTab>('consultation');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortState, setSortState] = useState<SortState>();
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<Set<string>>(
+    () => new Set()
+  );
+  const [selectedConsultationIds, setSelectedConsultationIds] = useState<Set<string>>(
+    () => new Set()
+  );
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<BookingStatus>('Scheduled');
+  const [showStatusFilter, setShowStatusFilter] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<BookingStatus | 'All'>(
+    'Scheduled'
+  );
+  const statusFilterRef = useRef<HTMLDivElement | null>(null);
 
-  // console.log('Current statusFilter:', statusFilter);
+  const statusQueryParam = selectedStatus === 'All' ? undefined : selectedStatus;
 
   const {
     data: consultationsData,
@@ -192,7 +230,7 @@ const BookingsPage: React.FC = () => {
     error,
     isError,
   } = useConsultations({
-    status: statusFilter,
+    status: statusQueryParam,
     page: currentPage,
     limit: 10,
   });
@@ -200,7 +238,6 @@ const BookingsPage: React.FC = () => {
   const createConsultationMutation = useCreateConsultation();
   const consultationRows = useMemo(() => {
     if (!consultationsData?.data) {
-      console.log('No consultations data found, returning empty array');
       return [];
     }
     
@@ -216,13 +253,21 @@ const BookingsPage: React.FC = () => {
     []
   );
 
-  const filteredConsultationRows = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
-    if (!term) {
+  const statusFilteredRows = useMemo(() => {
+    if (selectedStatus === 'All') {
       return consultationRows;
     }
 
-    return consultationRows.filter((row) => {
+    return consultationRows.filter((row) => row.status === selectedStatus);
+  }, [consultationRows, selectedStatus]);
+
+  const filteredConsultationRows = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) {
+      return statusFilteredRows;
+    }
+
+    return statusFilteredRows.filter((row) => {
       return [
         row.status,
         row.submittedPlatform,
@@ -238,7 +283,7 @@ const BookingsPage: React.FC = () => {
         .toLowerCase()
         .includes(term);
     });
-  }, [consultationRows, searchTerm]);
+  }, [searchTerm, statusFilteredRows]);
 
   const sortedConsultationRows = useMemo(() => {
     if (!sortState) {
@@ -282,55 +327,118 @@ const BookingsPage: React.FC = () => {
     return rowsToSort;
   }, [filteredConsultationRows, sortState]);
 
-  const tableData = activeTab === 'consultation' ? sortedConsultationRows : [];
+  const tableData = useMemo(
+    () => (activeTab === 'consultation' ? sortedConsultationRows : []),
+    [activeTab, sortedConsultationRows]
+  );
   
   useEffect(() => {
-    setSelectedIds([]);
+    setSelectedRowKeys(new Set());
+    setSelectedConsultationIds(new Set());
     setSortState(undefined);
   }, [activeTab]);
 
-  const isAllSelected =
-    tableData.length > 0 && tableData.every((row) => selectedIds.includes(row.id));
+  useEffect(() => {
+    setSelectedRowKeys(new Set());
+    setSelectedConsultationIds(new Set());
+    setCurrentPage(1);
+  }, [selectedStatus]);
 
-  // Debug selection state
-  console.log('Selection state:', {
-    selectedIds,
-    tableDataLength: tableData.length,
-    isAllSelected,
-    tableDataIds: tableData.map(row => row.id),
-  });
-
-  const handleSelectRow = (
-    row: BookingRecord,
-    _rowIndex: number,
-    selected: boolean
-  ) => {
-    console.log('handleSelectRow called:', { rowId: row.id, selected, currentSelectedIds: selectedIds });
-    
-    setSelectedIds((prev) => {
-      if (selected) {
-        const newSelection = Array.from(new Set([...prev, row.id]));
-        console.log('Adding row to selection:', { rowId: row.id, newSelection });
-        return newSelection;
-      }
-      const newSelection = prev.filter((id) => id !== row.id);
-      console.log('Removing row from selection:', { rowId: row.id, newSelection });
-      return newSelection;
-    });
-  };
-
-  const handleSelectAll = (selected: boolean) => {
-    console.log('handleSelectAll called:', { selected, tableDataLength: tableData.length });
-    
-    if (!selected) {
-      setSelectedIds([]);
+  useEffect(() => {
+    if (!showStatusFilter) {
       return;
     }
 
-    const allIds = tableData.map((row) => row.id);
-    console.log('Selecting all rows:', allIds);
-    setSelectedIds(allIds);
-  };
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        statusFilterRef.current &&
+        !statusFilterRef.current.contains(event.target as Node)
+      ) {
+        setShowStatusFilter(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showStatusFilter]);
+
+  const getRowKey = useCallback((row: BookingRecord, index: number) => {
+    return row.id ? `${row.id}::${index}` : `row-${index}`;
+  }, []);
+
+  const handleSelectRow = useCallback(
+    (row: BookingRecord, rowIndex: number, selected: boolean) => {
+      setSelectedRowKeys((prev) => {
+        const next = new Set(prev);
+        const key = getRowKey(row, rowIndex);
+        if (selected) {
+          next.add(key);
+        } else {
+          next.delete(key);
+        }
+        return next;
+      });
+
+      setSelectedConsultationIds((prev) => {
+        const next = new Set(prev);
+        if (selected) {
+          next.add(row.id);
+        } else {
+          next.delete(row.id);
+        }
+        return next;
+      });
+    },
+    [getRowKey]
+  );
+
+  const handleSelectAll = useCallback(
+    (selected: boolean) => {
+      if (!selected) {
+        setSelectedRowKeys(new Set());
+        setSelectedConsultationIds(new Set());
+        return;
+      }
+
+      if (tableData.length === 0) {
+        setSelectedRowKeys(new Set());
+        setSelectedConsultationIds(new Set());
+        return;
+      }
+
+      setSelectedRowKeys(
+        new Set(tableData.map((row, index) => getRowKey(row, index)))
+      );
+      setSelectedConsultationIds(new Set(tableData.map((row) => row.id)));
+    },
+    [getRowKey, tableData]
+  );
+
+  const isAllSelected =
+    tableData.length > 0 &&
+    tableData.every((row, index) => selectedRowKeys.has(getRowKey(row, index)));
+
+  const deleteConsultationMutation = useDeleteConsultation();
+
+  const handleDeleteSelected = useCallback(async () => {
+    if (selectedConsultationIds.size === 0) {
+      return;
+    }
+
+    try {
+      for (const consultationId of selectedConsultationIds) {
+        // Sequential deletes to keep mutation state predictable
+        // eslint-disable-next-line no-await-in-loop
+        await deleteConsultationMutation.mutateAsync(consultationId);
+      }
+      setSelectedRowKeys(new Set());
+      setSelectedConsultationIds(new Set());
+    } catch (error) {
+      console.error('Failed to delete consultation booking:', error);
+    }
+  }, [deleteConsultationMutation, selectedConsultationIds]);
 
   const handleSortChange = (state: SortState) => {
     setSortState(state);
@@ -346,19 +454,28 @@ const BookingsPage: React.FC = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleStatusFilterChange = (status: BookingStatus) => {
-    setStatusFilter(status);
-    setCurrentPage(1); 
-    setSelectedIds([]);
+  const handleStatusSelect = (status: BookingStatus | 'All') => {
+    setSelectedStatus((prev) => {
+      if (prev === status) {
+        return status === 'All' ? prev : 'All';
+      }
+      return status;
+    });
+    setShowStatusFilter(false);
   };
 
   const totalBookings = consultationsData?.total || 0;
 
-  const emptyMessage = isLoading 
-    ? 'Loading consultations...' 
+  const selectedStatusesLabel =
+    selectedStatus === 'All'
+      ? 'consultations'
+      : `${selectedStatus} consultations`;
+
+  const emptyMessage = isLoading
+    ? 'Loading consultations...'
     : searchTerm
     ? 'No bookings match your search criteria.'
-    : `No ${statusFilter} consultations available.`;
+    : `No ${selectedStatusesLabel} available.`;
 
   const pagination = consultationsData?.pagination;
 
@@ -394,14 +511,12 @@ const BookingsPage: React.FC = () => {
         facebookAccount: values.facebookAccount.trim() || undefined,
       };
 
-      console.log('Creating consultation with data:', consultationData);
-      console.log('Time transformed from:', values.bookingTimeSchedule, 'to:', consultationData.bookingTimeSchedule);
-      
       await createConsultationMutation.mutateAsync(consultationData);
       
       handleCloseAddDrawer();
-      setSelectedIds([]);
-      setSortState(undefined);      
+      setSelectedRowKeys(new Set());
+      setSelectedConsultationIds(new Set());
+      setSortState(undefined);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create consultation booking';
       console.error(`Error: ${errorMessage}`);
@@ -447,7 +562,6 @@ const BookingsPage: React.FC = () => {
   }
 
   if (isError) {
-    console.log('Component is in error state, showing error UI');
     return (
       <div className="space-y-8 text-gray-700">
         <section className="space-y-6">
@@ -521,42 +635,94 @@ const BookingsPage: React.FC = () => {
           </div>
 
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-1 flex-wrap items-center gap-3">
-            <div className="relative flex min-w-[240px] flex-1 items-center">
-              <span className="pointer-events-none absolute left-4 text-gray-400">
-                <SearchIcon className="h-4 w-4" />
+          <div className="relative z-20 flex flex-1 flex-wrap items-center gap-5">
+            <div className="relative min-w-[240px] flex-1 max-w-md">
+              <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+                <SearchIcon className="h-5 w-5" />
               </span>
               <input
                 type="search"
                 value={searchTerm}
                 onChange={handleSearchChange}
                 placeholder="Search Name, Email, Status..."
-                className="w-full rounded-md border bg-white py-2 pl-10 pr-4 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2 pr-4 pl-10 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
-            
+
             {/* Status Filter Dropdown */}
-            <div className="relative">
-              <select
-                value={statusFilter}
-                onChange={(e) => handleStatusFilterChange(e.target.value as BookingStatus)}
-                className="appearance-none rounded-md border bg-white py-2 pl-4 pr-8 text-sm font-medium text-gray-700 focus:outline-none cursor-pointer"
+            <div className="relative" ref={statusFilterRef}>
+              <button
+                type="button"
+                onClick={() => setShowStatusFilter((prev) => !prev)}
+                className="bg-secondary flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-red-200"
               >
-                <option value="Scheduled">Scheduled</option>
-                <option value="Completed">Completed</option>
-                <option value="Cancelled">Cancelled</option>
-              </select>
-              <FilterIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 pointer-events-none text-gray-400" />
+                <FilterIcon className="h-4 w-4" />
+                {selectedStatus === 'All' ? 'All Statuses' : selectedStatus}
+              </button>
+
+              {showStatusFilter && (
+                <div className="absolute top-full left-0 z-50 mt-2 w-64 rounded-lg border border-gray-200 bg-white shadow-lg">
+                  <div className="p-4 space-y-3">
+                    {[
+                      { value: 'All' as const, label: 'All Statuses' },
+                      ...bookingStatusOptions.map((status) => ({
+                        value: status,
+                        label: status,
+                      })),
+                    ].map((option) => {
+                      const isSelected = selectedStatus === option.value;
+                      const styles =
+                        option.value === 'All'
+                          ? { container: 'bg-gray-100 text-gray-700', dot: 'bg-gray-400' }
+                          : statusFilterOptionStyles[option.value];
+
+                      return (
+                        <label
+                          key={option.value}
+                          className="flex cursor-pointer items-center gap-3 rounded p-2 hover:bg-gray-50"
+                        >
+                          <input
+                            type="radio"
+                            name="booking-status-filter"
+                            checked={isSelected}
+                            onChange={() => handleStatusSelect(option.value)}
+                            className="h-5 w-5 border-gray-300 text-primary focus:ring-primary"
+                          />
+                          <span
+                            className={clsx(
+                              'inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium transition-colors',
+                              styles.container,
+                              isSelected ? 'ring-2 ring-primary/40' : 'opacity-80'
+                            )}
+                          >
+                            <span className={clsx('h-2 w-2 rounded-full', styles.dot)} />
+                            {option.label}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button
-              type="button"
-              className="rounded-full px-5 bg-secondary "
-              disabled={selectedIds.length === 0}
-            >
-              Remove
-            </Button>
+            {selectedRowKeys.size > 0 && (
+              <button
+                type="button"
+                onClick={handleDeleteSelected}
+                disabled={deleteConsultationMutation.isPending}
+                className={clsx(
+                  'bg-secondary flex items-center gap-2 rounded-xl px-4 py-2 text-gray-700 transition-colors hover:bg-red-200',
+                  deleteConsultationMutation.isPending && 'cursor-wait opacity-70'
+                )}
+              >
+                <RemoveIcon className="h-4 w-4" />
+                {deleteConsultationMutation.isPending
+                  ? 'Deleting...'
+                  : `Remove (${selectedConsultationIds.size})`}
+              </button>
+            )}
             <Button
               type="button"
               className="rounded-full px-5"
@@ -571,11 +737,13 @@ const BookingsPage: React.FC = () => {
         <DataTable
           columns={bookingColumns}
           data={tableData}
-          getRowId={(row) => row.id}
+          getRowId={getRowKey}
           selectable
           isAllSelected={isAllSelected}
           onSelectAll={handleSelectAll}
-          isRowSelected={(row) => selectedIds.includes(row.id)}
+          isRowSelected={(row, index) =>
+            selectedRowKeys.has(getRowKey(row, index))
+          }
           onSelectRow={handleSelectRow}
           sortState={sortState}
           onSortChange={handleSortChange}
