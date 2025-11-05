@@ -1348,7 +1348,7 @@ const BookingsPage: React.FC = () => {
                 {bulkDeleteConsultationsMutation.isPending ||
                 deleteConsultationMutation.isPending
                   ? 'Deleting...'
-                  : `Remove (${selectedConsultationIds.size})`}
+                  : `Remove`}
               </button>
             )}
             <Button
