@@ -22,6 +22,7 @@ import CloseSquareIcon from '@/assets/close-square.svg?react';
 import AddBookingDrawer, {
   type AddBookingFormValues,
 } from '@/components/bookings/AddBookingDrawer';
+import EditBookingDrawer from '@/components/bookings/EditBookingDrawer';
 import type { BookingStatus, PlatformStatus } from '@/types/bookings';
 import { bookingStatusOptions, platformStatusOptions } from '@/types/bookings';
 import {
@@ -228,7 +229,17 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
   );
 };
 
-const ActionDropdown: React.FC<{ booking: BookingRecord }> = ({ booking }) => {
+type ActionDropdownProps = {
+  booking: BookingRecord;
+  onEdit?: (booking: BookingRecord) => void;
+  onRemove?: (bookingId: string) => void;
+};
+
+const ActionDropdown: React.FC<ActionDropdownProps> = ({
+  booking,
+  onEdit,
+  onRemove,
+}) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
@@ -248,7 +259,7 @@ const ActionDropdown: React.FC<{ booking: BookingRecord }> = ({ booking }) => {
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
-  }, [booking.id]);
+  }, [booking.id, openDropdown]);
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -267,14 +278,14 @@ const ActionDropdown: React.FC<{ booking: BookingRecord }> = ({ booking }) => {
         <div className="absolute right-0 z-10 mt-1 w-38 rounded-lg border border-gray-200 bg-white shadow-lg">
           <div className="py-1">
             <button
-              // onClick={}
+              onClick={() => onEdit?.(booking)}
               className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
             >
               <EditIcon className="h-4 w-4 text-gray-500" />
               Edit
             </button>
             <button
-              // onClick={}
+              onClick={() => booking.id && onRemove?.(booking.id)}
               className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
             >
               <RemoveIcon className="h-4 w-4 text-red-600" />
@@ -405,23 +416,7 @@ const formatDisplayDate = (isoDate: string) => {
   return `${day} ${month} ${year}`;
 };
 
-const statusFilterOptionStyles: Record<
-  BookingStatus,
-  { container: string; dot: string }
-> = {
-  Scheduled: {
-    container: 'bg-[#E6F4FF] text-[#0B74C4]',
-    dot: 'bg-[#0B74C4]',
-  },
-  Completed: {
-    container: 'bg-[#E8F6EF] text-[#2D7D46]',
-    dot: 'bg-[#2D7D46]',
-  },
-  Cancelled: {
-    container: 'bg-[#FFF0F0] text-[#D13B3B]',
-    dot: 'bg-[#D13B3B]',
-  },
-};
+// NOTE: removed unused statusFilterOptionStyles constant to avoid unused variable lint errors.
 
 const transformConsultationToBookingRecord = (
   consultation: Consultation
@@ -484,9 +479,8 @@ const transformConsultationToBookingRecord = (
   };
 };
 
-const renderActions = (booking: BookingRecord) => (
-  <ActionDropdown booking={booking} />
-);
+// renderActions will be created inside the BookingsPage so it can access
+// handlers and state (edit/remove). The earlier top-level shortcut is removed.
 
 const BookingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<BookingTab>('consultation');
@@ -498,6 +492,7 @@ const BookingsPage: React.FC = () => {
   const [selectedConsultationIds, setSelectedConsultationIds] = useState<
     Set<string>
   >(() => new Set());
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [showStatusFilter, setShowStatusFilter] = useState(false);
@@ -811,7 +806,7 @@ const BookingsPage: React.FC = () => {
         ),
       },
     ],
-    [handleRowStatusChange]
+    [handleRowStatusChange, handleRowPlatformChange]
   );
 
   const tableData = useMemo(
@@ -935,6 +930,59 @@ const BookingsPage: React.FC = () => {
   const bulkDeleteConsultationsMutation = useBulkDeleteConsultations();
   const deleteConsultationMutation = useDeleteConsultation();
 
+  // State to hold the initial values for editing a booking.
+  const [editingInitialValues, setEditingInitialValues] = useState<
+    AddBookingFormValues | null
+  >(null);
+
+  const defaultEditInitialValues: AddBookingFormValues = {
+    status: 'Scheduled',
+    submittedPlatform: 'Website',
+    name: '',
+    email: '',
+    countryDialCode: '+95',
+    phoneNumber: '',
+    facebookAccount: '',
+    bookingTimeSchedule: '',
+    bookingDateSchedule: '',
+    location: 'Myanmar',
+    question: '',
+  };
+
+  const handleEditClick = (booking: BookingRecord) => {
+    const initial: AddBookingFormValues = {
+      status: booking.status,
+      submittedPlatform: booking.submittedPlatform,
+      name: booking.name ?? '',
+      email: booking.email ?? '',
+      countryDialCode: '+95',
+      phoneNumber: booking.phoneNumber ?? '',
+      facebookAccount: booking.facebookAccount ?? '',
+      bookingTimeSchedule: booking.bookingTimeSchedule ?? '',
+      bookingDateSchedule: booking.bookingDateSchedule ?? '',
+      location: booking.location ?? 'Myanmar',
+      question: booking.question ?? '',
+    };
+
+    setEditingInitialValues(initial);
+    setIsEditDrawerOpen(true);
+  };
+
+  const handleRemove = async (bookingId: string) => {
+    try {
+      await deleteConsultationMutation.mutateAsync(bookingId);
+      // Clear selection if it included the removed id
+      setSelectedConsultationIds((prev) => {
+        const next = new Set(prev);
+        next.delete(bookingId);
+        return next;
+      });
+      setSelectedRowKeys(new Set());
+    } catch (error) {
+      console.error('Failed to remove consultation booking:', error);
+    }
+  };
+
   const handleDeleteSelected = useCallback(async () => {
     if (selectedConsultationIds.size === 0) {
       return;
@@ -1028,6 +1076,10 @@ const BookingsPage: React.FC = () => {
     setIsAddDrawerOpen(false);
   };
 
+   const handleCloseEditDrawer = () => {
+    setIsEditDrawerOpen(false);
+  };
+
   const handleAddConsultationBooking = async (values: AddBookingFormValues) => {
     try {
       const transformBookingTime = (timeString: string): string => {
@@ -1069,6 +1121,22 @@ const BookingsPage: React.FC = () => {
       console.error(`Error: ${errorMessage}`);
     }
   };
+
+  const handleEditConsultationBooking = async (values: AddBookingFormValues) => {
+    // No update API available in this module; close the drawer and log the values.
+    // If an update mutation exists, replace this with the appropriate mutation call.
+    console.log('Edit booking submitted', values);
+    setIsEditDrawerOpen(false);
+    setEditingInitialValues(null);
+  };
+
+  const renderActions = (booking: BookingRecord) => (
+    <ActionDropdown
+      booking={booking}
+      onEdit={handleEditClick}
+      onRemove={handleRemove}
+    />
+  );
 
   if (isLoading) {
     return (
@@ -1229,51 +1297,30 @@ const BookingsPage: React.FC = () => {
                 <div className="absolute top-full left-0 z-50 mt-2 w-64 rounded-lg border border-gray-200 bg-white shadow-lg">
                   <div className="space-y-3 p-4">
                     {[
-                      { value: 'All' as const, label: 'All Statuses' },
+                      { value: 'All' as const, label: 'All Status' },
                       ...bookingStatusOptions.map((status) => ({
                         value: status,
                         label: status,
                       })),
                     ].map((option) => {
                       const isSelected = selectedStatus === option.value;
-                      const styles =
-                        option.value === 'All'
-                          ? {
-                              container: 'bg-gray-100 text-gray-700',
-                              dot: 'bg-gray-400',
-                            }
-                          : statusFilterOptionStyles[option.value];
 
                       return (
-                        <label
+                        <button
                           key={option.value}
-                          className="flex cursor-pointer items-center gap-3 rounded p-2 hover:bg-gray-50"
+                          type="button"
+                          onClick={() => handleStatusSelect(option.value)}
+                          className="flex w-full cursor-pointer items-center gap-3 rounded p-2 hover:bg-gray-50"
                         >
-                          <input
-                            type="radio"
-                            name="booking-status-filter"
-                            checked={isSelected}
-                            onChange={() => handleStatusSelect(option.value)}
-                            className="text-primary focus:ring-primary h-5 w-5 border-gray-300"
-                          />
                           <span
                             className={clsx(
                               'inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium transition-colors',
-                              styles.container,
-                              isSelected
-                                ? 'ring-primary/40 ring-2'
-                                : 'opacity-80'
+                              isSelected ? 'text-primary' : ''
                             )}
                           >
-                            <span
-                              className={clsx(
-                                'h-2 w-2 rounded-full',
-                                styles.dot
-                              )}
-                            />
                             {option.label}
                           </span>
-                        </label>
+                        </button>
                       );
                     })}
                   </div>
@@ -1410,6 +1457,13 @@ const BookingsPage: React.FC = () => {
         open={isAddDrawerOpen}
         onClose={handleCloseAddDrawer}
         onSubmit={handleAddConsultationBooking}
+      />
+
+      <EditBookingDrawer 
+        open={isEditDrawerOpen}
+        onClose={handleCloseEditDrawer}
+        onSubmit={handleEditConsultationBooking}
+        initialValues={editingInitialValues ?? defaultEditInitialValues}
       />
     </div>
   );
