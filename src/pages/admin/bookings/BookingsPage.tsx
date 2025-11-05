@@ -1268,8 +1268,8 @@ const BookingsPage: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="relative z-20 flex flex-1 flex-wrap items-center gap-5">
-            <div className="relative max-w-md min-w-[240px] flex-1">
+          <div className="relative z-50 flex max-w-md justify-between space-x-5">
+            <div className="relative max-w-md min-w-[290px] flex-1">
               <span className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-gray-400">
                 <SearchIcon className="h-5 w-5" />
               </span>
