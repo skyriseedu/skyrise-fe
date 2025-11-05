@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import clsx from 'clsx';
 
 import DataTable, {
@@ -9,23 +15,32 @@ import Button from '@/components/common/Button';
 import SearchIcon from '@/assets/search.svg?react';
 import FilterIcon from '@/assets/filter-alt.svg?react';
 import RemoveIcon from '@/assets/bin.svg?react';
+import CaretDownIcon from '@/assets/caret-down.svg?react';
+import CalendarTimeIcon from '@/assets/calendar-time.svg?react';
+import CheckboxCheckedIcon from '@/assets/checkbox-checked.svg?react';
+import CloseSquareIcon from '@/assets/close-square.svg?react';
 import AddBookingDrawer, {
   type AddBookingFormValues,
 } from '@/components/bookings/AddBookingDrawer';
-import type { BookingStatus } from '@/types/bookings';
-import { bookingStatusOptions } from '@/types/bookings';
+import type { BookingStatus, PlatformStatus } from '@/types/bookings';
+import { bookingStatusOptions, platformStatusOptions } from '@/types/bookings';
 import {
   useConsultations,
   useCreateConsultation,
   useDeleteConsultation,
   useBulkDeleteConsultations,
 } from '@/queries';
-import type { Consultation, CreateConsultationRequest, BookingStatusApi } from '@/types/bookings';
+import type {
+  Consultation,
+  CreateConsultationRequest,
+  BookingStatusApi,
+} from '@/types/bookings';
+import EditIcon from '@/assets/edit.svg?react';
 
 type BookingRecord = {
   id: string;
   status: BookingStatus;
-  submittedPlatform: string;
+  submittedPlatform: PlatformStatus;
   submittedDate: string; // ISO date string
   name: string;
   email: string;
@@ -38,6 +53,338 @@ type BookingRecord = {
 };
 
 type BookingTab = 'consultation' | 'admission';
+
+type StatusVisualConfig = {
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  iconWrapperClassName: string;
+  iconClassName: string;
+  textClassName: string;
+};
+
+type PlatformVisualConfig = {
+  textClassName: string;
+};
+
+const statusVisuals: Record<BookingStatus, StatusVisualConfig> = {
+  Scheduled: {
+    Icon: CalendarTimeIcon,
+    iconWrapperClassName: '',
+    iconClassName: 'text-gray-700',
+    textClassName: 'text-gray-700',
+  },
+  Completed: {
+    Icon: CheckboxCheckedIcon,
+    iconWrapperClassName: '',
+    iconClassName: '',
+    textClassName: '',
+  },
+  Cancelled: {
+    Icon: CloseSquareIcon,
+    iconWrapperClassName: '',
+    iconClassName: '',
+    textClassName: '',
+  },
+};
+
+const platformVisuals: Record<PlatformStatus, PlatformVisualConfig> = {
+  Website: {
+    textClassName: 'text-gray-700',
+  },
+  'Social Media': {
+    textClassName: 'text-gray-700',
+  },
+};
+
+type StatusDropdownProps = {
+  value: BookingStatus;
+  onChange: (nextStatus: BookingStatus) => void;
+  disabled?: boolean;
+};
+
+type platformDropdownProps = {
+  value: PlatformStatus;
+  onChange: (nextStatus: PlatformStatus) => void;
+  disabled?: boolean;
+};
+
+const StatusDropdown: React.FC<StatusDropdownProps> = ({
+  value,
+  onChange,
+  disabled = false,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!containerRef.current) return;
+      if (!containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  const toggleDropdown = () => {
+    if (disabled) return;
+    setIsOpen((prev) => !prev);
+  };
+
+  const handleSelect = (status: BookingStatus) => {
+    onChange(status);
+    setIsOpen(false);
+  };
+
+  const selectedVisuals = statusVisuals[value];
+  const SelectedIcon = selectedVisuals.Icon;
+
+  return (
+    <div ref={containerRef} className="relative inline-flex">
+      <button
+        type="button"
+        onClick={toggleDropdown}
+        disabled={disabled}
+        className={clsx(
+          'flex cursor-pointer items-center gap-3 rounded-full px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed'
+        )}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+      >
+        <span
+          className={clsx(
+            'flex h-9 w-9 items-center justify-center rounded-full',
+            selectedVisuals.iconWrapperClassName
+          )}
+        >
+          <SelectedIcon
+            className={clsx('h-5 w-5', selectedVisuals.iconClassName)}
+          />
+        </span>
+        <span className={clsx('text-base', selectedVisuals.textClassName)}>
+          {value}
+        </span>
+        <CaretDownIcon
+          className={clsx(
+            'ml-1 h-4 w-4 text-gray-500 transition-transform',
+            isOpen ? 'rotate-180' : ''
+          )}
+        />
+      </button>
+
+      {isOpen ? (
+        <div className="absolute top-full left-0 z-30 mt-2 w-56 rounded-3xl border border-gray-200 bg-white p-2 shadow-xl">
+          <div className="space-y-1">
+            {bookingStatusOptions.map((status) => {
+              const visuals = statusVisuals[status];
+              const isSelected = status === value;
+              const OptionIcon = visuals.Icon;
+
+              return (
+                <button
+                  key={status}
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => handleSelect(status)}
+                  className={clsx(
+                    'flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm transition hover:bg-gray-100',
+                    isSelected ? 'bg-gray-100 font-semibold' : 'font-medium'
+                  )}
+                >
+                  <span
+                    className={clsx(
+                      'flex h-9 w-9 items-center justify-center rounded-full',
+                      visuals.iconWrapperClassName
+                    )}
+                  >
+                    <OptionIcon
+                      className={clsx('h-5 w-5', visuals.iconClassName)}
+                    />
+                  </span>
+                  <span className={clsx('text-base', visuals.textClassName)}>
+                    {status}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+};
+
+const ActionDropdown: React.FC<{ booking: BookingRecord }> = ({ booking }) => {
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpenDropdown(null);
+      }
+    };
+
+    if (openDropdown === booking.id) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [booking.id]);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        className="cursor-pointer p-1 text-gray-500 hover:text-gray-700"
+        onClick={() =>
+          setOpenDropdown(openDropdown === booking.id ? null : booking.id)
+        }
+      >
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+        </svg>
+      </button>
+
+      {openDropdown === booking.id && (
+        <div className="absolute right-0 z-10 mt-1 w-38 rounded-lg border border-gray-200 bg-white shadow-lg">
+          <div className="py-1">
+            <button
+              // onClick={}
+              className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+            >
+              <EditIcon className="h-4 w-4 text-gray-500" />
+              Edit
+            </button>
+            <button
+              // onClick={}
+              className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+            >
+              <RemoveIcon className="h-4 w-4 text-red-600" />
+              Remove
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const PlatformDropdown: React.FC<platformDropdownProps> = ({
+  value,
+  onChange,
+  disabled = false,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!containerRef.current) return;
+      if (!containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  const toggleDropdown = () => {
+    if (disabled) return;
+    setIsOpen((prev) => !prev);
+  };
+
+  const handleSelect = (status: PlatformStatus) => {
+    onChange(status);
+    setIsOpen(false);
+  };
+
+  const selectedVisuals = platformVisuals[value];
+
+  return (
+    <div ref={containerRef} className="relative inline-flex">
+      <button
+        type="button"
+        onClick={toggleDropdown}
+        disabled={disabled}
+        className={clsx(
+          'flex cursor-pointer items-center gap-3 rounded-full px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed'
+        )}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+      >
+        <span className={clsx('text-base', selectedVisuals.textClassName)}>
+          {value}
+        </span>
+        <CaretDownIcon
+          className={clsx(
+            'ml-1 h-4 w-4 text-gray-500 transition-transform',
+            isOpen ? 'rotate-180' : ''
+          )}
+        />
+      </button>
+
+      {isOpen ? (
+        <div className="absolute top-full left-0 z-30 mt-2 w-56 rounded-3xl border border-gray-200 bg-white p-2 shadow-xl">
+          <div className="space-y-1">
+            {platformStatusOptions?.map((status) => {
+              const visuals = platformVisuals[status];
+              const isSelected = status === value;
+
+              return (
+                <button
+                  key={status}
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => handleSelect(status)}
+                  className={clsx(
+                    'flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm transition hover:bg-gray-100',
+                    isSelected ? 'bg-gray-100 font-semibold' : 'font-medium'
+                  )}
+                >
+                  <span className={clsx('text-base', visuals.textClassName)}>
+                    {status}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+};
 
 const addOrdinalSuffix = (day: number) => {
   const remainderTen = day % 10;
@@ -58,22 +405,10 @@ const formatDisplayDate = (isoDate: string) => {
   return `${day} ${month} ${year}`;
 };
 
-const statusBadgeStyles: Record<BookingStatus, { container: string; dot: string }> = {
-  Scheduled: {
-    container: 'bg-[#E6F4FF] text-[#0B74C4] border-[#B3DCF9]',
-    dot: 'bg-[#0B74C4]',
-  },
-  Completed: {
-    container: 'bg-[#E8F6EF] text-[#2D7D46] border-[#B5E3C6]',
-    dot: 'bg-[#2D7D46]',
-  },
-  Cancelled: {
-    container: 'bg-[#FFF0F0] text-[#D13B3B] border-[#F5B3B3]',
-    dot: 'bg-[#D13B3B]',
-  },
-};
-
-const statusFilterOptionStyles: Record<BookingStatus, { container: string; dot: string }> = {
+const statusFilterOptionStyles: Record<
+  BookingStatus,
+  { container: string; dot: string }
+> = {
   Scheduled: {
     container: 'bg-[#E6F4FF] text-[#0B74C4]',
     dot: 'bg-[#0B74C4]',
@@ -88,91 +423,9 @@ const statusFilterOptionStyles: Record<BookingStatus, { container: string; dot: 
   },
 };
 
-const renderStatusBadge = (status: BookingStatus) => {
-  const styles = statusBadgeStyles[status];
-
-  return (
-    <span
-      className={clsx(
-        'inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide',
-        styles.container
-      )}
-    >
-      <span className={clsx('h-2 w-2 rounded-full', styles.dot)} />
-      {status}
-    </span>
-  );
-};
-
-const bookingColumns: TableColumn<BookingRecord>[] = [
-  {
-    key: 'status',
-    header: 'Status',
-    minWidth: 160,
-    render: (row) => renderStatusBadge(row.status),
-  },
-  {
-    key: 'submittedPlatform',
-    header: 'Submitted Platform',
-    minWidth: 180,
-    sortable: true,
-    headerClassName: 'whitespace-nowrap',
-    headerContentClassName: 'whitespace-nowrap',
-  },
-  {
-    key: 'submittedDate',
-    header: 'Submitted Date',
-    sortable: true,
-    headerClassName: 'whitespace-nowrap',
-    headerContentClassName: 'whitespace-nowrap',
-    cellClassName: 'whitespace-nowrap',
-    render: (row) => formatDisplayDate(row.submittedDate),
-  },
-  {
-    key: 'name',
-    header: 'Name',
-    minWidth: 200,
-    sortable: true,
-  },
-  {
-    key: 'email',
-    header: 'Email',
-    minWidth: 220,
-    sortable: true,
-  },
-  {
-    key: 'phoneNumber',
-    header: 'Phone Number',
-    minWidth: 160,
-  },
-  {
-    key: 'bookingTimeSchedule',
-    header: 'Booking Time',
-    minWidth: 140,
-    sortable: true,
-    headerClassName: 'whitespace-nowrap',
-    headerContentClassName: 'whitespace-nowrap',
-    cellClassName: 'whitespace-nowrap',
-  },
-  {
-    key: 'location',
-    header: 'Location',
-    minWidth: 120,
-    sortable: true,
-  },
-  {
-    key: 'question',
-    header: 'Question',
-    minWidth: 200,
-    render: (row) => (
-      <div className="max-w-xs truncate" title={row.question}>
-        {row.question}
-      </div>
-    ),
-  },
-];
-
-const transformConsultationToBookingRecord = (consultation: Consultation): BookingRecord => {
+const transformConsultationToBookingRecord = (
+  consultation: Consultation
+): BookingRecord => {
   const statusMap: Record<string, BookingStatus> = {
     scheduled: 'Scheduled',
     completed: 'Completed',
@@ -206,18 +459,34 @@ const transformConsultationToBookingRecord = (consultation: Consultation): Booki
   return {
     id: resolvedId ?? '',
     status: frontendStatus,
-    submittedPlatform: pickString('submittedPlatform') ?? 'Website',
+    submittedPlatform: (() => {
+      const raw = pickString('submittedPlatform');
+      if (!raw) return 'Website' as PlatformStatus;
+
+      const cleaned = raw.trim().toLowerCase();
+      if (cleaned === 'social media' || cleaned === 'social')
+        return 'Social Media' as PlatformStatus;
+      if (cleaned === 'website') return 'Website' as PlatformStatus;
+
+      // Fallback: if it doesn't match known values, default to Website
+      return 'Website' as PlatformStatus;
+    })(),
     submittedDate: consultation.createdAt,
     name: consultation.user?.name ?? pickString('name') ?? 'N/A',
     email: consultation.user?.email ?? pickString('email') ?? 'N/A',
     phoneNumber: consultation.user?.phone ?? pickString('phoneNumber') ?? 'N/A',
     facebookAccount: pickString('facebookAccount'),
-    bookingTimeSchedule: pickString('bookingTimeSchedule') ?? consultation.time ?? 'N/A',
+    bookingTimeSchedule:
+      pickString('bookingTimeSchedule') ?? consultation.time ?? 'N/A',
     bookingDateSchedule: consultation.date,
     location: pickString('location') ?? 'N/A',
     question: pickString('question') ?? consultation.notes ?? 'N/A',
   };
 };
+
+const renderActions = (booking: BookingRecord) => (
+  <ActionDropdown booking={booking} />
+);
 
 const BookingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<BookingTab>('consultation');
@@ -226,18 +495,25 @@ const BookingsPage: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Set<string>>(
     () => new Set()
   );
-  const [selectedConsultationIds, setSelectedConsultationIds] = useState<Set<string>>(
-    () => new Set()
-  );
+  const [selectedConsultationIds, setSelectedConsultationIds] = useState<
+    Set<string>
+  >(() => new Set());
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [showStatusFilter, setShowStatusFilter] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus | 'All'>(
     'Scheduled'
   );
+  const [statusOverrides, setStatusOverrides] = useState<
+    Record<string, BookingStatus>
+  >({});
+  const [platformOverrides, setPlatformOverrides] = useState<
+    Record<string, PlatformStatus>
+  >({});
   const statusFilterRef = useRef<HTMLDivElement | null>(null);
 
-  const statusQueryParam = selectedStatus === 'All' ? undefined : selectedStatus;
+  const statusQueryParam =
+    selectedStatus === 'All' ? undefined : selectedStatus;
 
   const {
     data: consultationsData,
@@ -255,10 +531,70 @@ const BookingsPage: React.FC = () => {
     if (!consultationsData?.data) {
       return [];
     }
-    
-    const transformedRows = consultationsData.data.map(transformConsultationToBookingRecord);
+
+    const transformedRows = consultationsData.data.map(
+      transformConsultationToBookingRecord
+    );
     return transformedRows;
   }, [consultationsData]);
+
+  useEffect(() => {
+    setStatusOverrides((prev) => {
+      const next: Record<string, BookingStatus> = {};
+
+      consultationRows.forEach((row) => {
+        if (!row.id) {
+          return;
+        }
+
+        next[row.id] = prev[row.id] ?? row.status;
+      });
+
+      return next;
+    });
+  }, [consultationRows]);
+
+  useEffect(() => {
+    setPlatformOverrides((prev) => {
+      const next: Record<string, PlatformStatus> = {};
+
+      consultationRows.forEach((row) => {
+        if (!row.id) return;
+        next[row.id] = prev[row.id] ?? row.submittedPlatform;
+      });
+
+      return next;
+    });
+  }, [consultationRows]);
+
+  const consultationRowsWithOverrides = useMemo(() => {
+    if (
+      Object.keys(statusOverrides).length === 0 &&
+      Object.keys(platformOverrides).length === 0
+    ) {
+      return consultationRows;
+    }
+
+    return consultationRows.map((row) => {
+      if (!row.id) {
+        return row;
+      }
+
+      let updatedRow = row;
+
+      const statusOverride = statusOverrides[row.id];
+      if (statusOverride && statusOverride !== row.status) {
+        updatedRow = { ...updatedRow, status: statusOverride };
+      }
+
+      const platformOverride = platformOverrides[row.id];
+      if (platformOverride && platformOverride !== row.submittedPlatform) {
+        updatedRow = { ...updatedRow, submittedPlatform: platformOverride };
+      }
+
+      return updatedRow;
+    });
+  }, [consultationRows, statusOverrides, platformOverrides]);
 
   const tabs: Array<{ key: BookingTab; label: string }> = useMemo(
     () => [
@@ -269,12 +605,14 @@ const BookingsPage: React.FC = () => {
   );
 
   const statusFilteredRows = useMemo(() => {
+    const sourceRows = consultationRowsWithOverrides;
+
     if (selectedStatus === 'All') {
-      return consultationRows;
+      return sourceRows;
     }
 
-    return consultationRows.filter((row) => row.status === selectedStatus);
-  }, [consultationRows, selectedStatus]);
+    return sourceRows.filter((row) => row.status === selectedStatus);
+  }, [consultationRowsWithOverrides, selectedStatus]);
 
   const filteredConsultationRows = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -342,11 +680,145 @@ const BookingsPage: React.FC = () => {
     return rowsToSort;
   }, [filteredConsultationRows, sortState]);
 
+  const handleRowStatusChange = useCallback(
+    (row: BookingRecord, nextStatus: BookingStatus) => {
+      if (!row.id) {
+        console.warn(
+          'Cannot update consultation status without a valid id.',
+          row
+        );
+        return;
+      }
+
+      setStatusOverrides((prev) => {
+        if (prev[row.id] === nextStatus) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          [row.id]: nextStatus,
+        };
+      });
+    },
+    []
+  );
+
+  const handleRowPlatformChange = useCallback(
+    (row: BookingRecord, nextPlatform: PlatformStatus) => {
+      if (!row.id) {
+        console.warn(
+          'Cannot update consultation platform without a valid id.',
+          row
+        );
+        return;
+      }
+
+      setPlatformOverrides((prev) => {
+        if (prev[row.id] === nextPlatform) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          [row.id]: nextPlatform,
+        };
+      });
+    },
+    []
+  );
+
+  const bookingColumns = useMemo<TableColumn<BookingRecord>[]>(
+    () => [
+      {
+        key: 'status',
+        header: 'Status',
+        minWidth: 200,
+        render: (row) => (
+          <StatusDropdown
+            value={row.status}
+            onChange={(nextStatus) => handleRowStatusChange(row, nextStatus)}
+            disabled={!row.id}
+          />
+        ),
+      },
+      {
+        key: 'submittedPlatform',
+        header: 'Submitted Platform',
+        minWidth: 200,
+        sortable: true,
+        headerClassName: 'whitespace-nowrap',
+        headerContentClassName: 'whitespace-nowrap',
+        render: (row) => (
+          <PlatformDropdown
+            value={row.submittedPlatform}
+            onChange={(nextPlatform) =>
+              handleRowPlatformChange(row, nextPlatform)
+            }
+            disabled={!row.id}
+          />
+        ),
+      },
+      {
+        key: 'submittedDate',
+        header: 'Submitted Date',
+        sortable: true,
+        headerClassName: 'whitespace-nowrap',
+        headerContentClassName: 'whitespace-nowrap',
+        cellClassName: 'whitespace-nowrap',
+        render: (row) => formatDisplayDate(row.submittedDate),
+      },
+      {
+        key: 'name',
+        header: 'Name',
+        minWidth: 200,
+        sortable: true,
+      },
+      {
+        key: 'email',
+        header: 'Email',
+        minWidth: 220,
+        sortable: true,
+      },
+      {
+        key: 'phoneNumber',
+        header: 'Phone Number',
+        minWidth: 160,
+      },
+      {
+        key: 'bookingTimeSchedule',
+        header: 'Booking Time',
+        minWidth: 140,
+        sortable: true,
+        headerClassName: 'whitespace-nowrap',
+        headerContentClassName: 'whitespace-nowrap',
+        cellClassName: 'whitespace-nowrap',
+      },
+      {
+        key: 'location',
+        header: 'Location',
+        minWidth: 120,
+        sortable: true,
+      },
+      {
+        key: 'question',
+        header: 'Question',
+        minWidth: 200,
+        render: (row) => (
+          <div className="max-w-xs truncate" title={row.question}>
+            {row.question}
+          </div>
+        ),
+      },
+    ],
+    [handleRowStatusChange]
+  );
+
   const tableData = useMemo(
     () => (activeTab === 'consultation' ? sortedConsultationRows : []),
     [activeTab, sortedConsultationRows]
   );
-  
+
   useEffect(() => {
     setSelectedRowKeys(new Set());
     setSelectedConsultationIds(new Set());
@@ -442,7 +914,9 @@ const BookingsPage: React.FC = () => {
       });
 
       if (nextIds.size === 0) {
-        console.warn('No rows with valid consultation ids are available to select.');
+        console.warn(
+          'No rows with valid consultation ids are available to select.'
+        );
         setSelectedRowKeys(new Set());
         setSelectedConsultationIds(new Set());
         return;
@@ -478,7 +952,10 @@ const BookingsPage: React.FC = () => {
     }
 
     if (ids.length < rawIds.length) {
-      console.warn('Skipping consultation IDs that are invalid or empty.', rawIds);
+      console.warn(
+        'Skipping consultation IDs that are invalid or empty.',
+        rawIds
+      );
     }
 
     try {
@@ -490,7 +967,6 @@ const BookingsPage: React.FC = () => {
       try {
         // Fallback to individual deletes if the bulk endpoint is unavailable
         for (const consultationId of ids) {
-          // eslint-disable-next-line no-await-in-loop
           await deleteConsultationMutation.mutateAsync(consultationId);
         }
         setSelectedRowKeys(new Set());
@@ -512,7 +988,7 @@ const BookingsPage: React.FC = () => {
   const handleTabChange = (tabKey: BookingTab) => {
     setActiveTab(tabKey);
     setSearchTerm('');
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -539,8 +1015,8 @@ const BookingsPage: React.FC = () => {
   const emptyMessage = isLoading
     ? 'Loading consultations...'
     : searchTerm
-    ? 'No bookings match your search criteria.'
-    : `No ${selectedStatusesLabel} available.`;
+      ? 'No bookings match your search criteria.'
+      : `No ${selectedStatusesLabel} available.`;
 
   const pagination = consultationsData?.pagination;
 
@@ -559,7 +1035,10 @@ const BookingsPage: React.FC = () => {
       };
 
       const normalizePhoneNumber = () => {
-        const parts = [values.countryDialCode.trim(), values.phoneNumber.trim()].filter(Boolean);
+        const parts = [
+          values.countryDialCode.trim(),
+          values.phoneNumber.trim(),
+        ].filter(Boolean);
         return parts.join('').replace(/\s+/g, '');
       };
 
@@ -577,13 +1056,16 @@ const BookingsPage: React.FC = () => {
       };
 
       await createConsultationMutation.mutateAsync(consultationData);
-      
+
       handleCloseAddDrawer();
       setSelectedRowKeys(new Set());
       setSelectedConsultationIds(new Set());
       setSortState(undefined);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create consultation booking';
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to create consultation booking';
       console.error(`Error: ${errorMessage}`);
     }
   };
@@ -600,10 +1082,10 @@ const BookingsPage: React.FC = () => {
                   key={tab.key}
                   type="button"
                   className={clsx(
-                    "cursor-pointer relative pb-3 text-h4 font-semibold text-gray-500 transition-colors after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
+                    "text-h4 relative cursor-pointer pb-3 font-semibold text-gray-500 transition-colors after:absolute after:bottom-0 after:left-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
                     isActive
                       ? 'text-primary after:bg-primary'
-                      : 'after:bg-transparent hover:text-primary'
+                      : 'hover:text-primary after:bg-transparent'
                   )}
                 >
                   {tab.label}
@@ -611,13 +1093,13 @@ const BookingsPage: React.FC = () => {
               );
             })}
           </div>
-          
+
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
-            <div className="h-12 bg-gray-200 rounded mb-4"></div>
+            <div className="mb-6 h-8 w-1/3 rounded bg-gray-200"></div>
+            <div className="mb-4 h-12 rounded bg-gray-200"></div>
             <div className="space-y-3">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-16 bg-gray-200 rounded"></div>
+                <div key={i} className="h-16 rounded bg-gray-200"></div>
               ))}
             </div>
           </div>
@@ -638,10 +1120,10 @@ const BookingsPage: React.FC = () => {
                   key={tab.key}
                   type="button"
                   className={clsx(
-                    "cursor-pointer relative pb-3 text-h4 font-semibold text-gray-500 transition-colors after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
+                    "text-h4 relative cursor-pointer pb-3 font-semibold text-gray-500 transition-colors after:absolute after:bottom-0 after:left-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
                     isActive
                       ? 'text-primary after:bg-primary'
-                      : 'after:bg-transparent hover:text-primary'
+                      : 'hover:text-primary after:bg-transparent'
                   )}
                 >
                   {tab.label}
@@ -649,17 +1131,31 @@ const BookingsPage: React.FC = () => {
               );
             })}
           </div>
-          
-          <div className="text-center py-12">
-            <div className="text-red-500 mb-4">
-              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+          <div className="py-12 text-center">
+            <div className="mb-4 text-red-500">
+              <svg
+                className="mx-auto h-16 w-16"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Bookings</h3>
-            <p className="text-gray-600 mb-4">{error?.message || 'Failed to load consultation bookings'}</p>
-            <button 
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+            <h3 className="mb-2 text-xl font-semibold text-gray-900">
+              Error Loading Bookings
+            </h3>
+            <p className="mb-4 text-gray-600">
+              {error?.message || 'Failed to load consultation bookings'}
+            </p>
+            <button
+              className="rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600"
               onClick={() => window.location.reload()}
             >
               Retry
@@ -682,10 +1178,10 @@ const BookingsPage: React.FC = () => {
                 type="button"
                 onClick={() => handleTabChange(tab.key)}
                 className={clsx(
-                  "cursor-pointer relative pb-3 text-h4 font-semibold text-gray-500 transition-colors after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
+                  "text-h4 relative cursor-pointer pb-3 font-semibold text-gray-500 transition-colors after:absolute after:bottom-0 after:left-0 after:h-1 after:w-full after:rounded-full after:transition-colors after:duration-200 after:content-['']",
                   isActive
                     ? 'text-primary after:bg-primary'
-                    : 'after:bg-transparent hover:text-primary'
+                    : 'hover:text-primary after:bg-transparent'
                 )}
               >
                 {tab.label}
@@ -694,15 +1190,19 @@ const BookingsPage: React.FC = () => {
           })}
         </div>
 
-          <div className='flex flex-row gap-3 '>
-            <p className="text-h2 text-text-primary">Total Consultation Booking</p>
-            <p className="text-h2 font-semibold text-text-primary">{totalBookings}</p>
-          </div>
+        <div className="flex flex-row gap-3">
+          <p className="text-h2 text-text-primary">
+            Total Consultation Booking
+          </p>
+          <p className="text-h2 text-text-primary font-semibold">
+            {totalBookings}
+          </p>
+        </div>
 
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="relative z-20 flex flex-1 flex-wrap items-center gap-5">
-            <div className="relative min-w-[240px] flex-1 max-w-md">
-              <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="relative max-w-md min-w-[240px] flex-1">
+              <span className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-gray-400">
                 <SearchIcon className="h-5 w-5" />
               </span>
               <input
@@ -710,7 +1210,7 @@ const BookingsPage: React.FC = () => {
                 value={searchTerm}
                 onChange={handleSearchChange}
                 placeholder="Search Name, Email, Status..."
-                className="w-full rounded-lg border border-gray-300 bg-white py-2 pr-4 pl-10 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="focus:ring-primary/20 w-full rounded-lg border border-gray-300 bg-white py-2 pr-4 pl-10 text-sm text-gray-700 placeholder:text-gray-400 focus:ring-2 focus:outline-none"
               />
             </div>
 
@@ -727,7 +1227,7 @@ const BookingsPage: React.FC = () => {
 
               {showStatusFilter && (
                 <div className="absolute top-full left-0 z-50 mt-2 w-64 rounded-lg border border-gray-200 bg-white shadow-lg">
-                  <div className="p-4 space-y-3">
+                  <div className="space-y-3 p-4">
                     {[
                       { value: 'All' as const, label: 'All Statuses' },
                       ...bookingStatusOptions.map((status) => ({
@@ -738,7 +1238,10 @@ const BookingsPage: React.FC = () => {
                       const isSelected = selectedStatus === option.value;
                       const styles =
                         option.value === 'All'
-                          ? { container: 'bg-gray-100 text-gray-700', dot: 'bg-gray-400' }
+                          ? {
+                              container: 'bg-gray-100 text-gray-700',
+                              dot: 'bg-gray-400',
+                            }
                           : statusFilterOptionStyles[option.value];
 
                       return (
@@ -751,16 +1254,23 @@ const BookingsPage: React.FC = () => {
                             name="booking-status-filter"
                             checked={isSelected}
                             onChange={() => handleStatusSelect(option.value)}
-                            className="h-5 w-5 border-gray-300 text-primary focus:ring-primary"
+                            className="text-primary focus:ring-primary h-5 w-5 border-gray-300"
                           />
                           <span
                             className={clsx(
                               'inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium transition-colors',
                               styles.container,
-                              isSelected ? 'ring-2 ring-primary/40' : 'opacity-80'
+                              isSelected
+                                ? 'ring-primary/40 ring-2'
+                                : 'opacity-80'
                             )}
                           >
-                            <span className={clsx('h-2 w-2 rounded-full', styles.dot)} />
+                            <span
+                              className={clsx(
+                                'h-2 w-2 rounded-full',
+                                styles.dot
+                              )}
+                            />
                             {option.label}
                           </span>
                         </label>
@@ -800,7 +1310,9 @@ const BookingsPage: React.FC = () => {
               onClick={handleOpenAddDrawer}
               disabled={createConsultationMutation.isPending}
             >
-              {createConsultationMutation.isPending ? 'Creating...' : '+ Consultation Record'}
+              {createConsultationMutation.isPending
+                ? 'Creating...'
+                : '+ Consultation Record'}
             </Button>
           </div>
         </div>
@@ -817,6 +1329,7 @@ const BookingsPage: React.FC = () => {
           }
           onSelectRow={handleSelectRow}
           sortState={sortState}
+          renderActions={renderActions}
           onSortChange={handleSortChange}
           emptyMessage={emptyMessage}
           maxBodyHeight={460}
@@ -824,19 +1337,23 @@ const BookingsPage: React.FC = () => {
 
         {/* Pagination Controls */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
-            <div className="flex justify-between flex-1 sm:hidden">
+          <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+            <div className="flex flex-1 justify-between sm:hidden">
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage <= 1}
-                className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Previous
               </button>
               <button
-                onClick={() => setCurrentPage(Math.min(pagination.totalPages, currentPage + 1))}
+                onClick={() =>
+                  setCurrentPage(
+                    Math.min(pagination.totalPages, currentPage + 1)
+                  )
+                }
                 disabled={currentPage >= pagination.totalPages}
-                className="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next
               </button>
@@ -844,29 +1361,41 @@ const BookingsPage: React.FC = () => {
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm text-gray-700">
-                  Showing <span className="font-medium">{((currentPage - 1) * 10) + 1}</span> to{' '}
+                  Showing{' '}
+                  <span className="font-medium">
+                    {(currentPage - 1) * 10 + 1}
+                  </span>{' '}
+                  to{' '}
                   <span className="font-medium">
                     {Math.min(currentPage * 10, pagination.total)}
                   </span>{' '}
-                  of <span className="font-medium">{pagination.total}</span> results
+                  of <span className="font-medium">{pagination.total}</span>{' '}
+                  results
                 </p>
               </div>
               <div>
-                <nav className="inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                <nav
+                  className="inline-flex -space-x-px rounded-md shadow-sm"
+                  aria-label="Pagination"
+                >
                   <button
                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                     disabled={currentPage <= 1}
-                    className="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Previous
                   </button>
-                  <span className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300">
+                  <span className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700">
                     Page {currentPage} of {pagination.totalPages}
                   </span>
                   <button
-                    onClick={() => setCurrentPage(Math.min(pagination.totalPages, currentPage + 1))}
+                    onClick={() =>
+                      setCurrentPage(
+                        Math.min(pagination.totalPages, currentPage + 1)
+                      )
+                    }
                     disabled={currentPage >= pagination.totalPages}
-                    className="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Next
                   </button>

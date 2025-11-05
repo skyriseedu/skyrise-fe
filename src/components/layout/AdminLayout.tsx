@@ -216,7 +216,7 @@ const AdminLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-neutral-100 text-sm text-gray-700">
       <div className="flex min-h-screen">
-        <aside className="flex w-[280px] shrink-0 flex-col border-r border-gray-200 bg-white">
+        <aside className="flex w-[250px] shrink-0 flex-col border-r border-gray-200 bg-white">
           <div className="border-b border-gray-200 px-8 py-4">
             <img
               src={SkyriseLogoPrimary}

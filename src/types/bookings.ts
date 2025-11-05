@@ -1,9 +1,14 @@
 export type BookingStatus = 'Scheduled' | 'Completed' | 'Cancelled';
-
+export type PlatformStatus = 'Website' | 'Social Media'
 export const bookingStatusOptions: BookingStatus[] = [
   'Scheduled',
   'Completed',
   'Cancelled',
+];
+
+export const platformStatusOptions: PlatformStatus[] = [
+  'Website',
+  'Social Media'
 ];
 
 export interface Consultation {

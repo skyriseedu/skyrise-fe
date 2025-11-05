@@ -194,7 +194,7 @@ const ProgramSetup: React.FC = () => {
     return (
       <div className="relative" ref={dropdownRef}>
         <button
-          className="p-1 text-gray-500 hover:text-gray-700"
+          className="p-1 text-gray-500 cursor-pointer hover:text-gray-700"
           onClick={() =>
             setOpenDropdown(openDropdown === program.id ? null : program.id)
           }
@@ -209,21 +209,21 @@ const ProgramSetup: React.FC = () => {
             <div className="py-1">
               <button
                 onClick={() => handleView(program)}
-                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
               >
                 <ViewIcon className="h-4 w-4 text-gray-500" />
                 View
               </button>
               <button
                 onClick={() => handleEdit(program)}
-                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
               >
                 <EditIcon className="h-4 w-4 text-gray-500" />
                 Edit
               </button>
               <button
                 onClick={() => handleRemove(program)}
-                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+                className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
               >
                 <RemoveIcon className="h-4 w-4 text-red-600" />
                 Remove
