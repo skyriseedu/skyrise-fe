@@ -5,6 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 
 import DataTable, {
@@ -66,6 +67,12 @@ type PlatformVisualConfig = {
   textClassName: string;
 };
 
+type DropdownPosition = {
+  top: number;
+  left: number;
+  width: number;
+};
+
 const statusVisuals: Record<BookingStatus, StatusVisualConfig> = {
   Scheduled: {
     Icon: CalendarTimeIcon,
@@ -114,16 +121,39 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
   disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const [menuPosition, setMenuPosition] = useState<DropdownPosition | null>(
+    null
+  );
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      setMenuPosition(null);
+      return;
+    }
+
+    const updatePosition = () => {
+      const button = buttonRef.current;
+      if (!button) return;
+
+      const rect = button.getBoundingClientRect();
+      setMenuPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    };
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (!containerRef.current) return;
-      if (!containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+      const target = event.target as Node | null;
+      if (
+        buttonRef.current?.contains(target) ||
+        menuRef.current?.contains(target)
+      ) {
+        return;
       }
+      setIsOpen(false);
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -132,9 +162,15 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
       }
     };
 
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('keydown', handleKeyDown);
+
     return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
@@ -152,13 +188,16 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
 
   const selectedVisuals = statusVisuals[value];
   const SelectedIcon = selectedVisuals.Icon;
+  const portalTarget =
+    typeof document !== 'undefined' ? document.body : undefined;
 
   return (
-    <div ref={containerRef} className="relative inline-flex">
+    <div className="relative inline-flex">
       <button
         type="button"
         onClick={toggleDropdown}
         disabled={disabled}
+        ref={buttonRef}
         className={clsx(
           'flex cursor-pointer items-center gap-3 rounded-full px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed'
         )}
@@ -186,45 +225,59 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
         />
       </button>
 
-      {isOpen ? (
-        <div className="absolute top-full left-0 z-30 mt-2 w-56 rounded-3xl border border-gray-200 bg-white p-2 shadow-xl">
-          <div className="space-y-1">
-            {bookingStatusOptions.map((status) => {
-              const visuals = statusVisuals[status];
-              const isSelected = status === value;
-              const OptionIcon = visuals.Icon;
+      {isOpen && menuPosition && portalTarget
+        ? createPortal(
+            <div
+              ref={menuRef}
+              style={{
+                position: 'absolute',
+                top: menuPosition.top + 8,
+                left: menuPosition.left,
+                width: menuPosition.width,
+                zIndex: 1500,
+              }}
+            >
+              <div className="rounded-3xl border border-gray-200 bg-white p-2 shadow-xl">
+                <div className="space-y-1">
+                  {bookingStatusOptions.map((status) => {
+                    const visuals = statusVisuals[status];
+                    const isSelected = status === value;
+                    const OptionIcon = visuals.Icon;
 
-              return (
-                <button
-                  key={status}
-                  type="button"
-                  role="option"
-                  aria-selected={isSelected}
-                  onClick={() => handleSelect(status)}
-                  className={clsx(
-                    'flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm transition hover:bg-gray-100',
-                    isSelected ? 'bg-gray-100 font-semibold' : 'font-medium'
-                  )}
-                >
-                  <span
-                    className={clsx(
-                      'flex h-9 w-9 items-center justify-center rounded-full',
-                      visuals.iconWrapperClassName
-                    )}
-                  >
-                    <OptionIcon
-                      className={clsx('h-5 w-5', visuals.iconClassName)}
-                    />
-                  </span>
-                  <span className={clsx('text-base', visuals.textClassName)}>
-                    {status}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      ) : null}
+                    return (
+                      <button
+                        key={status}
+                        type="button"
+                        role="option"
+                        aria-selected={isSelected}
+                        onClick={() => handleSelect(status)}
+                        className={clsx(
+                          'flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm transition hover:bg-gray-100',
+                          isSelected ? 'bg-gray-100 font-semibold' : 'font-medium'
+                        )}
+                      >
+                        <span
+                          className={clsx(
+                            'flex h-9 w-9 items-center justify-center rounded-full',
+                            visuals.iconWrapperClassName
+                          )}
+                        >
+                          <OptionIcon
+                            className={clsx('h-5 w-5', visuals.iconClassName)}
+                          />
+                        </span>
+                        <span className={clsx('text-base', visuals.textClassName)}>
+                          {status}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>,
+            portalTarget
+          )
+        : null}
     </div>
   );
 };
@@ -240,60 +293,128 @@ const ActionDropdown: React.FC<ActionDropdownProps> = ({
   onEdit,
   onRemove,
 }) => {
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<DropdownPosition | null>(
+    null
+  );
 
   useEffect(() => {
+    if (!isOpen) {
+      setMenuPosition(null);
+      return;
+    }
+
+    const updatePosition = () => {
+      const button = buttonRef.current;
+      if (!button) return;
+
+      const rect = button.getBoundingClientRect();
+      setMenuPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.right + window.scrollX - 192,
+        width: 192,
+      });
+    };
+
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node | null;
       if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        buttonRef.current?.contains(target) ||
+        menuRef.current?.contains(target)
       ) {
-        setOpenDropdown(null);
+        return;
+      }
+      setIsOpen(false);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
       }
     };
 
-    if (openDropdown === booking.id) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  const toggleDropdown = () => {
+    setIsOpen((prev) => !prev);
+  };
+
+  const handleEdit = () => {
+    onEdit?.(booking);
+    setIsOpen(false);
+  };
+
+  const handleRemove = () => {
+    if (!booking.id) {
+      return;
     }
-  }, [booking.id, openDropdown]);
+    onRemove?.(booking.id);
+    setIsOpen(false);
+  };
+
+  const portalTarget =
+    typeof document !== 'undefined' ? document.body : undefined;
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative">
       <button
         className="cursor-pointer p-1 text-gray-500 hover:text-gray-700"
-        onClick={() =>
-          setOpenDropdown(openDropdown === booking.id ? null : booking.id)
-        }
+        onClick={toggleDropdown}
+        ref={buttonRef}
       >
         <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
         </svg>
       </button>
 
-      {openDropdown === booking.id && (
-        <div className="absolute right-0 z-10 mt-1 w-38 rounded-lg border border-gray-200 bg-white shadow-lg">
-          <div className="py-1">
-            <button
-              onClick={() => onEdit?.(booking)}
-              className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+      {isOpen && menuPosition && portalTarget
+        ? createPortal(
+            <div
+              ref={menuRef}
+              style={{
+                position: 'absolute',
+                top: menuPosition.top,
+                left: menuPosition.left,
+                width: menuPosition.width,
+                zIndex: 1500,
+              }}
             >
-              <EditIcon className="h-4 w-4 text-gray-500" />
-              Edit
-            </button>
-            <button
-              onClick={() => booking.id && onRemove?.(booking.id)}
-              className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
-            >
-              <RemoveIcon className="h-4 w-4 text-red-600" />
-              Remove
-            </button>
-          </div>
-        </div>
-      )}
+              <div className="mt-1 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
+                <div className="py-1">
+                  <button
+                    onClick={handleEdit}
+                    className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    <EditIcon className="h-4 w-4 text-gray-500" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={handleRemove}
+                    className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+                  >
+                    <RemoveIcon className="h-4 w-4 text-red-600" />
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>,
+            portalTarget
+          )
+        : null}
     </div>
   );
 };
@@ -304,16 +425,39 @@ const PlatformDropdown: React.FC<platformDropdownProps> = ({
   disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const [menuPosition, setMenuPosition] = useState<DropdownPosition | null>(
+    null
+  );
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      setMenuPosition(null);
+      return;
+    }
+
+    const updatePosition = () => {
+      const button = buttonRef.current;
+      if (!button) return;
+
+      const rect = button.getBoundingClientRect();
+      setMenuPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    };
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (!containerRef.current) return;
-      if (!containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+      const target = event.target as Node | null;
+      if (
+        buttonRef.current?.contains(target) ||
+        menuRef.current?.contains(target)
+      ) {
+        return;
       }
+      setIsOpen(false);
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -322,9 +466,15 @@ const PlatformDropdown: React.FC<platformDropdownProps> = ({
       }
     };
 
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('keydown', handleKeyDown);
+
     return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
@@ -341,13 +491,16 @@ const PlatformDropdown: React.FC<platformDropdownProps> = ({
   };
 
   const selectedVisuals = platformVisuals[value];
+  const portalTarget =
+    typeof document !== 'undefined' ? document.body : undefined;
 
   return (
-    <div ref={containerRef} className="relative inline-flex">
+    <div className="relative inline-flex">
       <button
         type="button"
         onClick={toggleDropdown}
         disabled={disabled}
+        ref={buttonRef}
         className={clsx(
           'flex cursor-pointer items-center gap-3 rounded-full px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed'
         )}
@@ -365,34 +518,48 @@ const PlatformDropdown: React.FC<platformDropdownProps> = ({
         />
       </button>
 
-      {isOpen ? (
-        <div className="absolute top-full left-0 z-30 mt-2 w-56 rounded-3xl border border-gray-200 bg-white p-2 shadow-xl">
-          <div className="space-y-1">
-            {platformStatusOptions?.map((status) => {
-              const visuals = platformVisuals[status];
-              const isSelected = status === value;
+      {isOpen && menuPosition && portalTarget
+        ? createPortal(
+            <div
+              ref={menuRef}
+              style={{
+                position: 'absolute',
+                top: menuPosition.top + 8,
+                left: menuPosition.left,
+                width: menuPosition.width,
+                zIndex: 1500,
+              }}
+            >
+              <div className="rounded-3xl border border-gray-200 bg-white p-2 shadow-xl">
+                <div className="space-y-1">
+                  {platformStatusOptions?.map((status) => {
+                    const visuals = platformVisuals[status];
+                    const isSelected = status === value;
 
-              return (
-                <button
-                  key={status}
-                  type="button"
-                  role="option"
-                  aria-selected={isSelected}
-                  onClick={() => handleSelect(status)}
-                  className={clsx(
-                    'flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm transition hover:bg-gray-100',
-                    isSelected ? 'bg-gray-100 font-semibold' : 'font-medium'
-                  )}
-                >
-                  <span className={clsx('text-base', visuals.textClassName)}>
-                    {status}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      ) : null}
+                    return (
+                      <button
+                        key={status}
+                        type="button"
+                        role="option"
+                        aria-selected={isSelected}
+                        onClick={() => handleSelect(status)}
+                        className={clsx(
+                          'flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm transition hover:bg-gray-100',
+                          isSelected ? 'bg-gray-100 font-semibold' : 'font-medium'
+                        )}
+                      >
+                        <span className={clsx('text-base', visuals.textClassName)}>
+                          {status}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>,
+            portalTarget
+          )
+        : null}
     </div>
   );
 };
@@ -1380,6 +1547,7 @@ const BookingsPage: React.FC = () => {
           onSortChange={handleSortChange}
           emptyMessage={emptyMessage}
           maxBodyHeight={460}
+          className="overflow-visible"
         />
 
         {/* Pagination Controls */}
