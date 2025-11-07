@@ -1,10 +1,16 @@
 export interface UploadedImage {
-  id: string;
+  publicId: string;
   url: string;
+  width: number;
+  height: number;
+  format: string;
+  size: number;
 }
 
 export interface UploadProgramImagesResponse {
   success: boolean;
   message?: string;
-  data: UploadedImage[];
+  data: {
+    images: UploadedImage[];
+  };
 }

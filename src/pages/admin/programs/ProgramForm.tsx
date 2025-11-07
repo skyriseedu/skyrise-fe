@@ -116,9 +116,11 @@ const ProgramForm: React.FC = () => {
 
         applicationDeadline: program.applicationDeadline || '',
 
-        universityRanking: (program.universityRanking && program.universityRanking.number !== undefined && program.universityRanking.number !== null)
-          ? program.universityRanking.number.toString()
-          : '',
+        universityRanking:
+          program.universityRanking &&
+          typeof program.universityRanking.number === 'number'
+            ? program.universityRanking.number.toString()
+            : '',
 
         universityRankingType: program.universityRanking?.type || 'Public',
 
@@ -291,25 +293,21 @@ const ProgramForm: React.FC = () => {
     try {
       let primaryImage: UploadedImage | undefined;
       let secondaryImage: UploadedImage | undefined;
+      const imageFormData = new FormData();
 
       if (formData.coverImages.primary instanceof File) {
-        const imageFormData = new FormData();
         imageFormData.append('images', formData.coverImages.primary);
-        const response =
-          await uploadProgramImagesMutation.mutateAsync(imageFormData);
-        primaryImage = response.data[0];
-      } else if (typeof formData.coverImages.primary === 'string') {
-        primaryImage = { id: '', url: formData.coverImages.primary };
       }
 
       if (formData.coverImages.secondary instanceof File) {
-        const imageFormData = new FormData();
         imageFormData.append('images', formData.coverImages.secondary);
-        const response =
-          await uploadProgramImagesMutation.mutateAsync(imageFormData);
-        secondaryImage = response.data[0];
-      } else if (typeof formData.coverImages.secondary === 'string') {
-        secondaryImage = { id: '', url: formData.coverImages.secondary };
+      }
+
+      const response =
+        await uploadProgramImagesMutation.mutateAsync(imageFormData);
+      if (response.data?.images?.length > 0) {
+        primaryImage = response.data.images[0];
+        secondaryImage = response.data.images[1];
       }
 
       const payload: CreateProgramPayload = {

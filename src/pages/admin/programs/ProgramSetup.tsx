@@ -91,8 +91,16 @@ const ProgramSetup: React.FC = () => {
     }));
 
     sorted.sort((a, b) => {
-      const aValue = a[sortState.key as keyof ProgramListItem];
-      const bValue = b[sortState.key as keyof ProgramListItem];
+      let aValue: string | number | undefined =
+        a[sortState.key as keyof ProgramListItem];
+      let bValue: string | number | undefined =
+        b[sortState.key as keyof ProgramListItem];
+
+      // Convert to Date objects for comparison if sorting by date fields
+      if (sortState.key === 'createdAt' || sortState.key === 'updatedAt') {
+        aValue = aValue ? new Date(aValue as string).getTime() : 0;
+        bValue = bValue ? new Date(bValue as string).getTime() : 0;
+      }
 
       if (sortState.direction === 'asc') {
         return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
@@ -235,14 +243,16 @@ const ProgramSetup: React.FC = () => {
       header: 'Published Date',
       sortable: true,
       headerContentClassName: 'flex items-center gap-1',
-      cell: (program) => new Date(program.createdAt!).toLocaleDateString(),
+      cell: (program) =>
+        program.createdAt ? formatNthDate(program.createdAt) : '',
     },
     {
       key: 'updatedAt',
       header: 'Modified Date',
       sortable: true,
       headerContentClassName: 'flex items-center gap-1',
-      cell: (program) => new Date(program.updatedAt!).toLocaleDateString(),
+      cell: (program) =>
+        program.updatedAt ? formatNthDate(program.updatedAt) : '',
     },
   ];
 
