@@ -92,3 +92,43 @@ export interface ProgramDetailsApiResponse {
   message?: string;
   data: ProgramDetails;
 }
+
+export interface CreateProgramPayload {
+  programName: string;
+  universityName: string;
+  universityRanking: number;
+  applicationDeadline: string;
+  images: {
+    image1: string;
+    image2: string;
+  };
+  about: string;
+  keyInformation: {
+    degree: string;
+    duration: string;
+    location: string;
+    applicationFee: string;
+    totalTuitionFees: string;
+    upcomingIntake: string[];
+  };
+  totalCredits: number;
+  creditDetails: string;
+  undergraduateEntryRequirement: string;
+  careerPaths: string;
+  studentReviews: {
+    studentName: string;
+    major: string;
+    studentImage: string;
+    review: string;
+  }[];
+  status: 'published' | 'draftsaved';
+}
+
+export interface BulkDeleteProgramsPayload {
+  ids: string[];
+}
+
+export interface UpdateProgramParams {
+  id: string;
+  payload: Partial<CreateProgramPayload>;
+}
