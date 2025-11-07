@@ -28,7 +28,7 @@ export function usePrograms(params: UseProgramsParams = {}) {
 
 export function useProgramsAdmin() {
   return useQuery({
-    queryKey: programKeys.adminLists(),
+    queryKey: programKeys.adminList({}),
     queryFn: () => programsService.getProgramsAdmin(),
     placeholderData: keepPreviousData,
   });
@@ -43,6 +43,7 @@ export function useProgramFilters() {
 }
 
 export function useProgramBySlug(slug: string) {
+  console.log('useProgramBySlug called with slug:', slug, 'enabled:', !!slug);
   return useQuery<ProgramDetailsApiResponse>({
     queryKey: programKeys.detail(slug),
     queryFn: () => programsService.getProgramBySlug(slug),

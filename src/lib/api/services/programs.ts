@@ -23,7 +23,7 @@ export const programsService = {
   },
 
   async getProgramsAdmin(): Promise<ProgramsApiResponse> {
-    const response = await apiClient.get(`/programs/admin/all?`);
+    const response = await apiClient.get(`/programs/admin/all`);
     return response.data;
   },
 

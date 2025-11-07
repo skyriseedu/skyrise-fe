@@ -14,6 +14,7 @@ import {
   useBulkDeleteProgram,
   useProgramsAdmin,
 } from '@/queries/programs';
+import { formatNthDate } from '@/helpers';
 import type { ProgramListItem } from '@/types/users/program';
 
 const ProgramSetup: React.FC = () => {
@@ -33,7 +34,7 @@ const ProgramSetup: React.FC = () => {
   );
   const statusFilterRef = useRef<HTMLDivElement>(null);
 
-  const { data: programsData, isLoading, isError } = useProgramsAdmin();
+  const { data: programsData, isLoading, isError } = useProgramsAdmin({});
   const deleteProgramMutation = useDeleteProgram();
   const bulkDeleteProgramMutation = useBulkDeleteProgram();
 
@@ -78,7 +79,17 @@ const ProgramSetup: React.FC = () => {
 
   // Sort programs
   const sortedPrograms = useMemo(() => {
-    const sorted = [...filteredPrograms];
+    let sorted = [...filteredPrograms];
+    sorted = sorted.map((program) => ({
+      ...program,
+      createdAt: program.createdAt
+        ? formatNthDate(new Date(program.createdAt))
+        : '',
+      updatedAt: program.updatedAt
+        ? formatNthDate(new Date(program.updatedAt))
+        : '',
+    }));
+
     sorted.sort((a, b) => {
       const aValue = a[sortState.key as keyof ProgramListItem];
       const bValue = b[sortState.key as keyof ProgramListItem];
@@ -118,12 +129,12 @@ const ProgramSetup: React.FC = () => {
   };
 
   const handleView = (program: ProgramListItem) => {
-    navigate(`/admin/programs/view/${program.slug}`);
+    navigate(`/admin/program-setup/view/${program.slug}`);
     setOpenDropdown(null);
   };
 
   const handleEdit = (program: ProgramListItem) => {
-    navigate(`/admin/programs/edit/${program.slug}`);
+    navigate(`/admin/program-setup/edit/${program.slug}`);
     setOpenDropdown(null);
   };
 

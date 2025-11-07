@@ -107,7 +107,7 @@ function DataTable<T extends Record<string, unknown>>({
 
   return (
     <div className={clsx('overflow-hidden rounded-xl bg-white', className)}>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto pb-40">
         <div
           className={clsx('min-w-full', {
             'overflow-y-auto': Boolean(maxBodyHeight),

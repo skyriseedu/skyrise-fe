@@ -80,7 +80,7 @@ export interface ProgramDetails {
   createdAt: string;
   updatedAt: string;
   applicationDeadline?: string | null;
-  universityRanking?: string | null;
+  universityRanking?: { type: string; number: number } | null;
   creditDetails?: string;
   careerPaths?: string;
   totalCredits?: number;
@@ -96,7 +96,10 @@ export interface ProgramDetailsApiResponse {
 export interface CreateProgramPayload {
   programName: string;
   universityName: string;
-  universityRanking: number;
+  universityRanking: {
+    type: string;
+    number: number;
+  };
   applicationDeadline: string;
   images: {
     image1: string;
