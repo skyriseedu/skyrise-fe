@@ -80,7 +80,7 @@ export interface ProgramDetails {
   createdAt: string;
   updatedAt: string;
   applicationDeadline?: string | null;
-  universityRanking?: string | null;
+  universityRanking?: { type: string; number: number } | null;
   creditDetails?: string;
   careerPaths?: string;
   totalCredits?: number;
@@ -91,4 +91,47 @@ export interface ProgramDetailsApiResponse {
   success: boolean;
   message?: string;
   data: ProgramDetails;
+}
+
+export interface CreateProgramPayload {
+  programName: string;
+  universityName: string;
+  universityRanking: {
+    type: string;
+    number: number;
+  };
+  applicationDeadline: string;
+  images: {
+    image1: string;
+    image2: string;
+  };
+  about: string;
+  keyInformation: {
+    degree: string;
+    duration: string;
+    location: string;
+    applicationFee: string;
+    totalTuitionFees: string;
+    upcomingIntake: string[];
+  };
+  totalCredits: number;
+  creditDetails: string;
+  undergraduateEntryRequirement: string;
+  careerPaths: string;
+  studentReviews: {
+    studentName: string;
+    major: string;
+    studentImage: string;
+    review: string;
+  }[];
+  status: 'published' | 'draftsaved';
+}
+
+export interface BulkDeleteProgramsPayload {
+  ids: string[];
+}
+
+export interface UpdateProgramParams {
+  id: string;
+  payload: Partial<CreateProgramPayload>;
 }
