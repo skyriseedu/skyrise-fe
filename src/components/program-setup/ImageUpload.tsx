@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import ImgUpload from '@/assets/img-upload.svg?react';
 import RemoveIcon from '@/assets/close.svg?react';
+import { useEffect } from 'react';
 
 interface ImageUploadProps {
   onImageUpload: (file: File) => void;
@@ -14,9 +15,17 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   image,
   title,
 }) => {
-  const [preview, setPreview] = useState<string | null>(
-    typeof image === 'string' ? image : null
-  );
+  const [preview, setPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof image === 'string') {
+      setPreview(image);
+    } else if (image instanceof File) {
+      setPreview(URL.createObjectURL(image));
+    } else {
+      setPreview(null);
+    }
+  }, [image]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {

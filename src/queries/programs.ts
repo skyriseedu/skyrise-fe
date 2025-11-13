@@ -43,7 +43,6 @@ export function useProgramFilters() {
 }
 
 export function useProgramBySlug(slug: string) {
-  console.log('useProgramBySlug called with slug:', slug, 'enabled:', !!slug);
   return useQuery<ProgramDetailsApiResponse>({
     queryKey: programKeys.detail(slug),
     queryFn: () => programsService.getProgramBySlug(slug),
