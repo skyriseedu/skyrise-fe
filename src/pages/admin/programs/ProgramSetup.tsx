@@ -9,54 +9,13 @@ import Search from '@/assets/search.svg?react';
 import RemoveIcon from '@/assets/bin.svg?react';
 import EditIcon from '@/assets/edit.svg?react';
 import ViewIcon from '@/assets/view.svg?react';
-
-// Mock data type
-type Program = {
-  id: string;
-  title: string;
-  universityName: string;
-  publishedDate: string;
-  modifiedDate: string;
-};
-
-// Mock data
-const mockPrograms: Program[] = [
-  {
-    id: '1',
-    title: 'Bachelor of Science : Information and Communication Technology',
-    universityName: 'Rangsit University(Rangsit International College)',
-    publishedDate: '24th July 2025',
-    modifiedDate: '12th August 2025',
-  },
-  {
-    id: '2',
-    title: 'Bachelor of Science : Information and Communication Technology',
-    universityName: 'Rangsit University(Rangsit International College)',
-    publishedDate: '24th July 2025',
-    modifiedDate: '12th August 2025',
-  },
-  {
-    id: '3',
-    title: 'Bachelor of Science : Information and Communication Technology',
-    universityName: 'Rangsit University(Rangsit International College)',
-    publishedDate: '24th July 2025',
-    modifiedDate: '12th August 2025',
-  },
-  {
-    id: '4',
-    title: 'Bachelor of Science : Information and Communication Technology',
-    universityName: 'Rangsit University(Rangsit International College)',
-    publishedDate: '24th July 2025',
-    modifiedDate: '12th August 2025',
-  },
-  {
-    id: '5',
-    title: 'Bachelor of Science : Information and Communication Technology',
-    universityName: 'Rangsit University(Rangsit International College)',
-    publishedDate: '24th July 2025',
-    modifiedDate: '12th August 2025',
-  },
-];
+import {
+  useDeleteProgram,
+  useBulkDeleteProgram,
+  useProgramsAdmin,
+} from '@/queries/programs';
+import { formatNthDate } from '@/helpers';
+import type { ProgramListItem } from '@/types/users/program';
 
 const ProgramSetup: React.FC = () => {
   const navigate = useNavigate();
@@ -65,7 +24,7 @@ const ProgramSetup: React.FC = () => {
     new Set()
   );
   const [sortState, setSortState] = useState<SortState>({
-    key: 'title',
+    key: 'programName',
     direction: 'asc',
   });
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -74,6 +33,10 @@ const ProgramSetup: React.FC = () => {
     new Set()
   );
   const statusFilterRef = useRef<HTMLDivElement>(null);
+
+  const { data: programsData, isLoading, isError } = useProgramsAdmin({});
+  const deleteProgramMutation = useDeleteProgram();
+  const bulkDeleteProgramMutation = useBulkDeleteProgram();
 
   // Handle click outside status filter
   useEffect(() => {
@@ -106,19 +69,38 @@ const ProgramSetup: React.FC = () => {
 
   // Filter programs based on search query
   const filteredPrograms = useMemo(() => {
-    return mockPrograms.filter(
+    if (!programsData) return [];
+    return programsData.data.programs.filter(
       (program) =>
-        program.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        program.programName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         program.universityName.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
+  }, [searchQuery, programsData]);
 
   // Sort programs
   const sortedPrograms = useMemo(() => {
-    const sorted = [...filteredPrograms];
+    let sorted = [...filteredPrograms];
+    sorted = sorted.map((program) => ({
+      ...program,
+      createdAt: program.createdAt
+        ? formatNthDate(new Date(program.createdAt))
+        : '',
+      updatedAt: program.updatedAt
+        ? formatNthDate(new Date(program.updatedAt))
+        : '',
+    }));
+
     sorted.sort((a, b) => {
-      const aValue = a[sortState.key as keyof Program];
-      const bValue = b[sortState.key as keyof Program];
+      let aValue: string | number | undefined =
+        a[sortState.key as keyof ProgramListItem];
+      let bValue: string | number | undefined =
+        b[sortState.key as keyof ProgramListItem];
+
+      // Convert to Date objects for comparison if sorting by date fields
+      if (sortState.key === 'createdAt' || sortState.key === 'updatedAt') {
+        aValue = aValue ? new Date(aValue as string).getTime() : 0;
+        bValue = bValue ? new Date(bValue as string).getTime() : 0;
+      }
 
       if (sortState.direction === 'asc') {
         return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
@@ -130,39 +112,46 @@ const ProgramSetup: React.FC = () => {
   }, [filteredPrograms, sortState]);
 
   const handleSelectRow = (
-    program: Program,
+    program: ProgramListItem,
     _index: number,
     selected: boolean
   ) => {
     const newSelected = new Set(selectedPrograms);
     if (selected) {
-      newSelected.add(program.id);
+      newSelected.add(program._id);
     } else {
-      newSelected.delete(program.id);
+      newSelected.delete(program._id);
     }
     setSelectedPrograms(newSelected);
   };
 
   const handleRemoveSelected = () => {
-    // In a real app, this would call an API to delete the selected programs
-    console.log('Removing programs:', Array.from(selectedPrograms));
-    setSelectedPrograms(new Set());
+    bulkDeleteProgramMutation.mutate(
+      { ids: Array.from(selectedPrograms) },
+      {
+        onSuccess: () => {
+          setSelectedPrograms(new Set());
+        },
+      }
+    );
   };
 
-  const handleView = (program: Program) => {
-    navigate(`/admin/programs/view/${program.id}`);
+  const handleView = (program: ProgramListItem) => {
+    navigate(`/admin/program-setup/view/${program.slug}`);
     setOpenDropdown(null);
   };
 
-  const handleEdit = (program: Program) => {
-    navigate(`/admin/programs/edit/${program.id}`);
+  const handleEdit = (program: ProgramListItem) => {
+    navigate(`/admin/program-setup/edit/${program.slug}`);
     setOpenDropdown(null);
   };
 
-  const handleRemove = (program: Program) => {
-    // In a real app, this would call an API to delete the program
-    console.log('Remove program:', program.id);
-    setOpenDropdown(null);
+  const handleRemove = (program: ProgramListItem) => {
+    deleteProgramMutation.mutate(program._id, {
+      onSuccess: () => {
+        setOpenDropdown(null);
+      },
+    });
   };
 
   const handleCreateNew = () => {
@@ -170,7 +159,9 @@ const ProgramSetup: React.FC = () => {
   };
 
   // Dropdown component
-  const ActionDropdown: React.FC<{ program: Program }> = ({ program }) => {
+  const ActionDropdown: React.FC<{ program: ProgramListItem }> = ({
+    program,
+  }) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -183,20 +174,20 @@ const ProgramSetup: React.FC = () => {
         }
       };
 
-      if (openDropdown === program.id) {
+      if (openDropdown === program._id) {
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
           document.removeEventListener('mousedown', handleClickOutside);
         };
       }
-    }, [program.id]);
+    }, [program._id]);
 
     return (
       <div className="relative" ref={dropdownRef}>
         <button
           className="p-1 text-gray-500 cursor-pointer hover:text-gray-700"
           onClick={() =>
-            setOpenDropdown(openDropdown === program.id ? null : program.id)
+            setOpenDropdown(openDropdown === program._id ? null : program._id)
           }
         >
           <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
@@ -204,7 +195,7 @@ const ProgramSetup: React.FC = () => {
           </svg>
         </button>
 
-        {openDropdown === program.id && (
+        {openDropdown === program._id && (
           <div className="absolute right-0 z-10 mt-1 w-38 rounded-lg border border-gray-200 bg-white shadow-lg">
             <div className="py-1">
               <button
@@ -235,9 +226,9 @@ const ProgramSetup: React.FC = () => {
     );
   };
 
-  const columns: TableColumn<Program>[] = [
+  const columns: TableColumn<ProgramListItem>[] = [
     {
-      key: 'title',
+      key: 'programName',
       header: 'Program Title',
       sortable: false,
       cellClassName: 'font-medium',
@@ -248,22 +239,29 @@ const ProgramSetup: React.FC = () => {
       sortable: false,
     },
     {
-      key: 'publishedDate',
+      key: 'createdAt',
       header: 'Published Date',
       sortable: true,
       headerContentClassName: 'flex items-center gap-1',
+      cell: (program) =>
+        program.createdAt ? formatNthDate(program.createdAt) : '',
     },
     {
-      key: 'modifiedDate',
+      key: 'updatedAt',
       header: 'Modified Date',
       sortable: true,
       headerContentClassName: 'flex items-center gap-1',
+      cell: (program) =>
+        program.updatedAt ? formatNthDate(program.updatedAt) : '',
     },
   ];
 
-  const renderActions = (program: Program) => (
+  const renderActions = (program: ProgramListItem) => (
     <ActionDropdown program={program} />
   );
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error fetching programs.</div>;
 
   return (
     <div className="min-h-screen p-6">
@@ -271,7 +269,7 @@ const ProgramSetup: React.FC = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-h2 mb-6 font-semibold text-gray-900">
-            Total Programs {mockPrograms.length}
+            Total Programs {programsData?.total || 0}
           </h1>
 
           <div className="flex items-center justify-between gap-4">
@@ -360,9 +358,9 @@ const ProgramSetup: React.FC = () => {
         <DataTable
           columns={columns}
           data={sortedPrograms}
-          getRowId={(program) => program.id}
+          getRowId={(program) => program._id}
           selectable={true}
-          isRowSelected={(program) => selectedPrograms.has(program.id)}
+          isRowSelected={(program) => selectedPrograms.has(program._id)}
           onSelectRow={handleSelectRow}
           renderActions={renderActions}
           sortState={sortState}

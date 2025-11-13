@@ -9,3 +9,4 @@ export * from './faqs';
 export * from './team-members';
 export * from './ambassadors';
 export * from './bookings';
+export * from './uploads';

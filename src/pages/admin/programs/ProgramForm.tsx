@@ -12,18 +12,30 @@ import Calendar from '@/assets/calendar.svg?react';
 import CaretDown from '@/assets/caret-down.svg?react';
 import CaretUp from '@/assets/caret-up.svg?react';
 import RemoveIcon from '@/assets/bin.svg?react';
+import {
+  useCreateProgram,
+  useProgramBySlug,
+  useUpdateProgram,
+} from '@/queries/programs';
+import { useUploadProgramImages } from '@/queries/uploads';
+import type {
+  CreateProgramPayload,
+  UpdateProgramParams,
+} from '@/types/users/program';
+import type { UploadedImage } from '@/types/uploads';
 
 type ProgramFormData = {
   programName: string;
   universityName: string;
   applicationDeadline: string;
   universityRanking: string;
-  universityRankingType: 'Public' | 'Private';
+  universityRankingType: string;
   aboutProgram: string;
   degree: string;
   duration: string;
   location: string;
   applicationFee: string;
+  totalTuitionFees: string;
   upcomingIntakes: Array<{ year: string; month: string }>;
   totalCreditRequirement: string;
   programStructure: string;
@@ -47,6 +59,7 @@ const initialFormData: ProgramFormData = {
   duration: '1 year',
   location: '',
   applicationFee: 'Free',
+  totalTuitionFees: '',
   upcomingIntakes: [{ year: '', month: '' }],
   totalCreditRequirement: '',
   programStructure: '',
@@ -58,8 +71,8 @@ const initialFormData: ProgramFormData = {
 
 const ProgramForm: React.FC = () => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-  const isEditing = Boolean(id);
+  const { slug } = useParams<{ slug: string }>();
+  const isEditing = Boolean(slug);
 
   const months = [
     'Jan',
@@ -83,14 +96,81 @@ const ProgramForm: React.FC = () => {
   const rankingDropdownRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
 
+  const createProgramMutation = useCreateProgram();
+  const updateProgramMutation = useUpdateProgram();
+  const uploadProgramImagesMutation = useUploadProgramImages();
+  console.log('ProgramForm render - slug:', slug, 'isEditing:', isEditing);
+
+  const { data: programData, isLoading: isProgramLoading } = useProgramBySlug(
+    slug || ''
+  );
+
   useEffect(() => {
-    if (isEditing && id) {
-      // Load existing program data for editing
-      // In a real app, this would fetch from an API
-      console.log('Loading program for editing:', id);
-      // setFormData(existingProgramData);
+    if (isEditing && programData) {
+      const program = programData.data;
+
+      setFormData({
+        programName: program.programName,
+
+        universityName: program.universityName,
+
+        applicationDeadline: program.applicationDeadline || '',
+
+        universityRanking:
+          program.universityRanking &&
+          typeof program.universityRanking.number === 'number'
+            ? program.universityRanking.number.toString()
+            : '',
+
+        universityRankingType: program.universityRanking?.type || 'Public',
+
+        aboutProgram: program.about || '',
+
+        degree: program.keyInformation?.degree || '',
+
+        duration: program.keyInformation?.duration || '',
+
+        location: program.keyInformation?.location || '',
+
+        applicationFee: program.keyInformation?.applicationFee || '',
+
+        totalTuitionFees: program.keyInformation?.totalTuitionFees || '',
+
+        upcomingIntakes: (program.keyInformation?.upcomingIntake || []).map(
+          (intake) => {
+            const parts = intake.split(' ');
+
+            return { month: parts[0], year: parts[1] };
+          }
+        ),
+
+        totalCreditRequirement: program.totalCredits?.toString() || '',
+
+        programStructure: program.creditDetails || '',
+
+        undergraduateEntryRequirement:
+          program.undergraduateEntryRequirement || '',
+
+        careerPaths: program.careerPaths || '',
+
+        studentReviews: (program.studentReviews || []).map((review) => ({
+          studentName: review.studentName || '',
+
+          major: review.major || '',
+
+          review: review.review || '',
+
+          image: review.studentImage || undefined,
+        })),
+
+        coverImages: {
+          primary: program.images?.image1 || undefined,
+
+          secondary: program.images?.image2 || undefined,
+        },
+      });
     }
-  }, [isEditing, id]);
+  }, [isEditing, programData, slug]);
 
   // Handle click outside of dropdowns
   useEffect(() => {
@@ -211,20 +291,72 @@ const ProgramForm: React.FC = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const formattedData = {
-        ...formData,
-        upcomingIntakes: formData.upcomingIntakes.map(
-          (intake) => `${intake.month} ${intake.year}`
-        ),
+      let primaryImage: UploadedImage | undefined;
+      let secondaryImage: UploadedImage | undefined;
+      const imageFormData = new FormData();
+
+      if (formData.coverImages.primary instanceof File) {
+        imageFormData.append('images', formData.coverImages.primary);
+      }
+
+      if (formData.coverImages.secondary instanceof File) {
+        imageFormData.append('images', formData.coverImages.secondary);
+      }
+
+      const response =
+        await uploadProgramImagesMutation.mutateAsync(imageFormData);
+      if (response.data?.images?.length > 0) {
+        primaryImage = response.data.images[0];
+        secondaryImage = response.data.images[1];
+      }
+
+      const payload: CreateProgramPayload = {
+        programName: formData.programName,
+        universityName: formData.universityName,
+        universityRanking: {
+          type: formData.universityRankingType.toLowerCase(),
+          number: parseInt(formData.universityRanking),
+        },
+        applicationDeadline: formData.applicationDeadline,
+        images: {
+          image1: primaryImage?.url || '',
+          image2: secondaryImage?.url || '',
+        },
+        about: formData.aboutProgram,
+        keyInformation: {
+          degree: formData.degree,
+          duration: formData.duration,
+          location: formData.location,
+          applicationFee: formData.applicationFee,
+          totalTuitionFees: formData.totalTuitionFees,
+          upcomingIntake: formData.upcomingIntakes.map(
+            (intake) => `${intake.month} ${intake.year}`
+          ),
+        },
+        totalCredits: parseInt(formData.totalCreditRequirement),
+        creditDetails: formData.programStructure,
+        undergraduateEntryRequirement: formData.undergraduateEntryRequirement,
+        careerPaths: formData.careerPaths,
+        studentReviews: formData.studentReviews.map((review) => ({
+          studentName: review.studentName,
+          major: review.major,
+          studentImage: review.image instanceof File ? '' : review.image || '',
+          review: review.review,
+        })),
+        status: 'published',
       };
 
-      // In a real app, this would submit to an API
-      console.log('Submitting program data:', formattedData);
+      if (isEditing) {
+        const updatePayload: UpdateProgramParams = {
+          id: programData!.data._id,
+          payload: payload,
+        };
+        await updateProgramMutation.mutateAsync(updatePayload);
+      } else {
+        await createProgramMutation.mutateAsync(payload);
+      }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      navigate('/admin/programs');
+      navigate('/admin/program-setup');
     } catch (error) {
       console.error('Error submitting program:', error);
     } finally {
@@ -235,6 +367,8 @@ const ProgramForm: React.FC = () => {
   const handleCancel = () => {
     navigate('/admin/program-setup');
   };
+
+  if (isProgramLoading) return <div>Loading program data...</div>;
 
   return (
     <div className="min-h-screen px-6">
@@ -417,14 +551,26 @@ const ProgramForm: React.FC = () => {
             <div>
               <h2 className="text-h3 mb-3 font-semibold">Cover Images</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <ImageUpload
-                  image={formData.coverImages.primary}
-                  onImageUpload={(file) => handleImageUpload('primary', file)}
-                />
-                <ImageUpload
-                  image={formData.coverImages.secondary}
-                  onImageUpload={(file) => handleImageUpload('secondary', file)}
-                />
+                <div>
+                  <label className="text-h5 mb-1 block text-gray-500">
+                    Primary Image
+                  </label>
+                  <ImageUpload
+                    image={formData.coverImages.primary}
+                    onImageUpload={(file) => handleImageUpload('primary', file)}
+                  />
+                </div>
+                <div>
+                  <label className="text-h5 mb-1 block text-gray-500">
+                    Secondary Image
+                  </label>
+                  <ImageUpload
+                    image={formData.coverImages.secondary}
+                    onImageUpload={(file) =>
+                      handleImageUpload('secondary', file)
+                    }
+                  />
+                </div>
               </div>
             </div>
 
@@ -671,10 +817,22 @@ const ProgramForm: React.FC = () => {
             </button>
             <button
               onClick={handleSubmit}
-              disabled={isLoading}
+              disabled={
+                isLoading ||
+                createProgramMutation.isPending ||
+                uploadProgramImagesMutation.isPending ||
+                updateProgramMutation.isPending
+              }
               className="bg-primary rounded-lg px-6 py-2 text-white hover:bg-red-600 disabled:opacity-50"
             >
-              {isLoading ? 'Publishing...' : 'Publish'}
+              {isLoading ||
+              createProgramMutation.isPending ||
+              uploadProgramImagesMutation.isPending ||
+              updateProgramMutation.isPending
+                ? 'Processing...'
+                : isEditing
+                  ? 'Save'
+                  : 'Publish'}
             </button>
           </div>
         </div>

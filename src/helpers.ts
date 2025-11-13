@@ -28,3 +28,21 @@ export const convertToISODate = (dateString: string): string => {
   const date = new Date(dateString + 'T00:00:00.000Z');
   return date.toISOString();
 };
+
+export function formatNthDate(dateString: string | Date): string {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.toLocaleString('en-US', { month: 'long' });
+  const year = date.getFullYear();
+
+  let suffix = 'th';
+  if (day === 1 || day === 21 || day === 31) {
+    suffix = 'st';
+  } else if (day === 2 || day === 22) {
+    suffix = 'nd';
+  } else if (day === 3 || day === 23) {
+    suffix = 'rd';
+  }
+
+  return `${day}${suffix} ${month} ${year}`;
+}

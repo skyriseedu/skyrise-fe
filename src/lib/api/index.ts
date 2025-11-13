@@ -12,3 +12,4 @@ export { faqsService } from './services/faqs';
 export { teamMembersService } from './services/team-members';
 export { ambassadorsService } from './services/ambassadors';
 export { bookingsService } from './services/bookings';
+export { uploadsService } from './services/uploads';

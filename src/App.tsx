@@ -99,7 +99,10 @@ const App: React.FC = () => {
               <Route index element={<AdminDashboard />} />
               <Route path="program-setup" element={<ProgramSetup />} />
               <Route path="program-setup/create" element={<ProgramForm />} />
-              <Route path="program-setup/edit/:id" element={<ProgramForm />} />
+              <Route
+                path="program-setup/edit/:slug"
+                element={<ProgramForm />}
+              />
 
               <Route path="university-setup" element={<UniversitySetup />} />
               <Route

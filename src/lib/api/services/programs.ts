@@ -4,21 +4,26 @@ import type {
   UseProgramsParams,
   ProgramsSearchParams,
   ProgramDetailsApiResponse,
+  CreateProgramPayload,
+  BulkDeleteProgramsPayload,
+  UpdateProgramParams,
 } from '@/types/users/program';
 import type { ProgramFiltersResponse } from '@/types/users/explore';
 
 export const programsService = {
-  async getPrograms(
-    params: UseProgramsParams = { page: 1, limit: 10 }
-  ): Promise<ProgramsApiResponse> {
-    const { page = 1, limit = 10 } = params;
+  async getPrograms(params: UseProgramsParams): Promise<ProgramsApiResponse> {
+    const { page, limit } = params;
 
-    const searchParams = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-    });
+    const searchParams = new URLSearchParams();
+    if (page) searchParams.append('page', page.toString());
+    if (limit) searchParams.append('limit', limit.toString());
 
     const response = await apiClient.get(`/programs?${searchParams}`);
+    return response.data;
+  },
+
+  async getProgramsAdmin(): Promise<ProgramsApiResponse> {
+    const response = await apiClient.get(`/programs/admin/all`);
     return response.data;
   },
 
@@ -30,20 +35,12 @@ export const programsService = {
   async searchPrograms(
     params: ProgramsSearchParams
   ): Promise<ProgramsApiResponse> {
-    const {
-      page = 1,
-      limit = 10,
-      q,
-      degrees,
-      programs,
-      fees,
-      duration,
-    } = params;
+    const { page, limit, q, degrees, programs, fees, duration } = params;
 
-    const sp = new URLSearchParams({
-      page: String(page),
-      limit: String(limit),
-    });
+    const sp = new URLSearchParams();
+
+    if (page) sp.append('page', String(page));
+    if (limit) sp.append('limit', String(limit));
 
     if (q && q.trim()) sp.append('q', q.trim());
 
@@ -68,6 +65,28 @@ export const programsService = {
 
   async getProgramBySlug(slug: string): Promise<ProgramDetailsApiResponse> {
     const response = await apiClient.get(`/programs/${slug}`);
+    return response.data;
+  },
+
+  async createProgram(payload: CreateProgramPayload) {
+    const response = await apiClient.post('/programs', payload);
+    return response.data;
+  },
+
+  async updateProgram({ id, payload }: UpdateProgramParams) {
+    const response = await apiClient.put(`/programs/${id}`, payload);
+    return response.data;
+  },
+
+  async deleteProgram(id: string) {
+    const response = await apiClient.delete(`/programs/${id}`);
+    return response.data;
+  },
+
+  async bulkDeletePrograms(payload: BulkDeleteProgramsPayload) {
+    const response = await apiClient.delete('/programs/bulk-delete', {
+      data: payload,
+    });
     return response.data;
   },
 };
