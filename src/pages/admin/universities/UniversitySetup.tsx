@@ -271,7 +271,7 @@ const UniversitySetup: React.FC = () => {
           <div className="flex items-center justify-between gap-4">
             {/* Search */}
             <div className="relative z-50 flex max-w-md justify-between space-x-5">
-              <div className="relative">
+              <div className="relative min-w-[290px]">
                 <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"

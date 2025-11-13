@@ -117,7 +117,7 @@ function DataTable<T extends Record<string, unknown>>({
           <table className="min-w-full border-collapse">
             <thead className="bg-secondary overflow-x-scroll">
               <tr>
-                <th className="bg-secondary sticky top-0 z-10 w-10 py-2 align-middle first:rounded-tl-2xl first:rounded-bl-2xl"></th>
+                <th className="bg-secondary sticky top-0 z-10 w-10 px-4 py-6 align-middle first:rounded-tl-xl"></th>
                 {columns?.map((column) => {
                   const alignment = getAlignClass(column.align);
                   const widthStyle = getDimensionValue(column.width);
@@ -139,7 +139,7 @@ function DataTable<T extends Record<string, unknown>>({
                     <th
                       key={key}
                       className={clsx(
-                        'bg-secondary text-h4 sticky top-0 z-10 py-2 font-semibold tracking-wide text-gray-600 uppercase first:rounded-tl-2xl first:rounded-bl-2xl last:rounded-tr-2xl last:rounded-br-2xl',
+                        'bg-secondary text-h5 sticky top-0 z-10 px-4 py-2 font-semibold tracking-wide text-gray-600 first:rounded-tl-xl last:rounded-tr-xl',
                         alignment,
                         column.headerClassName
                       )}
@@ -154,7 +154,7 @@ function DataTable<T extends Record<string, unknown>>({
                           type="button"
                           onClick={() => handleSort(column)}
                           className={clsx(
-                            'focus-visible:ring-primary/40 flex w-full cursor-pointer items-center gap-2 tracking-wide text-gray-700 uppercase focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-0',
+                            'focus-visible:ring-primary/40 flex w-full cursor-pointer items-center gap-1 tracking-wide text-gray-700  focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-0',
                             justify,
                             column.headerContentClassName
                           )}
@@ -185,7 +185,7 @@ function DataTable<T extends Record<string, unknown>>({
                   return (
                     <tr
                       key={rowId}
-                      className="border-b border-[#E9E9E9] last:border-b-0 hover:bg-[#FFF5F5]"
+                      className="border-b border-[#E9E9E9] last:border-b-0 cursor-pointer"
                     >
                       {selectable && (
                         <td className="px-4 py-5 align-middle">

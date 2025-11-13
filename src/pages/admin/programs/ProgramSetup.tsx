@@ -185,7 +185,7 @@ const ProgramSetup: React.FC = () => {
     return (
       <div className="relative" ref={dropdownRef}>
         <button
-          className="p-1 text-gray-500 hover:text-gray-700"
+          className="p-1 text-gray-500 cursor-pointer hover:text-gray-700"
           onClick={() =>
             setOpenDropdown(openDropdown === program._id ? null : program._id)
           }
@@ -200,21 +200,21 @@ const ProgramSetup: React.FC = () => {
             <div className="py-1">
               <button
                 onClick={() => handleView(program)}
-                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
               >
                 <ViewIcon className="h-4 w-4 text-gray-500" />
                 View
               </button>
               <button
                 onClick={() => handleEdit(program)}
-                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
               >
                 <EditIcon className="h-4 w-4 text-gray-500" />
                 Edit
               </button>
               <button
                 onClick={() => handleRemove(program)}
-                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+                className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
               >
                 <RemoveIcon className="h-4 w-4 text-red-600" />
                 Remove
@@ -275,7 +275,7 @@ const ProgramSetup: React.FC = () => {
           <div className="flex items-center justify-between gap-4">
             {/* Search */}
             <div className="relative z-50 flex max-w-md justify-between space-x-5">
-              <div className="relative">
+              <div className="relative min-w-[290px]">
                 <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
