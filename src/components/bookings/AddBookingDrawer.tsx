@@ -55,6 +55,13 @@ export interface BookingDrawerBaseProps {
   initialValues: AddBookingFormValues;
   title: string;
   submitLabel: string;
+  secondaryAction?: {
+    label: string;
+    onClick: () => void;
+    kind?: 'secondary' | 'destructive';
+    disabled?: boolean;
+    loading?: boolean;
+  };
 }
 
 const cloneFormValues = (input: AddBookingFormValues): AddBookingFormValues => ({
@@ -87,6 +94,7 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
     initialValues,
     title,
     submitLabel,
+    secondaryAction,
   } = props;
 
   const [values, setValues] = useState<AddBookingFormValues>(() =>
@@ -974,15 +982,20 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
               </div>
 
               <div className="px-6 py-4">
-                <div className="flex justify-end gap-3">
-                  {/* <Button
-                    type="button"
-                    outline
-                    className="min-w-[96px] border-gray-200 text-gray-600 hover:text-white"
-                    onClick={onClose}
-                  >
-                    Cancel
-                  </Button> */}
+                <div className="flex justify-between gap-3">
+                  {secondaryAction ? (
+                    <Button
+                      type="button"
+                      secondary={secondaryAction.kind !== 'destructive'}
+                      destructive={secondaryAction.kind === 'destructive'}
+                      className="min-w-[120px]"
+                      onClick={secondaryAction.onClick}
+                      disabled={secondaryAction.disabled}
+                      loading={secondaryAction.loading}
+                    >
+                      {secondaryAction.label}
+                    </Button>
+                  ) : null}
                   <Button type="submit" className="min-w-[120px]">
                     {submitLabel}
                   </Button>

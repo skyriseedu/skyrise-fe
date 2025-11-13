@@ -1431,6 +1431,7 @@ const BookingsPage: React.FC = () => {
   >(null);
   const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
   const [editingBookingType, setEditingBookingType] = useState<BookingTab>('consultation');
+  const [isEditRemovePending, setIsEditRemovePending] = useState(false);
 
   const defaultEditInitialValues: AddBookingFormValues = {
     status: 'Scheduled',
@@ -1480,27 +1481,52 @@ const BookingsPage: React.FC = () => {
     setIsEditDrawerOpen(true);
   };
 
-  const handleRemove = async (bookingId: string) => {
-    try {
-      if (activeTab === 'consultation') {
-        await deleteConsultationMutation.mutateAsync(bookingId);
-      } else {
-        await bulkDeleteApplicationsMutation.mutateAsync([bookingId]);
-      }
+  const handleRemove = useCallback(
+    async (bookingId: string, bookingType?: BookingTab) => {
+      const targetType = bookingType ?? activeTab;
 
-      // Clear selection if it included the removed id
-      setSelectedConsultationIds((prev) => {
-        const next = new Set(prev);
-        next.delete(bookingId);
-        return next;
-      });
-      setSelectedRowKeys(new Set());
-    } catch (error) {
-      const context =
-        activeTab === 'consultation'
-          ? 'Failed to remove consultation booking:'
-          : 'Failed to remove admission application:';
-      console.error(context, error);
+      try {
+        if (targetType === 'consultation') {
+          await deleteConsultationMutation.mutateAsync(bookingId);
+        } else {
+          await bulkDeleteApplicationsMutation.mutateAsync([bookingId]);
+        }
+
+        // Clear selection if it included the removed id
+        setSelectedConsultationIds((prev) => {
+          const next = new Set(prev);
+          next.delete(bookingId);
+          return next;
+        });
+        setSelectedRowKeys(new Set());
+      } catch (error) {
+        const context =
+          targetType === 'consultation'
+            ? 'Failed to remove consultation booking:'
+            : 'Failed to remove admission application:';
+        console.error(context, error);
+      }
+    },
+    [
+      activeTab,
+      bulkDeleteApplicationsMutation,
+      deleteConsultationMutation,
+      setSelectedConsultationIds,
+      setSelectedRowKeys,
+    ]
+  );
+
+  const handleRemoveFromEditDrawer = async () => {
+    if (!editingBookingId) {
+      return;
+    }
+
+    setIsEditRemovePending(true);
+    try {
+      await handleRemove(editingBookingId, editingBookingType);
+      handleCloseEditDrawer();
+    } finally {
+      setIsEditRemovePending(false);
     }
   };
 
@@ -1628,6 +1654,7 @@ const BookingsPage: React.FC = () => {
     setEditingBookingId(null);
     setEditingInitialValues(null);
     setEditingBookingType('consultation');
+    setIsEditRemovePending(false);
   };
 
   const buildConsultationPayload = (
@@ -2107,7 +2134,7 @@ const BookingsPage: React.FC = () => {
         onClose={handleCloseAddDrawer}
         onSubmit={activeTab === 'consultation' ? handleAddConsultationBooking : handleAddAdmissionApplication}
         title={activeTab === 'consultation' ? 'Add Consultation Booking' : 'Add Admission Application Booking'}
-        submitLabel={activeTab === 'consultation' ? 'Add' : 'Submit'}
+        submitLabel="Add"
       />
 
       <EditBookingDrawer 
@@ -2120,6 +2147,9 @@ const BookingsPage: React.FC = () => {
             ? 'Edit Consultation Booking'
             : 'Edit Admission Application Booking'
         }
+        onRemove={editingBookingId ? handleRemoveFromEditDrawer : undefined}
+        isRemoveLoading={isEditRemovePending}
+        isRemoveDisabled={isEditRemovePending}
       />
     </div>
   );
