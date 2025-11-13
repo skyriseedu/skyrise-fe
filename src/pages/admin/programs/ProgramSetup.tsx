@@ -396,9 +396,9 @@ const ProgramSetup: React.FC = () => {
         </div>
 
         {/* Data Table */}
-        <DataTable<ProgramListItem>
+        <DataTable<ProgramListItem & Record<string, unknown>>
           columns={columns}
-          data={sortedPrograms}
+          data={sortedPrograms as (ProgramListItem & Record<string, unknown>)[]}
           getRowId={(program) => program._id}
           selectable={true}
           isRowSelected={(program) => selectedPrograms.has(program._id)}

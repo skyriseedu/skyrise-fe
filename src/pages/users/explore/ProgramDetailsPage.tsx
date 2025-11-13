@@ -91,7 +91,7 @@ const ProgramDetailsPage: React.FC = () => {
                 <div className="absolute right-0 bottom-0 h-44 w-44 overflow-hidden rounded-full shadow-xl lg:h-72 lg:w-72">
                   <img
                     src={
-                      data?.data?.images?.[0] ||
+                      data?.data?.images?.image1 ||
                       'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=500&h=500&fit=crop'
                     }
                     alt={data?.data?.programName || 'Program'}
@@ -108,7 +108,7 @@ const ProgramDetailsPage: React.FC = () => {
                 >
                   <img
                     src={
-                      data?.data?.images?.[1] ||
+                      data?.data?.images?.image2 ||
                       'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=400&fit=crop'
                     }
                     alt={data?.data?.universityName || 'Program image'}
