@@ -36,6 +36,7 @@ import {
   useUpdateConsultation,
   useCreateApplicationBooking,
   useBulkDeleteApplications,
+  useUpdateApplicationBooking,
 } from '@/queries';
 import type {
   Consultation,
@@ -1053,6 +1054,7 @@ const BookingsPage: React.FC = () => {
         row.name,
         row.email,
         row.phoneNumber,
+        row.facebookAccount,
         row.bookingTimeSchedule,
         row.location,
         row.question,
@@ -1255,6 +1257,16 @@ const BookingsPage: React.FC = () => {
         minWidth: 160,
       },
       {
+        key: 'facebookAccount',
+        header: 'Facebook Account',
+        minWidth: 180,
+        render: (row) => (
+          <div className="max-w-xs truncate" title={row.facebookAccount}>
+            {row.facebookAccount || '—'}
+          </div>
+        ),
+      },
+      {
         key: 'bookingTimeSchedule',
         header: 'Booking Time',
         minWidth: 140,
@@ -1405,6 +1417,7 @@ const BookingsPage: React.FC = () => {
   const bulkDeleteApplicationsMutation = useBulkDeleteApplications();
   const deleteConsultationMutation = useDeleteConsultation();
   const updateConsultationMutation = useUpdateConsultation();
+  const updateApplicationMutation = useUpdateApplicationBooking();
 
   const isDeleteActionPending =
     activeTab === 'consultation'
@@ -1417,6 +1430,7 @@ const BookingsPage: React.FC = () => {
     AddBookingFormValues | null
   >(null);
   const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
+  const [editingBookingType, setEditingBookingType] = useState<BookingTab>('consultation');
 
   const defaultEditInitialValues: AddBookingFormValues = {
     status: 'Scheduled',
@@ -1461,6 +1475,7 @@ const BookingsPage: React.FC = () => {
     };
 
     setEditingBookingId(booking.id);
+    setEditingBookingType(activeTab);
     setEditingInitialValues(initial);
     setIsEditDrawerOpen(true);
   };
@@ -1612,6 +1627,7 @@ const BookingsPage: React.FC = () => {
     setIsEditDrawerOpen(false);
     setEditingBookingId(null);
     setEditingInitialValues(null);
+    setEditingBookingType('consultation');
   };
 
   const buildConsultationPayload = (
@@ -1715,35 +1731,47 @@ const BookingsPage: React.FC = () => {
     }
   };
 
-  const handleEditConsultationBooking = async (values: AddBookingFormValues) => {
+  const handleEditBooking = async (values: AddBookingFormValues) => {
     if (!editingBookingId) {
-      console.error('No consultation id available for editing.');
+      console.error('No booking id available for editing.');
       return;
     }
 
     try {
       const payload = buildConsultationPayload(values);
-      await updateConsultationMutation.mutateAsync({
-        consultationId: editingBookingId,
-        payload,
-      });
 
-      setStatusOverrides((prev) => ({
-        ...prev,
-        [editingBookingId]: values.status,
-      }));
+      if (editingBookingType === 'consultation') {
+        await updateConsultationMutation.mutateAsync({
+          consultationId: editingBookingId,
+          payload,
+        });
 
-      setPlatformOverrides((prev) => ({
-        ...prev,
-        [editingBookingId]: mapPlatformToDisplay(values.submittedPlatform),
-      }));
+        setStatusOverrides((prev) => ({
+          ...prev,
+          [editingBookingId]: values.status,
+        }));
+
+        setPlatformOverrides((prev) => ({
+          ...prev,
+          [editingBookingId]: mapPlatformToDisplay(values.submittedPlatform),
+        }));
+      } else {
+        await updateApplicationMutation.mutateAsync({
+          applicationId: editingBookingId,
+          payload,
+        });
+      }
 
       handleCloseEditDrawer();
       setSelectedRowKeys(new Set());
       setSelectedConsultationIds(new Set());
       setSortState(undefined);
     } catch (error) {
-      console.error('Failed to update consultation booking:', error);
+      const context =
+        editingBookingType === 'consultation'
+          ? 'Failed to update consultation booking:'
+          : 'Failed to update admission application booking:';
+      console.error(context, error);
     }
   };
 
@@ -2085,8 +2113,13 @@ const BookingsPage: React.FC = () => {
       <EditBookingDrawer 
         open={isEditDrawerOpen}
         onClose={handleCloseEditDrawer}
-        onSubmit={handleEditConsultationBooking}
+        onSubmit={handleEditBooking}
         initialValues={editingInitialValues ?? defaultEditInitialValues}
+        title={
+          editingBookingType === 'consultation'
+            ? 'Edit Consultation Booking'
+            : 'Edit Admission Application Booking'
+        }
       />
     </div>
   );

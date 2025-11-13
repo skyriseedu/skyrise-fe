@@ -6,14 +6,18 @@ import {
   type BookingDrawerBaseProps,
 } from './AddBookingDrawer';
 
-export type EditBookingDrawerProps = Omit<BookingDrawerBaseProps, 'initialValues' | 'title' | 'submitLabel'> & {
+export type EditBookingDrawerProps = Omit<
+  BookingDrawerBaseProps,
+  'initialValues' | 'title' | 'submitLabel'
+> & {
   initialValues: AddBookingFormValues;
+  title?: string;
 };
 
-const EditBookingDrawer: React.FC<EditBookingDrawerProps> = (props) => (
+const EditBookingDrawer: React.FC<EditBookingDrawerProps> = ({ title, ...rest }) => (
   <BookingDrawerBase
-    {...props}
-    title="Edit Consultation Booking"
+    {...rest}
+    title={title ?? 'Edit Consultation Booking'}
     submitLabel="Save Changes"
   />
 );

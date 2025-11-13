@@ -6,7 +6,11 @@ import type {
   ApplyConsultantFormValues,
   BulkDeleteApplicationsResponse,
 } from '@/types/users/forms';
-import type { BookingStatusApi, CreateConsultationRequest } from '@/types/bookings';
+import type {
+  BookingStatusApi,
+  CreateConsultationRequest,
+  UpdateConsultationRequest,
+} from '@/types/bookings';
 
 export const formsService = {
   async bookConsultation(
@@ -45,6 +49,19 @@ export const formsService = {
       return response.data;
     } catch (error) {
       console.error('Create application booking API error:', error);
+      throw error;
+    }
+  },
+
+  async updateApplicationBooking(
+    applicationId: string,
+    data: UpdateConsultationRequest
+  ): Promise<FormSubmissionResponse> {
+    try {
+      const response = await apiClient.put(`/applications/${applicationId}`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Update application booking API error:', error);
       throw error;
     }
   },
