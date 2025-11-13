@@ -34,7 +34,7 @@ const ProgramSetup: React.FC = () => {
   );
   const statusFilterRef = useRef<HTMLDivElement>(null);
 
-  const { data: programsData, isLoading, isError } = useProgramsAdmin({});
+  const { data: programsData, isLoading, isError } = useProgramsAdmin();
   const deleteProgramMutation = useDeleteProgram();
   const bulkDeleteProgramMutation = useBulkDeleteProgram();
 
@@ -67,47 +67,60 @@ const ProgramSetup: React.FC = () => {
     setSelectedStatuses(newStatuses);
   };
 
-  // Filter programs based on search query
+  // Filter programs based on search query AND status
   const filteredPrograms = useMemo(() => {
     if (!programsData) return [];
-    return programsData.data.programs.filter(
+
+    let filtered = programsData.data.programs.filter(
       (program) =>
         program.programName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         program.universityName.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery, programsData]);
+
+    // Apply status filter if any statuses are selected
+    if (selectedStatuses.size > 0) {
+      filtered = filtered.filter((program) =>
+        selectedStatuses.has(program.status || 'draft')
+      );
+    }
+
+    return filtered;
+  }, [searchQuery, programsData, selectedStatuses]);
 
   // Sort programs
   const sortedPrograms = useMemo(() => {
-    let sorted = [...filteredPrograms];
-    sorted = sorted.map((program) => ({
-      ...program,
-      createdAt: program.createdAt
-        ? formatNthDate(new Date(program.createdAt))
-        : '',
-      updatedAt: program.updatedAt
-        ? formatNthDate(new Date(program.updatedAt))
-        : '',
-    }));
+    const sorted = [...filteredPrograms];
 
     sorted.sort((a, b) => {
-      let aValue: string | number | undefined =
-        a[sortState.key as keyof ProgramListItem];
-      let bValue: string | number | undefined =
-        b[sortState.key as keyof ProgramListItem];
+      let aValue: string | number = '';
+      let bValue: string | number = '';
 
-      // Convert to Date objects for comparison if sorting by date fields
+      // Get the values based on sort key
       if (sortState.key === 'createdAt' || sortState.key === 'updatedAt') {
-        aValue = aValue ? new Date(aValue as string).getTime() : 0;
-        bValue = bValue ? new Date(bValue as string).getTime() : 0;
+        // For date fields, convert to timestamp for comparison
+        aValue = a[sortState.key]
+          ? new Date(a[sortState.key] as string).getTime()
+          : 0;
+        bValue = b[sortState.key]
+          ? new Date(b[sortState.key] as string).getTime()
+          : 0;
+      } else {
+        // For other fields, get string values
+        const aVal = a[sortState.key as keyof ProgramListItem];
+        const bVal = b[sortState.key as keyof ProgramListItem];
+
+        aValue = aVal === null || aVal === undefined ? '' : String(aVal);
+        bValue = bVal === null || bVal === undefined ? '' : String(bVal);
       }
 
+      // Compare values
       if (sortState.direction === 'asc') {
         return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
       } else {
         return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       }
     });
+
     return sorted;
   }, [filteredPrograms, sortState]);
 
@@ -126,6 +139,17 @@ const ProgramSetup: React.FC = () => {
   };
 
   const handleRemoveSelected = () => {
+    if (selectedPrograms.size === 0) return;
+
+    if (
+      !confirm(
+        `Are you sure you want to delete ${selectedPrograms.size} program(s)?`
+      )
+    ) {
+      return;
+    }
+
+    console.log('deleting', Array.from(selectedPrograms)); // --- IGNORE ---
     bulkDeleteProgramMutation.mutate(
       { ids: Array.from(selectedPrograms) },
       {
@@ -147,9 +171,19 @@ const ProgramSetup: React.FC = () => {
   };
 
   const handleRemove = (program: ProgramListItem) => {
+    if (!confirm(`Are you sure you want to delete "${program.programName}"?`)) {
+      return;
+    }
+
     deleteProgramMutation.mutate(program._id, {
       onSuccess: () => {
         setOpenDropdown(null);
+        // Remove from selection if it was selected
+        if (selectedPrograms.has(program._id)) {
+          const newSelected = new Set(selectedPrograms);
+          newSelected.delete(program._id);
+          setSelectedPrograms(newSelected);
+        }
       },
     });
   };
@@ -159,9 +193,10 @@ const ProgramSetup: React.FC = () => {
   };
 
   // Dropdown component
-  const ActionDropdown: React.FC<{ program: ProgramListItem }> = ({
-    program,
-  }) => {
+  const ActionDropdown: React.FC<{
+    program: ProgramListItem;
+    index: number;
+  }> = ({ program, index: _index }) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -185,7 +220,7 @@ const ProgramSetup: React.FC = () => {
     return (
       <div className="relative" ref={dropdownRef}>
         <button
-          className="p-1 text-gray-500 cursor-pointer hover:text-gray-700"
+          className="cursor-pointer p-1 text-gray-500 hover:text-gray-700"
           onClick={() =>
             setOpenDropdown(openDropdown === program._id ? null : program._id)
           }
@@ -243,21 +278,21 @@ const ProgramSetup: React.FC = () => {
       header: 'Published Date',
       sortable: true,
       headerContentClassName: 'flex items-center gap-1',
-      cell: (program) =>
-        program.createdAt ? formatNthDate(program.createdAt) : '',
+      render: (program: ProgramListItem) =>
+        program.createdAt ? formatNthDate(new Date(program.createdAt)) : '',
     },
     {
       key: 'updatedAt',
       header: 'Modified Date',
       sortable: true,
       headerContentClassName: 'flex items-center gap-1',
-      cell: (program) =>
-        program.updatedAt ? formatNthDate(program.updatedAt) : '',
+      render: (program: ProgramListItem) =>
+        program.updatedAt ? formatNthDate(new Date(program.updatedAt)) : '',
     },
   ];
 
-  const renderActions = (program: ProgramListItem) => (
-    <ActionDropdown program={program} />
+  const renderActions = (program: ProgramListItem, index: number) => (
+    <ActionDropdown program={program} index={index} />
   );
 
   if (isLoading) return <div>Loading...</div>;
@@ -269,7 +304,7 @@ const ProgramSetup: React.FC = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-h2 mb-6 font-semibold text-gray-900">
-            Total Programs {programsData?.total || 0}
+            Total Programs {sortedPrograms.length}
           </h1>
 
           <div className="flex items-center justify-between gap-4">
@@ -294,6 +329,11 @@ const ProgramSetup: React.FC = () => {
                 >
                   <Filter />
                   Status
+                  {selectedStatuses.size > 0 && (
+                    <span className="ml-1 rounded-full bg-red-500 px-2 py-0.5 text-xs text-white">
+                      {selectedStatuses.size}
+                    </span>
+                  )}
                 </button>
 
                 {showStatusFilter && (
@@ -337,10 +377,11 @@ const ProgramSetup: React.FC = () => {
               {selectedPrograms.size > 0 && (
                 <button
                   onClick={handleRemoveSelected}
-                  className="bg-secondary flex items-center gap-2 rounded-xl px-4 py-2 text-gray-700 hover:bg-red-200"
+                  disabled={bulkDeleteProgramMutation.isPending}
+                  className="bg-secondary flex items-center gap-2 rounded-xl px-4 py-2 text-gray-700 hover:bg-red-200 disabled:opacity-50"
                 >
                   <RemoveIcon className="h-4 w-4" />
-                  Remove
+                  Remove ({selectedPrograms.size})
                 </button>
               )}
 
@@ -355,7 +396,7 @@ const ProgramSetup: React.FC = () => {
         </div>
 
         {/* Data Table */}
-        <DataTable
+        <DataTable<ProgramListItem>
           columns={columns}
           data={sortedPrograms}
           getRowId={(program) => program._id}
