@@ -1104,6 +1104,50 @@ const BookingsPage: React.FC = () => {
     return rowsToSort;
   }, [filteredConsultationRows, sortState]);
 
+  // Apply the same sorting logic to application rows so the admission
+  // applications table respects the global sortState as well.
+  const sortedApplicationRows = useMemo(() => {
+    if (!sortState) {
+      return applicationRows;
+    }
+
+    const sortableKeys: Partial<Record<string, keyof BookingRecord>> = {
+      status: 'status',
+      submittedPlatform: 'submittedPlatform',
+      submittedDate: 'submittedDate',
+      name: 'name',
+      email: 'email',
+      phoneNumber: 'phoneNumber',
+      bookingTimeSchedule: 'bookingTimeSchedule',
+      location: 'location',
+      question: 'question',
+    };
+
+    const key = sortableKeys[sortState.key];
+    if (!key) {
+      return applicationRows;
+    }
+
+    const rowsToSort = [...applicationRows];
+
+    rowsToSort.sort((a, b) => {
+      const valueA = a[key];
+      const valueB = b[key];
+
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        const comparison = valueA.localeCompare(valueB, undefined, {
+          numeric: true,
+          sensitivity: 'base',
+        });
+        return sortState.direction === 'asc' ? comparison : -comparison;
+      }
+
+      return 0;
+    });
+
+    return rowsToSort;
+  }, [applicationRows, sortState]);
+
   const handleRowStatusChange = useCallback(
     (row: BookingRecord, nextStatus: BookingStatus) => {
       if (!row.id) {
@@ -1240,8 +1284,8 @@ const BookingsPage: React.FC = () => {
 
   const tableData = useMemo<BookingRecord[]>(() => {
     if (activeTab === 'consultation') return sortedConsultationRows;
-    return applicationRows;
-  }, [activeTab, sortedConsultationRows, applicationRows]);
+    return sortedApplicationRows;
+  }, [activeTab, sortedConsultationRows, sortedApplicationRows]);
 
   useEffect(() => {
     setSelectedRowKeys(new Set());
