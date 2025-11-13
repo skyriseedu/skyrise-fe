@@ -1109,9 +1109,35 @@ const BookingsPage: React.FC = () => {
 
   // Apply the same sorting logic to application rows so the admission
   // applications table respects the global sortState as well.
+  // Filter application rows by the global search term (same behaviour as
+  // consultations) so the admission applications tab responds to the
+  // search input.
+  const filteredApplicationRows = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return applicationRows;
+
+    return applicationRows.filter((row) => {
+      return [
+        row.status,
+        row.submittedPlatform,
+        formatDisplayDate(row.submittedDate),
+        row.name,
+        row.email,
+        row.phoneNumber,
+        row.facebookAccount,
+        row.bookingTimeSchedule,
+        row.location,
+        row.question,
+      ]
+        .join(' ')
+        .toLowerCase()
+        .includes(term);
+    });
+  }, [searchTerm, applicationRows]);
+
   const sortedApplicationRows = useMemo(() => {
     if (!sortState) {
-      return applicationRows;
+      return filteredApplicationRows;
     }
 
     const sortableKeys: Partial<Record<string, keyof BookingRecord>> = {
@@ -1128,10 +1154,10 @@ const BookingsPage: React.FC = () => {
 
     const key = sortableKeys[sortState.key];
     if (!key) {
-      return applicationRows;
+      return filteredApplicationRows;
     }
 
-    const rowsToSort = [...applicationRows];
+    const rowsToSort = [...filteredApplicationRows];
 
     rowsToSort.sort((a, b) => {
       const valueA = a[key];
@@ -1149,7 +1175,7 @@ const BookingsPage: React.FC = () => {
     });
 
     return rowsToSort;
-  }, [applicationRows, sortState]);
+  }, [filteredApplicationRows, sortState]);
 
   const handleRowStatusChange = useCallback(
     (row: BookingRecord, nextStatus: BookingStatus) => {
