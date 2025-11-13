@@ -31,6 +31,7 @@ import {
   useCreateConsultation,
   useDeleteConsultation,
   useBulkDeleteConsultations,
+  useUpdateConsultation,
 } from '@/queries';
 import type {
   Consultation,
@@ -71,6 +72,201 @@ type DropdownPosition = {
   top: number;
   left: number;
   width: number;
+};
+
+const supportedDialCodes = ['+95', '+66'] as const;
+
+const timeOptionToApiMap: Record<string, string> = {
+  '08:00 a.m': '08:00',
+  '12:00 p.m': '12:00',
+  '15:00 p.m': '15:00',
+  '20:00 p.m': '20:00',
+};
+
+const apiTimeToOptionMap = Object.entries(timeOptionToApiMap).reduce(
+  (acc, [option, apiValue]) => {
+    acc[apiValue] = option;
+    const truncated = apiValue.slice(0, 5);
+    acc[truncated] = option;
+    return acc;
+  },
+  {} as Record<string, string>
+);
+
+const formatTimeValueForApi = (value: string): string => {
+  if (!value) return '';
+  const trimmed = value.trim();
+  if (timeOptionToApiMap[trimmed]) {
+    return timeOptionToApiMap[trimmed];
+  }
+  return trimmed.slice(0, 5);
+};
+
+const formatTimeValueForForm = (value?: string): string => {
+  if (!value) return '';
+  const trimmed = value.trim();
+  if (apiTimeToOptionMap[trimmed]) {
+    return apiTimeToOptionMap[trimmed];
+  }
+  const truncated = trimmed.slice(0, 5);
+  return apiTimeToOptionMap[truncated] ?? trimmed;
+};
+
+const sanitizeTextValue = (value?: string | null, fallback = ''): string => {
+  if (!value) return fallback;
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.toUpperCase() === 'N/A') {
+    return fallback;
+  }
+  return trimmed;
+};
+
+const removeOrdinalSuffixes = (input: string) =>
+  input.replace(/\b(\d{1,2})(st|nd|rd|th)\b/gi, '$1');
+
+const monthMap: Record<string, number> = {
+  january: 0,
+  february: 1,
+  march: 2,
+  april: 3,
+  may: 4,
+  june: 5,
+  july: 6,
+  august: 7,
+  september: 8,
+  october: 9,
+  november: 10,
+  december: 11,
+};
+
+const tryParseNamedMonth = (input: string): string | null => {
+  const cleaned = removeOrdinalSuffixes(input).replace(/,/g, ' ').trim();
+  const normalized = cleaned.replace(/\s+/g, ' ');
+
+  const forwardMatch = normalized.match(
+    /^(\d{1,2})\s+([A-Za-z]+)\s+(\d{2,4})(.*)$/
+  );
+  const reverseMatch = normalized.match(
+    /^([A-Za-z]+)\s+(\d{1,2})\s+(\d{2,4})(.*)$/
+  );
+
+  const buildIsoFromMatch = (
+    dayMatch: RegExpMatchArray,
+    monthGroup: number,
+    dayGroup: number,
+    yearGroup: number
+  ): string | null => {
+    const monthName = dayMatch[monthGroup]?.toLowerCase();
+    const monthIndex = monthName ? monthMap[monthName] : undefined;
+    if (monthIndex === undefined) return null;
+
+    const day = Number(dayMatch[dayGroup]);
+    let year = Number(dayMatch[yearGroup]);
+    if (Number.isNaN(day) || Number.isNaN(year)) return null;
+    if (year < 100) {
+      year += year >= 70 ? 1900 : 2000;
+    }
+
+    const date = new Date(Date.UTC(year, monthIndex, day));
+    if (Number.isNaN(date.getTime())) return null;
+    return date.toISOString();
+  };
+
+  if (forwardMatch) {
+    const iso = buildIsoFromMatch(forwardMatch, 2, 1, 3);
+    if (iso) return iso;
+  }
+
+  if (reverseMatch) {
+    const iso = buildIsoFromMatch(reverseMatch, 1, 2, 3);
+    if (iso) return iso;
+  }
+
+  return null;
+};
+
+const formatDateValueForForm = (value?: string): string => {
+  const trimmed = sanitizeTextValue(value);
+  if (!trimmed) return '';
+
+  const tryParseToIso = (input: string): string | null => {
+    const parsed = new Date(input);
+    if (Number.isNaN(parsed.getTime())) {
+      return null;
+    }
+    return parsed.toISOString();
+  };
+
+  const isoCandidates = new Set<string>([trimmed]);
+
+  if (trimmed.includes(' ') && !trimmed.includes('T')) {
+    const spaced = trimmed.replace(' ', 'T');
+    isoCandidates.add(spaced);
+    if (!/[zZ]|[+-]\d{2}:?\d{2}$/.test(spaced)) {
+      isoCandidates.add(`${spaced}Z`);
+    }
+  }
+
+  if (trimmed.includes('/')) {
+    const normalizedSlashes = trimmed.replace(/\//g, '-');
+    isoCandidates.add(normalizedSlashes);
+  }
+
+  const namedMonthIso = tryParseNamedMonth(trimmed);
+  if (namedMonthIso) {
+    return namedMonthIso;
+  }
+
+  const cleanedOrdinal = removeOrdinalSuffixes(trimmed).replace(/,/g, ' ');
+  if (cleanedOrdinal !== trimmed) {
+    isoCandidates.add(cleanedOrdinal);
+  }
+
+  for (const candidate of isoCandidates) {
+    const iso = tryParseToIso(candidate);
+    if (iso) {
+      return iso;
+    }
+  }
+
+  const compact = cleanedOrdinal.replace(/\s+/g, '');
+  const match = compact.match(/^(\d{1,2})([/-])(\d{1,2})\2(\d{2,4})$/);
+  if (match) {
+    const day = Number(match[1]);
+    const month = Number(match[3]) - 1;
+    const rawYear = match[4];
+    const year = rawYear.length === 2 ? Number(`20${rawYear}`) : Number(rawYear);
+    const manualDate = new Date(Date.UTC(year, month, day));
+    if (!Number.isNaN(manualDate.getTime())) {
+      return manualDate.toISOString();
+    }
+  }
+
+  return trimmed;
+};
+
+const extractPhonePartsForForm = (rawPhone?: string) => {
+  const defaultDial = supportedDialCodes[0];
+  const sanitized = sanitizeTextValue(rawPhone);
+  if (!sanitized) {
+    return { dialCode: defaultDial, localNumber: '' };
+  }
+
+  const compact = sanitized.replace(/\s+/g, '');
+  const digitsOnly = compact.startsWith('+') ? compact.slice(1) : compact;
+
+  for (const dial of supportedDialCodes) {
+    const digits = dial.slice(1);
+    if (compact.startsWith(dial)) {
+      return { dialCode: dial, localNumber: compact.slice(dial.length) };
+    }
+
+    if (digitsOnly.startsWith(digits)) {
+      return { dialCode: dial, localNumber: digitsOnly.slice(digits.length) };
+    }
+  }
+
+  return { dialCode: defaultDial, localNumber: digitsOnly || compact };
 };
 
 const statusVisuals: Record<BookingStatus, StatusVisualConfig> = {
@@ -640,7 +836,8 @@ const transformConsultationToBookingRecord = (
     facebookAccount: pickString('facebookAccount'),
     bookingTimeSchedule:
       pickString('bookingTimeSchedule') ?? consultation.time ?? 'N/A',
-    bookingDateSchedule: consultation.date,
+    bookingDateSchedule:
+      pickString('bookingDateSchedule') ?? pickString('bookingDate') ?? consultation.date,
     location: pickString('location') ?? 'N/A',
     question: pickString('question') ?? consultation.notes ?? 'N/A',
   };
@@ -664,7 +861,7 @@ const BookingsPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showStatusFilter, setShowStatusFilter] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus | 'All'>(
-    'Scheduled'
+    'All'
   );
   const [statusOverrides, setStatusOverrides] = useState<
     Record<string, BookingStatus>
@@ -1096,11 +1293,13 @@ const BookingsPage: React.FC = () => {
 
   const bulkDeleteConsultationsMutation = useBulkDeleteConsultations();
   const deleteConsultationMutation = useDeleteConsultation();
+  const updateConsultationMutation = useUpdateConsultation();
 
   // State to hold the initial values for editing a booking.
   const [editingInitialValues, setEditingInitialValues] = useState<
     AddBookingFormValues | null
   >(null);
+  const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
 
   const defaultEditInitialValues: AddBookingFormValues = {
     status: 'Scheduled',
@@ -1117,20 +1316,34 @@ const BookingsPage: React.FC = () => {
   };
 
   const handleEditClick = (booking: BookingRecord) => {
+    if (!booking.id) {
+      console.warn('Cannot edit consultation booking without a valid id.', booking);
+      return;
+    }
+
+    const sanitizedTime = sanitizeTextValue(booking.bookingTimeSchedule);
+    const normalizedDate = formatDateValueForForm(booking.bookingDateSchedule);
+    const { dialCode, localNumber } = extractPhonePartsForForm(
+      booking.phoneNumber
+    );
+
     const initial: AddBookingFormValues = {
       status: booking.status,
       submittedPlatform: booking.submittedPlatform,
-      name: booking.name ?? '',
-      email: booking.email ?? '',
-      countryDialCode: '+95',
-      phoneNumber: booking.phoneNumber ?? '',
-      facebookAccount: booking.facebookAccount ?? '',
-      bookingTimeSchedule: booking.bookingTimeSchedule ?? '',
-      bookingDateSchedule: booking.bookingDateSchedule ?? '',
-      location: booking.location ?? 'Myanmar',
-      question: booking.question ?? '',
+      name: sanitizeTextValue(booking.name),
+      email: sanitizeTextValue(booking.email),
+      countryDialCode: dialCode,
+      phoneNumber: localNumber,
+      facebookAccount: sanitizeTextValue(booking.facebookAccount),
+      bookingTimeSchedule: sanitizedTime
+        ? formatTimeValueForForm(sanitizedTime)
+        : '',
+      bookingDateSchedule: normalizedDate,
+      location: sanitizeTextValue(booking.location, 'Myanmar') || 'Myanmar',
+      question: sanitizeTextValue(booking.question),
     };
 
+    setEditingBookingId(booking.id);
     setEditingInitialValues(initial);
     setIsEditDrawerOpen(true);
   };
@@ -1243,36 +1456,71 @@ const BookingsPage: React.FC = () => {
     setIsAddDrawerOpen(false);
   };
 
-   const handleCloseEditDrawer = () => {
+  const handleCloseEditDrawer = () => {
     setIsEditDrawerOpen(false);
+    setEditingBookingId(null);
+    setEditingInitialValues(null);
+  };
+
+  const buildConsultationPayload = (
+    values: AddBookingFormValues
+  ): CreateConsultationRequest => {
+    const normalizeSubmittedPlatform = () => {
+      const raw = values.submittedPlatform.trim().toLowerCase();
+      if (raw === 'social media' || raw === 'social') {
+        return 'social media';
+      }
+      if (raw === 'website') {
+        return 'website';
+      }
+      return raw || 'website';
+    };
+
+    const normalizePhoneNumber = () => {
+      const dialCode = values.countryDialCode.trim();
+      const basePhone = values.phoneNumber.trim();
+      if (!basePhone) {
+        return '';
+      }
+
+      const sanitizedPhone = basePhone.replace(/\s+/g, '');
+      if (sanitizedPhone.startsWith('+')) {
+        return sanitizedPhone;
+      }
+
+      const sanitizedDial = dialCode.replace(/\s+/g, '');
+      if (!sanitizedDial) {
+        return sanitizedPhone;
+      }
+
+      const dialDigits = sanitizedDial.startsWith('+')
+        ? sanitizedDial.slice(1)
+        : sanitizedDial;
+      const phoneDigits = sanitizedPhone.replace(/^\+/, '');
+      const needsDialPrefix = !phoneDigits.startsWith(dialDigits);
+      const combined = needsDialPrefix
+        ? `${dialDigits}${phoneDigits}`
+        : phoneDigits;
+      return `+${combined}`;
+    };
+
+    return {
+      name: values.name.trim(),
+      email: values.email.trim(),
+      phoneNumber: normalizePhoneNumber(),
+      bookingTimeSchedule: formatTimeValueForApi(values.bookingTimeSchedule),
+      bookingDateSchedule: values.bookingDateSchedule,
+      submittedPlatform: normalizeSubmittedPlatform(),
+      status: values.status.toLowerCase() as BookingStatusApi,
+      location: values.location.trim() || undefined,
+      question: values.question.trim() || undefined,
+      facebookAccount: values.facebookAccount.trim() || undefined,
+    };
   };
 
   const handleAddConsultationBooking = async (values: AddBookingFormValues) => {
     try {
-      const transformBookingTime = (timeString: string): string => {
-        return timeString.replace(/\s+(a\.m|p\.m)$/i, '');
-      };
-
-      const normalizePhoneNumber = () => {
-        const parts = [
-          values.countryDialCode.trim(),
-          values.phoneNumber.trim(),
-        ].filter(Boolean);
-        return parts.join('').replace(/\s+/g, '');
-      };
-
-      const consultationData: CreateConsultationRequest = {
-        name: values.name.trim(),
-        email: values.email.trim(),
-        phoneNumber: normalizePhoneNumber(),
-        bookingTimeSchedule: transformBookingTime(values.bookingTimeSchedule),
-        bookingDateSchedule: values.bookingDateSchedule,
-        submittedPlatform: values.submittedPlatform.trim(),
-        status: values.status.toLowerCase() as BookingStatusApi,
-        location: values.location.trim() || undefined,
-        question: values.question.trim() || undefined,
-        facebookAccount: values.facebookAccount.trim() || undefined,
-      };
+      const consultationData = buildConsultationPayload(values);
 
       await createConsultationMutation.mutateAsync(consultationData);
 
@@ -1290,11 +1538,25 @@ const BookingsPage: React.FC = () => {
   };
 
   const handleEditConsultationBooking = async (values: AddBookingFormValues) => {
-    // No update API available in this module; close the drawer and log the values.
-    // If an update mutation exists, replace this with the appropriate mutation call.
-    console.log('Edit booking submitted', values);
-    setIsEditDrawerOpen(false);
-    setEditingInitialValues(null);
+    if (!editingBookingId) {
+      console.error('No consultation id available for editing.');
+      return;
+    }
+
+    try {
+      const payload = buildConsultationPayload(values);
+      await updateConsultationMutation.mutateAsync({
+        consultationId: editingBookingId,
+        payload,
+      });
+
+      handleCloseEditDrawer();
+      setSelectedRowKeys(new Set());
+      setSelectedConsultationIds(new Set());
+      setSortState(undefined);
+    } catch (error) {
+      console.error('Failed to update consultation booking:', error);
+    }
   };
 
   const renderActions = (booking: BookingRecord) => (
