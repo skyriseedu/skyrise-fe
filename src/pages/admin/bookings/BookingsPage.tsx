@@ -34,7 +34,7 @@ import {
   useBulkDeleteConsultations,
   useApplications,
   useUpdateConsultation,
-  useSubmitApplication,
+  useCreateApplicationBooking,
   useBulkDeleteApplications,
 } from '@/queries';
 import type {
@@ -941,7 +941,7 @@ const BookingsPage: React.FC = () => {
   
 
   const createConsultationMutation = useCreateConsultation();
-  const submitApplicationMutation = useSubmitApplication();
+  const createApplicationMutation = useCreateApplicationBooking();
   const consultationRows = useMemo(() => {
     if (!consultationsData?.data) {
       return [];
@@ -1698,18 +1698,9 @@ const BookingsPage: React.FC = () => {
   };
   const handleAddAdmissionApplication = async (values: AddBookingFormValues) => {
     try {
-      // Map AddBookingFormValues -> ApplicationFormValues
-      const applicationPayload = {
-        name: values.name.trim(),
-        email: values.email.trim(),
-        phoneNumber: `${values.countryDialCode}${values.phoneNumber.replace(/\s+/g, '')}`.replace(/^\+?/, '+'),
-        bookingTimeSchedule: values.bookingTimeSchedule,
-        bookingDateSchedule: values.bookingDateSchedule,
-        location: values.location,
-        question: values.question,
-      };
+      const applicationPayload = buildConsultationPayload(values);
 
-      await submitApplicationMutation.mutateAsync(applicationPayload);
+      await createApplicationMutation.mutateAsync(applicationPayload);
 
       handleCloseAddDrawer();
       setSelectedRowKeys(new Set());
@@ -1979,14 +1970,14 @@ const BookingsPage: React.FC = () => {
               disabled={
                 activeTab === 'consultation'
                   ? createConsultationMutation.isPending
-                  : submitApplicationMutation.isPending
+                  : createApplicationMutation.isPending
               }
             >
               {activeTab === 'consultation'
                 ? createConsultationMutation.isPending
                   ? 'Creating...'
                   : '+ Consultation Record'
-                : submitApplicationMutation.isPending
+                : createApplicationMutation.isPending
                 ? 'Submitting...'
                 : '+ Admission Applicant Record'}
             </Button>

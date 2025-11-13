@@ -37,6 +37,18 @@ export const formsService = {
     return response.data;
   },
 
+  async createApplicationBooking(
+    data: CreateConsultationRequest
+  ): Promise<FormSubmissionResponse> {
+    try {
+      const response = await apiClient.post('/applications', data);
+      return response.data;
+    } catch (error) {
+      console.error('Create application booking API error:', error);
+      throw error;
+    }
+  },
+
   async submitConsultantApplication(
     data: ApplyConsultantFormValues
   ): Promise<FormSubmissionResponse> {
