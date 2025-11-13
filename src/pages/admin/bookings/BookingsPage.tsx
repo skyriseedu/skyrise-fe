@@ -1,3 +1,4 @@
+// consolidated query hooks imported below
 import React, {
   useCallback,
   useEffect,
@@ -31,7 +32,9 @@ import {
   useCreateConsultation,
   useDeleteConsultation,
   useBulkDeleteConsultations,
+  useApplications,
   useUpdateConsultation,
+  useSubmitApplication,
 } from '@/queries';
 import type {
   Consultation,
@@ -843,6 +846,49 @@ const transformConsultationToBookingRecord = (
   };
 };
 
+// Transform a generic application object returned by /applications into the
+// BookingRecord shape used by the table UI. We keep this permissive because
+// the application object shape may vary; fallback to sensible defaults.
+const transformApplicationToBookingRecord = (application: any): BookingRecord => {
+  const pick = (k: string) => {
+    const v = application?.[k];
+    if (typeof v === 'string') return v;
+    if (v == null) return undefined;
+    return String(v);
+  };
+
+  const resolvedId = pick('id') ?? pick('_id') ?? '';
+
+  const rawPlatform = (pick('submittedPlatform') || pick('platform') || '').toLowerCase();
+  const submittedPlatform = rawPlatform.includes('social') ? 'Social Media' : 'Website';
+
+  const rawStatus = (pick('status') || pick('state') || '').toString().toLowerCase();
+  const mapRawStatusToBookingStatus = (s: string): BookingStatus => {
+    if (!s) return 'Scheduled';
+    if (s.includes('complete') || s.includes('approved') || s.includes('accepted') || s.includes('done')) return 'Completed';
+    if (s.includes('cancel') || s.includes('reject') || s.includes('rejected') || s.includes('declined')) return 'Cancelled';
+    // treat submitted/pending/new as scheduled by default
+    return 'Scheduled';
+  };
+
+  const normalizedStatus = mapRawStatusToBookingStatus(rawStatus);
+
+  return {
+    id: resolvedId,
+    status: normalizedStatus,
+    submittedPlatform: submittedPlatform as PlatformStatus,
+    submittedDate: pick('createdAt') ?? pick('created_at') ?? pick('submittedAt') ?? '',
+    name: pick('name') ?? pick('fullName') ?? (application.user?.name ?? 'N/A'),
+    email: pick('email') ?? (application.user?.email ?? 'N/A'),
+    phoneNumber: pick('phone') ?? pick('phoneNumber') ?? (application.user?.phone ?? 'N/A'),
+    facebookAccount: pick('facebookAccount'),
+    bookingTimeSchedule: pick('preferredTime') ?? pick('bookingTimeSchedule') ?? 'N/A',
+    bookingDateSchedule: pick('preferredDate') ?? pick('bookingDateSchedule') ?? pick('createdAt') ?? '',
+    location: pick('location') ?? 'N/A',
+    question: pick('message') ?? pick('question') ?? 'N/A',
+  };
+};
+
 // renderActions will be created inside the BookingsPage so it can access
 // handlers and state (edit/remove). The earlier top-level shortcut is removed.
 
@@ -885,7 +931,16 @@ const BookingsPage: React.FC = () => {
     limit: 10,
   });
 
+  const {
+    data: applicationsData,
+    isLoading: isApplicationsLoading,
+    isError: isApplicationsError,
+  } = useApplications({ page: currentPage, limit: 10 });
+
+  
+
   const createConsultationMutation = useCreateConsultation();
+  const submitApplicationMutation = useSubmitApplication();
   const consultationRows = useMemo(() => {
     if (!consultationsData?.data) {
       return [];
@@ -896,6 +951,16 @@ const BookingsPage: React.FC = () => {
     );
     return transformedRows;
   }, [consultationsData]);
+
+  const applicationRows: BookingRecord[] = useMemo(() => {
+    if (!applicationsData?.data) return [];
+    try {
+      return applicationsData.data.map(transformApplicationToBookingRecord);
+    } catch (e) {
+      console.error('Failed to transform applications:', e);
+      return [];
+    }
+  }, [applicationsData]);
 
   useEffect(() => {
     setStatusOverrides((prev) => {
@@ -1173,10 +1238,10 @@ const BookingsPage: React.FC = () => {
     [handleRowStatusChange, handleRowPlatformChange]
   );
 
-  const tableData = useMemo(
-    () => (activeTab === 'consultation' ? sortedConsultationRows : []),
-    [activeTab, sortedConsultationRows]
-  );
+  const tableData = useMemo<BookingRecord[]>(() => {
+    if (activeTab === 'consultation') return sortedConsultationRows;
+    return applicationRows;
+  }, [activeTab, sortedConsultationRows, applicationRows]);
 
   useEffect(() => {
     setSelectedRowKeys(new Set());
@@ -1433,20 +1498,27 @@ const BookingsPage: React.FC = () => {
     setShowStatusFilter(false);
   };
 
-  const totalBookings = consultationsData?.total || 0;
-
   const selectedStatusesLabel =
-    selectedStatus === 'All'
-      ? 'consultations'
-      : `${selectedStatus} consultations`;
+    activeTab === 'consultation'
+      ? selectedStatus === 'All'
+        ? 'consultations'
+        : `${selectedStatus} consultations`
+      : 'applications';
 
-  const emptyMessage = isLoading
-    ? 'Loading consultations...'
-    : searchTerm
-      ? 'No bookings match your search criteria.'
-      : `No ${selectedStatusesLabel} available.`;
+  const emptyMessage =
+    activeTab === 'consultation'
+      ? isLoading
+        ? 'Loading consultations...'
+        : searchTerm
+          ? 'No bookings match your search criteria.'
+          : `No ${selectedStatusesLabel} available.`
+      : isApplicationsLoading
+        ? 'Loading applications...'
+        : searchTerm
+          ? 'No bookings match your search criteria.'
+          : `No ${selectedStatusesLabel} available.`;
 
-  const pagination = consultationsData?.pagination;
+  const pagination = activeTab === 'consultation' ? consultationsData?.pagination : applicationsData?.pagination;
 
   const handleOpenAddDrawer = () => {
     setIsAddDrawerOpen(true);
@@ -1544,6 +1616,33 @@ const BookingsPage: React.FC = () => {
       console.error(`Error: ${errorMessage}`);
     }
   };
+  const handleAddAdmissionApplication = async (values: AddBookingFormValues) => {
+    try {
+      // Map AddBookingFormValues -> ApplicationFormValues
+      const applicationPayload = {
+        name: values.name.trim(),
+        email: values.email.trim(),
+        phoneNumber: `${values.countryDialCode}${values.phoneNumber.replace(/\s+/g, '')}`.replace(/^\+?/, '+'),
+        bookingTimeSchedule: values.bookingTimeSchedule,
+        bookingDateSchedule: values.bookingDateSchedule,
+        location: values.location,
+        question: values.question,
+      };
+
+      await submitApplicationMutation.mutateAsync(applicationPayload);
+
+      handleCloseAddDrawer();
+      setSelectedRowKeys(new Set());
+      setSelectedConsultationIds(new Set());
+      setSortState(undefined);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to create admission application';
+      console.error(`Error: ${errorMessage}`);
+    }
+  };
 
   const handleEditConsultationBooking = async (values: AddBookingFormValues) => {
     if (!editingBookingId) {
@@ -1585,7 +1684,10 @@ const BookingsPage: React.FC = () => {
     />
   );
 
-  if (isLoading) {
+  const isActiveLoading = activeTab === 'consultation' ? isLoading : isApplicationsLoading;
+  const isActiveError = activeTab === 'consultation' ? isError : isApplicationsError;
+
+  if (isActiveLoading) {
     return (
       <div className="space-y-8 text-gray-700">
         <section className="space-y-6">
@@ -1623,7 +1725,7 @@ const BookingsPage: React.FC = () => {
     );
   }
 
-  if (isError) {
+  if (isActiveError) {
     return (
       <div className="space-y-8 text-gray-700">
         <section className="space-y-6">
@@ -1705,12 +1807,12 @@ const BookingsPage: React.FC = () => {
           })}
         </div>
 
-        <div className="flex flex-row gap-3">
+          <div className="flex flex-row gap-3">
           <p className="text-h2 text-text-primary">
-            Total Consultation Booking
+            {activeTab === 'consultation' ? 'Total Consultation Booking' : 'Total Admission Applications'}
           </p>
           <p className="text-h2 text-text-primary font-semibold">
-            {totalBookings}
+            {activeTab === 'consultation' ? (consultationsData?.total || 0) : (applicationsData?.total || 0)}
           </p>
         </div>
 
@@ -1802,11 +1904,19 @@ const BookingsPage: React.FC = () => {
               type="button"
               className="rounded-full px-5"
               onClick={handleOpenAddDrawer}
-              disabled={createConsultationMutation.isPending}
+              disabled={
+                activeTab === 'consultation'
+                  ? createConsultationMutation.isPending
+                  : submitApplicationMutation.isPending
+              }
             >
-              {createConsultationMutation.isPending
-                ? 'Creating...'
-                : '+ Consultation Record'}
+              {activeTab === 'consultation'
+                ? createConsultationMutation.isPending
+                  ? 'Creating...'
+                  : '+ Consultation Record'
+                : submitApplicationMutation.isPending
+                ? 'Submitting...'
+                : '+ Admission Applicant Record'}
             </Button>
           </div>
         </div>
@@ -1904,7 +2014,9 @@ const BookingsPage: React.FC = () => {
       <AddBookingDrawer
         open={isAddDrawerOpen}
         onClose={handleCloseAddDrawer}
-        onSubmit={handleAddConsultationBooking}
+        onSubmit={activeTab === 'consultation' ? handleAddConsultationBooking : handleAddAdmissionApplication}
+        title={activeTab === 'consultation' ? 'Add Consultation Booking' : 'Add Admission Application Booking'}
+        submitLabel={activeTab === 'consultation' ? 'Add' : 'Submit'}
       />
 
       <EditBookingDrawer 

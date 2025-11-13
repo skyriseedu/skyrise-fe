@@ -286,18 +286,18 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
   }> = {
     Scheduled: {
       Icon: CalendarTimeIcon,
-      iconClassName: 'text-yellow-600',
-      textClassName: 'text-yellow-600',
+      iconClassName: '',
+      textClassName: '',
     },
     Completed: {
       Icon: CheckboxCheckedIcon,
-      iconClassName: 'text-primary',
-      textClassName: 'text-primary',
+      iconClassName: '',
+      textClassName: '',
     },
     Cancelled: {
       Icon: CloseSquareIcon,
-      iconClassName: 'text-white',
-      textClassName: 'text-gray-900',
+      iconClassName: '',
+      textClassName: '',
     },
   };
 
@@ -469,9 +469,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                           setIsLocationMenuOpen(false);
                           setIsCalendarOpen(false);
                         }}
-                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-sm font-medium text-gray-700 transition focus:outline-none border ${
-                          errors.status ? 'border-red-500' : 'border-gray-200'
-                        }`}
+                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-sm font-medium text-gray-700 transition focus:outline-none ${
+                            errors.status ? 'ring-1 ring-red-500' : ''
+                          }`}
                         aria-haspopup="listbox"
                         aria-expanded={isStatusMenuOpen}
                       >
@@ -565,8 +565,8 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                           setIsLocationMenuOpen(false);
                           setIsCalendarOpen(false);
                         }}
-                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none border ${
-                          errors.submittedPlatform ? 'border-red-500' : 'border-gray-200'
+                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none ${
+                          errors.submittedPlatform ? 'ring-1 ring-red-500' : ''
                         }`}
                         aria-haspopup="listbox"
                         aria-expanded={isPlatformMenuOpen}
@@ -997,14 +997,14 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
   );
 };
 
-type AddBookingDrawerProps = Omit<BookingDrawerBaseProps, 'initialValues' | 'title' | 'submitLabel'>;
+type AddBookingDrawerProps = Omit<BookingDrawerBaseProps, 'initialValues'>;
 
 const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (props) => (
   <BookingDrawerBase
     {...props}
     initialValues={initialFormValues}
-    title="Add Consultation Booking"
-    submitLabel="Add"
+    title={props.title ?? 'Add Consultation Booking'}
+    submitLabel={props.submitLabel ?? 'Add'}
   />
 );
 

@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { formsService } from '@/lib/api';
 import type {
   BookConsultationFormValues,
@@ -54,3 +54,13 @@ export const useApplyConsultantApplication = () => {
     },
   });
 };
+
+export function useApplications(params: { page?: number; limit?: number } = {}) {
+  const { page = 1, limit = 10 } = params;
+
+  return useQuery({
+    queryKey: ['forms', 'applications', { page, limit }],
+    queryFn: () => formsService.getApplications({ page, limit }),
+    enabled: true,
+  });
+}
