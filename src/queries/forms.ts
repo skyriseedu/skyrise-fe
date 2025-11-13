@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formsService } from '@/lib/api';
 import type {
   BookConsultationFormValues,
@@ -62,5 +62,19 @@ export function useApplications(params: { page?: number; limit?: number } = {}) 
     queryKey: ['forms', 'applications', { page, limit }],
     queryFn: () => formsService.getApplications({ page, limit }),
     enabled: true,
+  });
+}
+
+export function useBulkDeleteApplications() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (ids: string[]) => formsService.bulkDeleteApplications(ids),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['forms', 'applications'] });
+    },
+    onError: (error) => {
+      console.error('Failed to bulk delete applications:', error);
+    },
   });
 }

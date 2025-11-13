@@ -4,6 +4,7 @@ import type {
   FormSubmissionResponse,
   ApplicationFormValues,
   ApplyConsultantFormValues,
+  BulkDeleteApplicationsResponse,
 } from '@/types/users/forms';
 import type { BookingStatusApi, CreateConsultationRequest } from '@/types/bookings';
 
@@ -60,6 +61,16 @@ export const formsService = {
       return response.data;
     } catch (error) {
       console.error('Applications API error:', error);
+      throw error;
+    }
+  },
+
+  async bulkDeleteApplications(ids: string[]): Promise<BulkDeleteApplicationsResponse> {
+    try {
+      const response = await apiClient.post('/applications/bulk-delete', { ids });
+      return response.data;
+    } catch (error) {
+      console.error('Bulk delete applications API error:', error);
       throw error;
     }
   },

@@ -35,6 +35,7 @@ import {
   useApplications,
   useUpdateConsultation,
   useSubmitApplication,
+  useBulkDeleteApplications,
 } from '@/queries';
 import type {
   Consultation,
@@ -1401,8 +1402,15 @@ const BookingsPage: React.FC = () => {
     tableData.every((row, index) => selectedRowKeys.has(getRowKey(row, index)));
 
   const bulkDeleteConsultationsMutation = useBulkDeleteConsultations();
+  const bulkDeleteApplicationsMutation = useBulkDeleteApplications();
   const deleteConsultationMutation = useDeleteConsultation();
   const updateConsultationMutation = useUpdateConsultation();
+
+  const isDeleteActionPending =
+    activeTab === 'consultation'
+      ? bulkDeleteConsultationsMutation.isPending ||
+        deleteConsultationMutation.isPending
+      : bulkDeleteApplicationsMutation.isPending;
 
   // State to hold the initial values for editing a booking.
   const [editingInitialValues, setEditingInitialValues] = useState<
@@ -1459,7 +1467,12 @@ const BookingsPage: React.FC = () => {
 
   const handleRemove = async (bookingId: string) => {
     try {
-      await deleteConsultationMutation.mutateAsync(bookingId);
+      if (activeTab === 'consultation') {
+        await deleteConsultationMutation.mutateAsync(bookingId);
+      } else {
+        await bulkDeleteApplicationsMutation.mutateAsync([bookingId]);
+      }
+
       // Clear selection if it included the removed id
       setSelectedConsultationIds((prev) => {
         const next = new Set(prev);
@@ -1468,7 +1481,11 @@ const BookingsPage: React.FC = () => {
       });
       setSelectedRowKeys(new Set());
     } catch (error) {
-      console.error('Failed to remove consultation booking:', error);
+      const context =
+        activeTab === 'consultation'
+          ? 'Failed to remove consultation booking:'
+          : 'Failed to remove admission application:';
+      console.error(context, error);
     }
   };
 
@@ -1484,35 +1501,54 @@ const BookingsPage: React.FC = () => {
     );
 
     if (ids.length === 0) {
-      console.warn('No valid consultation IDs selected for deletion.', rawIds);
+      console.warn('No valid booking IDs selected for deletion.', rawIds);
       return;
     }
 
     if (ids.length < rawIds.length) {
-      console.warn(
-        'Skipping consultation IDs that are invalid or empty.',
-        rawIds
-      );
+      console.warn('Skipping booking IDs that are invalid or empty.', rawIds);
+    }
+
+    if (activeTab === 'consultation') {
+      try {
+        await bulkDeleteConsultationsMutation.mutateAsync(ids);
+        setSelectedRowKeys(new Set());
+        setSelectedConsultationIds(new Set());
+      } catch (error) {
+        console.error('Failed to delete consultation booking:', error);
+        try {
+          // Fallback to individual deletes if the bulk endpoint is unavailable
+          for (const consultationId of ids) {
+            await deleteConsultationMutation.mutateAsync(consultationId);
+          }
+          setSelectedRowKeys(new Set());
+          setSelectedConsultationIds(new Set());
+        } catch (singleDeleteError) {
+          console.error('Fallback single delete failed:', singleDeleteError);
+        }
+      }
+      return;
     }
 
     try {
-      await bulkDeleteConsultationsMutation.mutateAsync(ids);
+      await bulkDeleteApplicationsMutation.mutateAsync(ids);
       setSelectedRowKeys(new Set());
       setSelectedConsultationIds(new Set());
     } catch (error) {
-      console.error('Failed to delete consultation booking:', error);
+      console.error('Failed to delete admission applications:', error);
       try {
-        // Fallback to individual deletes if the bulk endpoint is unavailable
-        for (const consultationId of ids) {
-          await deleteConsultationMutation.mutateAsync(consultationId);
+        for (const applicationId of ids) {
+          await bulkDeleteApplicationsMutation.mutateAsync([applicationId]);
         }
         setSelectedRowKeys(new Set());
         setSelectedConsultationIds(new Set());
       } catch (singleDeleteError) {
-        console.error('Fallback single delete failed:', singleDeleteError);
+        console.error('Fallback admission delete failed:', singleDeleteError);
       }
     }
   }, [
+    activeTab,
+    bulkDeleteApplicationsMutation,
     bulkDeleteConsultationsMutation,
     deleteConsultationMutation,
     selectedConsultationIds,
@@ -1926,22 +1962,14 @@ const BookingsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleDeleteSelected}
-                disabled={
-                  bulkDeleteConsultationsMutation.isPending ||
-                  deleteConsultationMutation.isPending
-                }
+                disabled={isDeleteActionPending}
                 className={clsx(
                   'bg-secondary flex items-center gap-2 rounded-xl px-4 py-2 text-gray-700 transition-colors hover:bg-red-200',
-                  (bulkDeleteConsultationsMutation.isPending ||
-                    deleteConsultationMutation.isPending) &&
-                    'cursor-wait opacity-70'
+                  isDeleteActionPending && 'cursor-wait opacity-70'
                 )}
               >
                 <RemoveIcon className="h-4 w-4" />
-                {bulkDeleteConsultationsMutation.isPending ||
-                deleteConsultationMutation.isPending
-                  ? 'Deleting...'
-                  : `Remove`}
+                {isDeleteActionPending ? 'Deleting...' : `Remove`}
               </button>
             )}
             <Button
