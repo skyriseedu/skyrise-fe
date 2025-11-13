@@ -1518,6 +1518,14 @@ const BookingsPage: React.FC = () => {
     };
   };
 
+  const mapPlatformToDisplay = (platform: string): PlatformStatus => {
+    const normalized = platform.trim().toLowerCase();
+    if (normalized === 'social media' || normalized === 'social') {
+      return 'Social Media';
+    }
+    return 'Website';
+  };
+
   const handleAddConsultationBooking = async (values: AddBookingFormValues) => {
     try {
       const consultationData = buildConsultationPayload(values);
@@ -1549,6 +1557,16 @@ const BookingsPage: React.FC = () => {
         consultationId: editingBookingId,
         payload,
       });
+
+      setStatusOverrides((prev) => ({
+        ...prev,
+        [editingBookingId]: values.status,
+      }));
+
+      setPlatformOverrides((prev) => ({
+        ...prev,
+        [editingBookingId]: mapPlatformToDisplay(values.submittedPlatform),
+      }));
 
       handleCloseEditDrawer();
       setSelectedRowKeys(new Set());

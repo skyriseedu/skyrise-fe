@@ -687,8 +687,8 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                             setIsCalendarOpen(false);
                           }}
                           className={clsx(
-                            'flex w-20 items-center justify-between rounded-md border px-4 py-2 text-sm font-semibold transition',
-                            'bg-white focus:border-primary'
+                            'flex w-20 items-center justify-between border-gray-300 rounded-md border px-4 py-2 text-sm font-semibold transition',
+                            'bg-white'
                           )}
                           aria-haspopup="listbox"
                           aria-expanded={isCountryCodeMenuOpen}
@@ -724,7 +724,7 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                                   setIsCountryCodeMenuOpen(false);
                                 }}
                                 className={clsx(
-                                  'flex w-full items-center justify-between px-4 py-2 text-sm transition hover:bg-gray-50',
+                                  'flex w-full items-center border-gray-100 justify-between px-4 py-2 text-sm transition hover:bg-gray-50',
                                   values.countryDialCode === option.code
                                     ? 'bg-gray-50 font-semibold'
                                     : 'text-gray-600'
@@ -743,7 +743,7 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                         value={values.phoneNumber}
                         onChange={(event) => handleFieldChange('phoneNumber', event.target.value)}
                         placeholder="Enter phone number"
-                        className={`flex-1 rounded-lg border px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 ${
+                        className={`flex-1 rounded-lg border  px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 ${
                           errors.phoneNumber ? 'border-red-500' : 'border-gray-200'
                         }`}
                       />
