@@ -31,6 +31,12 @@ import {
   useCreateConsultation,
   useDeleteConsultation,
   useBulkDeleteConsultations,
+  useApplications,
+  useUpdateConsultation,
+  useCreateApplicationBooking,
+  useBulkDeleteApplications,
+  useUpdateApplicationBooking,
+  useUpdateApplicationStatus,
 } from '@/queries';
 import type {
   Consultation,
@@ -71,6 +77,202 @@ type DropdownPosition = {
   top: number;
   left: number;
   width: number;
+};
+
+const supportedDialCodes = ['+95', '+66'] as const;
+const BOOKING_TABLE_MAX_BODY_HEIGHT = '35rem'; // header + 5 rows
+
+const timeOptionToApiMap: Record<string, string> = {
+  '08:00 a.m': '08:00',
+  '12:00 p.m': '12:00',
+  '15:00 p.m': '15:00',
+  '20:00 p.m': '20:00',
+};
+
+const apiTimeToOptionMap = Object.entries(timeOptionToApiMap).reduce(
+  (acc, [option, apiValue]) => {
+    acc[apiValue] = option;
+    const truncated = apiValue.slice(0, 5);
+    acc[truncated] = option;
+    return acc;
+  },
+  {} as Record<string, string>
+);
+
+const formatTimeValueForApi = (value: string): string => {
+  if (!value) return '';
+  const trimmed = value.trim();
+  if (timeOptionToApiMap[trimmed]) {
+    return timeOptionToApiMap[trimmed];
+  }
+  return trimmed.slice(0, 5);
+};
+
+const formatTimeValueForForm = (value?: string): string => {
+  if (!value) return '';
+  const trimmed = value.trim();
+  if (apiTimeToOptionMap[trimmed]) {
+    return apiTimeToOptionMap[trimmed];
+  }
+  const truncated = trimmed.slice(0, 5);
+  return apiTimeToOptionMap[truncated] ?? trimmed;
+};
+
+const sanitizeTextValue = (value?: string | null, fallback = ''): string => {
+  if (!value) return fallback;
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.toUpperCase() === 'N/A') {
+    return fallback;
+  }
+  return trimmed;
+};
+
+const removeOrdinalSuffixes = (input: string) =>
+  input.replace(/\b(\d{1,2})(st|nd|rd|th)\b/gi, '$1');
+
+const monthMap: Record<string, number> = {
+  january: 0,
+  february: 1,
+  march: 2,
+  april: 3,
+  may: 4,
+  june: 5,
+  july: 6,
+  august: 7,
+  september: 8,
+  october: 9,
+  november: 10,
+  december: 11,
+};
+
+const tryParseNamedMonth = (input: string): string | null => {
+  const cleaned = removeOrdinalSuffixes(input).replace(/,/g, ' ').trim();
+  const normalized = cleaned.replace(/\s+/g, ' ');
+
+  const forwardMatch = normalized.match(
+    /^(\d{1,2})\s+([A-Za-z]+)\s+(\d{2,4})(.*)$/
+  );
+  const reverseMatch = normalized.match(
+    /^([A-Za-z]+)\s+(\d{1,2})\s+(\d{2,4})(.*)$/
+  );
+
+  const buildIsoFromMatch = (
+    dayMatch: RegExpMatchArray,
+    monthGroup: number,
+    dayGroup: number,
+    yearGroup: number
+  ): string | null => {
+    const monthName = dayMatch[monthGroup]?.toLowerCase();
+    const monthIndex = monthName ? monthMap[monthName] : undefined;
+    if (monthIndex === undefined) return null;
+
+    const day = Number(dayMatch[dayGroup]);
+    let year = Number(dayMatch[yearGroup]);
+    if (Number.isNaN(day) || Number.isNaN(year)) return null;
+    if (year < 100) {
+      year += year >= 70 ? 1900 : 2000;
+    }
+
+    const date = new Date(Date.UTC(year, monthIndex, day));
+    if (Number.isNaN(date.getTime())) return null;
+    return date.toISOString();
+  };
+
+  if (forwardMatch) {
+    const iso = buildIsoFromMatch(forwardMatch, 2, 1, 3);
+    if (iso) return iso;
+  }
+
+  if (reverseMatch) {
+    const iso = buildIsoFromMatch(reverseMatch, 1, 2, 3);
+    if (iso) return iso;
+  }
+
+  return null;
+};
+
+const formatDateValueForForm = (value?: string): string => {
+  const trimmed = sanitizeTextValue(value);
+  if (!trimmed) return '';
+
+  const tryParseToIso = (input: string): string | null => {
+    const parsed = new Date(input);
+    if (Number.isNaN(parsed.getTime())) {
+      return null;
+    }
+    return parsed.toISOString();
+  };
+
+  const isoCandidates = new Set<string>([trimmed]);
+
+  if (trimmed.includes(' ') && !trimmed.includes('T')) {
+    const spaced = trimmed.replace(' ', 'T');
+    isoCandidates.add(spaced);
+    if (!/[zZ]|[+-]\d{2}:?\d{2}$/.test(spaced)) {
+      isoCandidates.add(`${spaced}Z`);
+    }
+  }
+
+  if (trimmed.includes('/')) {
+    const normalizedSlashes = trimmed.replace(/\//g, '-');
+    isoCandidates.add(normalizedSlashes);
+  }
+
+  const namedMonthIso = tryParseNamedMonth(trimmed);
+  if (namedMonthIso) {
+    return namedMonthIso;
+  }
+
+  const cleanedOrdinal = removeOrdinalSuffixes(trimmed).replace(/,/g, ' ');
+  if (cleanedOrdinal !== trimmed) {
+    isoCandidates.add(cleanedOrdinal);
+  }
+
+  for (const candidate of isoCandidates) {
+    const iso = tryParseToIso(candidate);
+    if (iso) {
+      return iso;
+    }
+  }
+
+  const compact = cleanedOrdinal.replace(/\s+/g, '');
+  const match = compact.match(/^(\d{1,2})([/-])(\d{1,2})\2(\d{2,4})$/);
+  if (match) {
+    const day = Number(match[1]);
+    const month = Number(match[3]) - 1;
+    const rawYear = match[4];
+    const year = rawYear.length === 2 ? Number(`20${rawYear}`) : Number(rawYear);
+    const manualDate = new Date(Date.UTC(year, month, day));
+    if (!Number.isNaN(manualDate.getTime())) {
+      return manualDate.toISOString();
+    }
+  }
+
+  return trimmed;
+};
+
+const extractPhonePartsForForm = (rawPhone?: string) => {
+  const defaultDial = supportedDialCodes[0];
+  const sanitized = sanitizeTextValue(rawPhone);
+  if (!sanitized) {
+    return { dialCode: defaultDial, localNumber: '' };
+  }
+
+  const compact = sanitized.replace(/\s+/g, '');
+  const digitsOnly = compact.startsWith('+') ? compact.slice(1) : compact;
+
+  for (const dial of supportedDialCodes) {
+    const digits = dial.slice(1);
+    if (compact.startsWith(dial)) {
+      return { dialCode: dial, localNumber: compact.slice(dial.length) };
+    }
+
+    if (digitsOnly.startsWith(digits)) {
+      return { dialCode: dial, localNumber: digitsOnly.slice(digits.length) };
+    }
+  }
+
+  return { dialCode: defaultDial, localNumber: digitsOnly || compact };
 };
 
 const statusVisuals: Record<BookingStatus, StatusVisualConfig> = {
@@ -583,7 +785,46 @@ const formatDisplayDate = (isoDate: string) => {
   return `${day} ${month} ${year}`;
 };
 
-// NOTE: removed unused statusFilterOptionStyles constant to avoid unused variable lint errors.
+const formatBookingDateSchedule = (value?: string) => {
+  const normalizedValue = formatDateValueForForm(value);
+  if (!normalizedValue) {
+    return '—';
+  }
+
+  const parsed = new Date(normalizedValue);
+  if (Number.isNaN(parsed.getTime())) {
+    return sanitizeTextValue(value) || '—';
+  }
+
+  return formatDisplayDate(parsed.toISOString());
+};
+
+const formatBookingTimeSchedule = (value?: string) => {
+  const formatted = formatTimeValueForForm(value);
+  if (!formatted) {
+    return '—';
+  }
+
+  if (/\b(?:a\.m|p\.m)\b/i.test(formatted)) {
+    return formatted;
+  }
+
+  const normalized = formatted.includes(':')
+    ? formatted
+    : `${formatted.slice(0, 2)}:${formatted.slice(2)}`;
+
+  const [hourPart, minutePart = '00'] = normalized.split(':');
+  const hour = Number(hourPart);
+  if (Number.isNaN(hour)) {
+    return formatted;
+  }
+
+  const period = hour >= 12 ? 'p.m' : 'a.m';
+  const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+  const minutes = minutePart.padStart(2, '0');
+
+  return `${hour12}:${minutes} ${period}`;
+};
 
 const transformConsultationToBookingRecord = (
   consultation: Consultation
@@ -630,7 +871,6 @@ const transformConsultationToBookingRecord = (
         return 'Social Media' as PlatformStatus;
       if (cleaned === 'website') return 'Website' as PlatformStatus;
 
-      // Fallback: if it doesn't match known values, default to Website
       return 'Website' as PlatformStatus;
     })(),
     submittedDate: consultation.createdAt,
@@ -640,14 +880,51 @@ const transformConsultationToBookingRecord = (
     facebookAccount: pickString('facebookAccount'),
     bookingTimeSchedule:
       pickString('bookingTimeSchedule') ?? consultation.time ?? 'N/A',
-    bookingDateSchedule: consultation.date,
+    bookingDateSchedule:
+      pickString('bookingDateSchedule') ?? pickString('bookingDate') ?? consultation.date,
     location: pickString('location') ?? 'N/A',
     question: pickString('question') ?? consultation.notes ?? 'N/A',
   };
 };
 
-// renderActions will be created inside the BookingsPage so it can access
-// handlers and state (edit/remove). The earlier top-level shortcut is removed.
+const transformApplicationToBookingRecord = (application: any): BookingRecord => {
+  const pick = (k: string) => {
+    const v = application?.[k];
+    if (typeof v === 'string') return v;
+    if (v == null) return undefined;
+    return String(v);
+  };
+
+  const resolvedId = pick('id') ?? pick('_id') ?? '';
+
+  const rawPlatform = (pick('submittedPlatform') || pick('platform') || '').toLowerCase();
+  const submittedPlatform = rawPlatform.includes('social') ? 'Social Media' : 'Website';
+
+  const rawStatus = (pick('status') || pick('state') || '').toString().toLowerCase();
+  const mapRawStatusToBookingStatus = (s: string): BookingStatus => {
+    if (!s) return 'Scheduled';
+    if (s.includes('complete') || s.includes('approved') || s.includes('accepted') || s.includes('done')) return 'Completed';
+    if (s.includes('cancel') || s.includes('reject') || s.includes('rejected') || s.includes('declined')) return 'Cancelled';
+    return 'Scheduled';
+  };
+
+  const normalizedStatus = mapRawStatusToBookingStatus(rawStatus);
+
+  return {
+    id: resolvedId,
+    status: normalizedStatus,
+    submittedPlatform: submittedPlatform as PlatformStatus,
+    submittedDate: pick('createdAt') ?? pick('created_at') ?? pick('submittedAt') ?? '',
+    name: pick('name') ?? pick('fullName') ?? (application.user?.name ?? 'N/A'),
+    email: pick('email') ?? (application.user?.email ?? 'N/A'),
+    phoneNumber: pick('phone') ?? pick('phoneNumber') ?? (application.user?.phone ?? 'N/A'),
+    facebookAccount: pick('facebookAccount'),
+    bookingTimeSchedule: pick('preferredTime') ?? pick('bookingTimeSchedule') ?? 'N/A',
+    bookingDateSchedule: pick('preferredDate') ?? pick('bookingDateSchedule') ?? pick('createdAt') ?? '',
+    location: pick('location') ?? 'N/A',
+    question: pick('message') ?? pick('question') ?? 'N/A',
+  };
+};
 
 const BookingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<BookingTab>('consultation');
@@ -664,10 +941,19 @@ const BookingsPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showStatusFilter, setShowStatusFilter] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus | 'All'>(
-    'Scheduled'
+    'All'
   );
   const [statusOverrides, setStatusOverrides] = useState<
     Record<string, BookingStatus>
+  >({});
+  const [applicationStatusOverrides, setApplicationStatusOverrides] = useState<
+    Record<string, BookingStatus>
+  >({});
+  const [applicationPlatformOverrides, setApplicationPlatformOverrides] = useState<
+    Record<string, PlatformStatus>
+  >({});
+  const [applicationFacebookOverrides, setApplicationFacebookOverrides] = useState<
+    Record<string, string>
   >({});
   const [platformOverrides, setPlatformOverrides] = useState<
     Record<string, PlatformStatus>
@@ -688,7 +974,16 @@ const BookingsPage: React.FC = () => {
     limit: 10,
   });
 
+  const {
+    data: applicationsData,
+    isLoading: isApplicationsLoading,
+    isError: isApplicationsError,
+  } = useApplications({ page: currentPage, limit: 10 });
+
+  
+
   const createConsultationMutation = useCreateConsultation();
+  const createApplicationMutation = useCreateApplicationBooking();
   const consultationRows = useMemo(() => {
     if (!consultationsData?.data) {
       return [];
@@ -699,6 +994,158 @@ const BookingsPage: React.FC = () => {
     );
     return transformedRows;
   }, [consultationsData]);
+
+  const applicationRows: BookingRecord[] = useMemo(() => {
+    if (!applicationsData?.data) return [];
+    try {
+      return applicationsData.data.map(transformApplicationToBookingRecord);
+    } catch (e) {
+      console.error('Failed to transform applications:', e);
+      return [];
+    }
+  }, [applicationsData]);
+
+  useEffect(() => {
+    setApplicationStatusOverrides((prev) => {
+      if (Object.keys(prev).length === 0) {
+        return prev;
+      }
+
+      const next: Record<string, BookingStatus> = {};
+
+      applicationRows.forEach((row) => {
+        if (!row.id) {
+          return;
+        }
+
+        const override = prev[row.id];
+        if (override && override !== row.status) {
+          next[row.id] = override;
+        }
+      });
+
+      const prevKeys = Object.keys(prev);
+      const nextKeys = Object.keys(next);
+      if (
+        prevKeys.length === nextKeys.length &&
+        prevKeys.every((key) => prev[key] === next[key])
+      ) {
+        return prev;
+      }
+
+      return next;
+    });
+  }, [applicationRows]);
+
+  useEffect(() => {
+    setApplicationPlatformOverrides((prev) => {
+      if (Object.keys(prev).length === 0) {
+        return prev;
+      }
+
+      const next: Record<string, PlatformStatus> = {};
+
+      applicationRows.forEach((row) => {
+        if (!row.id) {
+          return;
+        }
+
+        const override = prev[row.id];
+        if (override && override !== row.submittedPlatform) {
+          next[row.id] = override;
+        }
+      });
+
+      const prevKeys = Object.keys(prev);
+      const nextKeys = Object.keys(next);
+      if (
+        prevKeys.length === nextKeys.length &&
+        prevKeys.every((key) => prev[key] === next[key])
+      ) {
+        return prev;
+      }
+
+      return next;
+    });
+  }, [applicationRows]);
+
+  useEffect(() => {
+    setApplicationFacebookOverrides((prev) => {
+      if (Object.keys(prev).length === 0) {
+        return prev;
+      }
+
+      const next: Record<string, string> = {};
+
+      applicationRows.forEach((row) => {
+        if (!row.id) {
+          return;
+        }
+
+        const override = prev[row.id];
+        if (override !== undefined && override !== row.facebookAccount) {
+          next[row.id] = override;
+        }
+      });
+
+      const prevKeys = Object.keys(prev);
+      const nextKeys = Object.keys(next);
+      if (
+        prevKeys.length === nextKeys.length &&
+        prevKeys.every((key) => prev[key] === next[key])
+      ) {
+        return prev;
+      }
+
+      return next;
+    });
+  }, [applicationRows]);
+
+  const applicationRowsWithOverrides = useMemo(() => {
+    if (
+      Object.keys(applicationStatusOverrides).length === 0 &&
+      Object.keys(applicationPlatformOverrides).length === 0 &&
+      Object.keys(applicationFacebookOverrides).length === 0
+    ) {
+      return applicationRows;
+    }
+
+    return applicationRows.map((row) => {
+      if (!row.id) {
+        return row;
+      }
+
+      let updatedRow = row;
+
+      const statusOverride = applicationStatusOverrides[row.id];
+      if (statusOverride && statusOverride !== row.status) {
+        updatedRow = { ...updatedRow, status: statusOverride };
+      }
+
+      const platformOverride = applicationPlatformOverrides[row.id];
+      if (platformOverride && platformOverride !== row.submittedPlatform) {
+        updatedRow = { ...updatedRow, submittedPlatform: platformOverride };
+      }
+
+      const facebookOverride = applicationFacebookOverrides[row.id];
+      if (
+        facebookOverride !== undefined &&
+        facebookOverride !== row.facebookAccount
+      ) {
+        updatedRow = { ...updatedRow, facebookAccount: facebookOverride };
+      }
+
+      return updatedRow;
+    });
+  }, [
+    applicationRows,
+    applicationStatusOverrides,
+    applicationPlatformOverrides,
+    applicationFacebookOverrides,
+  ]);
+
+  const updateApplicationStatusMutation = useUpdateApplicationStatus();
+  const updateApplicationMutation = useUpdateApplicationBooking();
 
   useEffect(() => {
     setStatusOverrides((prev) => {
@@ -776,6 +1223,16 @@ const BookingsPage: React.FC = () => {
     return sourceRows.filter((row) => row.status === selectedStatus);
   }, [consultationRowsWithOverrides, selectedStatus]);
 
+  const statusFilteredApplicationRows = useMemo(() => {
+    if (selectedStatus === 'All') {
+      return applicationRowsWithOverrides;
+    }
+
+    return applicationRowsWithOverrides.filter(
+      (row) => row.status === selectedStatus
+    );
+  }, [applicationRowsWithOverrides, selectedStatus]);
+
   const filteredConsultationRows = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     if (!term) {
@@ -790,7 +1247,9 @@ const BookingsPage: React.FC = () => {
         row.name,
         row.email,
         row.phoneNumber,
+        row.facebookAccount,
         row.bookingTimeSchedule,
+        formatBookingDateSchedule(row.bookingDateSchedule),
         row.location,
         row.question,
       ]
@@ -813,6 +1272,7 @@ const BookingsPage: React.FC = () => {
       email: 'email',
       phoneNumber: 'phoneNumber',
       bookingTimeSchedule: 'bookingTimeSchedule',
+      bookingDateSchedule: 'bookingDateSchedule',
       location: 'location',
       question: 'question',
     };
@@ -842,13 +1302,121 @@ const BookingsPage: React.FC = () => {
     return rowsToSort;
   }, [filteredConsultationRows, sortState]);
 
+  const filteredApplicationRows = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return statusFilteredApplicationRows;
+
+    return statusFilteredApplicationRows.filter((row) => {
+      return [
+        row.status,
+        row.submittedPlatform,
+        formatDisplayDate(row.submittedDate),
+        row.name,
+        row.email,
+        row.phoneNumber,
+        row.facebookAccount,
+        row.bookingTimeSchedule,
+        formatBookingDateSchedule(row.bookingDateSchedule),
+        row.location,
+        row.question,
+      ]
+        .join(' ')
+        .toLowerCase()
+        .includes(term);
+    });
+  }, [searchTerm, statusFilteredApplicationRows]);
+
+  const sortedApplicationRows = useMemo(() => {
+    if (!sortState) {
+      return filteredApplicationRows;
+    }
+
+    const sortableKeys: Partial<Record<string, keyof BookingRecord>> = {
+      status: 'status',
+      submittedPlatform: 'submittedPlatform',
+      submittedDate: 'submittedDate',
+      name: 'name',
+      email: 'email',
+      phoneNumber: 'phoneNumber',
+      bookingTimeSchedule: 'bookingTimeSchedule',
+      bookingDateSchedule: 'bookingDateSchedule',
+      location: 'location',
+      question: 'question',
+    };
+
+    const key = sortableKeys[sortState.key];
+    if (!key) {
+      return filteredApplicationRows;
+    }
+
+    const rowsToSort = [...filteredApplicationRows];
+
+    rowsToSort.sort((a, b) => {
+      const valueA = a[key];
+      const valueB = b[key];
+
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        const comparison = valueA.localeCompare(valueB, undefined, {
+          numeric: true,
+          sensitivity: 'base',
+        });
+        return sortState.direction === 'asc' ? comparison : -comparison;
+      }
+
+      return 0;
+    });
+
+    return rowsToSort;
+  }, [filteredApplicationRows, sortState]);
+
   const handleRowStatusChange = useCallback(
     (row: BookingRecord, nextStatus: BookingStatus) => {
       if (!row.id) {
-        console.warn(
-          'Cannot update consultation status without a valid id.',
-          row
-        );
+        console.warn('Cannot update booking status without a valid id.', row);
+        return;
+      }
+
+      if (activeTab === 'admission') {
+        const hadExistingOverride =
+          applicationStatusOverrides[row.id] !== undefined;
+        const previousStatus = hadExistingOverride
+          ? applicationStatusOverrides[row.id]
+          : row.status;
+
+        if (previousStatus === nextStatus) {
+          return;
+        }
+
+        setApplicationStatusOverrides((prev) => ({
+          ...prev,
+          [row.id]: nextStatus,
+        }));
+
+        updateApplicationStatusMutation
+          .mutateAsync({
+            applicationId: row.id,
+            status: nextStatus.toLowerCase() as BookingStatusApi,
+          })
+          .catch((error) => {
+            console.error(
+              'Failed to update admission application status:',
+              error
+            );
+
+            setApplicationStatusOverrides((prev) => {
+              if (!hadExistingOverride) {
+                const rest = { ...prev };
+                delete rest[row.id];
+                return rest;
+              }
+
+              return {
+                ...prev,
+                [row.id]: previousStatus,
+              };
+            });
+          });
+
         return;
       }
 
@@ -863,7 +1431,13 @@ const BookingsPage: React.FC = () => {
         };
       });
     },
-    []
+    [
+      activeTab,
+      applicationStatusOverrides,
+      setApplicationStatusOverrides,
+      setStatusOverrides,
+      updateApplicationStatusMutation,
+    ]
   );
 
   const handleRowPlatformChange = useCallback(
@@ -873,6 +1447,52 @@ const BookingsPage: React.FC = () => {
           'Cannot update consultation platform without a valid id.',
           row
         );
+        return;
+      }
+
+      if (activeTab === 'admission') {
+        const hadExistingOverride =
+          applicationPlatformOverrides[row.id] !== undefined;
+        const previousPlatform = hadExistingOverride
+          ? applicationPlatformOverrides[row.id]
+          : row.submittedPlatform;
+
+        if (previousPlatform === nextPlatform) {
+          return;
+        }
+
+        setApplicationPlatformOverrides((prev) => ({
+          ...prev,
+          [row.id]: nextPlatform,
+        }));
+
+        updateApplicationMutation
+          .mutateAsync({
+            applicationId: row.id,
+            payload: {
+              submittedPlatform: mapPlatformToApi(nextPlatform),
+            },
+          })
+          .catch((error) => {
+            console.error(
+              'Failed to update admission application platform:',
+              error
+            );
+
+            setApplicationPlatformOverrides((prev) => {
+              if (!hadExistingOverride) {
+                const rest = { ...prev };
+                delete rest[row.id];
+                return rest;
+              }
+
+              return {
+                ...prev,
+                [row.id]: previousPlatform,
+              };
+            });
+          });
+
         return;
       }
 
@@ -887,7 +1507,13 @@ const BookingsPage: React.FC = () => {
         };
       });
     },
-    []
+    [
+      activeTab,
+      applicationPlatformOverrides,
+      setApplicationPlatformOverrides,
+      setPlatformOverrides,
+      updateApplicationMutation,
+    ]
   );
 
   const bookingColumns = useMemo<TableColumn<BookingRecord>[]>(
@@ -896,6 +1522,9 @@ const BookingsPage: React.FC = () => {
         key: 'status',
         header: 'Status',
         minWidth: 200,
+        align: 'center',
+        headerClassName: 'text-center',
+        headerContentClassName: 'flex w-full justify-center',
         render: (row) => (
           <StatusDropdown
             value={row.status}
@@ -948,6 +1577,16 @@ const BookingsPage: React.FC = () => {
         minWidth: 160,
       },
       {
+        key: 'facebookAccount',
+        header: 'Facebook Account',
+        minWidth: 180,
+        render: (row) => (
+          <div className="max-w-xs truncate" title={row.facebookAccount}>
+            {row.facebookAccount || '—'}
+          </div>
+        ),
+      },
+      {
         key: 'bookingTimeSchedule',
         header: 'Booking Time',
         minWidth: 140,
@@ -955,6 +1594,17 @@ const BookingsPage: React.FC = () => {
         headerClassName: 'whitespace-nowrap',
         headerContentClassName: 'whitespace-nowrap',
         cellClassName: 'whitespace-nowrap',
+        render: (row) => formatBookingTimeSchedule(row.bookingTimeSchedule),
+      },
+      {
+        key: 'bookingDateSchedule',
+        header: 'Booking Date',
+        minWidth: 160,
+        sortable: true,
+        headerClassName: 'whitespace-nowrap',
+        headerContentClassName: 'whitespace-nowrap',
+        cellClassName: 'whitespace-nowrap',
+        render: (row) => formatBookingDateSchedule(row.bookingDateSchedule),
       },
       {
         key: 'location',
@@ -976,10 +1626,10 @@ const BookingsPage: React.FC = () => {
     [handleRowStatusChange, handleRowPlatformChange]
   );
 
-  const tableData = useMemo(
-    () => (activeTab === 'consultation' ? sortedConsultationRows : []),
-    [activeTab, sortedConsultationRows]
-  );
+  const tableData = useMemo<BookingRecord[]>(() => {
+    if (activeTab === 'consultation') return sortedConsultationRows;
+    return sortedApplicationRows;
+  }, [activeTab, sortedConsultationRows, sortedApplicationRows]);
 
   useEffect(() => {
     setSelectedRowKeys(new Set());
@@ -1095,12 +1745,22 @@ const BookingsPage: React.FC = () => {
     tableData.every((row, index) => selectedRowKeys.has(getRowKey(row, index)));
 
   const bulkDeleteConsultationsMutation = useBulkDeleteConsultations();
+  const bulkDeleteApplicationsMutation = useBulkDeleteApplications();
   const deleteConsultationMutation = useDeleteConsultation();
+  const updateConsultationMutation = useUpdateConsultation();
 
-  // State to hold the initial values for editing a booking.
+  const isDeleteActionPending =
+    activeTab === 'consultation'
+      ? bulkDeleteConsultationsMutation.isPending ||
+        deleteConsultationMutation.isPending
+      : bulkDeleteApplicationsMutation.isPending;
+
   const [editingInitialValues, setEditingInitialValues] = useState<
     AddBookingFormValues | null
   >(null);
+  const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
+  const [editingBookingType, setEditingBookingType] = useState<BookingTab>('consultation');
+  const [isEditRemovePending, setIsEditRemovePending] = useState(false);
 
   const defaultEditInitialValues: AddBookingFormValues = {
     status: 'Scheduled',
@@ -1117,36 +1777,85 @@ const BookingsPage: React.FC = () => {
   };
 
   const handleEditClick = (booking: BookingRecord) => {
+    if (!booking.id) {
+      console.warn('Cannot edit consultation booking without a valid id.', booking);
+      return;
+    }
+
+    const sanitizedTime = sanitizeTextValue(booking.bookingTimeSchedule);
+    const normalizedDate = formatDateValueForForm(booking.bookingDateSchedule);
+    const { dialCode, localNumber } = extractPhonePartsForForm(
+      booking.phoneNumber
+    );
+
     const initial: AddBookingFormValues = {
       status: booking.status,
       submittedPlatform: booking.submittedPlatform,
-      name: booking.name ?? '',
-      email: booking.email ?? '',
-      countryDialCode: '+95',
-      phoneNumber: booking.phoneNumber ?? '',
-      facebookAccount: booking.facebookAccount ?? '',
-      bookingTimeSchedule: booking.bookingTimeSchedule ?? '',
-      bookingDateSchedule: booking.bookingDateSchedule ?? '',
-      location: booking.location ?? 'Myanmar',
-      question: booking.question ?? '',
+      name: sanitizeTextValue(booking.name),
+      email: sanitizeTextValue(booking.email),
+      countryDialCode: dialCode,
+      phoneNumber: localNumber,
+      facebookAccount: sanitizeTextValue(booking.facebookAccount),
+      bookingTimeSchedule: sanitizedTime
+        ? formatTimeValueForForm(sanitizedTime)
+        : '',
+      bookingDateSchedule: normalizedDate,
+      location: sanitizeTextValue(booking.location, 'Myanmar') || 'Myanmar',
+      question: sanitizeTextValue(booking.question),
     };
 
+    setEditingBookingId(booking.id);
+    setEditingBookingType(activeTab);
     setEditingInitialValues(initial);
     setIsEditDrawerOpen(true);
   };
 
-  const handleRemove = async (bookingId: string) => {
+  const handleRemove = useCallback(
+    async (bookingId: string, bookingType?: BookingTab) => {
+      const targetType = bookingType ?? activeTab;
+
+      try {
+        if (targetType === 'consultation') {
+          await deleteConsultationMutation.mutateAsync(bookingId);
+        } else {
+          await bulkDeleteApplicationsMutation.mutateAsync([bookingId]);
+        }
+
+        // Clear selection if it included the removed id
+        setSelectedConsultationIds((prev) => {
+          const next = new Set(prev);
+          next.delete(bookingId);
+          return next;
+        });
+        setSelectedRowKeys(new Set());
+      } catch (error) {
+        const context =
+          targetType === 'consultation'
+            ? 'Failed to remove consultation booking:'
+            : 'Failed to remove admission application:';
+        console.error(context, error);
+      }
+    },
+    [
+      activeTab,
+      bulkDeleteApplicationsMutation,
+      deleteConsultationMutation,
+      setSelectedConsultationIds,
+      setSelectedRowKeys,
+    ]
+  );
+
+  const handleRemoveFromEditDrawer = async () => {
+    if (!editingBookingId) {
+      return;
+    }
+
+    setIsEditRemovePending(true);
     try {
-      await deleteConsultationMutation.mutateAsync(bookingId);
-      // Clear selection if it included the removed id
-      setSelectedConsultationIds((prev) => {
-        const next = new Set(prev);
-        next.delete(bookingId);
-        return next;
-      });
-      setSelectedRowKeys(new Set());
-    } catch (error) {
-      console.error('Failed to remove consultation booking:', error);
+      await handleRemove(editingBookingId, editingBookingType);
+      handleCloseEditDrawer();
+    } finally {
+      setIsEditRemovePending(false);
     }
   };
 
@@ -1162,35 +1871,54 @@ const BookingsPage: React.FC = () => {
     );
 
     if (ids.length === 0) {
-      console.warn('No valid consultation IDs selected for deletion.', rawIds);
+      console.warn('No valid booking IDs selected for deletion.', rawIds);
       return;
     }
 
     if (ids.length < rawIds.length) {
-      console.warn(
-        'Skipping consultation IDs that are invalid or empty.',
-        rawIds
-      );
+      console.warn('Skipping booking IDs that are invalid or empty.', rawIds);
+    }
+
+    if (activeTab === 'consultation') {
+      try {
+        await bulkDeleteConsultationsMutation.mutateAsync(ids);
+        setSelectedRowKeys(new Set());
+        setSelectedConsultationIds(new Set());
+      } catch (error) {
+        console.error('Failed to delete consultation booking:', error);
+        try {
+          // Fallback to individual deletes if the bulk endpoint is unavailable
+          for (const consultationId of ids) {
+            await deleteConsultationMutation.mutateAsync(consultationId);
+          }
+          setSelectedRowKeys(new Set());
+          setSelectedConsultationIds(new Set());
+        } catch (singleDeleteError) {
+          console.error('Fallback single delete failed:', singleDeleteError);
+        }
+      }
+      return;
     }
 
     try {
-      await bulkDeleteConsultationsMutation.mutateAsync(ids);
+      await bulkDeleteApplicationsMutation.mutateAsync(ids);
       setSelectedRowKeys(new Set());
       setSelectedConsultationIds(new Set());
     } catch (error) {
-      console.error('Failed to delete consultation booking:', error);
+      console.error('Failed to delete admission applications:', error);
       try {
-        // Fallback to individual deletes if the bulk endpoint is unavailable
-        for (const consultationId of ids) {
-          await deleteConsultationMutation.mutateAsync(consultationId);
+        for (const applicationId of ids) {
+          await bulkDeleteApplicationsMutation.mutateAsync([applicationId]);
         }
         setSelectedRowKeys(new Set());
         setSelectedConsultationIds(new Set());
       } catch (singleDeleteError) {
-        console.error('Fallback single delete failed:', singleDeleteError);
+        console.error('Fallback admission delete failed:', singleDeleteError);
       }
     }
   }, [
+    activeTab,
+    bulkDeleteApplicationsMutation,
     bulkDeleteConsultationsMutation,
     deleteConsultationMutation,
     selectedConsultationIds,
@@ -1220,20 +1948,27 @@ const BookingsPage: React.FC = () => {
     setShowStatusFilter(false);
   };
 
-  const totalBookings = consultationsData?.total || 0;
-
   const selectedStatusesLabel =
-    selectedStatus === 'All'
-      ? 'consultations'
-      : `${selectedStatus} consultations`;
+    activeTab === 'consultation'
+      ? selectedStatus === 'All'
+        ? 'consultations'
+        : `${selectedStatus} consultations`
+      : 'applications';
 
-  const emptyMessage = isLoading
-    ? 'Loading consultations...'
-    : searchTerm
-      ? 'No bookings match your search criteria.'
-      : `No ${selectedStatusesLabel} available.`;
+  const emptyMessage =
+    activeTab === 'consultation'
+      ? isLoading
+        ? 'Loading consultations...'
+        : searchTerm
+          ? 'No bookings match your search criteria.'
+          : `No ${selectedStatusesLabel} available.`
+      : isApplicationsLoading
+        ? 'Loading applications...'
+        : searchTerm
+          ? 'No bookings match your search criteria.'
+          : `No ${selectedStatusesLabel} available.`;
 
-  const pagination = consultationsData?.pagination;
+  const pagination = activeTab === 'consultation' ? consultationsData?.pagination : applicationsData?.pagination;
 
   const handleOpenAddDrawer = () => {
     setIsAddDrawerOpen(true);
@@ -1243,36 +1978,89 @@ const BookingsPage: React.FC = () => {
     setIsAddDrawerOpen(false);
   };
 
-   const handleCloseEditDrawer = () => {
+  const handleCloseEditDrawer = () => {
     setIsEditDrawerOpen(false);
+    setEditingBookingId(null);
+    setEditingInitialValues(null);
+    setEditingBookingType('consultation');
+    setIsEditRemovePending(false);
   };
+
+  const buildConsultationPayload = (
+    values: AddBookingFormValues
+  ): CreateConsultationRequest => {
+    const normalizeSubmittedPlatform = () => {
+      const raw = values.submittedPlatform.trim().toLowerCase();
+      if (raw === 'social media' || raw === 'social') {
+        return 'social media';
+      }
+      if (raw === 'website') {
+        return 'website';
+      }
+      return raw || 'website';
+    };
+
+    const normalizePhoneNumber = () => {
+      const dialCode = values.countryDialCode.trim();
+      const basePhone = values.phoneNumber.trim();
+      if (!basePhone) {
+        return '';
+      }
+
+      const sanitizedPhone = basePhone.replace(/\s+/g, '');
+      if (sanitizedPhone.startsWith('+')) {
+        return sanitizedPhone;
+      }
+
+      const sanitizedDial = dialCode.replace(/\s+/g, '');
+      if (!sanitizedDial) {
+        return sanitizedPhone;
+      }
+
+      const dialDigits = sanitizedDial.startsWith('+')
+        ? sanitizedDial.slice(1)
+        : sanitizedDial;
+      const phoneDigits = sanitizedPhone.replace(/^\+/, '');
+      const needsDialPrefix = !phoneDigits.startsWith(dialDigits);
+      const combined = needsDialPrefix
+        ? `${dialDigits}${phoneDigits}`
+        : phoneDigits;
+      return `+${combined}`;
+    };
+
+    return {
+      name: values.name.trim(),
+      email: values.email.trim(),
+      phoneNumber: normalizePhoneNumber(),
+      bookingTimeSchedule: formatTimeValueForApi(values.bookingTimeSchedule),
+      bookingDateSchedule: values.bookingDateSchedule,
+      submittedPlatform: normalizeSubmittedPlatform(),
+      status: values.status.toLowerCase() as BookingStatusApi,
+      location: values.location.trim() || undefined,
+      question: values.question.trim() || undefined,
+      facebookAccount: values.facebookAccount.trim() || undefined,
+    };
+  };
+
+const mapPlatformToDisplay = (platform: string): PlatformStatus => {
+  const normalized = platform.trim().toLowerCase();
+  if (normalized === 'social media' || normalized === 'social') {
+    return 'Social Media';
+  }
+  return 'Website';
+};
+
+const mapPlatformToApi = (platform: PlatformStatus | string): string => {
+  const normalized = platform.toString().trim().toLowerCase();
+  if (normalized === 'social media' || normalized === 'social') {
+    return 'social media';
+  }
+  return 'website';
+};
 
   const handleAddConsultationBooking = async (values: AddBookingFormValues) => {
     try {
-      const transformBookingTime = (timeString: string): string => {
-        return timeString.replace(/\s+(a\.m|p\.m)$/i, '');
-      };
-
-      const normalizePhoneNumber = () => {
-        const parts = [
-          values.countryDialCode.trim(),
-          values.phoneNumber.trim(),
-        ].filter(Boolean);
-        return parts.join('').replace(/\s+/g, '');
-      };
-
-      const consultationData: CreateConsultationRequest = {
-        name: values.name.trim(),
-        email: values.email.trim(),
-        phoneNumber: normalizePhoneNumber(),
-        bookingTimeSchedule: transformBookingTime(values.bookingTimeSchedule),
-        bookingDateSchedule: values.bookingDateSchedule,
-        submittedPlatform: values.submittedPlatform.trim(),
-        status: values.status.toLowerCase() as BookingStatusApi,
-        location: values.location.trim() || undefined,
-        question: values.question.trim() || undefined,
-        facebookAccount: values.facebookAccount.trim() || undefined,
-      };
+      const consultationData = buildConsultationPayload(values);
 
       await createConsultationMutation.mutateAsync(consultationData);
 
@@ -1288,13 +2076,82 @@ const BookingsPage: React.FC = () => {
       console.error(`Error: ${errorMessage}`);
     }
   };
+  const handleAddAdmissionApplication = async (values: AddBookingFormValues) => {
+    try {
+      const applicationPayload = buildConsultationPayload(values);
 
-  const handleEditConsultationBooking = async (values: AddBookingFormValues) => {
-    // No update API available in this module; close the drawer and log the values.
-    // If an update mutation exists, replace this with the appropriate mutation call.
-    console.log('Edit booking submitted', values);
-    setIsEditDrawerOpen(false);
-    setEditingInitialValues(null);
+      await createApplicationMutation.mutateAsync(applicationPayload);
+
+      handleCloseAddDrawer();
+      setSelectedRowKeys(new Set());
+      setSelectedConsultationIds(new Set());
+      setSortState(undefined);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to create admission application';
+      console.error(`Error: ${errorMessage}`);
+    }
+  };
+
+  const handleEditBooking = async (values: AddBookingFormValues) => {
+    if (!editingBookingId) {
+      console.error('No booking id available for editing.');
+      return;
+    }
+
+    try {
+      const payload = buildConsultationPayload(values);
+
+      if (editingBookingType === 'consultation') {
+        await updateConsultationMutation.mutateAsync({
+          consultationId: editingBookingId,
+          payload,
+        });
+
+        setStatusOverrides((prev) => ({
+          ...prev,
+          [editingBookingId]: values.status,
+        }));
+
+        setPlatformOverrides((prev) => ({
+          ...prev,
+          [editingBookingId]: mapPlatformToDisplay(values.submittedPlatform),
+        }));
+      } else {
+        await updateApplicationMutation.mutateAsync({
+          applicationId: editingBookingId,
+          payload,
+        });
+
+        setApplicationStatusOverrides((prev) => ({
+          ...prev,
+          [editingBookingId]: values.status,
+        }));
+
+        setApplicationPlatformOverrides((prev) => ({
+          ...prev,
+          [editingBookingId]: mapPlatformToDisplay(values.submittedPlatform),
+        }));
+
+        setApplicationFacebookOverrides((prev) => ({
+          ...prev,
+          [editingBookingId]: sanitizeTextValue(values.facebookAccount, ''),
+        }));
+      }
+
+      handleCloseEditDrawer();
+      setSelectedRowKeys(new Set());
+      setSelectedConsultationIds(new Set());
+      setSortState(undefined);
+    } catch (error) {
+      const context =
+        editingBookingType === 'consultation'
+          ? 'Failed to update consultation booking:'
+          : 'Failed to update admission application booking:';
+      console.error(context, error);
+    }
   };
 
   const renderActions = (booking: BookingRecord) => (
@@ -1305,11 +2162,14 @@ const BookingsPage: React.FC = () => {
     />
   );
 
-  if (isLoading) {
+  const isActiveLoading = activeTab === 'consultation' ? isLoading : isApplicationsLoading;
+  const isActiveError = activeTab === 'consultation' ? isError : isApplicationsError;
+
+  if (isActiveLoading) {
     return (
       <div className="space-y-8 text-gray-700">
-        <section className="space-y-6">
-          <div className="flex flex-wrap items-center gap-6 pb-3">
+        <section className="space-y-6 mt-6">
+          <div className="flex flex-wrapitems-center gap-6 pb-3">
             {tabs?.map((tab) => {
               const isActive = activeTab === tab.key;
               return (
@@ -1343,10 +2203,10 @@ const BookingsPage: React.FC = () => {
     );
   }
 
-  if (isError) {
+  if (isActiveError) {
     return (
       <div className="space-y-8 text-gray-700">
-        <section className="space-y-6">
+        <section className="space-y-6 mt-6">
           <div className="flex flex-wrap items-center gap-6 pb-3">
             {tabs?.map((tab) => {
               const isActive = activeTab === tab.key;
@@ -1403,7 +2263,7 @@ const BookingsPage: React.FC = () => {
 
   return (
     <div className="space-y-8 text-gray-700">
-      <section className="space-y-6">
+      <section className="space-y-6 mt-6">
         <div className="flex flex-wrap items-center gap-6 pb-3">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.key;
@@ -1425,12 +2285,12 @@ const BookingsPage: React.FC = () => {
           })}
         </div>
 
-        <div className="flex flex-row gap-3">
+          <div className="flex flex-row gap-3">
           <p className="text-h2 text-text-primary">
-            Total Consultation Booking
+            {activeTab === 'consultation' ? 'Total Consultation Booking' : 'Total Admission Applications'}
           </p>
           <p className="text-h2 text-text-primary font-semibold">
-            {totalBookings}
+            {activeTab === 'consultation' ? (consultationsData?.total || 0) : (applicationsData?.total || 0)}
           </p>
         </div>
 
@@ -1457,7 +2317,7 @@ const BookingsPage: React.FC = () => {
                 className="bg-secondary flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-red-200"
               >
                 <FilterIcon className="h-4 w-4" />
-                {selectedStatus === 'All' ? 'All Statuses' : selectedStatus}
+                {selectedStatus === 'All' ? 'Status' : selectedStatus}
               </button>
 
               {showStatusFilter && (
@@ -1500,33 +2360,33 @@ const BookingsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleDeleteSelected}
-                disabled={
-                  bulkDeleteConsultationsMutation.isPending ||
-                  deleteConsultationMutation.isPending
-                }
+                disabled={isDeleteActionPending}
                 className={clsx(
                   'bg-secondary flex items-center gap-2 rounded-xl px-4 py-2 text-gray-700 transition-colors hover:bg-red-200',
-                  (bulkDeleteConsultationsMutation.isPending ||
-                    deleteConsultationMutation.isPending) &&
-                    'cursor-wait opacity-70'
+                  isDeleteActionPending && 'cursor-wait opacity-70'
                 )}
               >
                 <RemoveIcon className="h-4 w-4" />
-                {bulkDeleteConsultationsMutation.isPending ||
-                deleteConsultationMutation.isPending
-                  ? 'Deleting...'
-                  : `Remove`}
+                {isDeleteActionPending ? 'Deleting...' : `Remove`}
               </button>
             )}
             <Button
               type="button"
               className="rounded-full px-5"
               onClick={handleOpenAddDrawer}
-              disabled={createConsultationMutation.isPending}
+              disabled={
+                activeTab === 'consultation'
+                  ? createConsultationMutation.isPending
+                  : createApplicationMutation.isPending
+              }
             >
-              {createConsultationMutation.isPending
-                ? 'Creating...'
-                : '+ Consultation Record'}
+              {activeTab === 'consultation'
+                ? createConsultationMutation.isPending
+                  ? 'Creating...'
+                  : '+ Consultation Record'
+                : createApplicationMutation.isPending
+                ? 'Submitting...'
+                : '+ Admission Applicant Record'}
             </Button>
           </div>
         </div>
@@ -1541,14 +2401,14 @@ const BookingsPage: React.FC = () => {
           isRowSelected={(row, index) =>
             selectedRowKeys.has(getRowKey(row, index))
           }
-          onSelectRow={handleSelectRow}
-          sortState={sortState}
-          renderActions={renderActions}
-          onSortChange={handleSortChange}
-          emptyMessage={emptyMessage}
-          maxBodyHeight={460}
-          className="overflow-visible"
-        />
+        onSelectRow={handleSelectRow}
+        sortState={sortState}
+        renderActions={renderActions}
+        onSortChange={handleSortChange}
+        emptyMessage={emptyMessage}
+        maxBodyHeight={BOOKING_TABLE_MAX_BODY_HEIGHT}
+        className="overflow-visible"
+      />
 
         {/* Pagination Controls */}
         {pagination && pagination.totalPages > 1 && (
@@ -1624,14 +2484,24 @@ const BookingsPage: React.FC = () => {
       <AddBookingDrawer
         open={isAddDrawerOpen}
         onClose={handleCloseAddDrawer}
-        onSubmit={handleAddConsultationBooking}
+        onSubmit={activeTab === 'consultation' ? handleAddConsultationBooking : handleAddAdmissionApplication}
+        title={activeTab === 'consultation' ? 'Add Consultation Booking' : 'Add Admission Application Booking'}
+        submitLabel="Add"
       />
 
       <EditBookingDrawer 
         open={isEditDrawerOpen}
         onClose={handleCloseEditDrawer}
-        onSubmit={handleEditConsultationBooking}
+        onSubmit={handleEditBooking}
         initialValues={editingInitialValues ?? defaultEditInitialValues}
+        title={
+          editingBookingType === 'consultation'
+            ? 'Edit Consultation Booking'
+            : 'Edit Admission Application Booking'
+        }
+        onRemove={editingBookingId ? handleRemoveFromEditDrawer : undefined}
+        isRemoveLoading={isEditRemovePending}
+        isRemoveDisabled={isEditRemovePending}
       />
     </div>
   );

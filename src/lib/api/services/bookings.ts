@@ -6,6 +6,8 @@ import type {
   CreateConsultationResponse,
   DeleteConsultationResponse,
   BulkDeleteConsultationsResponse,
+  UpdateConsultationRequest,
+  UpdateConsultationResponse,
 } from '@/types/bookings';
 
 export const bookingsService = {
@@ -55,6 +57,22 @@ export const bookingsService = {
       return response.data;
     } catch (error) {
       console.error('Delete consultation API error:', error);
+      throw error;
+    }
+  },
+
+  async updateConsultation(
+    consultationId: string,
+    data: UpdateConsultationRequest
+  ): Promise<UpdateConsultationResponse> {
+    console.log('Updating consultation with ID:', consultationId, 'payload:', data);
+
+    try {
+      const response = await apiClient.put(`/consultations/${consultationId}`, data);
+      console.log('Update consultation API response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Update consultation API error:', error);
       throw error;
     }
   },

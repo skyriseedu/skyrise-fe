@@ -214,9 +214,9 @@ const AdminLayout: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-neutral-100 text-sm text-gray-700">
-      <div className="flex min-h-screen">
-        <aside className="flex w-[250px] shrink-0 flex-col border-r border-gray-200 bg-white">
+    <div className="h-screen bg-neutral-100 text-sm text-gray-700">
+      <div className="flex h-full overflow-hidden">
+        <aside className="flex h-full w-[250px] shrink-0 flex-col border-r border-gray-200 bg-white">
           <div className="border-b border-gray-200 px-8 py-4">
             <img
               src={SkyriseLogoPrimary}
@@ -239,8 +239,8 @@ const AdminLayout: React.FC = () => {
           </nav>
         </aside>
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header className="flex items-center justify-between border-b border-gray-200 bg-white px-12 py-4 shadow-[0_8px_20px_rgba(0,0,0,0.04)]">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+          <header className="flex shrink-0 items-center justify-between border-b border-gray-200 bg-white px-12 py-4 shadow-[0_8px_20px_rgba(0,0,0,0.04)]">
             <div className="flex items-center gap-5">
               {backArrowConfig.shouldShow && (
                 <button

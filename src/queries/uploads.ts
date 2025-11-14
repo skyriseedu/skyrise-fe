@@ -7,3 +7,10 @@ export function useUploadProgramImages() {
       uploadsService.uploadProgramImages(payload),
   });
 }
+
+export function useUploadTeamMemberImage() {
+  return useMutation({
+    mutationFn: (payload: FormData) =>
+      uploadsService.uploadTeamMemberImage(payload),
+  });
+}

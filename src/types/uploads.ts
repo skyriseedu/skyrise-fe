@@ -14,3 +14,11 @@ export interface UploadProgramImagesResponse {
     images: UploadedImage[];
   };
 }
+
+export interface UploadTeamMemberImageResponse {
+  success: boolean;
+  message?: string;
+  data: {
+    image: UploadedImage;
+  };
+}

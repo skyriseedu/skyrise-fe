@@ -24,6 +24,38 @@ export interface TeamMemberApiItem {
   id: string;
 }
 
+export interface CreateTeamMemberPayload {
+  memberName: string;
+  role: string;
+  major: string;
+  university: string;
+  socialMediaLink?: string;
+  profilePicture?: string;
+  pinned?: boolean;
+}
+
+export interface UpdateTeamMemberPayload {
+  memberName?: string;
+  role?: string;
+  major?: string;
+  university?: string;
+  socialMediaLink?: string;
+  profilePicture?: string;
+  pinned?: boolean;
+  status?: TeamMemberApiItem['status'];
+}
+
+export interface UpdateTeamMemberParams {
+  id: string;
+  payload: UpdateTeamMemberPayload;
+}
+
+export interface BulkDeleteTeamMembersResponse {
+  success: boolean;
+  message: string;
+  deletedCount?: number;
+}
+
 export interface TeamMembersResponse {
   success: boolean;
   count: number;
