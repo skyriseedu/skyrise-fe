@@ -294,20 +294,27 @@ const ProgramForm: React.FC = () => {
       let primaryImage: UploadedImage | undefined;
       let secondaryImage: UploadedImage | undefined;
       const imageFormData = new FormData();
+      let hasNewImages = false;
 
+      // Only upload new images (Files), not existing URLs
       if (formData.coverImages.primary instanceof File) {
         imageFormData.append('images', formData.coverImages.primary);
+        hasNewImages = true;
       }
 
       if (formData.coverImages.secondary instanceof File) {
         imageFormData.append('images', formData.coverImages.secondary);
+        hasNewImages = true;
       }
 
-      const response =
-        await uploadProgramImagesMutation.mutateAsync(imageFormData);
-      if (response.data?.images?.length > 0) {
-        primaryImage = response.data.images[0];
-        secondaryImage = response.data.images[1];
+      // Only call upload API if there are new images
+      if (hasNewImages) {
+        const response =
+          await uploadProgramImagesMutation.mutateAsync(imageFormData);
+        if (response.data?.images?.length > 0) {
+          primaryImage = response.data.images[0];
+          secondaryImage = response.data.images[1];
+        }
       }
 
       const payload: CreateProgramPayload = {
@@ -319,8 +326,17 @@ const ProgramForm: React.FC = () => {
         },
         applicationDeadline: formData.applicationDeadline,
         images: {
-          image1: primaryImage?.url || '',
-          image2: secondaryImage?.url || '',
+          // Use new uploaded image URL if available, otherwise keep existing URL
+          image1: primaryImage
+            ? primaryImage.url
+            : typeof formData.coverImages.primary === 'string'
+              ? formData.coverImages.primary
+              : '',
+          image2: secondaryImage
+            ? secondaryImage.url
+            : typeof formData.coverImages.secondary === 'string'
+              ? formData.coverImages.secondary
+              : '',
         },
         about: formData.aboutProgram,
         keyInformation: {
