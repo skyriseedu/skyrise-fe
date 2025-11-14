@@ -80,6 +80,7 @@ type DropdownPosition = {
 };
 
 const supportedDialCodes = ['+95', '+66'] as const;
+const BOOKING_TABLE_MAX_BODY_HEIGHT = '35rem'; // header + 5 rows
 
 const timeOptionToApiMap: Record<string, string> = {
   '08:00 a.m': '08:00',
@@ -784,6 +785,20 @@ const formatDisplayDate = (isoDate: string) => {
   return `${day} ${month} ${year}`;
 };
 
+const formatBookingDateSchedule = (value?: string) => {
+  const normalizedValue = formatDateValueForForm(value);
+  if (!normalizedValue) {
+    return '—';
+  }
+
+  const parsed = new Date(normalizedValue);
+  if (Number.isNaN(parsed.getTime())) {
+    return sanitizeTextValue(value) || '—';
+  }
+
+  return formatDisplayDate(parsed.toISOString());
+};
+
 // NOTE: removed unused statusFilterOptionStyles constant to avoid unused variable lint errors.
 
 const transformConsultationToBookingRecord = (
@@ -1056,6 +1071,7 @@ const BookingsPage: React.FC = () => {
         row.phoneNumber,
         row.facebookAccount,
         row.bookingTimeSchedule,
+        formatBookingDateSchedule(row.bookingDateSchedule),
         row.location,
         row.question,
       ]
@@ -1078,6 +1094,7 @@ const BookingsPage: React.FC = () => {
       email: 'email',
       phoneNumber: 'phoneNumber',
       bookingTimeSchedule: 'bookingTimeSchedule',
+      bookingDateSchedule: 'bookingDateSchedule',
       location: 'location',
       question: 'question',
     };
@@ -1126,6 +1143,7 @@ const BookingsPage: React.FC = () => {
         row.phoneNumber,
         row.facebookAccount,
         row.bookingTimeSchedule,
+        formatBookingDateSchedule(row.bookingDateSchedule),
         row.location,
         row.question,
       ]
@@ -1148,6 +1166,7 @@ const BookingsPage: React.FC = () => {
       email: 'email',
       phoneNumber: 'phoneNumber',
       bookingTimeSchedule: 'bookingTimeSchedule',
+      bookingDateSchedule: 'bookingDateSchedule',
       location: 'location',
       question: 'question',
     };
@@ -1300,6 +1319,16 @@ const BookingsPage: React.FC = () => {
         headerClassName: 'whitespace-nowrap',
         headerContentClassName: 'whitespace-nowrap',
         cellClassName: 'whitespace-nowrap',
+      },
+      {
+        key: 'bookingDateSchedule',
+        header: 'Booking Date',
+        minWidth: 160,
+        sortable: true,
+        headerClassName: 'whitespace-nowrap',
+        headerContentClassName: 'whitespace-nowrap',
+        cellClassName: 'whitespace-nowrap',
+        render: (row) => formatBookingDateSchedule(row.bookingDateSchedule),
       },
       {
         key: 'location',
@@ -1991,7 +2020,7 @@ const BookingsPage: React.FC = () => {
                 className="bg-secondary flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-red-200"
               >
                 <FilterIcon className="h-4 w-4" />
-                {selectedStatus === 'All' ? 'All Statuses' : selectedStatus}
+                {selectedStatus === 'All' ? 'Status' : selectedStatus}
               </button>
 
               {showStatusFilter && (
@@ -2075,14 +2104,14 @@ const BookingsPage: React.FC = () => {
           isRowSelected={(row, index) =>
             selectedRowKeys.has(getRowKey(row, index))
           }
-          onSelectRow={handleSelectRow}
-          sortState={sortState}
-          renderActions={renderActions}
-          onSortChange={handleSortChange}
-          emptyMessage={emptyMessage}
-          maxBodyHeight={460}
-          className="overflow-visible"
-        />
+        onSelectRow={handleSelectRow}
+        sortState={sortState}
+        renderActions={renderActions}
+        onSortChange={handleSortChange}
+        emptyMessage={emptyMessage}
+        maxBodyHeight={BOOKING_TABLE_MAX_BODY_HEIGHT}
+        className="overflow-visible"
+      />
 
         {/* Pagination Controls */}
         {pagination && pagination.totalPages > 1 && (
