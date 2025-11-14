@@ -6,6 +6,8 @@ import type {
   ApplicationFormValues,
   ApplyConsultantFormValues,
   FormError,
+  ConsultantApplicationsResponse,
+  ApplicationsResponse,
 } from '@/types/users/forms';
 import type {
   BookingStatusApi,
@@ -117,10 +119,21 @@ export const useApplyConsultantApplication = () => {
 export function useApplications(params: { page?: number; limit?: number } = {}) {
   const { page = 1, limit = 10 } = params;
 
-  return useQuery({
+  return useQuery<ApplicationsResponse>({
     queryKey: ['forms', 'applications', { page, limit }],
     queryFn: () => formsService.getApplications({ page, limit }),
     enabled: true,
+  });
+}
+
+export function useConsultantApplications(
+  params: { page?: number; limit?: number } = {}
+) {
+  const { page = 1, limit = 100 } = params;
+
+  return useQuery<ConsultantApplicationsResponse>({
+    queryKey: ['forms', 'consultant-applications', { page, limit }],
+    queryFn: () => formsService.getConsultantApplications({ page, limit }),
   });
 }
 

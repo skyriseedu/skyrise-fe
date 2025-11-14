@@ -5,6 +5,8 @@ import type {
   ApplicationFormValues,
   ApplyConsultantFormValues,
   BulkDeleteApplicationsResponse,
+  ConsultantApplicationsResponse,
+  ApplicationsResponse,
 } from '@/types/users/forms';
 import type {
   BookingStatusApi,
@@ -89,7 +91,17 @@ export const formsService = {
     return response.data;
   },
 
-  async getApplications(params: { page?: number; limit?: number } = {}): Promise<any> {
+  async getConsultantApplications(params: { page?: number; limit?: number } = {}): Promise<ConsultantApplicationsResponse> {
+    const { page = 1, limit = 100 } = params;
+    const response = await apiClient.get('/apply-consultant', {
+      params: { page, limit },
+    });
+    return response.data;
+  },
+
+  async getApplications(
+    params: { page?: number; limit?: number } = {}
+  ): Promise<ApplicationsResponse> {
     const { page = 1, limit = 10 } = params;
 
     const searchParams = new URLSearchParams({
