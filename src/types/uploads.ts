@@ -14,3 +14,13 @@ export interface UploadProgramImagesResponse {
     images: UploadedImage[];
   };
 }
+
+export interface UploadUniversityImagesResponse {
+  success: boolean;
+  message?: string;
+  data: {
+    coverImage1: UploadedImage;
+    coverImage2: UploadedImage;
+    studentImage: UploadedImage;
+  };
+}

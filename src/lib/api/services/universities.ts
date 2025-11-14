@@ -5,6 +5,8 @@ import type {
   GetUniversitiesResponse,
   SearchUniversitiesResponse,
   SingleUniversityResponse,
+  CreateUniversityPayload,
+  BulkDeleteUniversitiesResponse,
 } from '@/types/users/university';
 
 export const universityService = {
@@ -19,6 +21,11 @@ export const universityService = {
     });
 
     const response = await apiClient.get(`/universities?${searchParams}`);
+    return response.data;
+  },
+
+  async getAllUniversitiesAdmin(): Promise<GetUniversitiesResponse> {
+    const response = await apiClient.get('/universities/admin/all');
     return response.data;
   },
 
@@ -47,7 +54,51 @@ export const universityService = {
   },
 
   async getUniversityBySlug(slug: string): Promise<SingleUniversityResponse> {
-    const response = await apiClient.get(`/universities/${slug}`);
+    const response = await apiClient.get(`/universities/admin/${slug}`);
+    return response.data;
+  },
+
+  async getUniversityByIdAdmin(id: string): Promise<SingleUniversityResponse> {
+    const response = await apiClient.get(`/universities/admin/${id}`);
+    return response.data;
+  },
+
+  async createUniversity(
+    payload: CreateUniversityPayload
+  ): Promise<SingleUniversityResponse> {
+    const response = await apiClient.post('/universities', payload, {});
+    return response.data;
+  },
+
+  async updateUniversity(
+    id: string,
+    payload: CreateUniversityPayload
+  ): Promise<SingleUniversityResponse> {
+    const response = await apiClient.put(`/universities/${id}`, payload, {});
+    return response.data;
+  },
+
+  async deleteUniversity(id: string): Promise<{ success: boolean }> {
+    const response = await apiClient.delete(`/universities/${id}`);
+    return response.data;
+  },
+
+  async bulkDeleteUniversities(
+    ids: string[]
+  ): Promise<BulkDeleteUniversitiesResponse> {
+    const response = await apiClient.post('/universities/bulk-delete', {
+      ids,
+    });
+    return response.data;
+  },
+
+  async updatePinStatus(
+    id: string,
+    pinned: boolean
+  ): Promise<SingleUniversityResponse> {
+    const response = await apiClient.patch(`/universities/${id}/pinned`, {
+      pinned,
+    });
     return response.data;
   },
 };
