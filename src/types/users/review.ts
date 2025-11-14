@@ -9,7 +9,7 @@ export interface Review {
 
 // actual review structure
 export interface StudentReview {
-  _id: string;
+  _id?: string;
   studentName: string;
   major: string;
   studentImage: string;

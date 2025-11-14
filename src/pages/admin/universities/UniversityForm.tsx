@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import DropdownInput from '@/components/common/DropdownInput';
@@ -17,7 +16,10 @@ import type {
   CreateUniversityPayload,
   University,
 } from '@/types/users/university';
-import type { UploadedImage } from '@/types/uploads';
+import {
+  StudentReview,
+  type StudentReviewData,
+} from '@/components/program-setup/StudentReview';
 
 type UniversityFormData = {
   universityName: string;
@@ -33,6 +35,7 @@ type UniversityFormData = {
     creditTransfer: string;
     programs: number;
   };
+  studentReviews: Array<StudentReviewData>;
   numberOfCampus: number;
   intakes: Array<{ year: string; month: string }>;
   entryRequirement?: string;
@@ -58,6 +61,7 @@ const initialFormData: UniversityFormData = {
     creditTransfer: 'Not Available',
     programs: 0,
   },
+  studentReviews: [],
   numberOfCampus: 0,
   intakes: [{ year: '', month: '' }],
   entryRequirement: '',
@@ -89,8 +93,7 @@ const UniversityForm: React.FC = () => {
     'Dec',
   ];
 
-  const [formData, setFormData] =
-    useState<UniversityFormData>(initialFormData);
+  const [formData, setFormData] = useState<UniversityFormData>(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
   const [showRankingDropdown, setShowRankingDropdown] = useState(false);
   const rankingDropdownRef = useRef<HTMLDivElement>(null);
@@ -104,33 +107,35 @@ const UniversityForm: React.FC = () => {
 
   useEffect(() => {
     if (isEditing && universityData) {
-      const university = universityData.data as University;
+      const university = universityData.data?.university as University;
 
       setFormData({
-        universityName: university.universityName,
-        universityType: university.universityType,
-        aboutUniversity: university.aboutUniversity,
-        englishFoundation: university.englishFoundation,
-        bachelor: university.bachelor,
-        master: university.master,
+        universityName: university.universityName || '',
+        universityType: university.universityType || 'Public',
+        aboutUniversity: university.aboutUniversity || '',
+        englishFoundation: university.englishFoundation || '',
+        bachelor: university.bachelor || '',
+        master: university.master || '',
         keyInformation: {
-          ranking: university.keyInformation.ranking,
-          foundedYear: university.keyInformation.foundedYear,
-          location: university.keyInformation.location,
-          creditTransfer: university.keyInformation.creditTransfer,
-          programs: university.keyInformation.programs,
+          ranking: university.keyInformation?.ranking || '',
+          foundedYear: university.keyInformation?.foundedYear || 0,
+          location: university.keyInformation?.location || '',
+          creditTransfer:
+            university.keyInformation?.creditTransfer || 'Not Available',
+          programs: university.keyInformation?.programs || 0,
         },
-        numberOfCampus: university.numberOfCampus,
-        intakes: university.intakes.map((intake) => {
+        studentReviews: university.studentReviews || [],
+        numberOfCampus: university.numberOfCampus || 0,
+        intakes: university.intakes?.map((intake) => {
           const parts = intake.split(' ');
-          return { month: parts[0], year: parts[1] };
-        }),
-        entryRequirement: university.entryRequirement,
-        scholarshipRequirements: university.scholarshipRequirements,
-        logoImage: university.logoImage,
+          return { month: parts[0] || '', year: parts[1] || '' };
+        }) || [{ year: '', month: '' }],
+        entryRequirement: university.entryRequirement || '',
+        scholarshipRequirements: university.scholarshipRequirements || '',
+        logoImage: university.logoImage || undefined,
         coverImages: {
-          image1: university.coverImages.image1,
-          image2: university.coverImages.image2,
+          image1: university.coverImages?.image1 || undefined,
+          image2: university.coverImages?.image2 || undefined,
         },
       });
     }
@@ -222,6 +227,45 @@ const UniversityForm: React.FC = () => {
     }
   };
 
+  const handleAddStudentReview = () => {
+    setFormData((prev) => ({
+      ...prev,
+      studentReviews: [
+        ...prev.studentReviews,
+        { studentName: '', major: '', review: '', image: undefined },
+      ],
+    }));
+  };
+
+  const handleStudentReviewChange = (
+    index: number,
+    field: keyof StudentReviewData,
+    value: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      studentReviews: prev.studentReviews.map((review, i) =>
+        i === index ? { ...review, [field]: value } : review
+      ),
+    }));
+  };
+
+  const handleReviewImageChange = (index: number, file: File) => {
+    setFormData((prev) => ({
+      ...prev,
+      studentReviews: prev.studentReviews.map((review, i) =>
+        i === index ? { ...review, image: file } : review
+      ),
+    }));
+  };
+
+  const handleRemoveStudentReview = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      studentReviews: prev.studentReviews.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
@@ -249,15 +293,14 @@ const UniversityForm: React.FC = () => {
         const response =
           await uploadUniversityImagesMutation.mutateAsync(imageFormData);
 
-        let imageIndex = 0;
         if (formData.logoImage instanceof File) {
-          logoUrl = response.data.images[imageIndex++]?.url;
+          logoUrl = response.data.studentImage?.url;
         }
         if (formData.coverImages.image1 instanceof File) {
-          coverImage1Url = response.data.images[imageIndex++]?.url;
+          coverImage1Url = response.data.coverImage1?.url;
         }
         if (formData.coverImages.image2 instanceof File) {
-          coverImage2Url = response.data.images[imageIndex++]?.url;
+          coverImage2Url = response.data.coverImage2?.url;
         }
       }
 
@@ -296,6 +339,13 @@ const UniversityForm: React.FC = () => {
               ? formData.coverImages.image2
               : ''),
         },
+        // Fix: Use actual student reviews from form data
+        studentReviews: formData.studentReviews.map((review) => ({
+          studentName: review.studentName,
+          major: review.major,
+          studentImage: review.image instanceof File ? '' : review.image || '',
+          review: review.review,
+        })),
         status: 'published',
       };
 
@@ -355,7 +405,7 @@ const UniversityForm: React.FC = () => {
               <input
                 type="number"
                 placeholder="No. of Campus"
-                value={formData.numberOfCampus}
+                value={formData.numberOfCampus || ''}
                 onChange={(e) =>
                   handleInputChange('numberOfCampus', e.target.value)
                 }
@@ -487,7 +537,7 @@ const UniversityForm: React.FC = () => {
                   <input
                     type="number"
                     placeholder="yyyy"
-                    value={formData.keyInformation.foundedYear}
+                    value={formData.keyInformation.foundedYear || ''}
                     onChange={(e) =>
                       handleKeyInfoChange('foundedYear', e.target.value)
                     }
@@ -533,7 +583,7 @@ const UniversityForm: React.FC = () => {
                   <input
                     type="number"
                     placeholder="Programs"
-                    value={formData.keyInformation.programs}
+                    value={formData.keyInformation.programs || ''}
                     onChange={(e) =>
                       handleKeyInfoChange('programs', e.target.value)
                     }
@@ -549,10 +599,8 @@ const UniversityForm: React.FC = () => {
                 Upcoming Intakes
               </label>
               <div className="space-y-2">
-                {formData.intakes.map((intake, index) => {
-                  const selectedMonths = formData.intakes.map(
-                    (i) => i.month
-                  );
+                {formData.intakes?.map((intake, index) => {
+                  const selectedMonths = formData.intakes.map((i) => i.month);
                   return (
                     <div key={index} className="flex items-center gap-2">
                       <label className="flex items-center text-xs text-gray-500">
@@ -657,7 +705,7 @@ const UniversityForm: React.FC = () => {
               </label>
               <div className="">
                 <TextEditor
-                  value={formData.entryRequirement}
+                  value={formData.entryRequirement || ''}
                   onChange={(value) =>
                     handleInputChange('entryRequirement', value)
                   }
@@ -673,7 +721,7 @@ const UniversityForm: React.FC = () => {
               </label>
               <div className="">
                 <TextEditor
-                  value={formData.scholarshipRequirements}
+                  value={formData.scholarshipRequirements || ''}
                   onChange={(value) =>
                     handleInputChange('scholarshipRequirements', value)
                   }
@@ -681,6 +729,15 @@ const UniversityForm: React.FC = () => {
                 />
               </div>
             </div>
+
+            {/* Student Review */}
+            <StudentReview
+              reviews={formData.studentReviews}
+              onReviewChange={handleStudentReviewChange}
+              onReviewImageChange={handleReviewImageChange}
+              onAddReview={handleAddStudentReview}
+              onRemoveReview={handleRemoveStudentReview}
+            />
           </div>
 
           {/* Action Buttons */}
@@ -718,5 +775,3 @@ const UniversityForm: React.FC = () => {
 };
 
 export default UniversityForm;
-
-

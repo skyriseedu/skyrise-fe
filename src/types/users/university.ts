@@ -91,8 +91,17 @@ export interface SingleUniversityResponse {
 }
 
 export interface CreateUniversityPayload {
+  coverImages: {
+    image1: string;
+    image2: string;
+  };
+  applicationFee?: {
+    amount: number;
+    currency: string;
+  };
   universityName: string;
   universityType: 'Public' | 'Private';
+  logoImage: string;
   aboutUniversity: string;
   englishFoundation: string;
   bachelor: string;
@@ -105,7 +114,10 @@ export interface CreateUniversityPayload {
     programs: number;
   };
   numberOfCampus: number;
+  studentReviews: Array<StudentReview>;
   intakes: string[];
+  pinned?: boolean;
+  status: 'published' | 'draft' | 'archived';
   entryRequirement?: string;
   scholarshipRequirements?: string;
 }

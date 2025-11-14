@@ -110,7 +110,7 @@ const App: React.FC = () => {
                 element={<UniversityForm />}
               />
               <Route
-                path="university-setup/edit/:id"
+                path="university-setup/edit/:slug"
                 element={<UniversityForm />}
               />
 

@@ -54,7 +54,7 @@ export const universityService = {
   },
 
   async getUniversityBySlug(slug: string): Promise<SingleUniversityResponse> {
-    const response = await apiClient.get(`/universities/admin/${slug}`);
+    const response = await apiClient.get(`/universities/${slug}`);
     return response.data;
   },
 
