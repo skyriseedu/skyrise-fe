@@ -36,6 +36,7 @@ export interface AddTeamDrawerProps {
   onClose: () => void;
   onSubmit?: (values: AddTeamMemberFormValues) => void;
   initialValues?: Partial<AddTeamMemberFormValues>;
+  initialProfilePictureUrl?: string | null;
   title?: string;
   submitLabel?: string;
   isSubmitting?: boolean;
@@ -73,6 +74,7 @@ const AddTeamDrawer: React.FC<AddTeamDrawerProps> = ({
   onClose,
   onSubmit,
   initialValues,
+  initialProfilePictureUrl,
   title = 'Add Team Member',
   submitLabel = 'Add',
   isSubmitting = false,
@@ -106,16 +108,29 @@ const AddTeamDrawer: React.FC<AddTeamDrawerProps> = ({
   }, []);
 
   useEffect(() => {
-    if (open) {
-      setValues(mergedInitialValues);
-      setErrors({});
-      if (mergedInitialValues.profilePicture) {
-        updateProfilePreview(mergedInitialValues.profilePicture);
-      } else {
-        updateProfilePreview(null);
-      }
+    if (!open) {
+      return;
     }
-  }, [open, mergedInitialValues, updateProfilePreview]);
+
+    setValues(mergedInitialValues);
+    setErrors({});
+
+    if (mergedInitialValues.profilePicture) {
+      updateProfilePreview(mergedInitialValues.profilePicture);
+      return;
+    }
+
+    updateProfilePreview(null);
+
+    if (initialProfilePictureUrl) {
+      setProfilePreview(initialProfilePictureUrl);
+    }
+  }, [
+    open,
+    mergedInitialValues,
+    updateProfilePreview,
+    initialProfilePictureUrl,
+  ]);
 
   useEffect(() => {
     if (!open) return;
@@ -429,13 +444,13 @@ const AddTeamDrawer: React.FC<AddTeamDrawerProps> = ({
                     <div
                       className={clsx(
                         'flex flex-col items-center justify-center gap-4 rounded-3xl border-2 border-dashed px-6 py-10 text-center text-sm text-gray-500',
-                        values.profilePicture ? 'bg-white' : 'bg-[#FFFDF9]',
+                        profilePreview ? 'bg-white' : 'bg-[#FFFDF9]',
                         errors.profilePicture
                           ? 'border-red-400'
                           : 'border-gray-200'
                       )}
                     >
-                      {profilePreview && values.profilePicture ? (
+                      {profilePreview ? (
                         <div className="flex w-full flex-col items-center gap-4">
                           <img
                             src={profilePreview}

@@ -216,6 +216,11 @@ const formatDateLabel = (value?: string) => {
 };
 
 const pickPrimarySocialLink = (member: TeamMemberApiItem) => {
+  const directLink = member.socialMediaLink?.trim();
+  if (directLink) {
+    return directLink;
+  }
+
   const links = member.socialMediaLinks ?? {};
   return (
     links.facebook?.trim() ||
@@ -659,7 +664,7 @@ const SkyRiseTeamTab = () => {
     () => [
       {
         key: 'memberName',
-        header: 'Consultant Name',
+        header: 'Name',
         minWidth: '14rem',
         sortable: true,
         render: (row) => (
@@ -727,7 +732,7 @@ const SkyRiseTeamTab = () => {
       },
       {
         key: 'profilePicture',
-        header: 'Profile Picture',
+        header: 'Image',
         minWidth: '10rem',
         render: (row) =>
           row.profilePicture ? (
@@ -751,6 +756,7 @@ const SkyRiseTeamTab = () => {
     ),
     [areRowActionsDisabled, handleDeleteSingleMember, handleEditAction]
   );
+  console.log(editingMember?.profilePicture)
 
   return (
     <div>
@@ -830,6 +836,7 @@ const SkyRiseTeamTab = () => {
         onClose={handleCloseEditDrawer}
         onSubmit={handleEditTeamMember}
         initialValues={editingDrawerInitialValues}
+        initialProfilePictureUrl={editingMember?.profilePicture ?? null}
         title="Edit Team Member"
         submitLabel={
           updateTeamMemberMutation.isPending ? 'Saving...' : 'Save Changes'

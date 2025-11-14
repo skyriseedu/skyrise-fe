@@ -19,6 +19,7 @@ export interface TeamMemberApiItem {
   createdAt: string;
   updatedAt: string;
   slug: string;
+  socialMediaLink?: string;
   socialMediaLinks: TeamMemberSocialLinks;
   socialMediaCount: number;
   id: string;
