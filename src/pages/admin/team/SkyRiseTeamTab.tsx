@@ -664,7 +664,7 @@ const SkyRiseTeamTab = () => {
     () => [
       {
         key: 'memberName',
-        header: 'Consultant Name',
+        header: 'Name',
         minWidth: '14rem',
         sortable: true,
         render: (row) => (
@@ -732,7 +732,7 @@ const SkyRiseTeamTab = () => {
       },
       {
         key: 'profilePicture',
-        header: 'Profile Picture',
+        header: 'Image',
         minWidth: '10rem',
         render: (row) =>
           row.profilePicture ? (
