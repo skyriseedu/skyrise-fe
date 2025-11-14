@@ -1,4 +1,3 @@
-// consolidated query hooks imported below
 import React, {
   useCallback,
   useEffect,
@@ -800,7 +799,32 @@ const formatBookingDateSchedule = (value?: string) => {
   return formatDisplayDate(parsed.toISOString());
 };
 
-// NOTE: removed unused statusFilterOptionStyles constant to avoid unused variable lint errors.
+const formatBookingTimeSchedule = (value?: string) => {
+  const formatted = formatTimeValueForForm(value);
+  if (!formatted) {
+    return '—';
+  }
+
+  if (/\b(?:a\.m|p\.m)\b/i.test(formatted)) {
+    return formatted;
+  }
+
+  const normalized = formatted.includes(':')
+    ? formatted
+    : `${formatted.slice(0, 2)}:${formatted.slice(2)}`;
+
+  const [hourPart, minutePart = '00'] = normalized.split(':');
+  const hour = Number(hourPart);
+  if (Number.isNaN(hour)) {
+    return formatted;
+  }
+
+  const period = hour >= 12 ? 'p.m' : 'a.m';
+  const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+  const minutes = minutePart.padStart(2, '0');
+
+  return `${hour12}:${minutes} ${period}`;
+};
 
 const transformConsultationToBookingRecord = (
   consultation: Consultation
@@ -847,7 +871,6 @@ const transformConsultationToBookingRecord = (
         return 'Social Media' as PlatformStatus;
       if (cleaned === 'website') return 'Website' as PlatformStatus;
 
-      // Fallback: if it doesn't match known values, default to Website
       return 'Website' as PlatformStatus;
     })(),
     submittedDate: consultation.createdAt,
@@ -864,9 +887,6 @@ const transformConsultationToBookingRecord = (
   };
 };
 
-// Transform a generic application object returned by /applications into the
-// BookingRecord shape used by the table UI. We keep this permissive because
-// the application object shape may vary; fallback to sensible defaults.
 const transformApplicationToBookingRecord = (application: any): BookingRecord => {
   const pick = (k: string) => {
     const v = application?.[k];
@@ -1286,11 +1306,6 @@ const BookingsPage: React.FC = () => {
     return rowsToSort;
   }, [filteredConsultationRows, sortState]);
 
-  // Apply the same sorting logic to application rows so the admission
-  // applications table respects the global sortState as well.
-  // Filter application rows by the global search term (same behaviour as
-  // consultations) so the admission applications tab responds to the
-  // search input.
   const filteredApplicationRows = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     if (!term) return statusFilteredApplicationRows;
@@ -1511,6 +1526,9 @@ const BookingsPage: React.FC = () => {
         key: 'status',
         header: 'Status',
         minWidth: 200,
+        align: 'center',
+        headerClassName: 'text-center',
+        headerContentClassName: 'flex w-full justify-center',
         render: (row) => (
           <StatusDropdown
             value={row.status}
@@ -1580,6 +1598,7 @@ const BookingsPage: React.FC = () => {
         headerClassName: 'whitespace-nowrap',
         headerContentClassName: 'whitespace-nowrap',
         cellClassName: 'whitespace-nowrap',
+        render: (row) => formatBookingTimeSchedule(row.bookingTimeSchedule),
       },
       {
         key: 'bookingDateSchedule',
@@ -1740,7 +1759,6 @@ const BookingsPage: React.FC = () => {
         deleteConsultationMutation.isPending
       : bulkDeleteApplicationsMutation.isPending;
 
-  // State to hold the initial values for editing a booking.
   const [editingInitialValues, setEditingInitialValues] = useState<
     AddBookingFormValues | null
   >(null);
@@ -2154,8 +2172,8 @@ const mapPlatformToApi = (platform: PlatformStatus | string): string => {
   if (isActiveLoading) {
     return (
       <div className="space-y-8 text-gray-700">
-        <section className="space-y-6">
-          <div className="flex flex-wrap items-center gap-6 pb-3">
+        <section className="space-y-6 mt-6">
+          <div className="flex flex-wrapitems-center gap-6 pb-3">
             {tabs?.map((tab) => {
               const isActive = activeTab === tab.key;
               return (
@@ -2192,7 +2210,7 @@ const mapPlatformToApi = (platform: PlatformStatus | string): string => {
   if (isActiveError) {
     return (
       <div className="space-y-8 text-gray-700">
-        <section className="space-y-6">
+        <section className="space-y-6 mt-6">
           <div className="flex flex-wrap items-center gap-6 pb-3">
             {tabs?.map((tab) => {
               const isActive = activeTab === tab.key;
@@ -2249,7 +2267,7 @@ const mapPlatformToApi = (platform: PlatformStatus | string): string => {
 
   return (
     <div className="space-y-8 text-gray-700">
-      <section className="space-y-6">
+      <section className="space-y-6 mt-6">
         <div className="flex flex-wrap items-center gap-6 pb-3">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.key;
