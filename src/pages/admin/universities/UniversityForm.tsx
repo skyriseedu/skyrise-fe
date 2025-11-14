@@ -107,7 +107,7 @@ const UniversityForm: React.FC = () => {
 
   useEffect(() => {
     if (isEditing && universityData) {
-      const university = universityData.data?.university as University;
+      const university = universityData.data.university as University;
 
       setFormData({
         universityName: university.universityName || '',
@@ -124,12 +124,18 @@ const UniversityForm: React.FC = () => {
             university.keyInformation?.creditTransfer || 'Not Available',
           programs: university.keyInformation?.programs || 0,
         },
-        studentReviews: university.studentReviews || [],
+        studentReviews: (university.studentReviews || []).map((review) => ({
+          studentName: review.studentName || '',
+          major: review.major || '',
+          review: review.review || '',
+          image: review.studentImage || undefined,
+        })),
         numberOfCampus: university.numberOfCampus || 0,
-        intakes: university.intakes?.map((intake) => {
-          const parts = intake.split(' ');
-          return { month: parts[0] || '', year: parts[1] || '' };
-        }) || [{ year: '', month: '' }],
+        intakes:
+          university.intakes?.map((intake) => {
+            const parts = intake.split(' ');
+            return { month: parts[0] || '', year: parts[1] || '' };
+          }) || [],
         entryRequirement: university.entryRequirement || '',
         scholarshipRequirements: university.scholarshipRequirements || '',
         logoImage: university.logoImage || undefined,
@@ -250,13 +256,25 @@ const UniversityForm: React.FC = () => {
     }));
   };
 
-  const handleReviewImageChange = (index: number, file: File) => {
-    setFormData((prev) => ({
-      ...prev,
-      studentReviews: prev.studentReviews.map((review, i) =>
-        i === index ? { ...review, image: file } : review
-      ),
-    }));
+  const handleReviewImageChange = async (index: number, file: File) => {
+    const formData = new FormData();
+    formData.append('studentImage', file);
+
+    try {
+      const response =
+        await uploadUniversityImagesMutation.mutateAsync(formData);
+      if (response.data?.studentImage) {
+        const imageUrl = response.data.studentImage.url;
+        setFormData((prev) => ({
+          ...prev,
+          studentReviews: prev.studentReviews.map((review, i) =>
+            i === index ? { ...review, image: imageUrl } : review
+          ),
+        }));
+      }
+    } catch (error) {
+      console.error('Error uploading student review image:', error);
+    }
   };
 
   const handleRemoveStudentReview = (index: number) => {
@@ -274,34 +292,34 @@ const UniversityForm: React.FC = () => {
       let coverImage2Url: string | undefined;
 
       const imageFormData = new FormData();
-      let hasNewImages = false;
+      const imageUploadMap: ('logo' | 'cover1' | 'cover2')[] = [];
 
       if (formData.logoImage instanceof File) {
         imageFormData.append('images', formData.logoImage);
-        hasNewImages = true;
+        imageUploadMap.push('logo');
       }
       if (formData.coverImages.image1 instanceof File) {
         imageFormData.append('images', formData.coverImages.image1);
-        hasNewImages = true;
+        imageUploadMap.push('cover1');
       }
       if (formData.coverImages.image2 instanceof File) {
         imageFormData.append('images', formData.coverImages.image2);
-        hasNewImages = true;
+        imageUploadMap.push('cover2');
       }
 
-      if (hasNewImages) {
+      if (imageUploadMap.length > 0) {
         const response =
           await uploadUniversityImagesMutation.mutateAsync(imageFormData);
-
-        if (formData.logoImage instanceof File) {
-          logoUrl = response.data.studentImage?.url;
-        }
-        if (formData.coverImages.image1 instanceof File) {
-          coverImage1Url = response.data.coverImage1?.url;
-        }
-        if (formData.coverImages.image2 instanceof File) {
-          coverImage2Url = response.data.coverImage2?.url;
-        }
+        response.data.images.forEach((image, index) => {
+          const type = imageUploadMap[index];
+          if (type === 'logo') {
+            logoUrl = image.url;
+          } else if (type === 'cover1') {
+            coverImage1Url = image.url;
+          } else if (type === 'cover2') {
+            coverImage2Url = image.url;
+          }
+        });
       }
 
       const payload: CreateUniversityPayload = {
@@ -339,11 +357,10 @@ const UniversityForm: React.FC = () => {
               ? formData.coverImages.image2
               : ''),
         },
-        // Fix: Use actual student reviews from form data
         studentReviews: formData.studentReviews.map((review) => ({
           studentName: review.studentName,
           major: review.major,
-          studentImage: review.image instanceof File ? '' : review.image || '',
+          studentImage: typeof review.image === 'string' ? review.image : '',
           review: review.review,
         })),
         status: 'published',

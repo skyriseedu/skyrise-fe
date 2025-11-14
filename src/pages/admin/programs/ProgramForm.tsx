@@ -262,13 +262,24 @@ const ProgramForm: React.FC = () => {
     }));
   };
 
-  const handleReviewImageChange = (index: number, file: File) => {
-    setFormData((prev) => ({
-      ...prev,
-      studentReviews: prev.studentReviews.map((review, i) =>
-        i === index ? { ...review, image: file } : review
-      ),
-    }));
+  const handleReviewImageChange = async (index: number, file: File) => {
+    const formData = new FormData();
+    formData.append('images', file);
+
+    try {
+      const response = await uploadProgramImagesMutation.mutateAsync(formData);
+      if (response.data?.images?.length > 0) {
+        const imageUrl = response.data.images[0].url;
+        setFormData((prev) => ({
+          ...prev,
+          studentReviews: prev.studentReviews.map((review, i) =>
+            i === index ? { ...review, image: imageUrl } : review
+          ),
+        }));
+      }
+    } catch (error) {
+      console.error('Error uploading student review image:', error);
+    }
   };
 
   const handleRemoveStudentReview = (index: number) => {
