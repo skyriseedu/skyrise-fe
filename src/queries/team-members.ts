@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { teamMembersService } from '@/lib/api';
 
 import { teamMemberKeys } from './queryKeys';
+import type { UpdateTeamMemberParams } from '@/types/users/team';
 
 export const useTeamMembers = (page: number = 1, limit: number = 10) =>
   useQuery({
@@ -36,6 +37,21 @@ export const useCreateTeamMember = () => {
     },
     onError: (error) => {
       console.error('Failed to create team member:', error);
+    },
+  });
+};
+
+export const useUpdateTeamMember = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: UpdateTeamMemberParams) =>
+      teamMembersService.updateTeamMember(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: teamMemberKeys.all });
+    },
+    onError: (error) => {
+      console.error('Failed to update team member:', error);
     },
   });
 };

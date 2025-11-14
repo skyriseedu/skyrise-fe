@@ -6,6 +6,7 @@ import type {
   TeamMemberApiItem,
   TeamMembersQueryParams,
   TeamMembersResponse,
+  UpdateTeamMemberPayload,
 } from '@/types/users/team';
 
 export const teamMembersService = {
@@ -34,6 +35,14 @@ export const teamMembersService = {
     payload: CreateTeamMemberPayload
   ): Promise<TeamMemberApiItem> {
     const response = await apiClient.post('/team-members', payload);
+    return response.data?.data ?? response.data;
+  },
+
+  async updateTeamMember(
+    id: string,
+    payload: UpdateTeamMemberPayload
+  ): Promise<TeamMemberApiItem> {
+    const response = await apiClient.put(`/team-members/${id}`, payload);
     return response.data?.data ?? response.data;
   },
 };

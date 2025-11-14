@@ -1,12 +1,15 @@
 import SearchIcon from '@/assets/search.svg?react';
 import RemoveIcon from '@/assets/bin.svg?react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import EditIcon from '@/assets/edit.svg?react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import Button from '@/components/common/Button';
 import {
   useBulkDeleteTeamMembers,
   useCreateTeamMember,
   useTeamMembers,
+  useUpdateTeamMember,
   useUploadTeamMemberImage,
 } from '@/queries';
 import AddTeamDrawer, {
@@ -21,6 +24,12 @@ import type { TeamMemberApiItem } from '@/types/users/team';
 const TEAM_TABLE_MAX_BODY_HEIGHT = '35rem';
 const TEAM_MEMBERS_QUERY_LIMIT = 100;
 
+type DropdownPosition = {
+  top: number;
+  left: number;
+  width: number;
+};
+
 type TeamMemberRow = {
   id: string;
   memberName: string;
@@ -33,6 +42,161 @@ type TeamMemberRow = {
   createdAt?: string;
   primarySocialLink?: string;
 };
+
+type TeamMemberActionDropdownProps = {
+  member: TeamMemberRow;
+  onEdit?: (member: TeamMemberRow) => void;
+  onRemove?: (memberId: string) => void | Promise<void>;
+  disabled?: boolean;
+};
+
+function TeamMemberActionDropdown({
+  member,
+  onEdit,
+  onRemove,
+  disabled = false,
+}: TeamMemberActionDropdownProps) {
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<DropdownPosition | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (!isOpen) {
+      setMenuPosition(null);
+      return;
+    }
+
+    const updatePosition = () => {
+      const button = buttonRef.current;
+      if (!button) return;
+
+      const rect = button.getBoundingClientRect();
+      setMenuPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.right + window.scrollX - 192,
+        width: 192,
+      });
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+      if (
+        buttonRef.current?.contains(target) ||
+        menuRef.current?.contains(target)
+      ) {
+        return;
+      }
+      setIsOpen(false);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  const toggleDropdown = () => {
+    if (disabled) return;
+    setIsOpen((prev) => !prev);
+  };
+
+  const handleRemoveClick = async () => {
+    if (disabled) return;
+    if (!member.id) return;
+    await onRemove?.(member.id);
+    setIsOpen(false);
+  };
+
+  const handleEditClick = () => {
+    if (disabled) return;
+    onEdit?.(member);
+    setIsOpen(false);
+  };
+
+  const portalTarget =
+    typeof document !== 'undefined' ? document.body : undefined;
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        className={clsx(
+          'cursor-pointer p-1 text-gray-500 hover:text-gray-700',
+          disabled && 'cursor-not-allowed opacity-60'
+        )}
+        onClick={toggleDropdown}
+        ref={buttonRef}
+        disabled={disabled}
+        aria-label="Open actions"
+      >
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+        </svg>
+      </button>
+
+      {isOpen && menuPosition && portalTarget
+        ? createPortal(
+            <div
+              ref={menuRef}
+              style={{
+                position: 'absolute',
+                top: menuPosition.top,
+                left: menuPosition.left,
+                width: menuPosition.width,
+                zIndex: 1500,
+              }}
+            >
+              <div className="mt-1 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
+                <div className="py-1">
+                  {onEdit && (
+                    <button
+                      type="button"
+                      onClick={handleEditClick}
+                      className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+                      disabled={disabled}
+                    >
+                      <EditIcon className="h-4 w-4 text-gray-500" />
+                      Edit
+                    </button>
+                  )}
+                  {onEdit && (
+                    <div className="my-1 h-px w-full bg-gray-100" />
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleRemoveClick}
+                    className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={disabled}
+                  >
+                    <RemoveIcon className="h-4 w-4 text-red-600" />
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>,
+            portalTarget
+          )
+        : null}
+    </div>
+  );
+}
 
 const formatDateLabel = (value?: string) => {
   if (!value) {
@@ -107,12 +271,16 @@ const SkyRiseTeamTab = () => {
     () => new Set()
   );
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
+  const [editingMember, setEditingMember] = useState<TeamMemberRow | null>(
+    null
+  );
   const [sortState, setSortState] = useState<SortState>({
     key: 'createdAt',
     direction: 'desc',
   });
   const bulkDeleteTeamMembersMutation = useBulkDeleteTeamMembers();
   const createTeamMemberMutation = useCreateTeamMember();
+  const updateTeamMemberMutation = useUpdateTeamMember();
   const uploadTeamMemberImageMutation = useUploadTeamMemberImage();
   const {
     data: teamMembersResponse,
@@ -120,6 +288,8 @@ const SkyRiseTeamTab = () => {
     isError: isTeamMembersError,
   } = useTeamMembers(1, TEAM_MEMBERS_QUERY_LIMIT);
   const isDeleteActionPending = bulkDeleteTeamMembersMutation.isPending;
+  const areRowActionsDisabled =
+    isDeleteActionPending || updateTeamMemberMutation.isPending;
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
@@ -130,6 +300,10 @@ const SkyRiseTeamTab = () => {
 
   const handleCloseAddDrawer = () => {
     setIsAddDrawerOpen(false);
+  };
+
+  const handleCloseEditDrawer = () => {
+    setEditingMember(null);
   };
 
   const handleDeleteSelected = useCallback(async () => {
@@ -246,6 +420,53 @@ const SkyRiseTeamTab = () => {
       }
     },
     [createTeamMemberMutation, uploadTeamMemberImageMutation]
+  );
+
+  const handleEditAction = useCallback((member: TeamMemberRow) => {
+    setEditingMember(member);
+  }, []);
+
+  const handleEditTeamMember = useCallback(
+    async (values: AddTeamMemberFormValues) => {
+      if (!editingMember?.id) {
+        console.warn('Cannot edit team member without a valid selection.');
+        return;
+      }
+
+      try {
+        let profilePictureUrl = editingMember.profilePicture;
+
+        if (values.profilePicture) {
+          const formData = new FormData();
+          formData.append('image', values.profilePicture);
+          const uploadResponse =
+            await uploadTeamMemberImageMutation.mutateAsync(formData);
+          profilePictureUrl = uploadResponse?.data?.image?.url || profilePictureUrl;
+        }
+
+        await updateTeamMemberMutation.mutateAsync({
+          id: editingMember.id,
+          payload: {
+            memberName: values.memberName,
+            role: values.role,
+            major: values.major,
+            university: values.university,
+            socialMediaLink: values.socialMediaLink || undefined,
+            profilePicture: profilePictureUrl,
+            pinned: false,
+          },
+        });
+
+        setEditingMember(null);
+      } catch (error) {
+        console.error('Failed to update team member:', error);
+      }
+    },
+    [
+      editingMember,
+      updateTeamMemberMutation,
+      uploadTeamMemberImageMutation,
+    ]
   );
 
   const filteredRows = useMemo(() => {
@@ -415,6 +636,25 @@ const SkyRiseTeamTab = () => {
     teamMembersResponse?.count ??
     tableData.length;
 
+  const isEditDrawerOpen = Boolean(editingMember);
+
+  const editingDrawerInitialValues = useMemo<
+    Partial<AddTeamMemberFormValues> | undefined
+  >(() => {
+    if (!editingMember) {
+      return undefined;
+    }
+
+    return {
+      memberName: editingMember.memberName,
+      role: editingMember.role,
+      major: editingMember.major,
+      university: editingMember.university,
+      socialMediaLink: editingMember.primarySocialLink ?? '',
+      profilePicture: null,
+    };
+  }, [editingMember]);
+
   const teamColumns: TableColumn<TeamMemberRow>[] = useMemo(
     () => [
       {
@@ -502,19 +742,14 @@ const SkyRiseTeamTab = () => {
 
   const renderActions = useCallback(
     (row: TeamMemberRow) => (
-      <button
-        type="button"
-        onClick={() => handleDeleteSingleMember(row.id)}
-        disabled={isDeleteActionPending}
-        className={clsx(
-          'text-sm font-semibold text-red-500 hover:text-red-600',
-          isDeleteActionPending && 'cursor-not-allowed opacity-60'
-        )}
-      >
-        Remove
-      </button>
+      <TeamMemberActionDropdown
+        member={row}
+        onEdit={handleEditAction}
+        onRemove={handleDeleteSingleMember}
+        disabled={areRowActionsDisabled}
+      />
     ),
-    [handleDeleteSingleMember, isDeleteActionPending]
+    [areRowActionsDisabled, handleDeleteSingleMember, handleEditAction]
   );
 
   return (
@@ -589,6 +824,17 @@ const SkyRiseTeamTab = () => {
         submitLabel={
           createTeamMemberMutation.isPending ? 'Adding...' : 'Add'
         }
+      />
+      <AddTeamDrawer
+        open={isEditDrawerOpen}
+        onClose={handleCloseEditDrawer}
+        onSubmit={handleEditTeamMember}
+        initialValues={editingDrawerInitialValues}
+        title="Edit Team Member"
+        submitLabel={
+          updateTeamMemberMutation.isPending ? 'Saving...' : 'Save Changes'
+        }
+        isSubmitting={updateTeamMemberMutation.isPending}
       />
     </div>
   );
