@@ -8,6 +8,13 @@ export function useUploadProgramImages() {
   });
 }
 
+export function useUploadUniversityImages() {
+  return useMutation({
+    mutationFn: (payload: FormData) =>
+      uploadsService.uploadUniversityImages(payload),
+  });
+}
+
 export function useUploadTeamMemberImage() {
   return useMutation({
     mutationFn: (payload: FormData) =>

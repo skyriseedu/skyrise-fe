@@ -15,6 +15,16 @@ export interface UploadProgramImagesResponse {
   };
 }
 
+export interface UploadUniversityImagesResponse {
+  success: boolean;
+  message?: string;
+  data: {
+    coverImage1: UploadedImage;
+    coverImage2: UploadedImage;
+    studentImage: UploadedImage;
+  };
+}
+
 export interface UploadTeamMemberImageResponse {
   success: boolean;
   message?: string;

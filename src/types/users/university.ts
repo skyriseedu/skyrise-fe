@@ -7,6 +7,10 @@ export interface University {
     image1: string;
     image2: string;
   };
+  applicationFee?: {
+    amount: number;
+    currency: string;
+  };
   universityName: string;
   universityType: 'Public' | 'Private';
   logoImage: string;
@@ -29,6 +33,8 @@ export interface University {
   createdAt: string;
   updatedAt: string;
   slug: string;
+  pinned?: boolean;
+  pinnedAt?: string;
   entryRequirement?: string;
   scholarshipRequirements?: string;
 }
@@ -82,4 +88,59 @@ export interface SingleUniversityResponse {
   data: {
     university: University;
   };
+}
+
+export interface CreateUniversityPayload {
+  coverImages: {
+    image1: string;
+    image2: string;
+  };
+  applicationFee?: {
+    amount: number;
+    currency: string;
+  };
+  universityName: string;
+  universityType: 'Public' | 'Private';
+  logoImage: string;
+  aboutUniversity: string;
+  englishFoundation: string;
+  bachelor: string;
+  master: string;
+  keyInformation: {
+    ranking: string;
+    foundedYear: number;
+    location: string;
+    creditTransfer: string;
+    programs: number;
+  };
+  numberOfCampus: number;
+  studentReviews: Array<StudentReview>;
+  intakes: string[];
+  pinned?: boolean;
+  status: 'published' | 'draft' | 'archived';
+  entryRequirement?: string;
+  scholarshipRequirements?: string;
+}
+
+export interface BulkDeleteUniversitiesResponse {
+  success: boolean;
+  message: string;
+  data: {
+    deletedCount: number;
+    deletedIds: string[];
+  };
+}
+
+export interface UniversityListItem {
+  _id: string;
+  id: string;
+  universityName: string;
+  universityType: 'Public' | 'Private';
+  logoImage: string;
+  status: 'published' | 'draft' | 'archived';
+  views: number;
+  createdAt: string;
+  updatedAt: string;
+  slug: string;
+  pinned?: boolean;
 }
