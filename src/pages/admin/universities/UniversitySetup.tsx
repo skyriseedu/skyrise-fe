@@ -9,63 +9,22 @@ import Search from '@/assets/search.svg?react';
 import RemoveIcon from '@/assets/bin.svg?react';
 import EditIcon from '@/assets/edit.svg?react';
 import ViewIcon from '@/assets/view.svg?react';
-
-// Mock data type
-type University = {
-  id: string;
-  title: string;
-  universityName: string;
-  publishedDate: string;
-  modifiedDate: string;
-};
-
-// Mock data
-const mockPrograms: University[] = [
-  {
-    id: '1',
-    title: 'Bachelor of Science : Information and Communication Technology',
-    universityName: 'Rangsit University(Rangsit International College)',
-    publishedDate: '24th July 2025',
-    modifiedDate: '12th August 2025',
-  },
-  {
-    id: '2',
-    title: 'Bachelor of Science : Information and Communication Technology',
-    universityName: 'Rangsit University(Rangsit International College)',
-    publishedDate: '24th July 2025',
-    modifiedDate: '12th August 2025',
-  },
-  {
-    id: '3',
-    title: 'Bachelor of Science : Information and Communication Technology',
-    universityName: 'Rangsit University(Rangsit International College)',
-    publishedDate: '24th July 2025',
-    modifiedDate: '12th August 2025',
-  },
-  {
-    id: '4',
-    title: 'Bachelor of Science : Information and Communication Technology',
-    universityName: 'Rangsit University(Rangsit International College)',
-    publishedDate: '24th July 2025',
-    modifiedDate: '12th August 2025',
-  },
-  {
-    id: '5',
-    title: 'Bachelor of Science : Information and Communication Technology',
-    universityName: 'Rangsit University(Rangsit International College)',
-    publishedDate: '24th July 2025',
-    modifiedDate: '12th August 2025',
-  },
-];
+import {
+  useDeleteUniversity,
+  useBulkDeleteUniversities,
+  useAllUniversitiesAdmin,
+} from '@/queries/universities';
+import { formatNthDate } from '@/helpers';
+import type { UniversityListItem } from '@/types/users/university';
 
 const UniversitySetup: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedPrograms, setSelectedPrograms] = useState<Set<string>>(
+  const [selectedUniversities, setSelectedUniversities] = useState<Set<string>>(
     new Set()
   );
   const [sortState, setSortState] = useState<SortState>({
-    key: 'title',
+    key: 'universityName',
     direction: 'asc',
   });
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -74,6 +33,14 @@ const UniversitySetup: React.FC = () => {
     new Set()
   );
   const statusFilterRef = useRef<HTMLDivElement>(null);
+
+  const {
+    data: universitiesData,
+    isLoading,
+    isError,
+  } = useAllUniversitiesAdmin();
+  const deleteUniversityMutation = useDeleteUniversity();
+  const bulkDeleteUniversityMutation = useBulkDeleteUniversities();
 
   // Handle click outside status filter
   useEffect(() => {
@@ -104,65 +71,128 @@ const UniversitySetup: React.FC = () => {
     setSelectedStatuses(newStatuses);
   };
 
-  // Filter programs based on search query
-  const filteredPrograms = useMemo(() => {
-    return mockPrograms.filter(
-      (program) =>
-        program.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        program.universityName.toLowerCase().includes(searchQuery.toLowerCase())
+  // Filter universities based on search query AND status
+  const filteredUniversities = useMemo(() => {
+    if (!universitiesData) return [];
+
+    let filtered = universitiesData.data.universities.filter((university) =>
+      university.universityName
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
 
-  // Sort programs
-  const sortedPrograms = useMemo(() => {
-    const sorted = [...filteredPrograms];
+    // Apply status filter if any statuses are selected
+    if (selectedStatuses.size > 0) {
+      filtered = filtered.filter((university) =>
+        selectedStatuses.has(university.status || 'draft')
+      );
+    }
+
+    return filtered;
+  }, [searchQuery, universitiesData, selectedStatuses]);
+
+  // Sort universities
+  const sortedUniversities = useMemo(() => {
+    const sorted = [...filteredUniversities];
+
     sorted.sort((a, b) => {
-      const aValue = a[sortState.key as keyof University];
-      const bValue = b[sortState.key as keyof University];
+      let aValue: string | number = '';
+      let bValue: string | number = '';
 
+      // Get the values based on sort key
+      if (sortState.key === 'createdAt' || sortState.key === 'updatedAt') {
+        // For date fields, convert to timestamp for comparison
+        aValue = a[sortState.key]
+          ? new Date(a[sortState.key] as string).getTime()
+          : 0;
+        bValue = b[sortState.key]
+          ? new Date(b[sortState.key] as string).getTime()
+          : 0;
+      } else {
+        // For other fields, get string values
+        const aVal = a[sortState.key as keyof UniversityListItem];
+        const bVal = b[sortState.key as keyof UniversityListItem];
+
+        aValue = aVal === null || aVal === undefined ? '' : String(aVal);
+        bValue = bVal === null || bVal === undefined ? '' : String(bVal);
+      }
+
+      // Compare values
       if (sortState.direction === 'asc') {
         return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
       } else {
         return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       }
     });
+
     return sorted;
-  }, [filteredPrograms, sortState]);
+  }, [filteredUniversities, sortState]);
 
   const handleSelectRow = (
-    program: University,
+    university: UniversityListItem,
     _index: number,
     selected: boolean
   ) => {
-    const newSelected = new Set(selectedPrograms);
+    const newSelected = new Set(selectedUniversities);
     if (selected) {
-      newSelected.add(program.id);
+      newSelected.add(university._id);
     } else {
-      newSelected.delete(program.id);
+      newSelected.delete(university._id);
     }
-    setSelectedPrograms(newSelected);
+    setSelectedUniversities(newSelected);
   };
 
   const handleRemoveSelected = () => {
-    // In a real app, this would call an API to delete the selected programs
-    console.log('Removing programs:', Array.from(selectedPrograms));
-    setSelectedPrograms(new Set());
+    if (selectedUniversities.size === 0) return;
+
+    if (
+      !confirm(
+        `Are you sure you want to delete ${selectedUniversities.size} university(s)?`
+      )
+    ) {
+      return;
+    }
+
+    bulkDeleteUniversityMutation.mutate(
+      { ids: Array.from(selectedUniversities) },
+      {
+        onSuccess: () => {
+          setSelectedUniversities(new Set());
+        },
+      }
+    );
   };
 
-  const handleView = (program: University) => {
-    navigate(`/admin/programs/view/${program.id}`);
+  const handleView = (university: UniversityListItem) => {
+    navigate(`/admin/university-setup/view/${university.slug}`);
     setOpenDropdown(null);
   };
 
-  const handleEdit = (program: University) => {
-    navigate(`/admin/programs/edit/${program.id}`);
+  const handleEdit = (university: UniversityListItem) => {
+    navigate(`/admin/university-setup/edit/${university.slug}`);
     setOpenDropdown(null);
   };
 
-  const handleRemove = (program: University) => {
-    // In a real app, this would call an API to delete the program
-    console.log('Remove program:', program.id);
-    setOpenDropdown(null);
+  const handleRemove = (university: UniversityListItem) => {
+    if (
+      !confirm(
+        `Are you sure you want to delete "${university.universityName}"?`
+      )
+    ) {
+      return;
+    }
+
+    deleteUniversityMutation.mutate(university._id, {
+      onSuccess: () => {
+        setOpenDropdown(null);
+        // Remove from selection if it was selected
+        if (selectedUniversities.has(university._id)) {
+          const newSelected = new Set(selectedUniversities);
+          newSelected.delete(university._id);
+          setSelectedUniversities(newSelected);
+        }
+      },
+    });
   };
 
   const handleCreateNew = () => {
@@ -170,7 +200,10 @@ const UniversitySetup: React.FC = () => {
   };
 
   // Dropdown component
-  const ActionDropdown: React.FC<{ program: University }> = ({ program }) => {
+  const ActionDropdown: React.FC<{
+    university: UniversityListItem;
+    index: number;
+  }> = ({ university, index: _index }) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -183,20 +216,22 @@ const UniversitySetup: React.FC = () => {
         }
       };
 
-      if (openDropdown === program.id) {
+      if (openDropdown === university._id) {
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
           document.removeEventListener('mousedown', handleClickOutside);
         };
       }
-    }, [program.id]);
+    }, [university._id]);
 
     return (
       <div className="relative" ref={dropdownRef}>
         <button
-          className="p-1 text-gray-500 hover:text-gray-700"
+          className="cursor-pointer p-1 text-gray-500 hover:text-gray-700"
           onClick={() =>
-            setOpenDropdown(openDropdown === program.id ? null : program.id)
+            setOpenDropdown(
+              openDropdown === university._id ? null : university._id
+            )
           }
         >
           <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
@@ -204,26 +239,26 @@ const UniversitySetup: React.FC = () => {
           </svg>
         </button>
 
-        {openDropdown === program.id && (
+        {openDropdown === university._id && (
           <div className="absolute right-0 z-10 mt-1 w-38 rounded-lg border border-gray-200 bg-white shadow-lg">
             <div className="py-1">
               <button
-                onClick={() => handleView(program)}
-                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                onClick={() => handleView(university)}
+                className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
               >
                 <ViewIcon className="h-4 w-4 text-gray-500" />
                 View
               </button>
               <button
-                onClick={() => handleEdit(program)}
-                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                onClick={() => handleEdit(university)}
+                className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
               >
                 <EditIcon className="h-4 w-4 text-gray-500" />
                 Edit
               </button>
               <button
-                onClick={() => handleRemove(program)}
-                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+                onClick={() => handleRemove(university)}
+                className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
               >
                 <RemoveIcon className="h-4 w-4 text-red-600" />
                 Remove
@@ -235,29 +270,41 @@ const UniversitySetup: React.FC = () => {
     );
   };
 
-  const columns: TableColumn<University>[] = [
+  const columns: TableColumn<UniversityListItem>[] = [
     {
       key: 'universityName',
       header: 'University Name',
       sortable: false,
+      cellClassName: 'font-medium',
     },
     {
-      key: 'publishedDate',
+      key: 'createdAt',
       header: 'Published Date',
       sortable: true,
       headerContentClassName: 'flex items-center gap-1',
+      render: (university: UniversityListItem) =>
+        university.createdAt
+          ? formatNthDate(new Date(university.createdAt))
+          : '',
     },
     {
-      key: 'modifiedDate',
+      key: 'updatedAt',
       header: 'Modified Date',
       sortable: true,
       headerContentClassName: 'flex items-center gap-1',
+      render: (university: UniversityListItem) =>
+        university.updatedAt
+          ? formatNthDate(new Date(university.updatedAt))
+          : '',
     },
   ];
 
-  const renderActions = (program: University) => (
-    <ActionDropdown program={program} />
+  const renderActions = (university: UniversityListItem, index: number) => (
+    <ActionDropdown university={university} index={index} />
   );
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error fetching universities.</div>;
 
   return (
     <div className="min-h-screen p-6">
@@ -265,7 +312,7 @@ const UniversitySetup: React.FC = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-h2 mb-6 font-semibold text-gray-900">
-            Total Universities {mockPrograms.length}
+            Total Universities {sortedUniversities.length}
           </h1>
 
           <div className="flex items-center justify-between gap-4">
@@ -275,7 +322,7 @@ const UniversitySetup: React.FC = () => {
                 <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search Program, University"
+                  placeholder="Search University"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10"
@@ -290,6 +337,11 @@ const UniversitySetup: React.FC = () => {
                 >
                   <Filter />
                   Status
+                  {selectedStatuses.size > 0 && (
+                    <span className="ml-1 rounded-full bg-red-500 px-2 py-0.5 text-xs text-white">
+                      {selectedStatuses.size}
+                    </span>
+                  )}
                 </button>
 
                 {showStatusFilter && (
@@ -330,13 +382,14 @@ const UniversitySetup: React.FC = () => {
 
             {/* Action buttons */}
             <div className="flex items-center gap-3">
-              {selectedPrograms.size > 0 && (
+              {selectedUniversities.size > 0 && (
                 <button
                   onClick={handleRemoveSelected}
-                  className="bg-secondary flex items-center gap-2 rounded-xl px-4 py-2 text-gray-700 hover:bg-red-200"
+                  disabled={bulkDeleteUniversityMutation.isPending}
+                  className="bg-secondary flex items-center gap-2 rounded-xl px-4 py-2 text-gray-700 hover:bg-red-200 disabled:opacity-50"
                 >
                   <RemoveIcon className="h-4 w-4" />
-                  Remove
+                  Remove ({selectedUniversities.size})
                 </button>
               )}
 
@@ -344,24 +397,29 @@ const UniversitySetup: React.FC = () => {
                 onClick={handleCreateNew}
                 className="bg-primary flex items-center gap-2 rounded-xl px-4 py-2 text-white hover:bg-red-600"
               >
-                <span>+</span>New Program
+                <span>+</span>New University
               </button>
             </div>
           </div>
         </div>
 
         {/* Data Table */}
-        <DataTable
+        <DataTable<UniversityListItem & Record<string, unknown>>
           columns={columns}
-          data={sortedPrograms}
-          getRowId={(program) => program.id}
+          data={
+            sortedUniversities as unknown as (UniversityListItem &
+              Record<string, unknown>)[]
+          }
+          getRowId={(university) => university._id}
           selectable={true}
-          isRowSelected={(program) => selectedPrograms.has(program.id)}
+          isRowSelected={(university) =>
+            selectedUniversities.has(university._id)
+          }
           onSelectRow={handleSelectRow}
           renderActions={renderActions}
           sortState={sortState}
           onSortChange={setSortState}
-          emptyMessage="No programs found."
+          emptyMessage="No universities found."
         />
       </div>
     </div>

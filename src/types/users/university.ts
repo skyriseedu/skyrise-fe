@@ -118,3 +118,17 @@ export interface BulkDeleteUniversitiesResponse {
     deletedIds: string[];
   };
 }
+
+export interface UniversityListItem {
+  _id: string;
+  id: string;
+  universityName: string;
+  universityType: 'Public' | 'Private';
+  logoImage: string;
+  status: 'published' | 'draft' | 'archived';
+  views: number;
+  createdAt: string;
+  updatedAt: string;
+  slug: string;
+  pinned?: boolean;
+}
