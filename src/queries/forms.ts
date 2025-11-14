@@ -7,7 +7,11 @@ import type {
   ApplyConsultantFormValues,
   FormError,
 } from '@/types/users/forms';
-import type { CreateConsultationRequest, UpdateConsultationRequest } from '@/types/bookings';
+import type {
+  BookingStatusApi,
+  CreateConsultationRequest,
+  UpdateConsultationRequest,
+} from '@/types/bookings';
 
 export const useBookConsultation = () => {
   return useMutation<
@@ -58,6 +62,11 @@ type UpdateApplicationMutationParams = {
   payload: UpdateConsultationRequest;
 };
 
+type UpdateApplicationStatusParams = {
+  applicationId: string;
+  status: BookingStatusApi;
+};
+
 export const useUpdateApplicationBooking = () => {
   const queryClient = useQueryClient();
 
@@ -69,6 +78,21 @@ export const useUpdateApplicationBooking = () => {
     },
     onError: (error) => {
       console.error('Error updating admission application booking:', error);
+    },
+  });
+};
+
+export const useUpdateApplicationStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<FormSubmissionResponse, FormError, UpdateApplicationStatusParams>({
+    mutationFn: ({ applicationId, status }) =>
+      formsService.updateApplicationStatus(applicationId, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['forms', 'applications'] });
+    },
+    onError: (error) => {
+      console.error('Error updating admission application status:', error);
     },
   });
 };

@@ -37,6 +37,7 @@ import {
   useCreateApplicationBooking,
   useBulkDeleteApplications,
   useUpdateApplicationBooking,
+  useUpdateApplicationStatus,
 } from '@/queries';
 import type {
   Consultation,
@@ -929,6 +930,15 @@ const BookingsPage: React.FC = () => {
   const [statusOverrides, setStatusOverrides] = useState<
     Record<string, BookingStatus>
   >({});
+  const [applicationStatusOverrides, setApplicationStatusOverrides] = useState<
+    Record<string, BookingStatus>
+  >({});
+  const [applicationPlatformOverrides, setApplicationPlatformOverrides] = useState<
+    Record<string, PlatformStatus>
+  >({});
+  const [applicationFacebookOverrides, setApplicationFacebookOverrides] = useState<
+    Record<string, string>
+  >({});
   const [platformOverrides, setPlatformOverrides] = useState<
     Record<string, PlatformStatus>
   >({});
@@ -978,6 +988,148 @@ const BookingsPage: React.FC = () => {
       return [];
     }
   }, [applicationsData]);
+
+  useEffect(() => {
+    setApplicationStatusOverrides((prev) => {
+      if (Object.keys(prev).length === 0) {
+        return prev;
+      }
+
+      const next: Record<string, BookingStatus> = {};
+
+      applicationRows.forEach((row) => {
+        if (!row.id) {
+          return;
+        }
+
+        const override = prev[row.id];
+        if (override && override !== row.status) {
+          next[row.id] = override;
+        }
+      });
+
+      const prevKeys = Object.keys(prev);
+      const nextKeys = Object.keys(next);
+      if (
+        prevKeys.length === nextKeys.length &&
+        prevKeys.every((key) => prev[key] === next[key])
+      ) {
+        return prev;
+      }
+
+      return next;
+    });
+  }, [applicationRows]);
+
+  useEffect(() => {
+    setApplicationPlatformOverrides((prev) => {
+      if (Object.keys(prev).length === 0) {
+        return prev;
+      }
+
+      const next: Record<string, PlatformStatus> = {};
+
+      applicationRows.forEach((row) => {
+        if (!row.id) {
+          return;
+        }
+
+        const override = prev[row.id];
+        if (override && override !== row.submittedPlatform) {
+          next[row.id] = override;
+        }
+      });
+
+      const prevKeys = Object.keys(prev);
+      const nextKeys = Object.keys(next);
+      if (
+        prevKeys.length === nextKeys.length &&
+        prevKeys.every((key) => prev[key] === next[key])
+      ) {
+        return prev;
+      }
+
+      return next;
+    });
+  }, [applicationRows]);
+
+  useEffect(() => {
+    setApplicationFacebookOverrides((prev) => {
+      if (Object.keys(prev).length === 0) {
+        return prev;
+      }
+
+      const next: Record<string, string> = {};
+
+      applicationRows.forEach((row) => {
+        if (!row.id) {
+          return;
+        }
+
+        const override = prev[row.id];
+        if (override !== undefined && override !== row.facebookAccount) {
+          next[row.id] = override;
+        }
+      });
+
+      const prevKeys = Object.keys(prev);
+      const nextKeys = Object.keys(next);
+      if (
+        prevKeys.length === nextKeys.length &&
+        prevKeys.every((key) => prev[key] === next[key])
+      ) {
+        return prev;
+      }
+
+      return next;
+    });
+  }, [applicationRows]);
+
+  const applicationRowsWithOverrides = useMemo(() => {
+    if (
+      Object.keys(applicationStatusOverrides).length === 0 &&
+      Object.keys(applicationPlatformOverrides).length === 0 &&
+      Object.keys(applicationFacebookOverrides).length === 0
+    ) {
+      return applicationRows;
+    }
+
+    return applicationRows.map((row) => {
+      if (!row.id) {
+        return row;
+      }
+
+      let updatedRow = row;
+
+      const statusOverride = applicationStatusOverrides[row.id];
+      if (statusOverride && statusOverride !== row.status) {
+        updatedRow = { ...updatedRow, status: statusOverride };
+      }
+
+      const platformOverride = applicationPlatformOverrides[row.id];
+      if (platformOverride && platformOverride !== row.submittedPlatform) {
+        updatedRow = { ...updatedRow, submittedPlatform: platformOverride };
+      }
+
+      const facebookOverride = applicationFacebookOverrides[row.id];
+      if (
+        facebookOverride !== undefined &&
+        facebookOverride !== row.facebookAccount
+      ) {
+        updatedRow = { ...updatedRow, facebookAccount: facebookOverride };
+      }
+
+      return updatedRow;
+    });
+  }, [
+    applicationRows,
+    applicationStatusOverrides,
+    applicationPlatformOverrides,
+    applicationFacebookOverrides,
+  ]);
+
+  const updateApplicationStatusMutation = useUpdateApplicationStatus();
+  const updateApplicationMutation = useUpdateApplicationBooking();
 
   useEffect(() => {
     setStatusOverrides((prev) => {
@@ -1055,6 +1207,16 @@ const BookingsPage: React.FC = () => {
     return sourceRows.filter((row) => row.status === selectedStatus);
   }, [consultationRowsWithOverrides, selectedStatus]);
 
+  const statusFilteredApplicationRows = useMemo(() => {
+    if (selectedStatus === 'All') {
+      return applicationRowsWithOverrides;
+    }
+
+    return applicationRowsWithOverrides.filter(
+      (row) => row.status === selectedStatus
+    );
+  }, [applicationRowsWithOverrides, selectedStatus]);
+
   const filteredConsultationRows = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     if (!term) {
@@ -1131,9 +1293,9 @@ const BookingsPage: React.FC = () => {
   // search input.
   const filteredApplicationRows = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
-    if (!term) return applicationRows;
+    if (!term) return statusFilteredApplicationRows;
 
-    return applicationRows.filter((row) => {
+    return statusFilteredApplicationRows.filter((row) => {
       return [
         row.status,
         row.submittedPlatform,
@@ -1151,7 +1313,7 @@ const BookingsPage: React.FC = () => {
         .toLowerCase()
         .includes(term);
     });
-  }, [searchTerm, applicationRows]);
+  }, [searchTerm, statusFilteredApplicationRows]);
 
   const sortedApplicationRows = useMemo(() => {
     if (!sortState) {
@@ -1199,10 +1361,51 @@ const BookingsPage: React.FC = () => {
   const handleRowStatusChange = useCallback(
     (row: BookingRecord, nextStatus: BookingStatus) => {
       if (!row.id) {
-        console.warn(
-          'Cannot update consultation status without a valid id.',
-          row
-        );
+        console.warn('Cannot update booking status without a valid id.', row);
+        return;
+      }
+
+      if (activeTab === 'admission') {
+        const hadExistingOverride =
+          applicationStatusOverrides[row.id] !== undefined;
+        const previousStatus = hadExistingOverride
+          ? applicationStatusOverrides[row.id]
+          : row.status;
+
+        if (previousStatus === nextStatus) {
+          return;
+        }
+
+        setApplicationStatusOverrides((prev) => ({
+          ...prev,
+          [row.id]: nextStatus,
+        }));
+
+        updateApplicationStatusMutation
+          .mutateAsync({
+            applicationId: row.id,
+            status: nextStatus.toLowerCase() as BookingStatusApi,
+          })
+          .catch((error) => {
+            console.error(
+              'Failed to update admission application status:',
+              error
+            );
+
+            setApplicationStatusOverrides((prev) => {
+              if (!hadExistingOverride) {
+                const rest = { ...prev };
+                delete rest[row.id];
+                return rest;
+              }
+
+              return {
+                ...prev,
+                [row.id]: previousStatus,
+              };
+            });
+          });
+
         return;
       }
 
@@ -1217,7 +1420,13 @@ const BookingsPage: React.FC = () => {
         };
       });
     },
-    []
+    [
+      activeTab,
+      applicationStatusOverrides,
+      setApplicationStatusOverrides,
+      setStatusOverrides,
+      updateApplicationStatusMutation,
+    ]
   );
 
   const handleRowPlatformChange = useCallback(
@@ -1227,6 +1436,52 @@ const BookingsPage: React.FC = () => {
           'Cannot update consultation platform without a valid id.',
           row
         );
+        return;
+      }
+
+      if (activeTab === 'admission') {
+        const hadExistingOverride =
+          applicationPlatformOverrides[row.id] !== undefined;
+        const previousPlatform = hadExistingOverride
+          ? applicationPlatformOverrides[row.id]
+          : row.submittedPlatform;
+
+        if (previousPlatform === nextPlatform) {
+          return;
+        }
+
+        setApplicationPlatformOverrides((prev) => ({
+          ...prev,
+          [row.id]: nextPlatform,
+        }));
+
+        updateApplicationMutation
+          .mutateAsync({
+            applicationId: row.id,
+            payload: {
+              submittedPlatform: mapPlatformToApi(nextPlatform),
+            },
+          })
+          .catch((error) => {
+            console.error(
+              'Failed to update admission application platform:',
+              error
+            );
+
+            setApplicationPlatformOverrides((prev) => {
+              if (!hadExistingOverride) {
+                const rest = { ...prev };
+                delete rest[row.id];
+                return rest;
+              }
+
+              return {
+                ...prev,
+                [row.id]: previousPlatform,
+              };
+            });
+          });
+
         return;
       }
 
@@ -1241,7 +1496,13 @@ const BookingsPage: React.FC = () => {
         };
       });
     },
-    []
+    [
+      activeTab,
+      applicationPlatformOverrides,
+      setApplicationPlatformOverrides,
+      setPlatformOverrides,
+      updateApplicationMutation,
+    ]
   );
 
   const bookingColumns = useMemo<TableColumn<BookingRecord>[]>(
@@ -1472,7 +1733,6 @@ const BookingsPage: React.FC = () => {
   const bulkDeleteApplicationsMutation = useBulkDeleteApplications();
   const deleteConsultationMutation = useDeleteConsultation();
   const updateConsultationMutation = useUpdateConsultation();
-  const updateApplicationMutation = useUpdateApplicationBooking();
 
   const isDeleteActionPending =
     activeTab === 'consultation'
@@ -1768,13 +2028,21 @@ const BookingsPage: React.FC = () => {
     };
   };
 
-  const mapPlatformToDisplay = (platform: string): PlatformStatus => {
-    const normalized = platform.trim().toLowerCase();
-    if (normalized === 'social media' || normalized === 'social') {
-      return 'Social Media';
-    }
-    return 'Website';
-  };
+const mapPlatformToDisplay = (platform: string): PlatformStatus => {
+  const normalized = platform.trim().toLowerCase();
+  if (normalized === 'social media' || normalized === 'social') {
+    return 'Social Media';
+  }
+  return 'Website';
+};
+
+const mapPlatformToApi = (platform: PlatformStatus | string): string => {
+  const normalized = platform.toString().trim().toLowerCase();
+  if (normalized === 'social media' || normalized === 'social') {
+    return 'social media';
+  }
+  return 'website';
+};
 
   const handleAddConsultationBooking = async (values: AddBookingFormValues) => {
     try {
@@ -1842,6 +2110,21 @@ const BookingsPage: React.FC = () => {
           applicationId: editingBookingId,
           payload,
         });
+
+        setApplicationStatusOverrides((prev) => ({
+          ...prev,
+          [editingBookingId]: values.status,
+        }));
+
+        setApplicationPlatformOverrides((prev) => ({
+          ...prev,
+          [editingBookingId]: mapPlatformToDisplay(values.submittedPlatform),
+        }));
+
+        setApplicationFacebookOverrides((prev) => ({
+          ...prev,
+          [editingBookingId]: sanitizeTextValue(values.facebookAccount, ''),
+        }));
       }
 
       handleCloseEditDrawer();

@@ -66,6 +66,22 @@ export const formsService = {
     }
   },
 
+  async updateApplicationStatus(
+    applicationId: string,
+    status: BookingStatusApi
+  ): Promise<FormSubmissionResponse> {
+    try {
+      const response = await apiClient.patch(
+        `/applications/${applicationId}/status`,
+        { status }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Update application status API error:', error);
+      throw error;
+    }
+  },
+
   async submitConsultantApplication(
     data: ApplyConsultantFormValues
   ): Promise<FormSubmissionResponse> {
