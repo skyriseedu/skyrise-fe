@@ -84,9 +84,7 @@ export const programsService = {
   },
 
   async bulkDeletePrograms(payload: BulkDeleteProgramsPayload) {
-    const response = await apiClient.delete('/programs/bulk-delete', {
-      data: payload,
-    });
+    const response = await apiClient.post('/programs/bulk-delete', payload);
     return response.data;
   },
 };
