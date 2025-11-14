@@ -25,3 +25,17 @@ export const useBulkDeleteTeamMembers = () => {
     },
   });
 };
+
+export const useCreateTeamMember = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: teamMembersService.createTeamMember,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: teamMemberKeys.all });
+    },
+    onError: (error) => {
+      console.error('Failed to create team member:', error);
+    },
+  });
+};

@@ -2,6 +2,8 @@ import apiClient from '../client';
 
 import type {
   BulkDeleteTeamMembersResponse,
+  CreateTeamMemberPayload,
+  TeamMemberApiItem,
   TeamMembersQueryParams,
   TeamMembersResponse,
 } from '@/types/users/team';
@@ -26,5 +28,12 @@ export const teamMembersService = {
       console.error('Bulk delete team members API error:', error);
       throw error;
     }
+  },
+
+  async createTeamMember(
+    payload: CreateTeamMemberPayload
+  ): Promise<TeamMemberApiItem> {
+    const response = await apiClient.post('/team-members', payload);
+    return response.data?.data ?? response.data;
   },
 };

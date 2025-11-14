@@ -38,6 +38,7 @@ export interface AddTeamDrawerProps {
   initialValues?: Partial<AddTeamMemberFormValues>;
   title?: string;
   submitLabel?: string;
+  isSubmitting?: boolean;
   secondaryAction?: {
     label: string;
     onClick: () => void;
@@ -74,6 +75,7 @@ const AddTeamDrawer: React.FC<AddTeamDrawerProps> = ({
   initialValues,
   title = 'Add Team Member',
   submitLabel = 'Add',
+  isSubmitting = false,
   secondaryAction,
 }) => {
   const mergedInitialValues = useMemo(
@@ -490,7 +492,12 @@ const AddTeamDrawer: React.FC<AddTeamDrawerProps> = ({
                       {secondaryAction.label}
                     </Button>
                   ) : null}
-                  <Button type="submit" className="min-w-[120px]">
+                  <Button
+                    type="submit"
+                    className="min-w-[120px]"
+                    loading={isSubmitting}
+                    disabled={isSubmitting}
+                  >
                     {submitLabel}
                   </Button>
                 </div>
