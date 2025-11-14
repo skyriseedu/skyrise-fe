@@ -2,6 +2,7 @@ import apiClient from '../client';
 import type {
   UploadProgramImagesResponse,
   UploadUniversityImagesResponse,
+  UploadTeamMemberImageResponse,
 } from '@/types/uploads';
 
 export const uploadsService = {
@@ -25,6 +26,21 @@ export const uploadsService = {
   ): Promise<UploadUniversityImagesResponse> {
     const response = await apiClient.post(
       '/cloudinary-upload/university-images',
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    return response.data;
+  },
+
+  async uploadTeamMemberImage(
+    payload: FormData
+  ): Promise<UploadTeamMemberImageResponse> {
+    const response = await apiClient.post(
+      '/cloudinary-upload/team-member-image',
       payload,
       {
         headers: {

@@ -1,7 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { bookingsService } from '@/lib/api';
 import { bookingKeys } from './queryKeys';
-import type { UseConsultationsParams, CreateConsultationRequest } from '@/types/bookings';
+import type {
+  UseConsultationsParams,
+  CreateConsultationRequest,
+  UpdateConsultationRequest,
+} from '@/types/bookings';
+
+type UpdateConsultationMutationParams = {
+  consultationId: string;
+  payload: UpdateConsultationRequest;
+};
 
 export function useConsultations(params: UseConsultationsParams = {}) {
   const { status, page = 1, limit = 10 } = params;
@@ -52,6 +61,21 @@ export function useBulkDeleteConsultations() {
     },
     onError: (error) => {
       console.error('Failed to bulk delete consultations:', error);
+    },
+  });
+}
+
+export function useUpdateConsultation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ consultationId, payload }: UpdateConsultationMutationParams) =>
+      bookingsService.updateConsultation(consultationId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: bookingKeys.all });
+    },
+    onError: (error) => {
+      console.error('Failed to update consultation:', error);
     },
   });
 }

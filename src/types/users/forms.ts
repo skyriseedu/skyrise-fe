@@ -43,3 +43,9 @@ export interface FormError {
   message: string;
   errors?: Record<string, string[]>;
 }
+
+export interface BulkDeleteApplicationsResponse {
+  success: boolean;
+  message: string;
+  deletedCount?: number;
+}

@@ -6,15 +6,41 @@ import {
   type BookingDrawerBaseProps,
 } from './AddBookingDrawer';
 
-export type EditBookingDrawerProps = Omit<BookingDrawerBaseProps, 'initialValues' | 'title' | 'submitLabel'> & {
+export type EditBookingDrawerProps = Omit<
+  BookingDrawerBaseProps,
+  'initialValues' | 'title' | 'submitLabel' | 'secondaryAction'
+> & {
   initialValues: AddBookingFormValues;
+  title?: string;
+  onRemove?: () => void;
+  removeLabel?: string;
+  isRemoveDisabled?: boolean;
+  isRemoveLoading?: boolean;
 };
 
-const EditBookingDrawer: React.FC<EditBookingDrawerProps> = (props) => (
+const EditBookingDrawer: React.FC<EditBookingDrawerProps> = ({
+  title,
+  onRemove,
+  removeLabel = 'Remove',
+  isRemoveDisabled,
+  isRemoveLoading,
+  ...rest
+}) => (
   <BookingDrawerBase
-    {...props}
-    title="Edit Consultation Booking"
-    submitLabel="Save Changes"
+    {...rest}
+    title={title ?? 'Edit Consultation Booking'}
+    submitLabel="Save"
+    secondaryAction={
+      onRemove
+        ? {
+            label: removeLabel,
+            onClick: onRemove,
+            kind: 'secondary',
+            disabled: isRemoveDisabled,
+            loading: isRemoveLoading,
+          }
+        : undefined
+    }
   />
 );
 

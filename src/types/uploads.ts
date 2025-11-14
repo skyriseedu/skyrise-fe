@@ -24,3 +24,11 @@ export interface UploadUniversityImagesResponse {
     studentImage: UploadedImage;
   };
 }
+
+export interface UploadTeamMemberImageResponse {
+  success: boolean;
+  message?: string;
+  data: {
+    image: UploadedImage;
+  };
+}

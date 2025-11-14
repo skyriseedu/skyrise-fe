@@ -108,7 +108,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
   };
 
   const handleDateClick = (day: number | null) => {
-    if (day && !isPast(day)) {
+    if (day) {
       const newDate = new Date(
         currentDate.getFullYear(),
         currentDate.getMonth(),
@@ -184,7 +184,6 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
           const selected = isSelectedDate(day);
           const today = isToday(day);
           const past = isPast(day);
-          const disabled = !day || past;
           const base =
             'h-8 w-8 rounded-full text-sm font-medium transition-all duration-200';
           const state = !day
@@ -192,7 +191,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
             : selected
               ? 'bg-primary text-white shadow-lg'
               : past
-                ? 'text-gray-300 cursor-not-allowed'
+                ? 'text-gray-400 hover:bg-gray-100 hover:text-gray-900'
                 : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900';
           const todayRing =
             day && today && !selected
@@ -202,8 +201,8 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
             <button
               key={index}
               onClick={() => handleDateClick(day)}
-              disabled={disabled}
-              className={`${base} ${state} ${todayRing} ${!disabled ? 'cursor-pointer' : ''}`}
+              disabled={!day}
+              className={`${base} ${state} ${todayRing} ${day ? 'cursor-pointer' : ''}`}
             >
               {day}
             </button>

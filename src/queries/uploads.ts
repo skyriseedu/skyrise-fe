@@ -14,3 +14,10 @@ export function useUploadUniversityImages() {
       uploadsService.uploadUniversityImages(payload),
   });
 }
+
+export function useUploadTeamMemberImage() {
+  return useMutation({
+    mutationFn: (payload: FormData) =>
+      uploadsService.uploadTeamMemberImage(payload),
+  });
+}

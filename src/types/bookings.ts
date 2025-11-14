@@ -1,5 +1,5 @@
 export type BookingStatus = 'Scheduled' | 'Completed' | 'Cancelled';
-export type PlatformStatus = 'Website' | 'Social Media'
+export type PlatformStatus = 'Website' | 'Social Media';
 export const bookingStatusOptions: BookingStatus[] = [
   'Scheduled',
   'Completed',
@@ -8,7 +8,7 @@ export const bookingStatusOptions: BookingStatus[] = [
 
 export const platformStatusOptions: PlatformStatus[] = [
   'Website',
-  'Social Media'
+  'Social Media',
 ];
 
 export interface Consultation {
@@ -72,6 +72,27 @@ export interface CreateConsultationRequest {
 }
 
 export interface CreateConsultationResponse {
+  success: boolean;
+  message: string;
+  data: {
+    consultation: Consultation;
+  };
+}
+
+export interface UpdateConsultationRequest {
+  name?: string;
+  email?: string;
+  phoneNumber?: string;
+  bookingTimeSchedule?: string;
+  bookingDateSchedule?: string;
+  submittedPlatform?: string;
+  status?: BookingStatusApi;
+  location?: string;
+  question?: string;
+  facebookAccount?: string;
+}
+
+export interface UpdateConsultationResponse {
   success: boolean;
   message: string;
   data: {

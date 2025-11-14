@@ -4,8 +4,13 @@ import type {
   FormSubmissionResponse,
   ApplicationFormValues,
   ApplyConsultantFormValues,
+  BulkDeleteApplicationsResponse,
 } from '@/types/users/forms';
-import type { BookingStatusApi, CreateConsultationRequest } from '@/types/bookings';
+import type {
+  BookingStatusApi,
+  CreateConsultationRequest,
+  UpdateConsultationRequest,
+} from '@/types/bookings';
 
 export const formsService = {
   async bookConsultation(
@@ -36,10 +41,82 @@ export const formsService = {
     return response.data;
   },
 
+  async createApplicationBooking(
+    data: CreateConsultationRequest
+  ): Promise<FormSubmissionResponse> {
+    try {
+      const response = await apiClient.post('/applications', data);
+      return response.data;
+    } catch (error) {
+      console.error('Create application booking API error:', error);
+      throw error;
+    }
+  },
+
+  async updateApplicationBooking(
+    applicationId: string,
+    data: UpdateConsultationRequest
+  ): Promise<FormSubmissionResponse> {
+    try {
+      const response = await apiClient.put(`/applications/${applicationId}`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Update application booking API error:', error);
+      throw error;
+    }
+  },
+
+  async updateApplicationStatus(
+    applicationId: string,
+    status: BookingStatusApi
+  ): Promise<FormSubmissionResponse> {
+    try {
+      const response = await apiClient.patch(
+        `/applications/${applicationId}/status`,
+        { status }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Update application status API error:', error);
+      throw error;
+    }
+  },
+
   async submitConsultantApplication(
     data: ApplyConsultantFormValues
   ): Promise<FormSubmissionResponse> {
     const response = await apiClient.post('/apply-consultant', data);
     return response.data;
+  },
+
+  async getApplications(params: { page?: number; limit?: number } = {}): Promise<any> {
+    const { page = 1, limit = 10 } = params;
+
+    const searchParams = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+
+    const url = `/applications?${searchParams.toString()}`;
+    console.log('Fetching applications from:', url);
+
+    try {
+      const response = await apiClient.get(url);
+      console.log('Applications API response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Applications API error:', error);
+      throw error;
+    }
+  },
+
+  async bulkDeleteApplications(ids: string[]): Promise<BulkDeleteApplicationsResponse> {
+    try {
+      const response = await apiClient.post('/applications/bulk-delete', { ids });
+      return response.data;
+    } catch (error) {
+      console.error('Bulk delete applications API error:', error);
+      throw error;
+    }
   },
 };

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import clsx from 'clsx';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -40,6 +41,10 @@ const defaultPlatforms: PlatformOption[] = [
 
 const bookingTimeOptions = ['08:00 a.m', '12:00 p.m', '15:00 p.m', '20:00 p.m'];
 const bookingLocationOptions = ['Myanmar', 'Thailand', 'Singapore'];
+const countryDialCodeOptions = [
+  { code: '+95', label: '+95' },
+  { code: '+66', label: '+66' },
+];
 
 export interface BookingDrawerBaseProps {
   open: boolean;
@@ -50,6 +55,13 @@ export interface BookingDrawerBaseProps {
   initialValues: AddBookingFormValues;
   title: string;
   submitLabel: string;
+  secondaryAction?: {
+    label: string;
+    onClick: () => void;
+    kind?: 'secondary' | 'destructive';
+    disabled?: boolean;
+    loading?: boolean;
+  };
 }
 
 const cloneFormValues = (input: AddBookingFormValues): AddBookingFormValues => ({
@@ -82,6 +94,7 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
     initialValues,
     title,
     submitLabel,
+    secondaryAction,
   } = props;
 
   const [values, setValues] = useState<AddBookingFormValues>(() =>
@@ -93,11 +106,13 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
   const [isTimeMenuOpen, setIsTimeMenuOpen] = useState(false);
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isCountryCodeMenuOpen, setIsCountryCodeMenuOpen] = useState(false);
   const statusDropdownRef = useRef<HTMLDivElement | null>(null);
   const platformDropdownRef = useRef<HTMLDivElement | null>(null);
   const timeDropdownRef = useRef<HTMLDivElement | null>(null);
   const locationDropdownRef = useRef<HTMLDivElement | null>(null);
   const calendarRef = useRef<HTMLDivElement | null>(null);
+  const countryCodeDropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -141,6 +156,7 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
       setIsTimeMenuOpen(false);
       setIsLocationMenuOpen(false);
       setIsCalendarOpen(false);
+      setIsCountryCodeMenuOpen(false);
     }
   }, [open]);
 
@@ -217,6 +233,24 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
   }, [isLocationMenuOpen]);
 
   useEffect(() => {
+    if (!isCountryCodeMenuOpen) {
+      return undefined;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!countryCodeDropdownRef.current) return;
+      if (!countryCodeDropdownRef.current.contains(event.target as Node)) {
+        setIsCountryCodeMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isCountryCodeMenuOpen]);
+
+  useEffect(() => {
     if (!isCalendarOpen) {
       return undefined;
     }
@@ -224,7 +258,8 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
     const handleClickOutside = (event: MouseEvent) => {
       if (!calendarRef.current) return;
       if (!calendarRef.current.contains(event.target as Node)) {
-        setIsCalendarOpen(false);
+      setIsCalendarOpen(false);
+      setIsCountryCodeMenuOpen(false);
       }
     };
 
@@ -259,18 +294,18 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
   }> = {
     Scheduled: {
       Icon: CalendarTimeIcon,
-      iconClassName: 'text-yellow-600',
-      textClassName: 'text-yellow-600',
+      iconClassName: '',
+      textClassName: '',
     },
     Completed: {
       Icon: CheckboxCheckedIcon,
-      iconClassName: 'text-primary',
-      textClassName: 'text-primary',
+      iconClassName: '',
+      textClassName: '',
     },
     Cancelled: {
       Icon: CloseSquareIcon,
-      iconClassName: 'text-white',
-      textClassName: 'text-gray-900',
+      iconClassName: '',
+      textClassName: '',
     },
   };
 
@@ -298,7 +333,7 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
     if (!values.phoneNumber.trim()) {
       newErrors.phoneNumber = 'Phone number is required';
     } else {
-      const phoneRegex = /^[\d\s\-\+\(\)]{7,}$/;
+      const phoneRegex = /^[\d\s()+-]{7,}$/;
       if (!phoneRegex.test(values.phoneNumber.trim())) {
         newErrors.phoneNumber = 'Please provide a valid phone number';
       }
@@ -362,7 +397,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
 
   const formattedBookingDate = safeSelectedDate
     ? safeSelectedDate.toLocaleDateString('en-GB')
-    : '';
+    : values.bookingDateSchedule
+      ? values.bookingDateSchedule
+      : '';
 
   if (typeof document === 'undefined') {
     return null;
@@ -440,9 +477,9 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                           setIsLocationMenuOpen(false);
                           setIsCalendarOpen(false);
                         }}
-                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-sm font-medium text-gray-700 transition focus:outline-none border ${
-                          errors.status ? 'border-red-500' : 'border-gray-200'
-                        }`}
+                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-sm font-medium text-gray-700 transition focus:outline-none ${
+                            errors.status ? 'ring-1 ring-red-500' : ''
+                          }`}
                         aria-haspopup="listbox"
                         aria-expanded={isStatusMenuOpen}
                       >
@@ -536,8 +573,8 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                           setIsLocationMenuOpen(false);
                           setIsCalendarOpen(false);
                         }}
-                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none border ${
-                          errors.submittedPlatform ? 'border-red-500' : 'border-gray-200'
+                        className={`flex w-full items-center justify-between gap-4 rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-gray-700 transition focus:outline-none ${
+                          errors.submittedPlatform ? 'ring-1 ring-red-500' : ''
                         }`}
                         aria-haspopup="listbox"
                         aria-expanded={isPlatformMenuOpen}
@@ -646,20 +683,75 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
                       Phone Number
                     </label>
                     <div className="flex gap-3">
-                      <input
-                        id="booking-country-code"
-                        value={values.countryDialCode}
-                        onChange={(event) =>
-                          handleFieldChange('countryDialCode', event.target.value)
-                        }
-                        className="w-24 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
-                      />
+                      <div className="relative" ref={countryCodeDropdownRef}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsCountryCodeMenuOpen((prev) => !prev);
+                            setIsLocationMenuOpen(false);
+                            setIsStatusMenuOpen(false);
+                            setIsPlatformMenuOpen(false);
+                            setIsTimeMenuOpen(false);
+                            setIsCalendarOpen(false);
+                          }}
+                          className={clsx(
+                            'flex w-20 items-center justify-between border-gray-300 rounded-md border px-4 py-2 text-sm font-semibold transition',
+                            'bg-white'
+                          )}
+                          aria-haspopup="listbox"
+                          aria-expanded={isCountryCodeMenuOpen}
+                        >
+                          <span className="flex items-center gap-2">
+                            <span>
+                              {
+                                countryDialCodeOptions.find(
+                                  (option) => option.code === values.countryDialCode
+                                )?.code
+                              }
+                            </span>
+                          </span>
+                          <CaretDownIcon
+                            className={clsx(
+                              'h-4 w-4 text-gray-500 transition-transform',
+                              isCountryCodeMenuOpen ? 'rotate-180' : ''
+                            )}
+                          />
+                        </button>
+                        {isCountryCodeMenuOpen ? (
+                          <div
+                            role="listbox"
+                            aria-labelledby="booking-country-code"
+                            className="absolute left-0 right-0 top-full z-30 mt-2 overflow-hidden border border-gray-100 bg-white shadow-xl"
+                          >
+                            {countryDialCodeOptions.map((option) => (
+                              <button
+                                key={option.code}
+                                type="button"
+                                onClick={() => {
+                                  handleFieldChange('countryDialCode', option.code);
+                                  setIsCountryCodeMenuOpen(false);
+                                }}
+                                className={clsx(
+                                  'flex w-full items-center border-gray-100 justify-between px-4 py-2 text-sm transition hover:bg-gray-50',
+                                  values.countryDialCode === option.code
+                                    ? 'bg-gray-50 font-semibold'
+                                    : 'text-gray-600'
+                                )}
+                              >
+                                <span className="flex items-center gap-2">
+                                  <span>{option.label}</span>
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
                       <input
                         id="booking-phone"
                         value={values.phoneNumber}
                         onChange={(event) => handleFieldChange('phoneNumber', event.target.value)}
                         placeholder="Enter phone number"
-                        className={`flex-1 rounded-lg border px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 ${
+                        className={`flex-1 rounded-lg border  px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 ${
                           errors.phoneNumber ? 'border-red-500' : 'border-gray-200'
                         }`}
                       />
@@ -890,15 +982,20 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
               </div>
 
               <div className="px-6 py-4">
-                <div className="flex justify-end gap-3">
-                  {/* <Button
-                    type="button"
-                    outline
-                    className="min-w-[96px] border-gray-200 text-gray-600 hover:text-white"
-                    onClick={onClose}
-                  >
-                    Cancel
-                  </Button> */}
+                <div className="flex justify-between gap-3">
+                  {secondaryAction ? (
+                    <Button
+                      type="button"
+                      secondary={secondaryAction.kind !== 'destructive'}
+                      destructive={secondaryAction.kind === 'destructive'}
+                      className="min-w-[120px]"
+                      onClick={secondaryAction.onClick}
+                      disabled={secondaryAction.disabled}
+                      loading={secondaryAction.loading}
+                    >
+                      {secondaryAction.label}
+                    </Button>
+                  ) : null}
                   <Button type="submit" className="min-w-[120px]">
                     {submitLabel}
                   </Button>
@@ -913,14 +1010,14 @@ const BookingDrawerBase: React.FC<BookingDrawerBaseProps> = (
   );
 };
 
-type AddBookingDrawerProps = Omit<BookingDrawerBaseProps, 'initialValues' | 'title' | 'submitLabel'>;
+type AddBookingDrawerProps = Omit<BookingDrawerBaseProps, 'initialValues'>;
 
 const AddBookingDrawer: React.FC<AddBookingDrawerProps> = (props) => (
   <BookingDrawerBase
     {...props}
     initialValues={initialFormValues}
-    title="Add Consultation Booking"
-    submitLabel="Add"
+    title={props.title ?? 'Add Consultation Booking'}
+    submitLabel={props.submitLabel ?? 'Add'}
   />
 );
 
