@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { teamMembersService } from '@/lib/api';
 
@@ -11,3 +11,17 @@ export const useTeamMembers = (page: number = 1, limit: number = 10) =>
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
+
+export const useBulkDeleteTeamMembers = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (ids: string[]) => teamMembersService.bulkDeleteTeamMembers(ids),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: teamMemberKeys.all });
+    },
+    onError: (error) => {
+      console.error('Failed to bulk delete team members:', error);
+    },
+  });
+};

@@ -905,7 +905,6 @@ const transformApplicationToBookingRecord = (application: any): BookingRecord =>
     if (!s) return 'Scheduled';
     if (s.includes('complete') || s.includes('approved') || s.includes('accepted') || s.includes('done')) return 'Completed';
     if (s.includes('cancel') || s.includes('reject') || s.includes('rejected') || s.includes('declined')) return 'Cancelled';
-    // treat submitted/pending/new as scheduled by default
     return 'Scheduled';
   };
 
@@ -926,9 +925,6 @@ const transformApplicationToBookingRecord = (application: any): BookingRecord =>
     question: pick('message') ?? pick('question') ?? 'N/A',
   };
 };
-
-// renderActions will be created inside the BookingsPage so it can access
-// handlers and state (edit/remove). The earlier top-level shortcut is removed.
 
 const BookingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<BookingTab>('consultation');

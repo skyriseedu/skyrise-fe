@@ -24,6 +24,12 @@ export interface TeamMemberApiItem {
   id: string;
 }
 
+export interface BulkDeleteTeamMembersResponse {
+  success: boolean;
+  message: string;
+  deletedCount?: number;
+}
+
 export interface TeamMembersResponse {
   success: boolean;
   count: number;

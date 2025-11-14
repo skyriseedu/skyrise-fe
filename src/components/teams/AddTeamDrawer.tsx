@@ -1,10 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import clsx from 'clsx';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import CloseIcon from '@/assets/close.svg?react';
 import Button from '@/components/common/Button';
+import GalleryAdd from '@/assets/gallery-add.svg?react';
 
 export interface AddTeamMemberFormValues {
   memberName: string;
@@ -74,7 +81,8 @@ const AddTeamDrawer: React.FC<AddTeamDrawerProps> = ({
     [initialValues]
   );
 
-  const [values, setValues] = useState<AddTeamMemberFormValues>(mergedInitialValues);
+  const [values, setValues] =
+    useState<AddTeamMemberFormValues>(mergedInitialValues);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
   const profilePreviewRef = useRef<string | null>(null);
@@ -147,10 +155,7 @@ const AddTeamDrawer: React.FC<AddTeamDrawerProps> = ({
     }
   };
 
-  const handleTextFieldChange = (
-    field: TextField,
-    value: string
-  ) => {
+  const handleTextFieldChange = (field: TextField, value: string) => {
     setValues((prev) => ({
       ...prev,
       [field]: value,
@@ -226,68 +231,97 @@ const AddTeamDrawer: React.FC<AddTeamDrawerProps> = ({
     <AnimatePresence>
       {open ? (
         <motion.div
-          className="fixed inset-0 z-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[60] flex items-center justify-end px-4 py-6 sm:px-6"
+          initial={false}
           onMouseDown={handleOverlayClick}
         >
-          <div className="absolute inset-0 bg-gray-900/50" />
+          <motion.div
+            className="absolute inset-0 bg-gray-900/40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+            aria-hidden="true"
+          />
 
           <motion.aside
-            className="absolute inset-y-0 right-0 flex max-w-[544px] w-full"
+            className="relative z-10 -mr-7 flex h-[650px] max-h-[calc(100vh-48px)] w-full max-w-[420px] flex-col rounded-tl-[32px] rounded-bl-[32px] bg-white px-4 shadow-2xl sm:max-h-[calc(100vh-64px)]"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            onMouseDown={(event) => event.stopPropagation()}
+            transition={{ duration: 0.28, ease: 'easeInOut' }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="team-drawer-title"
           >
-            <form
-              onSubmit={handleSubmit}
-              className="flex h-full w-full flex-col bg-[#FDFBF6] shadow-2xl"
-            >
-              <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
-                <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100"
-                  aria-label="Close drawer"
-                >
-                  <CloseIcon className="h-5 w-5" />
-                </button>
+            <div className="flex items-start justify-between border-b border-gray-100 px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div>
+                  <p
+                    id="booking-drawer-title"
+                    className="text-base font-semibold text-gray-900"
+                  >
+                    {title}
+                  </p>
+                </div>
               </div>
 
+              <button
+                type="button"
+                onClick={onClose}
+                className="text-gray-400 transition-colors hover:text-gray-600"
+                aria-label="Close"
+              >
+                <CloseIcon className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={handleSubmit}
+              className="flex max-h-[600px] flex-col overflow-y-scroll"
+            >
               <div className="flex-1 overflow-y-auto px-6 py-6">
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <label htmlFor="team-member-name" className="text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="team-member-name"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Member Name
                     </label>
                     <input
                       id="team-member-name"
                       type="text"
                       value={values.memberName}
-                      onChange={(event) => handleTextFieldChange('memberName', event.target.value)}
+                      onChange={(event) =>
+                        handleTextFieldChange('memberName', event.target.value)
+                      }
                       placeholder="Enter member name"
                       className={inputClassName(Boolean(errors.memberName))}
                       aria-invalid={Boolean(errors.memberName)}
                     />
                     {errors.memberName ? (
-                      <p className="text-sm text-red-500">{errors.memberName}</p>
+                      <p className="text-sm text-red-500">
+                        {errors.memberName}
+                      </p>
                     ) : null}
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="team-member-role" className="text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="team-member-role"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Role
                     </label>
                     <input
                       id="team-member-role"
                       type="text"
                       value={values.role}
-                      onChange={(event) => handleTextFieldChange('role', event.target.value)}
+                      onChange={(event) =>
+                        handleTextFieldChange('role', event.target.value)
+                      }
                       placeholder="Enter role"
                       className={inputClassName(Boolean(errors.role))}
                       aria-invalid={Boolean(errors.role)}
@@ -298,48 +332,71 @@ const AddTeamDrawer: React.FC<AddTeamDrawerProps> = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="team-member-major" className="text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="team-member-major"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Major <span className="text-gray-400">(optional)</span>
                     </label>
                     <input
                       id="team-member-major"
                       type="text"
                       value={values.major}
-                      onChange={(event) => handleTextFieldChange('major', event.target.value)}
+                      onChange={(event) =>
+                        handleTextFieldChange('major', event.target.value)
+                      }
                       placeholder="Enter major"
                       className={inputClassName()}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="team-member-university" className="text-sm font-medium text-gray-700">
-                      University <span className="text-gray-400">(optional)</span>
+                    <label
+                      htmlFor="team-member-university"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      University{' '}
+                      <span className="text-gray-400">(optional)</span>
                     </label>
                     <input
                       id="team-member-university"
                       type="text"
                       value={values.university}
-                      onChange={(event) => handleTextFieldChange('university', event.target.value)}
+                      onChange={(event) =>
+                        handleTextFieldChange('university', event.target.value)
+                      }
                       placeholder="Enter university"
                       className={inputClassName()}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="team-member-social-link" className="text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="team-member-social-link"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Social Media Link
                     </label>
                     <input
                       id="team-member-social-link"
                       type="url"
                       value={values.socialMediaLink}
-                      onChange={(event) => handleTextFieldChange('socialMediaLink', event.target.value)}
+                      onChange={(event) =>
+                        handleTextFieldChange(
+                          'socialMediaLink',
+                          event.target.value
+                        )
+                      }
                       placeholder="https://"
-                      className={inputClassName(Boolean(errors.socialMediaLink))}
+                      className={inputClassName(
+                        Boolean(errors.socialMediaLink)
+                      )}
                       aria-invalid={Boolean(errors.socialMediaLink)}
                     />
                     {errors.socialMediaLink ? (
-                      <p className="text-sm text-red-500">{errors.socialMediaLink}</p>
+                      <p className="text-sm text-red-500">
+                        {errors.socialMediaLink}
+                      </p>
                     ) : null}
                   </div>
 
@@ -371,7 +428,9 @@ const AddTeamDrawer: React.FC<AddTeamDrawerProps> = ({
                       className={clsx(
                         'flex flex-col items-center justify-center gap-4 rounded-3xl border-2 border-dashed px-6 py-10 text-center text-sm text-gray-500',
                         values.profilePicture ? 'bg-white' : 'bg-[#FFFDF9]',
-                        errors.profilePicture ? 'border-red-400' : 'border-gray-200'
+                        errors.profilePicture
+                          ? 'border-red-400'
+                          : 'border-gray-200'
                       )}
                     >
                       {profilePreview && values.profilePicture ? (
@@ -391,31 +450,32 @@ const AddTeamDrawer: React.FC<AddTeamDrawerProps> = ({
                           </Button>
                         </div>
                       ) : (
-                        <>
-                          <p className="text-base font-medium text-gray-900">
-                            Drag & drop or browse to upload
+                        <div
+                          onClick={() => fileInputRef.current?.click()}
+                          className="flex flex-col items-center justify-center text-center text-[#85868A]"
+                        >
+                          <GalleryAdd />
+                          <p className="text-sm font-medium">
+                            Click to upload or drag and drop
                           </p>
-                          <p className="text-sm text-gray-500">
-                            Recommended formats: JPG, PNG (max 5MB)
+                          <p className="text-xs mt-1.5">
+                            Maximum size 1MB
+                            <br></br>
+                            Supported JPG, JPEG
                           </p>
-                          <Button
-                            type="button"
-                            className="min-w-[140px]"
-                            onClick={() => fileInputRef.current?.click()}
-                          >
-                            Browse Files
-                          </Button>
-                        </>
+                        </div>
                       )}
                     </div>
                     {errors.profilePicture ? (
-                      <p className="text-sm text-red-500">{errors.profilePicture}</p>
+                      <p className="text-sm text-red-500">
+                        {errors.profilePicture}
+                      </p>
                     ) : null}
                   </div>
                 </div>
               </div>
 
-              <div className="border-t border-gray-100 px-6 py-4">
+              <div className="px-6 py-4">
                 <div className="flex justify-between gap-3">
                   {secondaryAction ? (
                     <Button

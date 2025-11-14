@@ -1,6 +1,7 @@
 import apiClient from '../client';
 
 import type {
+  BulkDeleteTeamMembersResponse,
   TeamMembersQueryParams,
   TeamMembersResponse,
 } from '@/types/users/team';
@@ -15,5 +16,15 @@ export const teamMembersService = {
     });
 
     return response.data;
+  },
+
+  async bulkDeleteTeamMembers(ids: string[]): Promise<BulkDeleteTeamMembersResponse> {
+    try {
+      const response = await apiClient.post('/team-members/bulk-delete', { ids });
+      return response.data;
+    } catch (error) {
+      console.error('Bulk delete team members API error:', error);
+      throw error;
+    }
   },
 };
