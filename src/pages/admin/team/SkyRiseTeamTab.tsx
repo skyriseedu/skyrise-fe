@@ -7,6 +7,7 @@ import {
   useBulkDeleteTeamMembers,
   useCreateTeamMember,
   useTeamMembers,
+  useUploadTeamMemberImage,
 } from '@/queries';
 import AddTeamDrawer, {
   type AddTeamMemberFormValues,
@@ -77,14 +78,6 @@ const formatSocialLabel = (link?: string) => {
   }
 };
 
-const fileToBase64 = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve((reader.result as string) ?? '');
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
-
 const toTeamMemberRow = (member: TeamMemberApiItem): TeamMemberRow | null => {
   const id = member.id || member._id;
   if (!id) {
@@ -120,6 +113,7 @@ const SkyRiseTeamTab = () => {
   });
   const bulkDeleteTeamMembersMutation = useBulkDeleteTeamMembers();
   const createTeamMemberMutation = useCreateTeamMember();
+  const uploadTeamMemberImageMutation = useUploadTeamMemberImage();
   const {
     data: teamMembersResponse,
     isPending: isTeamMembersLoading,
@@ -226,7 +220,14 @@ const SkyRiseTeamTab = () => {
       try {
         let profilePictureUrl: string | undefined;
         if (values.profilePicture) {
-          profilePictureUrl = await fileToBase64(values.profilePicture);
+          const formData = new FormData();
+          formData.append('image', values.profilePicture);
+          const uploadResponse =
+            await uploadTeamMemberImageMutation.mutateAsync(formData);
+          profilePictureUrl = uploadResponse?.data?.image?.url;
+          if (!profilePictureUrl) {
+            console.warn('Team member image upload succeeded without URL');
+          }
         }
 
         await createTeamMemberMutation.mutateAsync({
@@ -244,7 +245,7 @@ const SkyRiseTeamTab = () => {
         console.error('Failed to add team member:', error);
       }
     },
-    [createTeamMemberMutation]
+    [createTeamMemberMutation, uploadTeamMemberImageMutation]
   );
 
   const filteredRows = useMemo(() => {
@@ -524,9 +525,9 @@ const SkyRiseTeamTab = () => {
           {totalMembers || 0}
         </span>
       </p>
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-        <div className="relative z-50 flex max-w-md justify-between space-x-5">
-          <div className="relative max-w-md min-w-[290px] flex-1">
+      <div className="mt-4 flex flex-wrap items-center gap-4">
+        <div className="relative z-50 flex min-w-[290px] flex-1 max-w-md">
+          <div className="relative w-full">
             <span className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-gray-400">
               <SearchIcon className="h-5 w-5" />
             </span>
@@ -539,7 +540,7 @@ const SkyRiseTeamTab = () => {
             />
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-3">
           {selectedRowKeys.size > 0 && (
             <button
               type="button"
@@ -586,7 +587,7 @@ const SkyRiseTeamTab = () => {
         onSubmit={handleAddTeamMember}
         isSubmitting={createTeamMemberMutation.isPending}
         submitLabel={
-          createTeamMemberMutation.isPending ? 'Adding...' : 'Add Team Member'
+          createTeamMemberMutation.isPending ? 'Adding...' : 'Add'
         }
       />
     </div>
