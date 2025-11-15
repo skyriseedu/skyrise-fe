@@ -23,6 +23,7 @@ export interface TeamMemberApiItem {
   socialMediaLinks: TeamMemberSocialLinks;
   socialMediaCount: number;
   id: string;
+  pinned?: boolean;
 }
 
 export interface CreateTeamMemberPayload {
