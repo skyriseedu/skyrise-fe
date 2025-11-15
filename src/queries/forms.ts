@@ -34,7 +34,8 @@ export const useBookConsultation = () => {
 
 export const useSubmitApplication = () => {
   return useMutation<FormSubmissionResponse, FormError, ApplicationFormValues>({
-    mutationFn: (data: ApplicationFormValues) => formsService.submitApplication(data),
+    mutationFn: (data: ApplicationFormValues) =>
+      formsService.submitApplication(data),
     onSuccess: (data) => {
       console.log('Application form submitted successfully:', data);
     },
@@ -47,7 +48,11 @@ export const useSubmitApplication = () => {
 export const useCreateApplicationBooking = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<FormSubmissionResponse, FormError, CreateConsultationRequest>({
+  return useMutation<
+    FormSubmissionResponse,
+    FormError,
+    CreateConsultationRequest
+  >({
     mutationFn: (data: CreateConsultationRequest) =>
       formsService.createApplicationBooking(data),
     onSuccess: () => {
@@ -72,7 +77,11 @@ type UpdateApplicationStatusParams = {
 export const useUpdateApplicationBooking = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<FormSubmissionResponse, FormError, UpdateApplicationMutationParams>({
+  return useMutation<
+    FormSubmissionResponse,
+    FormError,
+    UpdateApplicationMutationParams
+  >({
     mutationFn: ({ applicationId, payload }) =>
       formsService.updateApplicationBooking(applicationId, payload),
     onSuccess: () => {
@@ -87,7 +96,11 @@ export const useUpdateApplicationBooking = () => {
 export const useUpdateApplicationStatus = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<FormSubmissionResponse, FormError, UpdateApplicationStatusParams>({
+  return useMutation<
+    FormSubmissionResponse,
+    FormError,
+    UpdateApplicationStatusParams
+  >({
     mutationFn: ({ applicationId, status }) =>
       formsService.updateApplicationStatus(applicationId, status),
     onSuccess: () => {
@@ -115,25 +128,30 @@ export const useApplyConsultantApplication = () => {
     },
   });
 };
-
-export function useApplications(params: { page?: number; limit?: number } = {}) {
-  const { page = 1, limit = 10 } = params;
+export function useApplications(params?: { page?: number; limit?: number }) {
+  const hasParams = params?.page || params?.limit;
 
   return useQuery<ApplicationsResponse>({
-    queryKey: ['forms', 'applications', { page, limit }],
-    queryFn: () => formsService.getApplications({ page, limit }),
+    queryKey: hasParams
+      ? ['forms', 'applications', params]
+      : ['forms', 'applications'],
+    queryFn: () => formsService.getApplications(hasParams ? params : undefined),
     enabled: true,
   });
 }
 
-export function useConsultantApplications(
-  params: { page?: number; limit?: number } = {}
-) {
-  const { page = 1, limit = 100 } = params;
+export function useConsultantApplications(params?: {
+  page?: number;
+  limit?: number;
+}) {
+  const hasParams = params?.page || params?.limit;
 
   return useQuery<ConsultantApplicationsResponse>({
-    queryKey: ['forms', 'consultant-applications', { page, limit }],
-    queryFn: () => formsService.getConsultantApplications({ page, limit }),
+    queryKey: hasParams
+      ? ['forms', 'consultant-applications', params]
+      : ['forms', 'consultant-applications'],
+    queryFn: () =>
+      formsService.getConsultantApplications(hasParams ? params : undefined),
   });
 }
 

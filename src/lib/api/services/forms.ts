@@ -60,7 +60,10 @@ export const formsService = {
     data: UpdateConsultationRequest
   ): Promise<FormSubmissionResponse> {
     try {
-      const response = await apiClient.put(`/applications/${applicationId}`, data);
+      const response = await apiClient.put(
+        `/applications/${applicationId}`,
+        data
+      );
       return response.data;
     } catch (error) {
       console.error('Update application booking API error:', error);
@@ -91,7 +94,17 @@ export const formsService = {
     return response.data;
   },
 
-  async getConsultantApplications(params: { page?: number; limit?: number } = {}): Promise<ConsultantApplicationsResponse> {
+  async getConsultantApplications(params?: {
+    page?: number;
+    limit?: number;
+  }): Promise<ConsultantApplicationsResponse> {
+    // If no params provided, fetch all without pagination
+    if (!params || (params.page === undefined && params.limit === undefined)) {
+      const response = await apiClient.get('/apply-consultant');
+      return response.data;
+    }
+
+    // With params, use pagination
     const { page = 1, limit = 100 } = params;
     const response = await apiClient.get('/apply-consultant', {
       params: { page, limit },
@@ -99,9 +112,26 @@ export const formsService = {
     return response.data;
   },
 
-  async getApplications(
-    params: { page?: number; limit?: number } = {}
-  ): Promise<ApplicationsResponse> {
+  async getApplications(params?: {
+    page?: number;
+    limit?: number;
+  }): Promise<ApplicationsResponse> {
+    // If no params provided, fetch all without pagination
+    if (!params || (params.page === undefined && params.limit === undefined)) {
+      const url = '/applications';
+      console.log('Fetching all applications from:', url);
+
+      try {
+        const response = await apiClient.get(url);
+        console.log('Applications API response:', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Applications API error:', error);
+        throw error;
+      }
+    }
+
+    // With params, use pagination
     const { page = 1, limit = 10 } = params;
 
     const searchParams = new URLSearchParams({
@@ -122,9 +152,13 @@ export const formsService = {
     }
   },
 
-  async bulkDeleteApplications(ids: string[]): Promise<BulkDeleteApplicationsResponse> {
+  async bulkDeleteApplications(
+    ids: string[]
+  ): Promise<BulkDeleteApplicationsResponse> {
     try {
-      const response = await apiClient.post('/applications/bulk-delete', { ids });
+      const response = await apiClient.post('/applications/bulk-delete', {
+        ids,
+      });
       return response.data;
     } catch (error) {
       console.error('Bulk delete applications API error:', error);

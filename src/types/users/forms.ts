@@ -40,6 +40,10 @@ export interface ApplicationsResponse {
   message?: string;
   total?: number;
   count?: number;
+  pagination?: {
+    page: number;
+    pages: number;
+  };
   data?: ApplicationRecord[];
 }
 
@@ -59,10 +63,12 @@ export interface ConsultantApplicationsResponse {
   message?: string;
   total?: number;
   count?: number;
-  data?: ConsultantApplication[] | {
-    applications?: ConsultantApplication[];
-    consultantApplications?: ConsultantApplication[];
-  };
+  data?:
+    | ConsultantApplication[]
+    | {
+        applications?: ConsultantApplication[];
+        consultantApplications?: ConsultantApplication[];
+      };
   consultantApplications?: ConsultantApplication[];
   applications?: ConsultantApplication[];
 }

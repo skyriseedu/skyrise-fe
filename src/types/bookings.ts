@@ -43,11 +43,9 @@ export interface ConsultationsApiResponse {
   total: number;
   pagination: {
     page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
+    pages: number;
   };
-  data: Consultation[]; 
+  data: Consultation[];
 }
 
 export interface UseConsultationsParams {
