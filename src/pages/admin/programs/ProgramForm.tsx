@@ -140,7 +140,7 @@ const ProgramForm: React.FC = () => {
           (intake) => {
             const parts = intake.split(' ');
 
-            return { month: parts[0], year: parts[1] };
+            return { month: parts[0] || '', year: parts[1] || '' };
           }
         ),
 
@@ -262,13 +262,24 @@ const ProgramForm: React.FC = () => {
     }));
   };
 
-  const handleReviewImageChange = (index: number, file: File) => {
-    setFormData((prev) => ({
-      ...prev,
-      studentReviews: prev.studentReviews.map((review, i) =>
-        i === index ? { ...review, image: file } : review
-      ),
-    }));
+  const handleReviewImageChange = async (index: number, file: File) => {
+    const formData = new FormData();
+    formData.append('images', file);
+
+    try {
+      const response = await uploadProgramImagesMutation.mutateAsync(formData);
+      if (response.data?.images?.length > 0) {
+        const imageUrl = response.data.images[0].url;
+        setFormData((prev) => ({
+          ...prev,
+          studentReviews: prev.studentReviews.map((review, i) =>
+            i === index ? { ...review, image: imageUrl } : review
+          ),
+        }));
+      }
+    } catch (error) {
+      console.error('Error uploading student review image:', error);
+    }
   };
 
   const handleRemoveStudentReview = (index: number) => {
@@ -284,6 +295,16 @@ const ProgramForm: React.FC = () => {
       coverImages: {
         ...prev.coverImages,
         [type]: file,
+      },
+    }));
+  };
+
+  const handleImageRemove = (type: 'primary' | 'secondary') => {
+    setFormData((prev) => ({
+      ...prev,
+      coverImages: {
+        ...prev.coverImages,
+        [type]: undefined,
       },
     }));
   };
@@ -317,6 +338,18 @@ const ProgramForm: React.FC = () => {
         }
       }
 
+      const primaryImageUrl = primaryImage
+        ? primaryImage.url
+        : typeof formData.coverImages.primary === 'string'
+          ? formData.coverImages.primary
+          : undefined;
+
+      const secondaryImageUrl = secondaryImage
+        ? secondaryImage.url
+        : typeof formData.coverImages.secondary === 'string'
+          ? formData.coverImages.secondary
+          : undefined;
+
       const payload: CreateProgramPayload = {
         programName: formData.programName,
         universityName: formData.universityName,
@@ -326,17 +359,8 @@ const ProgramForm: React.FC = () => {
         },
         applicationDeadline: formData.applicationDeadline,
         images: {
-          // Use new uploaded image URL if available, otherwise keep existing URL
-          image1: primaryImage
-            ? primaryImage.url
-            : typeof formData.coverImages.primary === 'string'
-              ? formData.coverImages.primary
-              : '',
-          image2: secondaryImage
-            ? secondaryImage.url
-            : typeof formData.coverImages.secondary === 'string'
-              ? formData.coverImages.secondary
-              : '',
+          ...(primaryImageUrl && { image1: primaryImageUrl }),
+          ...(secondaryImageUrl && { image2: secondaryImageUrl }),
         },
         about: formData.aboutProgram,
         keyInformation: {
@@ -345,9 +369,9 @@ const ProgramForm: React.FC = () => {
           location: formData.location,
           applicationFee: formData.applicationFee,
           totalTuitionFees: formData.totalTuitionFees,
-          upcomingIntake: formData.upcomingIntakes.map(
-            (intake) => `${intake.month} ${intake.year}`
-          ),
+          upcomingIntake: formData.upcomingIntakes
+            .filter((intake) => intake.month && intake.year)
+            .map((intake) => `${intake.month} ${intake.year}`),
         },
         totalCredits: parseInt(formData.totalCreditRequirement),
         creditDetails: formData.programStructure,
@@ -574,6 +598,7 @@ const ProgramForm: React.FC = () => {
                   <ImageUpload
                     image={formData.coverImages.primary}
                     onImageUpload={(file) => handleImageUpload('primary', file)}
+                    onRemove={() => handleImageRemove('primary')}
                   />
                 </div>
                 <div>
@@ -585,6 +610,7 @@ const ProgramForm: React.FC = () => {
                     onImageUpload={(file) =>
                       handleImageUpload('secondary', file)
                     }
+                    onRemove={() => handleImageRemove('secondary')}
                   />
                 </div>
               </div>

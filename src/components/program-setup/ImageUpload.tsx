@@ -6,12 +6,14 @@ import { useEffect } from 'react';
 
 interface ImageUploadProps {
   onImageUpload: (file: File) => void;
+  onRemove?: () => void;
   image: File | string | undefined;
   title?: string;
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
   onImageUpload,
+  onRemove,
   image,
   title,
 }) => {
@@ -47,6 +49,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const handleRemoveImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     setPreview(null);
+    if (onRemove) {
+      onRemove();
+    }
   };
 
   return (

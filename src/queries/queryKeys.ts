@@ -43,6 +43,20 @@ export const universityKeys = {
   detail: (id: string) => [...universityKeys.details(), id] as const,
   paginated: (page?: number, limit?: number) =>
     [...universityKeys.all, 'paginated', { page, limit }] as const,
+  adminLists: () => [...universityKeys.all, 'admin-list'] as const,
+  adminList: (filters: Record<string, unknown>) =>
+    [...universityKeys.adminLists(), { filters }] as const,
+  adminDetails: () => [...universityKeys.all, 'admin-detail'] as const,
+  adminDetail: (id: string) => [...universityKeys.adminDetails(), id] as const,
+  create: (payload: Record<string, unknown>) =>
+    [...universityKeys.all, 'create', { payload }] as const,
+  update: (id: string, payload: Record<string, unknown>) =>
+    [...universityKeys.all, 'update', id, { payload }] as const,
+  pinStatus: (id: string, pinned: boolean) =>
+    [...universityKeys.all, 'pin-status', id, { pinned }] as const,
+  delete: (id: string) => [...universityKeys.all, 'delete', id] as const,
+  bulkDelete: (ids: string[]) =>
+    [...universityKeys.all, 'bulk-delete', { ids }] as const,
 } as const;
 
 export const faqKeys = {

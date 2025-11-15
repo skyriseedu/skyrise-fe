@@ -2,103 +2,154 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import DropdownInput from '@/components/common/DropdownInput';
 import { TextEditor } from '@/components/common/TextEditor/TextEditor';
-import CustomCalendar from '@/components/common/CustomCalendar';
+import ImageUpload from '@/components/program-setup/ImageUpload';
+import CaretDown from '@/assets/caret-down.svg?react';
+import CaretUp from '@/assets/caret-up.svg?react';
+import RemoveIcon from '@/assets/bin.svg?react';
+import {
+  useCreateUniversity,
+  useUniversityBySlug,
+  useUpdateUniversity,
+} from '@/queries/universities';
+import { useUploadUniversityImages } from '@/queries/uploads';
+import type {
+  CreateUniversityPayload,
+  University,
+} from '@/types/users/university';
 import {
   StudentReview,
   type StudentReviewData,
 } from '@/components/program-setup/StudentReview';
-import ImageUpload from '@/components/program-setup/ImageUpload';
-import Calendar from '@/assets/calendar.svg?react';
-import CaretDown from '@/assets/caret-down.svg?react';
-import CaretUp from '@/assets/caret-up.svg?react';
-import RemoveIcon from '@/assets/bin.svg?react';
 
-type ProgramFormData = {
-  programName: string;
+type UniversityFormData = {
   universityName: string;
-  applicationDeadline: string;
-  universityRanking: string;
-  universityRankingType: 'Public' | 'Private';
-  aboutProgram: string;
-  degree: string;
-  duration: string;
-  location: string;
-  applicationFee: string;
-  creditTransfer: string;
-  upcomingIntakes: Array<{ year: string; month: string }>;
-  totalCreditRequirement: string;
-  programStructure: string;
-  undergraduateEntryRequirement: string;
-  careerPaths: string;
+  universityType: 'Public' | 'Private';
+  aboutUniversity: string;
+  englishFoundation: string;
+  bachelor: string;
+  master: string;
+  keyInformation: {
+    ranking: string;
+    foundedYear: number;
+    location: string;
+    creditTransfer: string;
+    programs: number;
+  };
   studentReviews: Array<StudentReviewData>;
+  numberOfCampus: number;
+  intakes: Array<{ month: string }>;
+  entryRequirement?: string;
+  scholarshipRequirements?: string;
+  logoImage?: File | string;
   coverImages: {
-    primary?: File | string;
-    secondary?: File | string;
+    image1?: File | string;
+    image2?: File | string;
   };
 };
 
-const initialFormData: ProgramFormData = {
-  programName: '',
+const initialFormData: UniversityFormData = {
   universityName: '',
-  applicationDeadline: '',
-  universityRanking: '',
-  universityRankingType: 'Public',
-  aboutProgram: '',
-  degree: 'Bachelor',
-  duration: '1 year',
-  creditTransfer: 'Not Available',
-  location: '',
-  applicationFee: 'Free',
-  upcomingIntakes: [{ year: '', month: '' }],
-  totalCreditRequirement: '',
-  programStructure: '',
-  undergraduateEntryRequirement: '',
-  careerPaths: '',
+  universityType: 'Public',
+  aboutUniversity: '',
+  englishFoundation: '',
+  bachelor: '',
+  master: '',
+  keyInformation: {
+    ranking: '',
+    foundedYear: 0,
+    location: '',
+    creditTransfer: 'Not Available',
+    programs: 0,
+  },
   studentReviews: [],
-  coverImages: {},
+  numberOfCampus: 0,
+  intakes: [{ month: '' }],
+  entryRequirement: '',
+  scholarshipRequirements: '',
+  logoImage: undefined,
+  coverImages: {
+    image1: undefined,
+    image2: undefined,
+  },
 };
 
 const UniversityForm: React.FC = () => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-  const isEditing = Boolean(id);
+  const { slug } = useParams<{ slug: string }>();
+  const isEditing = Boolean(slug);
 
   const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
+    'January',
+    'February',
+    'March',
+    'April',
     'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
-  const [formData, setFormData] = useState<ProgramFormData>(initialFormData);
+  const [formData, setFormData] = useState<UniversityFormData>(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
-  const [showCalendar, setShowCalendar] = useState(false);
   const [showRankingDropdown, setShowRankingDropdown] = useState(false);
   const rankingDropdownRef = useRef<HTMLDivElement>(null);
-  const calendarRef = useRef<HTMLDivElement>(null);
+
+  const createUniversityMutation = useCreateUniversity();
+  const updateUniversityMutation = useUpdateUniversity();
+  const uploadUniversityImagesMutation = useUploadUniversityImages();
+
+  const { data: universityData, isLoading: isUniversityLoading } =
+    useUniversityBySlug(slug || '');
 
   useEffect(() => {
-    if (isEditing && id) {
-      // Load existing program data for editing
-      // In a real app, this would fetch from an API
-      console.log('Loading program for editing:', id);
-      // setFormData(existingProgramData);
+    if (isEditing && universityData) {
+      const university = universityData.data.university as University;
+
+      setFormData({
+        universityName: university.universityName || '',
+        universityType: university.universityType || 'Public',
+        aboutUniversity: university.aboutUniversity || '',
+        englishFoundation: university.englishFoundation || '',
+        bachelor: university.bachelor || '',
+        master: university.master || '',
+        keyInformation: {
+          ranking: university.keyInformation?.ranking || '',
+          foundedYear: university.keyInformation?.foundedYear || 0,
+          location: university.keyInformation?.location || '',
+          creditTransfer:
+            university.keyInformation?.creditTransfer || 'Not Available',
+          programs: university.keyInformation?.programs || 0,
+        },
+        studentReviews: (university.studentReviews || []).map((review) => ({
+          studentName: review.studentName || '',
+          major: review.major || '',
+          review: review.review || '',
+          image: review.studentImage || undefined,
+        })),
+        numberOfCampus: university.numberOfCampus || 0,
+        intakes:
+          university.intakes?.map((intake) => {
+            return { month: intake };
+          }) || [],
+        entryRequirement: university.entryRequirement || '',
+        scholarshipRequirements: university.scholarshipRequirements || '',
+        logoImage: university.logoImage || undefined,
+        coverImages: {
+          image1: university.coverImages?.image1 || undefined,
+          image2: university.coverImages?.image2 || undefined,
+        },
+      });
     }
-  }, [isEditing, id]);
+  }, [isEditing, universityData, slug]);
 
   // Handle click outside of dropdowns
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
-      // Handle ranking dropdown
       if (
         rankingDropdownRef.current &&
         !rankingDropdownRef.current.contains(target) &&
@@ -106,26 +157,16 @@ const UniversityForm: React.FC = () => {
       ) {
         setShowRankingDropdown(false);
       }
-
-      // Handle calendar dropdown
-      if (
-        calendarRef.current &&
-        !calendarRef.current.contains(target) &&
-        showCalendar
-      ) {
-        setShowCalendar(false);
-      }
     }
 
-    // Use capture phase to ensure our handler runs first
     document.addEventListener('mousedown', handleClickOutside, true);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside, true);
     };
-  }, [showRankingDropdown, showCalendar]);
+  }, [showRankingDropdown]);
 
   const handleInputChange = (
-    field: keyof ProgramFormData,
+    field: keyof UniversityFormData,
     value: string | number | File
   ) => {
     setFormData((prev) => ({
@@ -134,21 +175,30 @@ const UniversityForm: React.FC = () => {
     }));
   };
 
-  const handleAddIntake = () => {
-    setFormData((prev) => ({
-      ...prev,
-      upcomingIntakes: [...prev.upcomingIntakes, { year: '', month: '' }],
-    }));
-  };
-
-  const handleIntakeChange = (
-    index: number,
-    field: 'year' | 'month',
-    value: string
+  const handleKeyInfoChange = (
+    field: keyof UniversityFormData['keyInformation'],
+    value: string | number
   ) => {
     setFormData((prev) => ({
       ...prev,
-      upcomingIntakes: prev.upcomingIntakes.map((intake, i) =>
+      keyInformation: {
+        ...prev.keyInformation,
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleAddIntake = () => {
+    setFormData((prev) => ({
+      ...prev,
+      intakes: [...prev.intakes, { month: '' }],
+    }));
+  };
+
+  const handleIntakeChange = (index: number, field: 'month', value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      intakes: prev.intakes.map((intake, i) =>
         i === index ? { ...intake, [field]: value } : intake
       ),
     }));
@@ -157,8 +207,39 @@ const UniversityForm: React.FC = () => {
   const handleRemoveIntake = (index: number) => {
     setFormData((prev) => ({
       ...prev,
-      upcomingIntakes: prev.upcomingIntakes.filter((_, i) => i !== index),
+      intakes: prev.intakes.filter((_, i) => i !== index),
     }));
+  };
+
+  const handleImageUpload = (
+    type: 'logoImage' | 'image1' | 'image2',
+    file: File
+  ) => {
+    if (type === 'logoImage') {
+      setFormData((prev) => ({ ...prev, logoImage: file }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        coverImages: {
+          ...prev.coverImages,
+          [type]: file,
+        },
+      }));
+    }
+  };
+
+  const handleImageRemove = (type: 'logoImage' | 'image1' | 'image2') => {
+    if (type === 'logoImage') {
+      setFormData((prev) => ({ ...prev, logoImage: undefined }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        coverImages: {
+          ...prev.coverImages,
+          [type]: undefined,
+        },
+      }));
+    }
   };
 
   const handleAddStudentReview = () => {
@@ -184,13 +265,25 @@ const UniversityForm: React.FC = () => {
     }));
   };
 
-  const handleReviewImageChange = (index: number, file: File) => {
-    setFormData((prev) => ({
-      ...prev,
-      studentReviews: prev.studentReviews.map((review, i) =>
-        i === index ? { ...review, image: file } : review
-      ),
-    }));
+  const handleReviewImageChange = async (index: number, file: File) => {
+    const formData = new FormData();
+    formData.append('studentImage', file);
+
+    try {
+      const response =
+        await uploadUniversityImagesMutation.mutateAsync(formData);
+      if (response.data?.studentImage) {
+        const imageUrl = response.data.studentImage.url;
+        setFormData((prev) => ({
+          ...prev,
+          studentReviews: prev.studentReviews.map((review, i) =>
+            i === index ? { ...review, image: imageUrl } : review
+          ),
+        }));
+      }
+    } catch (error) {
+      console.error('Error uploading student review image:', error);
+    }
   };
 
   const handleRemoveStudentReview = (index: number) => {
@@ -200,43 +293,115 @@ const UniversityForm: React.FC = () => {
     }));
   };
 
-  const handleImageUpload = (type: 'primary' | 'secondary', file: File) => {
-    setFormData((prev) => ({
-      ...prev,
-      coverImages: {
-        ...prev.coverImages,
-        [type]: file,
-      },
-    }));
-  };
-
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const formattedData = {
-        ...formData,
-        upcomingIntakes: formData.upcomingIntakes.map(
-          (intake) => `${intake.month} ${intake.year}`
-        ),
+      let logoUrl: string | undefined;
+      let coverImage1Url: string | undefined;
+      let coverImage2Url: string | undefined;
+
+      const imageFormData = new FormData();
+      let imageUploadCount: number = 0;
+
+      if (formData.logoImage instanceof File) {
+        imageFormData.append('logo', formData.logoImage);
+        imageUploadCount++;
+      }
+      if (formData.coverImages.image1 instanceof File) {
+        imageFormData.append('coverImage1', formData.coverImages.image1);
+        imageUploadCount++;
+      }
+      if (formData.coverImages.image2 instanceof File) {
+        imageFormData.append('coverImage2', formData.coverImages.image2);
+        imageUploadCount++;
+      }
+
+      if (imageUploadCount > 0) {
+        const response =
+          await uploadUniversityImagesMutation.mutateAsync(imageFormData);
+        if (response.data) {
+          if (response.data.logo) {
+            logoUrl = response.data.logo.url;
+          }
+          if (response.data.coverImage1) {
+            coverImage1Url = response.data.coverImage1.url;
+          }
+          if (response.data.coverImage2) {
+            coverImage2Url = response.data.coverImage2.url;
+          }
+        }
+      }
+
+      const logoImage =
+        logoUrl ||
+        (typeof formData.logoImage === 'string'
+          ? formData.logoImage
+          : undefined);
+      const coverImage1 =
+        coverImage1Url ||
+        (typeof formData.coverImages.image1 === 'string'
+          ? formData.coverImages.image1
+          : undefined);
+      const coverImage2 =
+        coverImage2Url ||
+        (typeof formData.coverImages.image2 === 'string'
+          ? formData.coverImages.image2
+          : undefined);
+
+      const payload: CreateUniversityPayload = {
+        universityName: formData.universityName,
+        universityType: formData.universityType,
+        aboutUniversity: formData.aboutUniversity,
+        englishFoundation: formData.englishFoundation,
+        bachelor: formData.bachelor,
+        master: formData.master,
+        keyInformation: {
+          ranking: formData.keyInformation.ranking,
+          foundedYear: Number(formData.keyInformation.foundedYear),
+          location: formData.keyInformation.location,
+          creditTransfer: formData.keyInformation.creditTransfer,
+          programs: Number(formData.keyInformation.programs),
+        },
+        numberOfCampus: Number(formData.numberOfCampus),
+        intakes: formData.intakes.map((intake) => `${intake.month}`),
+        entryRequirement: formData.entryRequirement,
+        scholarshipRequirements: formData.scholarshipRequirements,
+        logoImage: logoImage || '',
+        coverImages: {
+          image1: coverImage1 || '',
+          image2: coverImage2 || '',
+        },
+        studentReviews: formData.studentReviews.map((review) => ({
+          studentName: review.studentName,
+          major: review.major,
+          studentImage: typeof review.image === 'string' ? review.image : '',
+          review: review.review,
+        })),
+        status: 'published',
       };
 
-      // In a real app, this would submit to an API
-      console.log('Submitting program data:', formattedData);
+      if (isEditing) {
+        await updateUniversityMutation.mutateAsync({
+          id: (universityData!.data?.university as University)._id,
+          payload,
+        });
+      } else {
+        await createUniversityMutation.mutateAsync(payload);
+      }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      navigate('/admin/programs');
+      navigate('/admin/university-setup');
     } catch (error) {
-      console.error('Error submitting program:', error);
+      console.error('Error submitting university:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleCancel = () => {
-    navigate('/admin/program-setup');
+    navigate('/admin/university-setup');
   };
+
+  if (isUniversityLoading) return <div>Loading university data...</div>;
 
   return (
     <div className="min-h-screen px-6">
@@ -271,6 +436,10 @@ const UniversityForm: React.FC = () => {
               <input
                 type="number"
                 placeholder="No. of Campus"
+                value={formData.numberOfCampus || ''}
+                onChange={(e) =>
+                  handleInputChange('numberOfCampus', e.target.value)
+                }
                 className="w-full rounded-lg border border-gray-300 px-4 py-2"
               />
             </div>
@@ -279,8 +448,9 @@ const UniversityForm: React.FC = () => {
               <h2 className="text-h3 mb-3 font-semibold">Logo</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <ImageUpload
-                  image={formData.coverImages.secondary}
-                  onImageUpload={(file) => handleImageUpload('secondary', file)}
+                  image={formData.logoImage}
+                  onImageUpload={(file) => handleImageUpload('logoImage', file)}
+                  onRemove={() => handleImageRemove('logoImage')}
                 />
               </div>
             </div>
@@ -290,26 +460,30 @@ const UniversityForm: React.FC = () => {
               <h2 className="text-h3 mb-3 font-semibold">Cover Images</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <ImageUpload
-                  image={formData.coverImages.primary}
-                  onImageUpload={(file) => handleImageUpload('primary', file)}
+                  image={formData.coverImages.image1}
+                  onImageUpload={(file) => handleImageUpload('image1', file)}
+                  onRemove={() => handleImageRemove('image1')}
                 />
                 <ImageUpload
-                  image={formData.coverImages.secondary}
-                  onImageUpload={(file) => handleImageUpload('secondary', file)}
+                  image={formData.coverImages.image2}
+                  onImageUpload={(file) => handleImageUpload('image2', file)}
+                  onRemove={() => handleImageRemove('image2')}
                 />
               </div>
             </div>
 
-            {/* About Program */}
+            {/* About University */}
             <div>
               <label className="text-h3 mb-2 block font-semibold text-gray-700">
-                About Program
+                About University
               </label>
               <div className="w-full rounded-lg">
                 <TextEditor
-                  value={formData.aboutProgram}
-                  onChange={(value) => handleInputChange('aboutProgram', value)}
-                  placeholder="Description about program"
+                  value={formData.aboutUniversity}
+                  onChange={(value) =>
+                    handleInputChange('aboutUniversity', value)
+                  }
+                  placeholder="Description about university"
                   className=""
                 />
               </div>
@@ -329,18 +503,16 @@ const UniversityForm: React.FC = () => {
                     className="relative flex overflow-visible rounded-lg border border-gray-300"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {/* Custom Dropdown */}
                     <div className="relative" ref={rankingDropdownRef}>
                       <button
                         type="button"
                         onClick={(e) => {
-                          e.stopPropagation(); // Stop propagation to prevent other handlers
-                          setShowCalendar(false);
+                          e.stopPropagation();
                           setShowRankingDropdown(!showRankingDropdown);
                         }}
-                        className={`flex items-center justify-between border-0 border-r border-gray-300 px-3 py-2 focus:outline-none ${showRankingDropdown ? '' : ''}`}
+                        className={`flex items-center justify-between border-0 border-r border-gray-300 px-3 py-2 focus:outline-none`}
                       >
-                        <span>{formData.universityRankingType}</span>
+                        <span>{formData.universityType}</span>
                         {showRankingDropdown ? (
                           <CaretUp className="ml-2 h-4 w-4 text-gray-500" />
                         ) : (
@@ -351,12 +523,13 @@ const UniversityForm: React.FC = () => {
                         <div className="absolute top-full left-0 z-[100] mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg">
                           <button
                             type="button"
-                            className={`w-full px-3 py-2 text-left first:rounded-t-lg hover:bg-gray-100 ${formData.universityRankingType === 'Public' ? 'bg-gray-100 font-medium' : ''}`}
+                            className={`w-full px-3 py-2 text-left first:rounded-t-lg hover:bg-gray-100 ${
+                              formData.universityType === 'Public'
+                                ? 'bg-gray-100 font-medium'
+                                : ''
+                            }`}
                             onClick={() => {
-                              handleInputChange(
-                                'universityRankingType',
-                                'Public'
-                              );
+                              handleInputChange('universityType', 'Public');
                               setShowRankingDropdown(false);
                             }}
                           >
@@ -364,12 +537,13 @@ const UniversityForm: React.FC = () => {
                           </button>
                           <button
                             type="button"
-                            className={`w-full px-3 py-2 text-left last:rounded-b-lg hover:bg-gray-100 ${formData.universityRankingType === 'Private' ? 'bg-gray-100 font-medium' : ''}`}
+                            className={`w-full px-3 py-2 text-left last:rounded-b-lg hover:bg-gray-100 ${
+                              formData.universityType === 'Private'
+                                ? 'bg-gray-100 font-medium'
+                                : ''
+                            }`}
                             onClick={() => {
-                              handleInputChange(
-                                'universityRankingType',
-                                'Private'
-                              );
+                              handleInputChange('universityType', 'Private');
                               setShowRankingDropdown(false);
                             }}
                           >
@@ -381,19 +555,12 @@ const UniversityForm: React.FC = () => {
                     <input
                       type="text"
                       placeholder="0"
-                      value={formData.universityRanking}
-                      onClick={(e) => e.stopPropagation()} // Prevent clicks on the input from closing the dropdown
+                      value={formData.keyInformation.ranking}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={(e) => {
-                        // Only allow numbers
-                        const value = e.target.value.replace(/[^0-9]/g, '');
-                        handleInputChange('universityRanking', value);
+                        handleKeyInfoChange('ranking', e.target.value);
                       }}
                       className="w-20 border-0 px-4 py-2 focus:ring-0 focus:outline-none"
-                      style={{
-                        appearance: 'textfield',
-                        MozAppearance: 'textfield',
-                        WebkitAppearance: 'none',
-                      }}
                     />
                   </div>
                 </div>
@@ -404,6 +571,10 @@ const UniversityForm: React.FC = () => {
                   <input
                     type="number"
                     placeholder="yyyy"
+                    value={formData.keyInformation.foundedYear || ''}
+                    onChange={(e) =>
+                      handleKeyInfoChange('foundedYear', e.target.value)
+                    }
                     className="w-full rounded-lg border border-gray-300 px-3 py-2"
                   />
                 </div>
@@ -415,9 +586,9 @@ const UniversityForm: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Location"
-                    value={formData.location}
+                    value={formData.keyInformation.location}
                     onChange={(e) =>
-                      handleInputChange('location', e.target.value)
+                      handleKeyInfoChange('location', e.target.value)
                     }
                     className="w-full rounded-lg border border-gray-300 px-3 py-2"
                   />
@@ -432,9 +603,9 @@ const UniversityForm: React.FC = () => {
                       { value: 'Available', label: 'Available' },
                       { value: 'Not Available', label: 'Not Available' },
                     ]}
-                    value={formData.creditTransfer}
+                    value={formData.keyInformation.creditTransfer}
                     onChange={(value) =>
-                      handleInputChange('creditTransfer', value)
+                      handleKeyInfoChange('creditTransfer', value)
                     }
                     placeholder="Select Credit Transfer"
                   />
@@ -444,8 +615,12 @@ const UniversityForm: React.FC = () => {
                     Programs
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Programs"
+                    value={formData.keyInformation.programs || ''}
+                    onChange={(e) =>
+                      handleKeyInfoChange('programs', e.target.value)
+                    }
                     className="w-full rounded-lg border border-gray-300 px-3 py-2"
                   />
                 </div>
@@ -455,27 +630,13 @@ const UniversityForm: React.FC = () => {
             {/* Upcoming Intakes */}
             <div>
               <label className="text-h3 mb-4 block font-semibold text-gray-700">
-                Upcoming Intakes
+                Intakes
               </label>
               <div className="space-y-2">
-                {formData.upcomingIntakes.map((intake, index) => {
-                  const selectedMonths = formData.upcomingIntakes.map(
-                    (i) => i.month
-                  );
+                {formData.intakes?.map((intake, index) => {
+                  const selectedMonths = formData.intakes.map((i) => i.month);
                   return (
                     <div key={index} className="flex items-center gap-2">
-                      <label className="flex items-center text-xs text-gray-500">
-                        Year
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Year"
-                        value={intake.year}
-                        onChange={(e) =>
-                          handleIntakeChange(index, 'year', e.target.value)
-                        }
-                        className="w-24 rounded-lg border border-gray-300 px-3 py-2"
-                      />
                       <label className="flex items-center text-xs text-gray-500">
                         Month
                       </label>
@@ -494,7 +655,7 @@ const UniversityForm: React.FC = () => {
                         placeholder="Select Month"
                         className="w-34"
                       />
-                      {formData.upcomingIntakes.length > 1 && (
+                      {formData.intakes.length > 1 && (
                         <button
                           type="button"
                           onClick={() => handleRemoveIntake(index)}
@@ -515,70 +676,78 @@ const UniversityForm: React.FC = () => {
               </div>
             </div>
 
-            {/* Program Structure */}
+            {/* English Foundation */}
             <div>
               <label className="text-h3 mb-2 block font-semibold text-gray-700">
-                Program Structure
+                English Foundation
               </label>
-              <div className="mb-4">
-                <label className="text-h5 mb-1 block text-gray-500">
-                  Total Credit Requirement
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="number"
-                    placeholder="120"
-                    value={formData.totalCreditRequirement}
-                    onChange={(e) =>
-                      handleInputChange(
-                        'totalCreditRequirement',
-                        e.target.value
-                      )
-                    }
-                    className="rounded-lg border border-gray-300 px-3 py-2"
-                  />
-                  <span className="flex items-center text-sm text-gray-500">
-                    CREDITS
-                  </span>
-                </div>
-              </div>
               <div className="">
                 <TextEditor
-                  value={formData.programStructure}
+                  value={formData.englishFoundation}
                   onChange={(value) =>
-                    handleInputChange('programStructure', value)
+                    handleInputChange('englishFoundation', value)
                   }
-                  placeholder="Program structure details..."
+                  placeholder="English foundation details..."
                 />
               </div>
             </div>
 
-            {/* Undergraduate Entry Requirement */}
+            {/* Bachelor */}
             <div>
               <label className="text-h3 mb-2 block font-semibold text-gray-700">
-                Undergraduate Entry Requirement
+                Bachelor
               </label>
               <div className="">
                 <TextEditor
-                  value={formData.undergraduateEntryRequirement}
+                  value={formData.bachelor}
+                  onChange={(value) => handleInputChange('bachelor', value)}
+                  placeholder="Bachelor details..."
+                />
+              </div>
+            </div>
+
+            {/* Master */}
+            <div>
+              <label className="text-h3 mb-2 block font-semibold text-gray-700">
+                Master
+              </label>
+              <div className="">
+                <TextEditor
+                  value={formData.master}
+                  onChange={(value) => handleInputChange('master', value)}
+                  placeholder="Master details..."
+                />
+              </div>
+            </div>
+
+            {/* Entry Requirement */}
+            <div>
+              <label className="text-h3 mb-2 block font-semibold text-gray-700">
+                Entry Requirement
+              </label>
+              <div className="">
+                <TextEditor
+                  value={formData.entryRequirement || ''}
                   onChange={(value) =>
-                    handleInputChange('undergraduateEntryRequirement', value)
+                    handleInputChange('entryRequirement', value)
                   }
                   placeholder="Entry requirements..."
                 />
               </div>
             </div>
 
-            {/* Career Paths */}
+            {/* Scholarship Requirements */}
             <div>
               <label className="text-h3 mb-2 block font-semibold text-gray-700">
-                Career Paths (if any)
+                Scholarship Requirements (if any)
               </label>
               <div className="">
                 <TextEditor
-                  value={formData.careerPaths}
-                  onChange={(value) => handleInputChange('careerPaths', value)}
-                  placeholder="Career paths information..."
+                  value={formData.scholarshipRequirements || ''}
+                  onChange={(value) =>
+                    handleInputChange('scholarshipRequirements', value)
+                  }
+                  placeholder="Scholarship requirements..."
                 />
               </div>
             </div>
@@ -603,10 +772,22 @@ const UniversityForm: React.FC = () => {
             </button>
             <button
               onClick={handleSubmit}
-              disabled={isLoading}
+              disabled={
+                isLoading ||
+                createUniversityMutation.isPending ||
+                uploadUniversityImagesMutation.isPending ||
+                updateUniversityMutation.isPending
+              }
               className="bg-primary rounded-lg px-6 py-2 text-white hover:bg-red-600 disabled:opacity-50"
             >
-              {isLoading ? 'Publishing...' : 'Publish'}
+              {isLoading ||
+              createUniversityMutation.isPending ||
+              uploadUniversityImagesMutation.isPending ||
+              updateUniversityMutation.isPending
+                ? 'Processing...'
+                : isEditing
+                  ? 'Save'
+                  : 'Publish'}
             </button>
           </div>
         </div>
@@ -614,5 +795,4 @@ const UniversityForm: React.FC = () => {
     </div>
   );
 };
-
 export default UniversityForm;
