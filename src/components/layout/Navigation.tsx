@@ -135,7 +135,7 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen, onClose }) => {
                                   onClick={onClose}
                                   className={`text-h3 block rounded-lg px-4 py-1 font-semibold transition-colors ${
                                     isActiveSubItem(subItem.path)
-                                      ? 'bg-primary text-white'
+                                      ? 'bg-secondary text-primary'
                                       : 'text-text-primary hover:bg-secondary hover:text-primary'
                                   }`}
                                 >

@@ -151,7 +151,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
                           to={subItem.path}
                           className={`text-h3 block rounded-md px-4 py-2 font-medium transition-colors ${
                             isActiveSubItem(subItem.path)
-                              ? 'bg-primary text-white'
+                              ? 'bg-secondary text-primary'
                               : 'text-text-primary hover:bg-secondary hover:text-primary'
                           }`}
                           onClick={() => setExpandedServices(false)}

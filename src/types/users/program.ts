@@ -11,7 +11,7 @@ export interface ProgramListItem {
   programName: string;
   universityName: string;
   applicationDeadline: string | null;
-  universityRanking?: string | null;
+  universityRanking?: string | { type?: string; number?: number } | null;
   keyInformation?: {
     degree?: string;
     duration?: string;

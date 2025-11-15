@@ -53,6 +53,18 @@ const ApplicationDeadline: React.FC<{ deadline?: string | null }> = ({
   );
 };
 
+const formatRanking = (
+  ranking: ProgramListItem['universityRanking']
+): string | undefined => {
+  if (!ranking) return undefined;
+  if (typeof ranking === 'string') return ranking;
+  const parts: string[] = [];
+  if (typeof ranking.number === 'number') parts.push(`#${ranking.number}`);
+  if (ranking.type) parts.push(ranking.type);
+  const formatted = parts.join(' ').trim();
+  return formatted.length ? formatted : undefined;
+};
+
 const ProgramCard: React.FC<ProgramCardProps> = ({
   program,
   onApplyClick,
@@ -71,7 +83,7 @@ const ProgramCard: React.FC<ProgramCardProps> = ({
   const programInfo = [
     { label: 'Upcoming Intake', value: upcomingIntake },
     { label: 'Duration', value: duration },
-    { label: rankingLabel, value: ranking ?? undefined },
+    { label: rankingLabel, value: formatRanking(ranking) },
     { label: 'Total Tuition Fees', value: totalTuitionFees },
   ];
 

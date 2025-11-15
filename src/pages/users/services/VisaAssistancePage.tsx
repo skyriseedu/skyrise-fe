@@ -26,7 +26,7 @@ const VisaAssistancePage: React.FC = () => {
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
         >
           <div className="container mx-auto px-6 text-left lg:px-8">
-            <h1 className="text-h3 md:text-h2 lg:text-h1 font-semibold text-white">
+            <h1 className="text-h3 md:text-h2 lg:text-h2 font-semibold text-white">
               "Your dream. Our guidance. Let's build your future together!"
             </h1>
           </div>
