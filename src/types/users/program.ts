@@ -102,8 +102,8 @@ export interface CreateProgramPayload {
   };
   applicationDeadline: string;
   images: {
-    image1: string;
-    image2: string;
+    image1?: string;
+    image2?: string;
   };
   about: string;
   keyInformation: {

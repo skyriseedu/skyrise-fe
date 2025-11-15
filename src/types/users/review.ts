@@ -1,5 +1,5 @@
 export interface Review {
-  _id: string;
+  _id?: string;
   studentName: string;
   major: string;
   studentImage?: string;
