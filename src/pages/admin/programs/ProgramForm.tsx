@@ -140,7 +140,7 @@ const ProgramForm: React.FC = () => {
           (intake) => {
             const parts = intake.split(' ');
 
-            return { month: parts[0], year: parts[1] };
+            return { month: parts[0] || '', year: parts[1] || '' };
           }
         ),
 
@@ -369,9 +369,9 @@ const ProgramForm: React.FC = () => {
           location: formData.location,
           applicationFee: formData.applicationFee,
           totalTuitionFees: formData.totalTuitionFees,
-          upcomingIntake: formData.upcomingIntakes.map(
-            (intake) => `${intake.month} ${intake.year}`
-          ),
+          upcomingIntake: formData.upcomingIntakes
+            .filter((intake) => intake.month && intake.year)
+            .map((intake) => `${intake.month} ${intake.year}`),
         },
         totalCredits: parseInt(formData.totalCreditRequirement),
         creditDetails: formData.programStructure,
