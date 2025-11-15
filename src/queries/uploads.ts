@@ -21,3 +21,10 @@ export function useUploadTeamMemberImage() {
       uploadsService.uploadTeamMemberImage(payload),
   });
 }
+
+export function useUploadConsultantImage() {
+  return useMutation({
+    mutationFn: (payload: FormData) =>
+      uploadsService.uploadConsultantImage(payload),
+  });
+}

@@ -50,4 +50,19 @@ export const uploadsService = {
     );
     return response.data;
   },
+
+  async uploadConsultantImage(
+    payload: FormData
+  ): Promise<UploadTeamMemberImageResponse> {
+    const response = await apiClient.post(
+      '/cloudinary-upload/consultant-image',
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    return response.data;
+  },
 };
