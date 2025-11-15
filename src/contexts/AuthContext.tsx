@@ -137,11 +137,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(user);
       } else {
         // Refresh failed, logout user
-        logout();
+        await logout();
       }
     } catch (error) {
       console.error('Token refresh error:', error);
-      logout();
+      await logout();
     }
   };
 
