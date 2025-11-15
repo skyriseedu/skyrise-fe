@@ -40,6 +40,27 @@ const UniversityBadge: React.FC<{ university?: string }> = ({ university }) => {
   );
 };
 
+const formatApplicationDeadline = (deadline?: string | null) => {
+  if (!deadline) return undefined;
+
+  const trimmed = deadline.trim();
+  if (!trimmed) return undefined;
+
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) {
+    return trimmed;
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }).format(parsed);
+};
+
 const ApplicationDeadline: React.FC<{ deadline?: string | null }> = ({
   deadline,
 }) => {
@@ -47,7 +68,7 @@ const ApplicationDeadline: React.FC<{ deadline?: string | null }> = ({
     <p className="text-body-4 mb-6 font-semibold text-[var(--color-text-secondary)] lg:mb-4">
       Application deadline -{' '}
       <span className="font-semibold text-[var(--color-text-important)]">
-        {deadline}
+        {deadline ?? '-'}
       </span>
     </p>
   );
@@ -77,7 +98,9 @@ const ProgramCard: React.FC<ProgramCardProps> = ({
   const duration = program.keyInformation?.duration;
   const ranking = program.universityRanking;
   const totalTuitionFees = program.keyInformation?.totalTuitionFees;
-  const applicationDeadline = program.applicationDeadline;
+  const applicationDeadline = formatApplicationDeadline(
+    program.applicationDeadline
+  );
   const slug = program.slug;
   const rankingLabel = 'Thailand Ranking';
   const programInfo = [
