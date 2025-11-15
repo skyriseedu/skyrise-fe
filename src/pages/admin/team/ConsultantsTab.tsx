@@ -409,7 +409,11 @@ const ConsultantsTab = () => {
       try {
         let imageUrl = editingConsultant.image;
 
-        if (values.profilePicture) {
+        // If image was removed, set to empty string
+        if (values.imageRemoved) {
+          imageUrl = '';
+        } else if (values.profilePicture) {
+          // If new image was uploaded, upload it and get URL
           const formData = new FormData();
           formData.append('image', values.profilePicture);
           const uploadResponse =

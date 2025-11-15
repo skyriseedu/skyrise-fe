@@ -61,6 +61,7 @@ export const useBulkDeleteConsultants = () => {
     mutationFn: (ids: string[]) => consultantService.bulkDeleteConsultants(ids),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: consultantKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['allConsultantsAdmin'] });
     },
     onError: (error) => {
       console.error('Failed to bulk delete consultants:', error);
@@ -75,6 +76,7 @@ export const useCreateConsultant = () => {
     mutationFn: consultantService.createConsultant,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: consultantKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['allConsultantsAdmin'] });
     },
     onError: (error) => {
       console.error('Failed to create consultant:', error);
@@ -90,6 +92,7 @@ export const useUpdateConsultant = () => {
       consultantService.updateConsultant(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: consultantKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['allConsultantsAdmin'] });
     },
     onError: (error) => {
       console.error('Failed to update consultant:', error);
@@ -104,6 +107,7 @@ export const useUpdateConsultantPinStatus = () => {
       consultantService.updatePinStatus(id, pinned),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: consultantKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['allConsultantsAdmin'] });
     },
   });
 };

@@ -19,6 +19,7 @@ export interface AddTeamMemberFormValues {
   facebookAccount: string;
   pinned?: boolean;
   profilePicture: File | null;
+  imageRemoved?: boolean;
 }
 
 const defaultFormValues: AddTeamMemberFormValues = {
@@ -31,6 +32,7 @@ const defaultFormValues: AddTeamMemberFormValues = {
   facebookAccount: '',
   pinned: false,
   profilePicture: null,
+  imageRemoved: false,
 };
 
 export interface AddConsultantDrawerProps {
@@ -161,7 +163,11 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
   };
 
   const handleImageUpload = (file: File) => {
-    setValues((prev) => ({ ...prev, profilePicture: file }));
+    setValues((prev) => ({
+      ...prev,
+      profilePicture: file,
+      imageRemoved: false,
+    }));
     if (errors.profilePicture) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -172,7 +178,11 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
   };
 
   const handleRemoveProfilePicture = () => {
-    setValues((prev) => ({ ...prev, profilePicture: null }));
+    setValues((prev) => ({
+      ...prev,
+      profilePicture: null,
+      imageRemoved: true,
+    }));
     if (errors.profilePicture) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -214,6 +224,7 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
       facebookAccount: values.facebookAccount.trim(),
       pinned: values.pinned,
       profilePicture: values.profilePicture,
+      imageRemoved: values.imageRemoved,
     };
 
     setValues(sanitizedValues);
