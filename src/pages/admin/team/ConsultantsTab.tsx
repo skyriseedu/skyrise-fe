@@ -372,7 +372,7 @@ const ConsultantsTab = () => {
           formData.append('image', values.profilePicture);
           const uploadResponse =
             await uploadConsultantImageMutation.mutateAsync(formData);
-          imageUrl = uploadResponse?.data?.image?.url;
+          imageUrl = uploadResponse?.data?.url;
         }
 
         await createConsultantMutation.mutateAsync({
@@ -414,7 +414,7 @@ const ConsultantsTab = () => {
           formData.append('image', values.profilePicture);
           const uploadResponse =
             await uploadConsultantImageMutation.mutateAsync(formData);
-          imageUrl = uploadResponse?.data?.image?.url || imageUrl;
+          imageUrl = uploadResponse?.data?.url || imageUrl;
         }
 
         await updateConsultantMutation.mutateAsync({

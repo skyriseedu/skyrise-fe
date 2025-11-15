@@ -69,9 +69,7 @@ export const consultantService = {
   },
 
   async updatePinStatus(id: string, pinned: boolean): Promise<Consultant> {
-    const response = await apiClient.patch(`/consultants/${id}/pin`, {
-      pinned,
-    });
-    return response.data?.data ?? response.data;
+    const response = await apiClient.put(`/consultants/${id}`, { pinned });
+    return response.data;
   },
 };

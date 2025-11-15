@@ -29,7 +29,5 @@ export interface UploadUniversityImagesResponse {
 export interface UploadTeamMemberImageResponse {
   success: boolean;
   message?: string;
-  data: {
-    image: UploadedImage;
-  };
+  data: UploadedImage;
 }
