@@ -1,6 +1,8 @@
 import SearchIcon from '@/assets/search.svg?react';
 import RemoveIcon from '@/assets/bin.svg?react';
 import EditIcon from '@/assets/edit.svg?react';
+import PinIcon from '@/assets/pin.svg?react';
+import AddPinIcon from '@/assets/add-pin.svg?react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import clsx from 'clsx';
@@ -41,6 +43,7 @@ type TeamMemberRow = {
   order: number;
   createdAt?: string;
   primarySocialLink?: string;
+  pinned: boolean;
 };
 
 type TeamMemberActionDropdownProps = {
@@ -264,6 +267,7 @@ const toTeamMemberRow = (member: TeamMemberApiItem): TeamMemberRow | null => {
     order: member.order ?? 0,
     createdAt: member.createdAt,
     primarySocialLink: pickPrimarySocialLink(member),
+    pinned: member.pinned ?? false,
   };
 };
 
@@ -458,7 +462,6 @@ const SkyRiseTeamTab = () => {
             university: values.university,
             socialMediaLink: values.socialMediaLink || undefined,
             profilePicture: profilePictureUrl,
-            pinned: false,
           },
         });
 
@@ -611,6 +614,26 @@ const SkyRiseTeamTab = () => {
     setSortState(nextState);
   }, []);
 
+  const handleTogglePinnedStatus = useCallback(
+    async (member: TeamMemberRow) => {
+      if (!member.id || updateTeamMemberMutation.isPending) {
+        return;
+      }
+
+      try {
+        await updateTeamMemberMutation.mutateAsync({
+          id: member.id,
+          payload: {
+            pinned: !member.pinned,
+          },
+        });
+      } catch (error) {
+        console.error('Failed to toggle pinned status:', error);
+      }
+    },
+    [updateTeamMemberMutation]
+  );
+
   const emptyMessage = useMemo(() => {
     if (isTeamMembersLoading) {
       return 'Loading team members...';
@@ -662,6 +685,30 @@ const SkyRiseTeamTab = () => {
 
   const teamColumns: TableColumn<TeamMemberRow>[] = useMemo(
     () => [
+      {
+        key: 'pinned',
+        header: '',
+        minWidth: '3rem',
+        render: (row) => (
+          <button
+            type="button"
+            className="flex items-center justify-center"
+            onClick={(event) => {
+              event.stopPropagation();
+              handleTogglePinnedStatus(row);
+            }}
+            aria-label={row.pinned ? 'Unpin team member' : 'Pin team member'}
+            aria-pressed={row.pinned}
+            disabled={areRowActionsDisabled}
+          >
+            {row.pinned ? (
+              <AddPinIcon className="h-5 w-5 text-primary" />
+            ) : (
+              <PinIcon className="h-5 w-5 text-gray-400" />
+            )}
+          </button>
+        ),
+      },
       {
         key: 'memberName',
         header: 'Name',
@@ -742,7 +789,7 @@ const SkyRiseTeamTab = () => {
           ),
       },
     ],
-    []
+    [areRowActionsDisabled, handleTogglePinnedStatus]
   );
 
   const renderActions = useCallback(
@@ -756,8 +803,6 @@ const SkyRiseTeamTab = () => {
     ),
     [areRowActionsDisabled, handleDeleteSingleMember, handleEditAction]
   );
-  console.log(editingMember?.profilePicture)
-
   return (
     <div>
       <p className="text-h2 text-text-primary">

@@ -26,6 +26,7 @@ import AccommodationPage from './pages/users/services/AccommodationPage';
 import PreUniversityPage from './pages/users/services/PreUniversityPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import LogoutPage from './pages/auth/LogoutPage';
 import UniversitySetup from './pages/admin/universities/UniversitySetup';
 import UniversityForm from './pages/admin/universities/UniversityForm';
 
@@ -49,6 +50,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/logout" element={<LogoutPage />} />
 
             {/* Public user routes */}
             <Route path="/" element={<Layout />}>
