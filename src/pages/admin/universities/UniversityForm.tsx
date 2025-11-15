@@ -37,7 +37,7 @@ type UniversityFormData = {
   };
   studentReviews: Array<StudentReviewData>;
   numberOfCampus: number;
-  intakes: Array<{ year: string; month: string }>;
+  intakes: Array<{ month: string }>;
   entryRequirement?: string;
   scholarshipRequirements?: string;
   logoImage?: File | string;
@@ -63,7 +63,7 @@ const initialFormData: UniversityFormData = {
   },
   studentReviews: [],
   numberOfCampus: 0,
-  intakes: [{ year: '', month: '' }],
+  intakes: [{ month: '' }],
   entryRequirement: '',
   scholarshipRequirements: '',
   logoImage: undefined,
@@ -79,18 +79,18 @@ const UniversityForm: React.FC = () => {
   const isEditing = Boolean(slug);
 
   const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
+    'January',
+    'February',
+    'March',
+    'April',
     'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
   const [formData, setFormData] = useState<UniversityFormData>(initialFormData);
@@ -133,8 +133,7 @@ const UniversityForm: React.FC = () => {
         numberOfCampus: university.numberOfCampus || 0,
         intakes:
           university.intakes?.map((intake) => {
-            const parts = intake.split(' ');
-            return { month: parts[0] || '', year: parts[1] || '' };
+            return { month: intake };
           }) || [],
         entryRequirement: university.entryRequirement || '',
         scholarshipRequirements: university.scholarshipRequirements || '',
@@ -192,15 +191,11 @@ const UniversityForm: React.FC = () => {
   const handleAddIntake = () => {
     setFormData((prev) => ({
       ...prev,
-      intakes: [...prev.intakes, { year: '', month: '' }],
+      intakes: [...prev.intakes, { month: '' }],
     }));
   };
 
-  const handleIntakeChange = (
-    index: number,
-    field: 'year' | 'month',
-    value: string
-  ) => {
+  const handleIntakeChange = (index: number, field: 'month', value: string) => {
     setFormData((prev) => ({
       ...prev,
       intakes: prev.intakes.map((intake, i) =>
@@ -228,6 +223,20 @@ const UniversityForm: React.FC = () => {
         coverImages: {
           ...prev.coverImages,
           [type]: file,
+        },
+      }));
+    }
+  };
+
+  const handleImageRemove = (type: 'logoImage' | 'image1' | 'image2') => {
+    if (type === 'logoImage') {
+      setFormData((prev) => ({ ...prev, logoImage: undefined }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        coverImages: {
+          ...prev.coverImages,
+          [type]: undefined,
         },
       }));
     }
@@ -292,35 +301,52 @@ const UniversityForm: React.FC = () => {
       let coverImage2Url: string | undefined;
 
       const imageFormData = new FormData();
-      const imageUploadMap: ('logo' | 'cover1' | 'cover2')[] = [];
+      let imageUploadCount: number = 0;
 
       if (formData.logoImage instanceof File) {
-        imageFormData.append('images', formData.logoImage);
-        imageUploadMap.push('logo');
+        imageFormData.append('logo', formData.logoImage);
+        imageUploadCount++;
       }
       if (formData.coverImages.image1 instanceof File) {
-        imageFormData.append('images', formData.coverImages.image1);
-        imageUploadMap.push('cover1');
+        imageFormData.append('coverImage1', formData.coverImages.image1);
+        imageUploadCount++;
       }
       if (formData.coverImages.image2 instanceof File) {
-        imageFormData.append('images', formData.coverImages.image2);
-        imageUploadMap.push('cover2');
+        imageFormData.append('coverImage2', formData.coverImages.image2);
+        imageUploadCount++;
       }
 
-      if (imageUploadMap.length > 0) {
+      if (imageUploadCount > 0) {
         const response =
           await uploadUniversityImagesMutation.mutateAsync(imageFormData);
-        response.data.images.forEach((image, index) => {
-          const type = imageUploadMap[index];
-          if (type === 'logo') {
-            logoUrl = image.url;
-          } else if (type === 'cover1') {
-            coverImage1Url = image.url;
-          } else if (type === 'cover2') {
-            coverImage2Url = image.url;
+        if (response.data) {
+          if (response.data.logo) {
+            logoUrl = response.data.logo.url;
           }
-        });
+          if (response.data.coverImage1) {
+            coverImage1Url = response.data.coverImage1.url;
+          }
+          if (response.data.coverImage2) {
+            coverImage2Url = response.data.coverImage2.url;
+          }
+        }
       }
+
+      const logoImage =
+        logoUrl ||
+        (typeof formData.logoImage === 'string'
+          ? formData.logoImage
+          : undefined);
+      const coverImage1 =
+        coverImage1Url ||
+        (typeof formData.coverImages.image1 === 'string'
+          ? formData.coverImages.image1
+          : undefined);
+      const coverImage2 =
+        coverImage2Url ||
+        (typeof formData.coverImages.image2 === 'string'
+          ? formData.coverImages.image2
+          : undefined);
 
       const payload: CreateUniversityPayload = {
         universityName: formData.universityName,
@@ -337,25 +363,13 @@ const UniversityForm: React.FC = () => {
           programs: Number(formData.keyInformation.programs),
         },
         numberOfCampus: Number(formData.numberOfCampus),
-        intakes: formData.intakes.map(
-          (intake) => `${intake.month} ${intake.year}`
-        ),
+        intakes: formData.intakes.map((intake) => `${intake.month}`),
         entryRequirement: formData.entryRequirement,
         scholarshipRequirements: formData.scholarshipRequirements,
-        logoImage:
-          logoUrl ||
-          (typeof formData.logoImage === 'string' ? formData.logoImage : ''),
+        ...(logoImage && { logoImage }),
         coverImages: {
-          image1:
-            coverImage1Url ||
-            (typeof formData.coverImages.image1 === 'string'
-              ? formData.coverImages.image1
-              : ''),
-          image2:
-            coverImage2Url ||
-            (typeof formData.coverImages.image2 === 'string'
-              ? formData.coverImages.image2
-              : ''),
+          ...(coverImage1 && { image1: coverImage1 }),
+          ...(coverImage2 && { image2: coverImage2 }),
         },
         studentReviews: formData.studentReviews.map((review) => ({
           studentName: review.studentName,
@@ -368,7 +382,7 @@ const UniversityForm: React.FC = () => {
 
       if (isEditing) {
         await updateUniversityMutation.mutateAsync({
-          id: (universityData!.data as University)._id,
+          id: (universityData!.data?.university as University)._id,
           payload,
         });
       } else {
@@ -436,6 +450,7 @@ const UniversityForm: React.FC = () => {
                 <ImageUpload
                   image={formData.logoImage}
                   onImageUpload={(file) => handleImageUpload('logoImage', file)}
+                  onRemove={() => handleImageRemove('logoImage')}
                 />
               </div>
             </div>
@@ -447,10 +462,12 @@ const UniversityForm: React.FC = () => {
                 <ImageUpload
                   image={formData.coverImages.image1}
                   onImageUpload={(file) => handleImageUpload('image1', file)}
+                  onRemove={() => handleImageRemove('image1')}
                 />
                 <ImageUpload
                   image={formData.coverImages.image2}
                   onImageUpload={(file) => handleImageUpload('image2', file)}
+                  onRemove={() => handleImageRemove('image2')}
                 />
               </div>
             </div>
@@ -613,25 +630,13 @@ const UniversityForm: React.FC = () => {
             {/* Upcoming Intakes */}
             <div>
               <label className="text-h3 mb-4 block font-semibold text-gray-700">
-                Upcoming Intakes
+                Intakes
               </label>
               <div className="space-y-2">
                 {formData.intakes?.map((intake, index) => {
                   const selectedMonths = formData.intakes.map((i) => i.month);
                   return (
                     <div key={index} className="flex items-center gap-2">
-                      <label className="flex items-center text-xs text-gray-500">
-                        Year
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Year"
-                        value={intake.year}
-                        onChange={(e) =>
-                          handleIntakeChange(index, 'year', e.target.value)
-                        }
-                        className="w-24 rounded-lg border border-gray-300 px-3 py-2"
-                      />
                       <label className="flex items-center text-xs text-gray-500">
                         Month
                       </label>
@@ -790,5 +795,4 @@ const UniversityForm: React.FC = () => {
     </div>
   );
 };
-
 export default UniversityForm;

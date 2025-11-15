@@ -92,8 +92,8 @@ export interface SingleUniversityResponse {
 
 export interface CreateUniversityPayload {
   coverImages: {
-    image1: string;
-    image2: string;
+    image1?: string;
+    image2?: string;
   };
   applicationFee?: {
     amount: number;
@@ -101,7 +101,7 @@ export interface CreateUniversityPayload {
   };
   universityName: string;
   universityType: 'Public' | 'Private';
-  logoImage: string;
+  logoImage?: string;
   aboutUniversity: string;
   englishFoundation: string;
   bachelor: string;

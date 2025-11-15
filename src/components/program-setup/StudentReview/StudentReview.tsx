@@ -116,9 +116,9 @@ const StudentReview: React.FC<StudentReviewProps> = ({
                     </label>
                     {review.image && (
                       <div className="flex items-center gap-2">
-                        <span>
+                        <span className="truncate text-xs text-gray-600">
                           {typeof review.image === 'string'
-                            ? review.image
+                            ? review.image.split('/').pop() || review.image
                             : review.image.name}
                         </span>
                       </div>

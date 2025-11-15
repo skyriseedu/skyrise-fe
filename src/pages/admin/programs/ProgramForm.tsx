@@ -299,6 +299,16 @@ const ProgramForm: React.FC = () => {
     }));
   };
 
+  const handleImageRemove = (type: 'primary' | 'secondary') => {
+    setFormData((prev) => ({
+      ...prev,
+      coverImages: {
+        ...prev.coverImages,
+        [type]: undefined,
+      },
+    }));
+  };
+
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
@@ -328,6 +338,18 @@ const ProgramForm: React.FC = () => {
         }
       }
 
+      const primaryImageUrl = primaryImage
+        ? primaryImage.url
+        : typeof formData.coverImages.primary === 'string'
+          ? formData.coverImages.primary
+          : undefined;
+
+      const secondaryImageUrl = secondaryImage
+        ? secondaryImage.url
+        : typeof formData.coverImages.secondary === 'string'
+          ? formData.coverImages.secondary
+          : undefined;
+
       const payload: CreateProgramPayload = {
         programName: formData.programName,
         universityName: formData.universityName,
@@ -337,17 +359,8 @@ const ProgramForm: React.FC = () => {
         },
         applicationDeadline: formData.applicationDeadline,
         images: {
-          // Use new uploaded image URL if available, otherwise keep existing URL
-          image1: primaryImage
-            ? primaryImage.url
-            : typeof formData.coverImages.primary === 'string'
-              ? formData.coverImages.primary
-              : '',
-          image2: secondaryImage
-            ? secondaryImage.url
-            : typeof formData.coverImages.secondary === 'string'
-              ? formData.coverImages.secondary
-              : '',
+          ...(primaryImageUrl && { image1: primaryImageUrl }),
+          ...(secondaryImageUrl && { image2: secondaryImageUrl }),
         },
         about: formData.aboutProgram,
         keyInformation: {
@@ -585,6 +598,7 @@ const ProgramForm: React.FC = () => {
                   <ImageUpload
                     image={formData.coverImages.primary}
                     onImageUpload={(file) => handleImageUpload('primary', file)}
+                    onRemove={() => handleImageRemove('primary')}
                   />
                 </div>
                 <div>
@@ -596,6 +610,7 @@ const ProgramForm: React.FC = () => {
                     onImageUpload={(file) =>
                       handleImageUpload('secondary', file)
                     }
+                    onRemove={() => handleImageRemove('secondary')}
                   />
                 </div>
               </div>

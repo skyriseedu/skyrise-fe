@@ -156,9 +156,14 @@ const AdminLayout: React.FC = () => {
         pattern: /^\/admin\/program-setup\/edit\/.*/,
         backTo: '/admin/program-setup',
       },
-      // Add more back arrow routes here as needed
-      // { pattern: '/admin/university-setup/create', backTo: '/admin/university-setup', label: 'UNIVERSITY SETUP' },
-      // { pattern: /^\/admin\/university-setup\/edit\/.*/, backTo: '/admin/university-setup', label: 'UNIVERSITY SETUP' },
+      {
+        pattern: '/admin/university-setup/create',
+        backTo: '/admin/university-setup',
+      },
+      {
+        pattern: /^\/admin\/university-setup\/edit\/.*/,
+        backTo: '/admin/university-setup',
+      },
     ];
 
     // Check for back arrow route matches
