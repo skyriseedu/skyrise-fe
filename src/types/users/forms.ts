@@ -33,6 +33,46 @@ export interface ApplyConsultantFormValues {
   specialization?: string;
 }
 
+export type ApplicationRecord = Record<string, unknown>;
+
+export interface ApplicationsResponse {
+  success?: boolean;
+  message?: string;
+  total?: number;
+  count?: number;
+  pagination?: {
+    page: number;
+    pages: number;
+  };
+  data?: ApplicationRecord[];
+}
+
+export interface ConsultantApplication {
+  id?: string;
+  _id?: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  reason?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ConsultantApplicationsResponse {
+  success?: boolean;
+  message?: string;
+  total?: number;
+  count?: number;
+  data?:
+    | ConsultantApplication[]
+    | {
+        applications?: ConsultantApplication[];
+        consultantApplications?: ConsultantApplication[];
+      };
+  consultantApplications?: ConsultantApplication[];
+  applications?: ConsultantApplication[];
+}
+
 export interface FormSubmissionResponse {
   id: string;
   message: string;

@@ -241,7 +241,8 @@ const formatDateValueForForm = (value?: string): string => {
     const day = Number(match[1]);
     const month = Number(match[3]) - 1;
     const rawYear = match[4];
-    const year = rawYear.length === 2 ? Number(`20${rawYear}`) : Number(rawYear);
+    const year =
+      rawYear.length === 2 ? Number(`20${rawYear}`) : Number(rawYear);
     const manualDate = new Date(Date.UTC(year, month, day));
     if (!Number.isNaN(manualDate.getTime())) {
       return manualDate.toISOString();
@@ -455,7 +456,9 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
                         onClick={() => handleSelect(status)}
                         className={clsx(
                           'flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm transition hover:bg-gray-100',
-                          isSelected ? 'bg-gray-100 font-semibold' : 'font-medium'
+                          isSelected
+                            ? 'bg-gray-100 font-semibold'
+                            : 'font-medium'
                         )}
                       >
                         <span
@@ -468,7 +471,9 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
                             className={clsx('h-5 w-5', visuals.iconClassName)}
                           />
                         </span>
-                        <span className={clsx('text-base', visuals.textClassName)}>
+                        <span
+                          className={clsx('text-base', visuals.textClassName)}
+                        >
                           {status}
                         </span>
                       </button>
@@ -747,10 +752,14 @@ const PlatformDropdown: React.FC<platformDropdownProps> = ({
                         onClick={() => handleSelect(status)}
                         className={clsx(
                           'flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm transition hover:bg-gray-100',
-                          isSelected ? 'bg-gray-100 font-semibold' : 'font-medium'
+                          isSelected
+                            ? 'bg-gray-100 font-semibold'
+                            : 'font-medium'
                         )}
                       >
-                        <span className={clsx('text-base', visuals.textClassName)}>
+                        <span
+                          className={clsx('text-base', visuals.textClassName)}
+                        >
                           {status}
                         </span>
                       </button>
@@ -881,13 +890,17 @@ const transformConsultationToBookingRecord = (
     bookingTimeSchedule:
       pickString('bookingTimeSchedule') ?? consultation.time ?? 'N/A',
     bookingDateSchedule:
-      pickString('bookingDateSchedule') ?? pickString('bookingDate') ?? consultation.date,
+      pickString('bookingDateSchedule') ??
+      pickString('bookingDate') ??
+      consultation.date,
     location: pickString('location') ?? 'N/A',
     question: pickString('question') ?? consultation.notes ?? 'N/A',
   };
 };
 
-const transformApplicationToBookingRecord = (application: any): BookingRecord => {
+const transformApplicationToBookingRecord = (
+  application: any
+): BookingRecord => {
   const pick = (k: string) => {
     const v = application?.[k];
     if (typeof v === 'string') return v;
@@ -897,14 +910,34 @@ const transformApplicationToBookingRecord = (application: any): BookingRecord =>
 
   const resolvedId = pick('id') ?? pick('_id') ?? '';
 
-  const rawPlatform = (pick('submittedPlatform') || pick('platform') || '').toLowerCase();
-  const submittedPlatform = rawPlatform.includes('social') ? 'Social Media' : 'Website';
+  const rawPlatform = (
+    pick('submittedPlatform') ||
+    pick('platform') ||
+    ''
+  ).toLowerCase();
+  const submittedPlatform = rawPlatform.includes('social')
+    ? 'Social Media'
+    : 'Website';
 
-  const rawStatus = (pick('status') || pick('state') || '').toString().toLowerCase();
+  const rawStatus = (pick('status') || pick('state') || '')
+    .toString()
+    .toLowerCase();
   const mapRawStatusToBookingStatus = (s: string): BookingStatus => {
     if (!s) return 'Scheduled';
-    if (s.includes('complete') || s.includes('approved') || s.includes('accepted') || s.includes('done')) return 'Completed';
-    if (s.includes('cancel') || s.includes('reject') || s.includes('rejected') || s.includes('declined')) return 'Cancelled';
+    if (
+      s.includes('complete') ||
+      s.includes('approved') ||
+      s.includes('accepted') ||
+      s.includes('done')
+    )
+      return 'Completed';
+    if (
+      s.includes('cancel') ||
+      s.includes('reject') ||
+      s.includes('rejected') ||
+      s.includes('declined')
+    )
+      return 'Cancelled';
     return 'Scheduled';
   };
 
@@ -914,13 +947,20 @@ const transformApplicationToBookingRecord = (application: any): BookingRecord =>
     id: resolvedId,
     status: normalizedStatus,
     submittedPlatform: submittedPlatform as PlatformStatus,
-    submittedDate: pick('createdAt') ?? pick('created_at') ?? pick('submittedAt') ?? '',
-    name: pick('name') ?? pick('fullName') ?? (application.user?.name ?? 'N/A'),
-    email: pick('email') ?? (application.user?.email ?? 'N/A'),
-    phoneNumber: pick('phone') ?? pick('phoneNumber') ?? (application.user?.phone ?? 'N/A'),
+    submittedDate:
+      pick('createdAt') ?? pick('created_at') ?? pick('submittedAt') ?? '',
+    name: pick('name') ?? pick('fullName') ?? application.user?.name ?? 'N/A',
+    email: pick('email') ?? application.user?.email ?? 'N/A',
+    phoneNumber:
+      pick('phone') ?? pick('phoneNumber') ?? application.user?.phone ?? 'N/A',
     facebookAccount: pick('facebookAccount'),
-    bookingTimeSchedule: pick('preferredTime') ?? pick('bookingTimeSchedule') ?? 'N/A',
-    bookingDateSchedule: pick('preferredDate') ?? pick('bookingDateSchedule') ?? pick('createdAt') ?? '',
+    bookingTimeSchedule:
+      pick('preferredTime') ?? pick('bookingTimeSchedule') ?? 'N/A',
+    bookingDateSchedule:
+      pick('preferredDate') ??
+      pick('bookingDateSchedule') ??
+      pick('createdAt') ??
+      '',
     location: pick('location') ?? 'N/A',
     question: pick('message') ?? pick('question') ?? 'N/A',
   };
@@ -938,7 +978,6 @@ const BookingsPage: React.FC = () => {
   >(() => new Set());
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [showStatusFilter, setShowStatusFilter] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus | 'All'>(
     'All'
@@ -949,12 +988,10 @@ const BookingsPage: React.FC = () => {
   const [applicationStatusOverrides, setApplicationStatusOverrides] = useState<
     Record<string, BookingStatus>
   >({});
-  const [applicationPlatformOverrides, setApplicationPlatformOverrides] = useState<
-    Record<string, PlatformStatus>
-  >({});
-  const [applicationFacebookOverrides, setApplicationFacebookOverrides] = useState<
-    Record<string, string>
-  >({});
+  const [applicationPlatformOverrides, setApplicationPlatformOverrides] =
+    useState<Record<string, PlatformStatus>>({});
+  const [applicationFacebookOverrides, setApplicationFacebookOverrides] =
+    useState<Record<string, string>>({});
   const [platformOverrides, setPlatformOverrides] = useState<
     Record<string, PlatformStatus>
   >({});
@@ -970,17 +1007,13 @@ const BookingsPage: React.FC = () => {
     isError,
   } = useConsultations({
     status: statusQueryParam,
-    page: currentPage,
-    limit: 10,
   });
 
   const {
     data: applicationsData,
     isLoading: isApplicationsLoading,
     isError: isApplicationsError,
-  } = useApplications({ page: currentPage, limit: 10 });
-
-  
+  } = useApplications();
 
   const createConsultationMutation = useCreateConsultation();
   const createApplicationMutation = useCreateApplicationBooking();
@@ -1640,7 +1673,6 @@ const BookingsPage: React.FC = () => {
   useEffect(() => {
     setSelectedRowKeys(new Set());
     setSelectedConsultationIds(new Set());
-    setCurrentPage(1);
   }, [selectedStatus]);
 
   useEffect(() => {
@@ -1755,11 +1787,11 @@ const BookingsPage: React.FC = () => {
         deleteConsultationMutation.isPending
       : bulkDeleteApplicationsMutation.isPending;
 
-  const [editingInitialValues, setEditingInitialValues] = useState<
-    AddBookingFormValues | null
-  >(null);
+  const [editingInitialValues, setEditingInitialValues] =
+    useState<AddBookingFormValues | null>(null);
   const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
-  const [editingBookingType, setEditingBookingType] = useState<BookingTab>('consultation');
+  const [editingBookingType, setEditingBookingType] =
+    useState<BookingTab>('consultation');
   const [isEditRemovePending, setIsEditRemovePending] = useState(false);
 
   const defaultEditInitialValues: AddBookingFormValues = {
@@ -1778,7 +1810,10 @@ const BookingsPage: React.FC = () => {
 
   const handleEditClick = (booking: BookingRecord) => {
     if (!booking.id) {
-      console.warn('Cannot edit consultation booking without a valid id.', booking);
+      console.warn(
+        'Cannot edit consultation booking without a valid id.',
+        booking
+      );
       return;
     }
 
@@ -1931,7 +1966,6 @@ const BookingsPage: React.FC = () => {
   const handleTabChange = (tabKey: BookingTab) => {
     setActiveTab(tabKey);
     setSearchTerm('');
-    setCurrentPage(1);
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1967,8 +2001,6 @@ const BookingsPage: React.FC = () => {
         : searchTerm
           ? 'No bookings match your search criteria.'
           : `No ${selectedStatusesLabel} available.`;
-
-  const pagination = activeTab === 'consultation' ? consultationsData?.pagination : applicationsData?.pagination;
 
   const handleOpenAddDrawer = () => {
     setIsAddDrawerOpen(true);
@@ -2042,21 +2074,21 @@ const BookingsPage: React.FC = () => {
     };
   };
 
-const mapPlatformToDisplay = (platform: string): PlatformStatus => {
-  const normalized = platform.trim().toLowerCase();
-  if (normalized === 'social media' || normalized === 'social') {
-    return 'Social Media';
-  }
-  return 'Website';
-};
+  const mapPlatformToDisplay = (platform: string): PlatformStatus => {
+    const normalized = platform.trim().toLowerCase();
+    if (normalized === 'social media' || normalized === 'social') {
+      return 'Social Media';
+    }
+    return 'Website';
+  };
 
-const mapPlatformToApi = (platform: PlatformStatus | string): string => {
-  const normalized = platform.toString().trim().toLowerCase();
-  if (normalized === 'social media' || normalized === 'social') {
-    return 'social media';
-  }
-  return 'website';
-};
+  const mapPlatformToApi = (platform: PlatformStatus | string): string => {
+    const normalized = platform.toString().trim().toLowerCase();
+    if (normalized === 'social media' || normalized === 'social') {
+      return 'social media';
+    }
+    return 'website';
+  };
 
   const handleAddConsultationBooking = async (values: AddBookingFormValues) => {
     try {
@@ -2076,7 +2108,9 @@ const mapPlatformToApi = (platform: PlatformStatus | string): string => {
       console.error(`Error: ${errorMessage}`);
     }
   };
-  const handleAddAdmissionApplication = async (values: AddBookingFormValues) => {
+  const handleAddAdmissionApplication = async (
+    values: AddBookingFormValues
+  ) => {
     try {
       const applicationPayload = buildConsultationPayload(values);
 
@@ -2162,14 +2196,16 @@ const mapPlatformToApi = (platform: PlatformStatus | string): string => {
     />
   );
 
-  const isActiveLoading = activeTab === 'consultation' ? isLoading : isApplicationsLoading;
-  const isActiveError = activeTab === 'consultation' ? isError : isApplicationsError;
+  const isActiveLoading =
+    activeTab === 'consultation' ? isLoading : isApplicationsLoading;
+  const isActiveError =
+    activeTab === 'consultation' ? isError : isApplicationsError;
 
   if (isActiveLoading) {
     return (
       <div className="space-y-8 text-gray-700">
-        <section className="space-y-6 mt-6">
-          <div className="flex flex-wrapitems-center gap-6 pb-3">
+        <section className="mt-6 space-y-6">
+          <div className="flex-wrapitems-center flex gap-6 pb-3">
             {tabs?.map((tab) => {
               const isActive = activeTab === tab.key;
               return (
@@ -2206,7 +2242,7 @@ const mapPlatformToApi = (platform: PlatformStatus | string): string => {
   if (isActiveError) {
     return (
       <div className="space-y-8 text-gray-700">
-        <section className="space-y-6 mt-6">
+        <section className="mt-6 space-y-6">
           <div className="flex flex-wrap items-center gap-6 pb-3">
             {tabs?.map((tab) => {
               const isActive = activeTab === tab.key;
@@ -2263,7 +2299,7 @@ const mapPlatformToApi = (platform: PlatformStatus | string): string => {
 
   return (
     <div className="space-y-8 text-gray-700">
-      <section className="space-y-6 mt-6">
+      <section className="mt-6 space-y-6">
         <div className="flex flex-wrap items-center gap-6 pb-3">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.key;
@@ -2285,12 +2321,16 @@ const mapPlatformToApi = (platform: PlatformStatus | string): string => {
           })}
         </div>
 
-          <div className="flex flex-row gap-3">
+        <div className="flex flex-row gap-3">
           <p className="text-h2 text-text-primary">
-            {activeTab === 'consultation' ? 'Total Consultation Booking' : 'Total Admission Applications'}
+            {activeTab === 'consultation'
+              ? 'Total Consultation Booking'
+              : 'Total Admission Applications'}
           </p>
           <p className="text-h2 text-text-primary font-semibold">
-            {activeTab === 'consultation' ? (consultationsData?.total || 0) : (applicationsData?.total || 0)}
+            {activeTab === 'consultation'
+              ? consultationsData?.total || 0
+              : applicationsData?.total || 0}
           </p>
         </div>
 
@@ -2385,8 +2425,8 @@ const mapPlatformToApi = (platform: PlatformStatus | string): string => {
                   ? 'Creating...'
                   : '+ Consultation Record'
                 : createApplicationMutation.isPending
-                ? 'Submitting...'
-                : '+ Admission Applicant Record'}
+                  ? 'Submitting...'
+                  : '+ Admission Applicant Record'}
             </Button>
           </div>
         </div>
@@ -2401,95 +2441,33 @@ const mapPlatformToApi = (platform: PlatformStatus | string): string => {
           isRowSelected={(row, index) =>
             selectedRowKeys.has(getRowKey(row, index))
           }
-        onSelectRow={handleSelectRow}
-        sortState={sortState}
-        renderActions={renderActions}
-        onSortChange={handleSortChange}
-        emptyMessage={emptyMessage}
-        maxBodyHeight={BOOKING_TABLE_MAX_BODY_HEIGHT}
-        className="overflow-visible"
-      />
-
-        {/* Pagination Controls */}
-        {pagination && pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-            <div className="flex flex-1 justify-between sm:hidden">
-              <button
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage <= 1}
-                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Previous
-              </button>
-              <button
-                onClick={() =>
-                  setCurrentPage(
-                    Math.min(pagination.totalPages, currentPage + 1)
-                  )
-                }
-                disabled={currentPage >= pagination.totalPages}
-                className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Next
-              </button>
-            </div>
-            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Showing{' '}
-                  <span className="font-medium">
-                    {(currentPage - 1) * 10 + 1}
-                  </span>{' '}
-                  to{' '}
-                  <span className="font-medium">
-                    {Math.min(currentPage * 10, pagination.total)}
-                  </span>{' '}
-                  of <span className="font-medium">{pagination.total}</span>{' '}
-                  results
-                </p>
-              </div>
-              <div>
-                <nav
-                  className="inline-flex -space-x-px rounded-md shadow-sm"
-                  aria-label="Pagination"
-                >
-                  <button
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage <= 1}
-                    className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-                  <span className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700">
-                    Page {currentPage} of {pagination.totalPages}
-                  </span>
-                  <button
-                    onClick={() =>
-                      setCurrentPage(
-                        Math.min(pagination.totalPages, currentPage + 1)
-                      )
-                    }
-                    disabled={currentPage >= pagination.totalPages}
-                    className="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </nav>
-              </div>
-            </div>
-          </div>
-        )}
+          onSelectRow={handleSelectRow}
+          sortState={sortState}
+          renderActions={renderActions}
+          onSortChange={handleSortChange}
+          emptyMessage={emptyMessage}
+          maxBodyHeight={BOOKING_TABLE_MAX_BODY_HEIGHT}
+          className="overflow-visible"
+        />
       </section>
 
       <AddBookingDrawer
         open={isAddDrawerOpen}
         onClose={handleCloseAddDrawer}
-        onSubmit={activeTab === 'consultation' ? handleAddConsultationBooking : handleAddAdmissionApplication}
-        title={activeTab === 'consultation' ? 'Add Consultation Booking' : 'Add Admission Application Booking'}
+        onSubmit={
+          activeTab === 'consultation'
+            ? handleAddConsultationBooking
+            : handleAddAdmissionApplication
+        }
+        title={
+          activeTab === 'consultation'
+            ? 'Add Consultation Booking'
+            : 'Add Admission Application Booking'
+        }
         submitLabel="Add"
       />
 
-      <EditBookingDrawer 
+      <EditBookingDrawer
         open={isEditDrawerOpen}
         onClose={handleCloseEditDrawer}
         onSubmit={handleEditBooking}
