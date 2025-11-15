@@ -1,41 +1,38 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import CloseIcon from '@/assets/close.svg?react';
 import Button from '@/components/common/Button';
-import GalleryAdd from '@/assets/gallery-add.svg?react';
-import CaretDownIcon from '@/assets/caret-down.svg?react';
+import CaretDown from '@/assets/caret-down.svg?react';
+import CaretUp from '@/assets/caret-up.svg?react';
+import ImageUpload from '@/components/program-setup/ImageUpload';
 
 export interface AddTeamMemberFormValues {
-  memberName: string;
-  role: string;
+  consultantName: string;
   major: string;
   university: string;
   email: string;
   countryDialCode: string;
   phoneNumber: string;
-  socialMediaLink: string;
+  facebookAccount: string;
+  pinned?: boolean;
   profilePicture: File | null;
+  imageRemoved?: boolean;
 }
 
 const defaultFormValues: AddTeamMemberFormValues = {
-  memberName: '',
-  role: '',
+  consultantName: '',
   major: '',
   university: '',
   email: '',
   countryDialCode: '+95',
   phoneNumber: '',
-  socialMediaLink: '',
+  facebookAccount: '',
+  pinned: false,
   profilePicture: null,
+  imageRemoved: false,
 };
 
 export interface AddConsultantDrawerProps {
@@ -82,7 +79,7 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
   onSubmit,
   initialValues,
   initialProfilePictureUrl,
-  title = 'Add Team Member',
+  title = 'Add Consultant',
   submitLabel = 'Add',
   isSubmitting = false,
   secondaryAction,
@@ -95,26 +92,11 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
   const [values, setValues] =
     useState<AddTeamMemberFormValues>(mergedInitialValues);
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [profilePreview, setProfilePreview] = useState<string | null>(null);
-  const profilePreviewRef = useRef<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const countryCodeDropdownRef = useRef<HTMLDivElement | null>(null);
-  const [isCountryCodeMenuOpen, setIsCountryCodeMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [phoneInput, setPhoneInput] = useState<string>('');
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string>('+95');
 
-  const updateProfilePreview = useCallback((file: File | null) => {
-    if (profilePreviewRef.current) {
-      URL.revokeObjectURL(profilePreviewRef.current);
-      profilePreviewRef.current = null;
-    }
-
-    if (file) {
-      const url = URL.createObjectURL(file);
-      profilePreviewRef.current = url;
-      setProfilePreview(url);
-    } else {
-      setProfilePreview(null);
-    }
-  }, []);
+  const countryCodeOptions = ['+95', '+66'];
 
   useEffect(() => {
     if (!open) {
@@ -124,22 +106,13 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
     setValues(mergedInitialValues);
     setErrors({});
 
-    if (mergedInitialValues.profilePicture) {
-      updateProfilePreview(mergedInitialValues.profilePicture);
-      return;
-    }
+    // Set country code from initial values or default to +95
+    const countryCode = mergedInitialValues.countryDialCode || '+95';
+    setSelectedCountryCode(countryCode);
 
-    updateProfilePreview(null);
-
-    if (initialProfilePictureUrl) {
-      setProfilePreview(initialProfilePictureUrl);
-    }
-  }, [
-    open,
-    mergedInitialValues,
-    updateProfilePreview,
-    initialProfilePictureUrl,
-  ]);
+    // Set phone input (should already be just the number part)
+    setPhoneInput(mergedInitialValues.phoneNumber || '');
+  }, [open, mergedInitialValues]);
 
   useEffect(() => {
     if (!open) return;
@@ -169,12 +142,6 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
     };
   }, [open]);
 
-  useEffect(() => {
-    return () => {
-      updateProfilePreview(null);
-    };
-  }, [updateProfilePreview]);
-
   const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
       onClose();
@@ -195,11 +162,12 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] ?? null;
-    setValues((prev) => ({ ...prev, profilePicture: file }));
-    updateProfilePreview(file);
-
+  const handleImageUpload = (file: File) => {
+    setValues((prev) => ({
+      ...prev,
+      profilePicture: file,
+      imageRemoved: false,
+    }));
     if (errors.profilePicture) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -209,37 +177,26 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (!isCountryCodeMenuOpen) {
-      return undefined;
-    }
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (!countryCodeDropdownRef.current) return;
-      if (!countryCodeDropdownRef.current.contains(event.target as Node)) {
-        setIsCountryCodeMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isCountryCodeMenuOpen]);
-
   const handleRemoveProfilePicture = () => {
-    setValues((prev) => ({ ...prev, profilePicture: null }));
-    updateProfilePreview(null);
+    setValues((prev) => ({
+      ...prev,
+      profilePicture: null,
+      imageRemoved: true,
+    }));
+    if (errors.profilePicture) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next.profilePicture;
+        return next;
+      });
+    }
   };
 
   const validate = (): FieldErrors => {
     const newErrors: FieldErrors = {};
 
-    if (!values.memberName.trim()) {
-      newErrors.memberName = 'Member name is required';
-    }
-    if (!values.role.trim()) {
-      newErrors.role = 'Role is required';
+    if (!values.consultantName.trim()) {
+      newErrors.consultantName = 'Consultant name is required';
     }
     if (!values.email.trim()) {
       newErrors.email = 'Email is required';
@@ -247,12 +204,6 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
 
     return newErrors;
   };
-
-  const countryDialCodeOptions = [
-    { code: '+95', label: '+95' },
-    { code: '+66', label: '+66' },
-  ];
-
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -264,15 +215,16 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
     }
 
     const sanitizedValues: AddTeamMemberFormValues = {
-      memberName: values.memberName.trim(),
-      role: values.role.trim(),
+      consultantName: values.consultantName.trim(),
       major: values.major.trim(),
       university: values.university.trim(),
       email: values.email.trim(),
       countryDialCode: values.countryDialCode.trim() || '+95',
       phoneNumber: values.phoneNumber.trim(),
-      socialMediaLink: values.socialMediaLink.trim(),
+      facebookAccount: values.facebookAccount.trim(),
+      pinned: values.pinned,
       profilePicture: values.profilePicture,
+      imageRemoved: values.imageRemoved,
     };
 
     setValues(sanitizedValues);
@@ -344,47 +296,66 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
                       htmlFor="team-member-name"
                       className="text-sm font-medium text-gray-700"
                     >
-                      Member Name
+                      Consultant Name
                     </label>
                     <input
                       id="team-member-name"
                       type="text"
-                      value={values.memberName}
+                      value={values.consultantName}
                       onChange={(event) =>
-                        handleFieldChange('memberName', event.target.value)
+                        handleFieldChange('consultantName', event.target.value)
                       }
-                      placeholder="Enter member name"
-                      className={inputClassName(Boolean(errors.memberName))}
-                      aria-invalid={Boolean(errors.memberName)}
+                      placeholder="Enter consultant name"
+                      className={inputClassName(Boolean(errors.consultantName))}
+                      aria-invalid={Boolean(errors.consultantName)}
                     />
-                    {errors.memberName ? (
+                    {errors.consultantName ? (
                       <p className="text-sm text-red-500">
-                        {errors.memberName}
+                        {errors.consultantName}
                       </p>
                     ) : null}
                   </div>
 
                   <div className="space-y-2">
                     <label
-                      htmlFor="team-member-role"
+                      htmlFor="team-member-major"
                       className="text-sm font-medium text-gray-700"
                     >
-                      Role
+                      Major (optional)
                     </label>
                     <input
-                      id="team-member-role"
+                      id="team-member-major"
                       type="text"
-                      value={values.role}
+                      value={values.major}
                       onChange={(event) =>
-                        handleFieldChange('role', event.target.value)
+                        handleFieldChange('major', event.target.value)
                       }
-                      placeholder="Enter role"
-                      className={inputClassName(Boolean(errors.role))}
-                      aria-invalid={Boolean(errors.role)}
+                      placeholder="Enter major"
+                      className={inputClassName(Boolean(errors.major))}
+                      aria-invalid={Boolean(errors.major)}
                     />
-                    {errors.role ? (
-                      <p className="text-sm text-red-500">{errors.role}</p>
+                    {errors.major ? (
+                      <p className="text-sm text-red-500">{errors.major}</p>
                     ) : null}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="team-member-university"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      University(optional)
+                    </label>
+                    <input
+                      id="team-member-university"
+                      type="text"
+                      value={values.university}
+                      onChange={(event) =>
+                        handleFieldChange('university', event.target.value)
+                      }
+                      placeholder="Enter university"
+                      className={inputClassName()}
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -411,119 +382,65 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label
-                      htmlFor="team-member-major"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Major <span className="text-gray-400">(optional)</span>
-                    </label>
-                    <input
-                      id="team-member-major"
-                      type="text"
-                      value={values.major}
-                      onChange={(event) =>
-                        handleFieldChange('major', event.target.value)
-                      }
-                      placeholder="Enter major"
-                      className={inputClassName()}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="team-member-university"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      University{' '}
-                      <span className="text-gray-400">(optional)</span>
-                    </label>
-                    <input
-                      id="team-member-university"
-                      type="text"
-                      value={values.university}
-                      onChange={(event) =>
-                        handleFieldChange('university', event.target.value)
-                      }
-                      placeholder="Enter university"
-                      className={inputClassName()}
-                    />
-                  </div>
-
-                    <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">
                       Phone Number
                     </label>
-                    <div className="flex gap-3">
-                      <div className="relative" ref={countryCodeDropdownRef}>
+                    <div className="flex rounded-lg border border-gray-200">
+                      <div className="relative border-r">
                         <button
                           type="button"
-                          onClick={() => {
-                            setIsCountryCodeMenuOpen((prev) => !prev);
-                          }}
-                          className={clsx(
-                            'flex w-20 items-center justify-between border-gray-300 rounded-md border px-4 py-2 text-sm font-semibold transition',
-                            'bg-white'
-                          )}
-                          aria-haspopup="listbox"
-                          aria-expanded={isCountryCodeMenuOpen}
+                          className="flex h-full min-w-[70px] items-center justify-between px-3 py-2 text-left"
+                          onClick={() =>
+                            setOpenDropdown(
+                              openDropdown === 'countryCode'
+                                ? null
+                                : 'countryCode'
+                            )
+                          }
                         >
-                          <span className="flex items-center gap-2">
-                            <span>
-                              {
-                                countryDialCodeOptions.find(
-                                  (option) => option.code === values.countryDialCode
-                                )?.code ?? values.countryDialCode
-                              }
-                            </span>
-                          </span>
-                          <CaretDownIcon
-                            className={clsx(
-                              'h-4 w-4 text-gray-500 transition-transform',
-                              isCountryCodeMenuOpen ? 'rotate-180' : ''
-                            )}
-                          />
+                          <span className="text-sm">{selectedCountryCode}</span>
+                          {openDropdown === 'countryCode' ? (
+                            <CaretUp className="ml-1 h-5 w-5 text-black" />
+                          ) : (
+                            <CaretDown className="ml-1 h-5 w-5 text-black" />
+                          )}
                         </button>
-                        {isCountryCodeMenuOpen ? (
-                          <div
-                            role="listbox"
-                            aria-labelledby="booking-country-code"
-                            className="absolute left-0 right-0 top-full z-30 mt-2 overflow-hidden border border-gray-100 bg-white shadow-xl"
-                          >
-                            {countryDialCodeOptions?.map((option) => (
+                        {openDropdown === 'countryCode' && (
+                          <div className="absolute top-full left-0 z-50 mt-1 min-w-[100px] rounded-lg border bg-white shadow-lg">
+                            {countryCodeOptions.map((option) => (
                               <button
-                                key={option.code}
+                                key={option}
                                 type="button"
+                                className="w-full px-3 py-2 text-left text-sm first:rounded-t-lg last:rounded-b-lg hover:bg-gray-100"
                                 onClick={() => {
-                                  handleFieldChange('countryDialCode', option.code);
-                                  setIsCountryCodeMenuOpen(false);
+                                  setSelectedCountryCode(option);
+                                  setOpenDropdown(null);
+                                  handleFieldChange('countryDialCode', option);
                                 }}
-                                className={clsx(
-                                  'flex w-full items-center border-gray-100 justify-between px-4 py-2 text-sm transition hover:bg-gray-50',
-                                  values.countryDialCode === option.code
-                                    ? 'bg-gray-50 font-semibold'
-                                    : 'text-gray-600'
-                                )}
                               >
-                                <span className="flex items-center gap-2">
-                                  <span>{option.label}</span>
-                                </span>
+                                {option}
                               </button>
                             ))}
                           </div>
-                        ) : null}
+                        )}
                       </div>
                       <input
-                        id="booking-phone"
-                        value={values.phoneNumber}
-                        onChange={(event) => handleFieldChange('phoneNumber', event.target.value)}
-                        placeholder="Enter phone number"
-                        className={`flex-1 rounded-lg border  px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 ${
-                          errors.phoneNumber ? 'border-red-500' : 'border-gray-200'
+                        className={`flex-1 border-0 px-3 py-2 outline-none focus:ring-0 ${
+                          errors.phoneNumber ? 'border-red-500' : ''
                         }`}
+                        value={phoneInput}
+                        onChange={(e) => {
+                          const inputValue = e.target.value;
+                          setPhoneInput(inputValue);
+                          handleFieldChange('phoneNumber', inputValue);
+                        }}
+                        placeholder="Enter phone number"
                       />
                     </div>
                     {errors.phoneNumber && (
-                      <p className="text-sm text-red-500">{errors.phoneNumber}</p>
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.phoneNumber}
+                      </p>
                     )}
                   </div>
 
@@ -532,102 +449,45 @@ const AddConsultantDrawer: React.FC<AddConsultantDrawerProps> = ({
                       htmlFor="team-member-social-link"
                       className="text-sm font-medium text-gray-700"
                     >
-                      Social Media Link
+                      Facebook Account
                     </label>
                     <input
                       id="team-member-social-link"
-                      type="url"
-                      value={values.socialMediaLink}
+                      type="text"
+                      value={values.facebookAccount}
                       onChange={(event) =>
-                        handleFieldChange(
-                          'socialMediaLink',
-                          event.target.value
-                        )
+                        handleFieldChange('facebookAccount', event.target.value)
                       }
                       placeholder="https://"
                       className={inputClassName(
-                        Boolean(errors.socialMediaLink)
+                        Boolean(errors.facebookAccount)
                       )}
-                      aria-invalid={Boolean(errors.socialMediaLink)}
+                      aria-invalid={Boolean(errors.facebookAccount)}
                     />
-                    {errors.socialMediaLink ? (
+                    {errors.facebookAccount ? (
                       <p className="text-sm text-red-500">
-                        {errors.socialMediaLink}
+                        {errors.facebookAccount}
                       </p>
                     ) : null}
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <label className="text-sm font-medium text-gray-700">
-                        Import Profile Picture
-                      </label>
-                      {values.profilePicture ? (
-                        <button
-                          type="button"
-                          className="text-sm font-medium text-red-500"
-                          onClick={handleRemoveProfilePicture}
-                        >
-                          Remove
-                        </button>
-                      ) : null}
-                    </div>
-
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      className="sr-only"
-                      onChange={handleFileChange}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Profile Picture
+                    </label>
+                    <ImageUpload
+                      onImageUpload={handleImageUpload}
+                      onRemove={handleRemoveProfilePicture}
+                      image={
+                        values.profilePicture ||
+                        (initialProfilePictureUrl ?? undefined)
+                      }
                     />
-
-                    <div
-                      className={clsx(
-                        'flex flex-col items-center justify-center gap-4 rounded-3xl border-2 border-dashed px-6 py-10 text-center text-sm text-gray-500',
-                        profilePreview ? 'bg-white' : 'bg-[#FFFDF9]',
-                        errors.profilePicture
-                          ? 'border-red-400'
-                          : 'border-gray-200'
-                      )}
-                    >
-                      {profilePreview ? (
-                        <div className="flex w-full flex-col items-center gap-4">
-                          <img
-                            src={profilePreview}
-                            alt="Profile preview"
-                            className="max-h-48 w-full rounded-2xl object-cover"
-                          />
-                          <Button
-                            type="button"
-                            secondary
-                            className="min-w-[140px]"
-                            onClick={() => fileInputRef.current?.click()}
-                          >
-                            Replace Image
-                          </Button>
-                        </div>
-                      ) : (
-                        <div
-                          onClick={() => fileInputRef.current?.click()}
-                          className="flex flex-col items-center justify-center text-center text-[#85868A]"
-                        >
-                          <GalleryAdd />
-                          <p className="text-sm font-medium">
-                            Click to upload or drag and drop
-                          </p>
-                          <p className="text-xs mt-1.5">
-                            Maximum size 1MB
-                            <br></br>
-                            Supported JPG, JPEG
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                    {errors.profilePicture ? (
+                    {errors.profilePicture && (
                       <p className="text-sm text-red-500">
                         {errors.profilePicture}
                       </p>
-                    ) : null}
+                    )}
                   </div>
                 </div>
               </div>

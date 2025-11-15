@@ -9,10 +9,12 @@ import Search from '@/assets/search.svg?react';
 import RemoveIcon from '@/assets/bin.svg?react';
 import EditIcon from '@/assets/edit.svg?react';
 import ViewIcon from '@/assets/view.svg?react';
+import Pin from '@/assets/pin-icon.svg?react';
 import {
   useDeleteUniversity,
   useBulkDeleteUniversities,
   useAllUniversitiesAdmin,
+  useUpdateUniversityPinStatus,
 } from '@/queries/universities';
 import { formatNthDate } from '@/helpers';
 import type { UniversityListItem } from '@/types/users/university';
@@ -41,6 +43,7 @@ const UniversitySetup: React.FC = () => {
   } = useAllUniversitiesAdmin();
   const deleteUniversityMutation = useDeleteUniversity();
   const bulkDeleteUniversityMutation = useBulkDeleteUniversities();
+  const updatePinStatusMutation = useUpdateUniversityPinStatus();
 
   // Handle click outside status filter
   useEffect(() => {
@@ -195,6 +198,13 @@ const UniversitySetup: React.FC = () => {
     });
   };
 
+  const handlePinToggle = (university: UniversityListItem) => {
+    updatePinStatusMutation.mutate({
+      id: university._id,
+      pinned: !university.pinned,
+    });
+  };
+
   const handleCreateNew = () => {
     navigate('/admin/university-setup/create');
   };
@@ -271,6 +281,28 @@ const UniversitySetup: React.FC = () => {
   };
 
   const columns: TableColumn<UniversityListItem>[] = [
+    {
+      key: 'pinned',
+      header: '',
+      sortable: false,
+      cellClassName: 'w-12',
+      render: (university: UniversityListItem) => (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handlePinToggle(university);
+          }}
+          className="cursor-pointer p-1 hover:opacity-70"
+          title={university.pinned ? 'Unpin university' : 'Pin university'}
+        >
+          <Pin
+            className={`h-5 w-5 transition-colors ${
+              university.pinned ? 'text-[#DE595B]' : 'text-[#FFE6E7]'
+            }`}
+          />
+        </button>
+      ),
+    },
     {
       key: 'universityName',
       header: 'University Name',

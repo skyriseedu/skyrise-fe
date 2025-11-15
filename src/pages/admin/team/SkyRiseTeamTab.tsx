@@ -179,9 +179,7 @@ function TeamMemberActionDropdown({
                       Edit
                     </button>
                   )}
-                  {onEdit && (
-                    <div className="my-1 h-px w-full bg-gray-100" />
-                  )}
+                  {onEdit && <div className="my-1 h-px w-full bg-gray-100" />}
                   <button
                     type="button"
                     onClick={handleRemoveClick}
@@ -407,7 +405,7 @@ const SkyRiseTeamTab = () => {
           formData.append('image', values.profilePicture);
           const uploadResponse =
             await uploadTeamMemberImageMutation.mutateAsync(formData);
-          profilePictureUrl = uploadResponse?.data?.image?.url;
+          profilePictureUrl = uploadResponse?.data?.url;
           if (!profilePictureUrl) {
             console.warn('Team member image upload succeeded without URL');
           }
@@ -450,7 +448,7 @@ const SkyRiseTeamTab = () => {
           formData.append('image', values.profilePicture);
           const uploadResponse =
             await uploadTeamMemberImageMutation.mutateAsync(formData);
-          profilePictureUrl = uploadResponse?.data?.image?.url || profilePictureUrl;
+          profilePictureUrl = uploadResponse?.data?.url || profilePictureUrl;
         }
 
         await updateTeamMemberMutation.mutateAsync({
@@ -470,11 +468,7 @@ const SkyRiseTeamTab = () => {
         console.error('Failed to update team member:', error);
       }
     },
-    [
-      editingMember,
-      updateTeamMemberMutation,
-      uploadTeamMemberImageMutation,
-    ]
+    [editingMember, updateTeamMemberMutation, uploadTeamMemberImageMutation]
   );
 
   const filteredRows = useMemo(() => {
@@ -702,7 +696,7 @@ const SkyRiseTeamTab = () => {
             disabled={areRowActionsDisabled}
           >
             {row.pinned ? (
-              <AddPinIcon className="h-5 w-5 text-primary" />
+              <AddPinIcon className="text-primary h-5 w-5" />
             ) : (
               <PinIcon className="h-5 w-5 text-gray-400" />
             )}
@@ -812,7 +806,7 @@ const SkyRiseTeamTab = () => {
         </span>
       </p>
       <div className="mt-4 flex flex-wrap items-center gap-4">
-        <div className="relative z-50 flex min-w-[290px] flex-1 max-w-md">
+        <div className="relative z-50 flex max-w-md min-w-[290px] flex-1">
           <div className="relative w-full">
             <span className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-gray-400">
               <SearchIcon className="h-5 w-5" />
@@ -872,9 +866,7 @@ const SkyRiseTeamTab = () => {
         onClose={handleCloseAddDrawer}
         onSubmit={handleAddTeamMember}
         isSubmitting={createTeamMemberMutation.isPending}
-        submitLabel={
-          createTeamMemberMutation.isPending ? 'Adding...' : 'Add'
-        }
+        submitLabel={createTeamMemberMutation.isPending ? 'Adding...' : 'Add'}
       />
       <AddTeamDrawer
         open={isEditDrawerOpen}
