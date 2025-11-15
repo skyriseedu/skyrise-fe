@@ -1,10 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Facebook from '../../assets/facebook.svg?react';
 import YouTube from '../../assets/youtube.svg?react';
 import Messenger from '../../assets/messenger.svg?react';
 import Telegram from '../../assets/telegram.svg?react';
-import CaretDown from '../../assets/caret-down.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
 import SuccessModal from '../common/SuccessModal';
 import ConsultantForm from '../common/ApplyConsultantForm';
@@ -66,19 +65,16 @@ const footerNavigation = [
 ];
 
 const Footer: React.FC = () => {
-  const [expandedServices, setExpandedServices] = useState(false);
-  const servicesRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+  const servicesSection = footerNavigation.find((item) => item.hasSubmenu);
+  const generalNavigation = footerNavigation.filter((item) => !item.hasSubmenu);
 
   const handleFormSuccess = () => {
     setIsOpen(false);
     setShowSuccessModal(true);
   };
 
-  const toggleServices = () => {
-    setExpandedServices(!expandedServices);
-  };
   return (
     <footer className="bg-secondary relative overflow-hidden px-6 pt-8 pb-15 lg:px-12 lg:pt-12 lg:pb-50">
       <div className="lg:flex lg:items-start lg:justify-between lg:space-x-8">
@@ -122,52 +118,40 @@ const Footer: React.FC = () => {
           </button>
         </div>
 
-        <nav className="relative z-10 mb-8 lg:mt-10 lg:mr-20 lg:mb-0 lg:max-w-xs lg:flex-1">
-          <ul className="space-y-3 lg:space-y-4">
-            {footerNavigation.map((item) => (
-              <li key={item.name}>
-                {item.hasSubmenu ? (
-                  <div ref={servicesRef}>
-                    <button
-                      onClick={toggleServices}
-                      className="text-h3 text-text-primary hover:text-primary lg:text-h3 flex w-full cursor-pointer items-start text-left font-normal transition-colors"
-                    >
-                      <span className="flex items-center space-x-2">
-                        <span>{item.name}</span>
-                        <CaretDown
-                          className={`h-4 w-4 transition-transform duration-200 ${expandedServices ? 'rotate-180' : ''}`}
-                        />
-                      </span>
-                    </button>
-
-                    {expandedServices && (
-                      <ul className="mt-2 ml-4 space-y-2">
-                        {item.subItems?.map((subItem) => (
-                          <li key={subItem.name}>
-                            <Link
-                              to={subItem.path}
-                              className="text-h4 lg:text-h4 text-text-primary hover:text-primary block cursor-pointer font-normal transition-colors"
-                            >
-                              {subItem.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ) : (
-                  item.path && (
+        <nav className="relative z-10 mb-8 lg:mt-10 lg:mr-20 lg:mb-0 lg:max-w-xl lg:flex-1">
+          <div className="flex flex-col gap-8 sm:grid sm:grid-cols-2">
+            <ul className="space-y-3 lg:space-y-4">
+              {generalNavigation.map((item) => (
+                <li key={item.name}>
+                  {item.path && (
                     <Link
                       to={item.path}
                       className="text-h3 lg:text-h3 text-text-primary hover:text-primary cursor-pointer font-normal transition-colors"
                     >
                       {item.name}
                     </Link>
-                  )
-                )}
-              </li>
-            ))}
-          </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+
+            {servicesSection?.subItems?.length ? (
+              <div>
+                <ul className="space-y-2">
+                  {servicesSection.subItems.map((subItem) => (
+                    <li key={subItem.name}>
+                      <Link
+                        to={subItem.path}
+                        className="text-h3 lg:text-h3 text-text-primary mb-3 font-normal  hover:text-primary cursor-pointer transition-colors"
+                      >
+                        {subItem.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
         </nav>
       </div>
 
