@@ -376,12 +376,12 @@ const ConsultantsTab = () => {
         }
 
         await createConsultantMutation.mutateAsync({
-          consultantName: values.memberName,
+          consultantName: values.consultantName,
           major: values.major,
           university: values.university,
           email: values.email,
           phoneNumber: `${values.countryDialCode}${values.phoneNumber}`,
-          facebookAccount: values.socialMediaLink,
+          facebookAccount: values.facebookAccount || '',
           profileImage: imageUrl || '',
           pinned: false,
           status: 'active',
@@ -420,12 +420,12 @@ const ConsultantsTab = () => {
         await updateConsultantMutation.mutateAsync({
           id: editingConsultant.id,
           payload: {
-            consultantName: values.memberName,
+            consultantName: values.consultantName,
             major: values.major,
             university: values.university,
             email: values.email,
             phoneNumber: `${values.countryDialCode}${values.phoneNumber}`,
-            facebookAccount: values.socialMediaLink,
+            facebookAccount: values.facebookAccount || '',
             profileImage: imageUrl || '',
           },
         });
@@ -622,14 +622,34 @@ const ConsultantsTab = () => {
       return undefined;
     }
 
+    // Parse phone number to extract country code and number
+    let countryDialCode = '+95';
+    let phoneNumber = editingConsultant.phoneNumber;
+
+    // Check if phone number starts with a country code
+    if (phoneNumber.startsWith('+95')) {
+      countryDialCode = '+95';
+      phoneNumber = phoneNumber.substring(3);
+    } else if (phoneNumber.startsWith('+66')) {
+      countryDialCode = '+66';
+      phoneNumber = phoneNumber.substring(3);
+    } else if (phoneNumber.startsWith('+')) {
+      // Handle other country codes (extract until first non-digit after +)
+      const match = phoneNumber.match(/^(\+\d+)(.*)$/);
+      if (match) {
+        countryDialCode = match[1];
+        phoneNumber = match[2];
+      }
+    }
+
     return {
-      memberName: editingConsultant.name,
+      consultantName: editingConsultant.name,
       major: editingConsultant.major,
       university: editingConsultant.university,
       email: editingConsultant.email,
-      countryDialCode: '+95',
-      phoneNumber: editingConsultant.phoneNumber,
-      socialMediaLink: editingConsultant.facebookAccount,
+      countryDialCode,
+      phoneNumber,
+      facebookAccount: editingConsultant.facebookAccount,
       profilePicture: null,
     };
   }, [editingConsultant]);
