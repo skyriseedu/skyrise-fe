@@ -366,10 +366,10 @@ const UniversityForm: React.FC = () => {
         intakes: formData.intakes.map((intake) => `${intake.month}`),
         entryRequirement: formData.entryRequirement,
         scholarshipRequirements: formData.scholarshipRequirements,
-        ...(logoImage && { logoImage }),
+        logoImage: logoImage || '',
         coverImages: {
-          ...(coverImage1 && { image1: coverImage1 }),
-          ...(coverImage2 && { image2: coverImage2 }),
+          image1: coverImage1 || '',
+          image2: coverImage2 || '',
         },
         studentReviews: formData.studentReviews.map((review) => ({
           studentName: review.studentName,
