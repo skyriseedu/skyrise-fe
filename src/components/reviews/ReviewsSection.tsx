@@ -33,8 +33,8 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
   // Normalize backend reviews to the card-friendly shape
   const displayReviews: DisplayReview[] = React.useMemo(() => {
     if (Array.isArray(reviews)) {
-      return reviews.map((r) => ({
-        id: r._id,
+      return reviews.map((r, index) => ({
+        id: r._id || `review-${index}`,
         name: r.studentName,
         program: r.major,
         testimonial: r.review,
