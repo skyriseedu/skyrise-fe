@@ -4,9 +4,8 @@ import type {
   Ambassador,
   AmbassadorSectionProps,
 } from '@/types/users/about-us';
-import { useAmbassadors } from '@/queries';
-
-import type { AmbassadorApiItem } from '@/types/users/ambassadors';
+import { useConsultants } from '@/queries/consultants';
+import type { Consultant } from '@/types/users/consultant';
 
 const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
   title = 'Student Ambassadors',
@@ -15,32 +14,32 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState({ width: 30, left: 0 });
   const {
-    data: ambassadorsResponse,
-    isPending: isAmbassadorsLoading,
-    isError: isAmbassadorsError,
-  } = useAmbassadors(1, 20);
+    data: consultantsResponse,
+    isPending: isConsultantsLoading,
+    isError: isConsultantsError,
+  } = useConsultants(1, 20);
 
-  const apiAmbassadors = React.useMemo(
-    () => ambassadorsResponse?.data?.ambassadors ?? [],
-    [ambassadorsResponse]
+  const apiConsultants = React.useMemo(
+    () => consultantsResponse?.data?.consultants ?? [],
+    [consultantsResponse]
   );
 
   const ambassadors: Ambassador[] = React.useMemo(() => {
-    if (!apiAmbassadors.length) {
+    if (!apiConsultants.length) {
       return [];
     }
 
-    return apiAmbassadors.map(
-      (ambassador: AmbassadorApiItem) =>
+    return apiConsultants.map(
+      (consultant: Consultant) =>
         ({
-          id: ambassador.id ?? ambassador._id,
-          image: ambassador.profileImage,
-          name: ambassador.ambassadorName,
-          department: ambassador.major,
-          university: ambassador.university,
+          id: consultant.id ?? consultant._id ?? consultant.slug ?? '',
+          image: consultant.profileImage ?? '',
+          name: consultant.consultantName ?? consultant.name ?? '',
+          department: consultant.major ?? consultant.specialization?.[0] ?? '',
+          university: consultant.university ?? consultant.company ?? '',
         }) satisfies Ambassador
     );
-  }, [apiAmbassadors]);
+  }, [apiConsultants]);
 
   const hasAmbassadors = ambassadors.length > 0;
 
@@ -81,19 +80,19 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
       </div>
 
       <div className="mx-auto max-w-[1200px]">
-        {isAmbassadorsLoading && (
+        {isConsultantsLoading && (
           <p className="text-center text-sm text-neutral-500">
             Loading ambassadors...
           </p>
         )}
 
-        {isAmbassadorsError && !isAmbassadorsLoading && (
+        {isConsultantsError && !isConsultantsLoading && (
           <p className="text-center text-sm text-red-500">
             We could not load ambassadors at the moment. Please try again later.
           </p>
         )}
 
-        {!isAmbassadorsLoading && !isAmbassadorsError && !hasAmbassadors && (
+        {!isConsultantsLoading && !isConsultantsError && !hasAmbassadors && (
           <p className="text-center text-sm text-neutral-500">
             Ambassador information will be available soon.
           </p>
