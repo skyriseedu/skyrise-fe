@@ -52,6 +52,7 @@ export interface consultantCountResponse {
 export interface ConsultantsQueryParams {
   page?: number;
   limit?: number;
+  admin?: boolean;
 }
 
 export interface ConsultantsResponse {

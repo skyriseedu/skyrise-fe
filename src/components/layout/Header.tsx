@@ -108,7 +108,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
     >
       <div className="flex items-center justify-between px-6 py-5 lg:px-15">
         <Link to="/" className="flex items-center">
-          <img src={SkyRiseLogo} alt="SkyRise Logo" className="h-12 w-auto" />
+          <img src={SkyRiseLogo} alt="SKYRISE Logo" className="h-12 w-auto" />
         </Link>
 
         <nav className="hidden items-center space-x-4 lg:flex">
@@ -149,7 +149,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
                         <Link
                           key={subItem.name}
                           to={subItem.path}
-                          className={`text-h3 block rounded-md px-4 py-2 font-medium transition-colors ${
+                          className={`text-[14px] block rounded-md px-4 py-2 font-regular transition-colors ${
                             isActiveSubItem(subItem.path)
                               ? 'bg-secondary text-primary'
                               : 'text-text-primary hover:bg-secondary hover:text-primary'

@@ -35,7 +35,7 @@ const LayoutContent: React.FC = () => {
   }, [location.pathname]);
 
   useEffect(() => {
-    document.title = pageTitle ? `Skyrise | ${pageTitle}` : 'Skyrise';
+    document.title = pageTitle ? `SKYRISE | ${pageTitle}` : 'SKYRISE';
   }, [pageTitle]);
 
   const toggleMenu = () => {

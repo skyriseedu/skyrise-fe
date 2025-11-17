@@ -6,6 +6,7 @@ export const consultantKeys = {
   all: ['consultants'] as const,
   paginated: (page: number, limit: number) =>
     [...consultantKeys.all, 'paginated', page, limit] as const,
+  adminAll: () => [...consultantKeys.all, 'admin', 'all'] as const,
 };
 
 export function useConsultantCount() {
@@ -25,7 +26,7 @@ export const useConsultants = (page: number = 1, limit: number = 10) =>
 
 export const useAllConsultantsAdmin = () => {
   return useQuery({
-    queryKey: ['allConsultantsAdmin'],
+    queryKey: consultantKeys.adminAll(),
     queryFn: () => consultantService.getAllConsultantsAdmin(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -61,7 +62,7 @@ export const useBulkDeleteConsultants = () => {
     mutationFn: (ids: string[]) => consultantService.bulkDeleteConsultants(ids),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: consultantKeys.all });
-      queryClient.invalidateQueries({ queryKey: ['allConsultantsAdmin'] });
+      queryClient.invalidateQueries({ queryKey: consultantKeys.adminAll() });
     },
     onError: (error) => {
       console.error('Failed to bulk delete consultants:', error);
@@ -76,7 +77,7 @@ export const useCreateConsultant = () => {
     mutationFn: consultantService.createConsultant,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: consultantKeys.all });
-      queryClient.invalidateQueries({ queryKey: ['allConsultantsAdmin'] });
+      queryClient.invalidateQueries({ queryKey: consultantKeys.adminAll() });
     },
     onError: (error) => {
       console.error('Failed to create consultant:', error);
@@ -92,7 +93,7 @@ export const useUpdateConsultant = () => {
       consultantService.updateConsultant(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: consultantKeys.all });
-      queryClient.invalidateQueries({ queryKey: ['allConsultantsAdmin'] });
+      queryClient.invalidateQueries({ queryKey: consultantKeys.adminAll() });
     },
     onError: (error) => {
       console.error('Failed to update consultant:', error);
@@ -107,7 +108,7 @@ export const useUpdateConsultantPinStatus = () => {
       consultantService.updatePinStatus(id, pinned),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: consultantKeys.all });
-      queryClient.invalidateQueries({ queryKey: ['allConsultantsAdmin'] });
+      queryClient.invalidateQueries({ queryKey: consultantKeys.adminAll() });
     },
   });
 };

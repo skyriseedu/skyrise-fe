@@ -83,7 +83,7 @@ const Footer: React.FC = () => {
             Contact Us
           </h3>
           <p className="text-body-3 lg:text-body-4 font-regular mb-6 lg:font-normal">
-            Have questions about university? Reach out to SkyRise Corner – we're
+            Have questions about university? Reach out to SKYRISE Corner – we're
             here to help you every step of the way!
           </p>
 
@@ -100,14 +100,14 @@ const Footer: React.FC = () => {
                   {social.icon}
                 </div>
                 <span className="text-body-3 lg:text-body-4 font-regular lg:font-normal">
-                  skyrise/{social.name.toLowerCase()}.com
+                  SKYRISE/{social.name.toLowerCase()}.com
                 </span>
               </a>
             ))}
           </div>
 
           <div className="text-body-3 text-text-primary lg:text-body-4 mb-4 font-normal">
-            Passionate about education? Join SkyRise Corner as a consultant and
+            Passionate about education? Join SKYRISE Corner as a consultant and
             help students achieve their university dreams!
           </div>
           <button

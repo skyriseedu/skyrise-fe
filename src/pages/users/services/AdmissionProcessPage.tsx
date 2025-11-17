@@ -110,7 +110,7 @@ const AdmissionProcessPage: React.FC = () => {
                 className="text-text-primary cursor-pointer rounded-[20px] px-8 py-3 shadow-lg"
                 onClick={() => setIsApplicationOpen(true)}
               >
-                Apply with SkyRise Now!
+                Apply with SKYRISE Now!
               </Button>
             </div>
           </div>

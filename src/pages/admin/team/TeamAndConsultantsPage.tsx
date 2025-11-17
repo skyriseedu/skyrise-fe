@@ -7,7 +7,7 @@ import ConsultantsTab from './ConsultantsTab';
 type TeamTab = 'team' | 'consultants';
 
 const tabs: Array<{ key: TeamTab; label: string }> = [
-  { key: 'team', label: 'Skyrise Team' },
+  { key: 'team', label: 'SKYRISE Team' },
   { key: 'consultants', label: 'Consultants' },
 ];
 

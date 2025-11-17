@@ -132,7 +132,7 @@ const ProgramCard: React.FC<ProgramCardProps> = ({
           onClick={onApplyClick}
           className="flex-1 !border-0 !bg-[var(--color-secondary)] whitespace-nowrap !text-[var(--color-text-primary)] hover:!bg-[var(--color-secondary)]/80 lg:flex-none lg:!px-8"
         >
-          Apply with SkyRise
+          Apply with SKYRISE
         </Button>
 
         <Button

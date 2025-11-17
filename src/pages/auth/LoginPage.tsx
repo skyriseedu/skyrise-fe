@@ -138,7 +138,7 @@ const LoginPage: React.FC = () => {
                   to="/register"
                   className="text-text-primary decoration-primary font-medium underline decoration-4 underline-offset-5"
                 >
-                  Register to SkyRise
+                  Register to SKYRISE
                 </Link>
               </div>
             </Form>

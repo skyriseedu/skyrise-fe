@@ -281,10 +281,7 @@ const SkyRiseTeamTab = () => {
   const [editingMember, setEditingMember] = useState<TeamMemberRow | null>(
     null
   );
-  const [sortState, setSortState] = useState<SortState>({
-    key: 'createdAt',
-    direction: 'desc',
-  });
+  const [sortState, setSortState] = useState<SortState | null>(null);
   const bulkDeleteTeamMembersMutation = useBulkDeleteTeamMembers();
   const createTeamMemberMutation = useCreateTeamMember();
   const updateTeamMemberMutation = useUpdateTeamMember();
@@ -853,7 +850,7 @@ const SkyRiseTeamTab = () => {
           selectable
           isRowSelected={(row) => rowIsSelected(row)}
           onSelectRow={handleSelectRow}
-          sortState={sortState}
+          sortState={sortState ?? undefined}
           onSortChange={handleSortChange}
           renderActions={renderActions}
           emptyMessage={emptyMessage}

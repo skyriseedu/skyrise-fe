@@ -49,7 +49,7 @@ const RegisterPage: React.FC = () => {
             Create your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Join SkyRise today
+            Join SKYRISE today
           </p>
         </div>
 
@@ -208,7 +208,7 @@ const RegisterPage: React.FC = () => {
                   to="/login"
                   className="text-primary hover:text-primary/80 font-medium underline"
                 >
-                  Sign in to SkyRise
+                  Sign in to SKYRISE
                 </Link>
               </div>
 

@@ -225,7 +225,7 @@ const AdminLayout: React.FC = () => {
           <div className="border-b border-gray-200 px-8 py-4">
             <img
               src={SkyriseLogoPrimary}
-              alt="SkyRise Corner Education Agency"
+              alt="SKYRISE Corner Education Agency"
               className="h-12 w-auto"
             />
           </div>
@@ -264,7 +264,7 @@ const AdminLayout: React.FC = () => {
               <div className="flex h-12 w-12 items-center justify-center">
                 <img
                   src={SkyriseLogoMark}
-                  alt="SkyRise Corner Education Agency"
+                  alt="SKYRISE Corner Education Agency"
                   className="h-12 w-auto"
                 />
               </div>
