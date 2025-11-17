@@ -1,7 +1,8 @@
 import SearchIcon from '@/assets/search.svg?react';
 import RemoveIcon from '@/assets/bin.svg?react';
 import EditIcon from '@/assets/edit.svg?react';
-import PinIcon from '@/assets/pin-icon.svg?react';
+import PinIcon from '@/assets/pin.svg?react';
+import AddPinIcon from '@/assets/add-pin.svg?react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import clsx from 'clsx';
@@ -252,10 +253,7 @@ const ConsultantsTab = () => {
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
   const [editingConsultant, setEditingConsultant] =
     useState<ConsultantRow | null>(null);
-  const [sortState, setSortState] = useState<SortState>({
-    key: 'createdAt',
-    direction: 'desc',
-  });
+  const [sortState, setSortState] = useState<SortState | null>(null);
 
   const bulkDeleteConsultantsMutation = useBulkDeleteConsultants();
   const createConsultantMutation = useCreateConsultant();
@@ -444,12 +442,16 @@ const ConsultantsTab = () => {
 
   const handlePinToggle = useCallback(
     (consultant: ConsultantRow) => {
+      if (!consultant.id || areRowActionsDisabled) {
+        return;
+      }
+
       updatePinStatusMutation.mutate({
         id: consultant.id,
         pinned: !consultant.pinned,
       });
     },
-    [updatePinStatusMutation]
+    [areRowActionsDisabled, updatePinStatusMutation]
   );
 
   const filteredRows = useMemo(() => {
@@ -671,16 +673,18 @@ const ConsultantsTab = () => {
               e.stopPropagation();
               handlePinToggle(row);
             }}
-            className="cursor-pointer p-1 hover:opacity-70"
+            type="button"
+            className="flex items-center justify-center"
             title={row.pinned ? 'Unpin consultant' : 'Pin consultant'}
+            aria-label={row.pinned ? 'Unpin consultant' : 'Pin consultant'}
+            aria-pressed={row.pinned}
+            disabled={areRowActionsDisabled}
           >
-            <PinIcon
-              className={`h-5 w-5 transition-colors ${
-                row.pinned
-                  ? 'fill-red-500 text-red-500'
-                  : 'fill-gray-300 text-gray-300'
-              }`}
-            />
+            {row.pinned ? (
+              <AddPinIcon className="text-primary h-5 w-5" />
+            ) : (
+              <PinIcon className="h-5 w-5 text-gray-400" />
+            )}
           </button>
         ),
       },
@@ -763,7 +767,7 @@ const ConsultantsTab = () => {
           ),
       },
     ],
-    [handlePinToggle]
+    [areRowActionsDisabled, handlePinToggle]
   );
 
   const renderActions = useCallback(
@@ -834,7 +838,7 @@ const ConsultantsTab = () => {
           selectable
           isRowSelected={(row) => rowIsSelected(row)}
           onSelectRow={handleSelectRow}
-          sortState={sortState}
+          sortState={sortState ?? undefined}
           onSortChange={handleSortChange}
           renderActions={renderActions}
           emptyMessage={emptyMessage}
