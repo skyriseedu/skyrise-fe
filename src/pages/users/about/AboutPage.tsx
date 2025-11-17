@@ -31,7 +31,10 @@ const AboutPage: React.FC = () => {
       return [];
     }
 
-    return [...apiTeamMembers]
+    const pinnedMembers = apiTeamMembers.filter((member) => member.pinned);
+    const membersToDisplay = pinnedMembers.length ? pinnedMembers : apiTeamMembers;
+
+    return [...membersToDisplay]
       .sort((memberA, memberB) => memberA.order - memberB.order)
       .map((member: TeamMemberApiItem) => {
         const facebookLink =

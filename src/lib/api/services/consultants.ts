@@ -17,16 +17,17 @@ export const consultantService = {
   async getConsultants({
     page = 1,
     limit = 10,
+    admin = false,
   }: ConsultantsQueryParams = {}): Promise<ConsultantsResponse> {
-    const response = await apiClient.get('/consultants', {
-      params: { page, limit },
-    });
+    const endpoint = admin ? '/consultants/admin/all' : '/consultants';
+    const config = admin ? undefined : { params: { page, limit } };
+
+    const response = await apiClient.get(endpoint, config);
     return response.data;
   },
 
   async getAllConsultantsAdmin(): Promise<ConsultantsResponse> {
-    const response = await apiClient.get('/consultants/admin/all');
-    return response.data;
+    return this.getConsultants({ admin: true });
   },
 
   async getConsultantById(id: string): Promise<Consultant> {
