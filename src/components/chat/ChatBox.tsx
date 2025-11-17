@@ -118,7 +118,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
               <div className="flex flex-row gap-2 text-left">
                 <SkyRiseLogo className="h-7 w-7" />
                 <p className="mt-1 text-sm font-medium text-neutral-600">
-                  SkyRise is answering for you...
+                  SKYRISE is answering for you...
                 </p>
               </div>
               <button
@@ -204,7 +204,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
                   rel="noreferrer"
                   className="text-primary underline"
                 >
-                  here (SkyRise Corner Facebook Page)
+                  here (SKYRISE Corner Facebook Page)
                 </a>{' '}
                 for further information
               </p>

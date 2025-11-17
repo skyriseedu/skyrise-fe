@@ -84,7 +84,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
         {({ values, setFieldValue, isSubmitting, errors, touched }) => (
           <Form className="w-full rounded-lg bg-white p-6 shadow-lg">
             <h2 className="text-h3 mb-6 text-center font-semibold">
-              Apply with SkyRise
+              Apply with SKYRISE
             </h2>
 
             {/* Error display */}

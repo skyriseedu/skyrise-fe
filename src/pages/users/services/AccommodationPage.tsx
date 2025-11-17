@@ -81,7 +81,7 @@ const AdmissionProcessPage: React.FC = () => {
               <span className="text-text-primary text-h4 lg:text-body-3">
                 Assistance in booking student accommodation or hostels{' '}
                 <span className="font-bold">
-                  ( Those who do not apply admission with SkyRise team can also
+                  ( Those who do not apply admission with SKYRISE team can also
                   take it with CHARGES)
                 </span>
               </span>
@@ -134,7 +134,7 @@ const AdmissionProcessPage: React.FC = () => {
                 <span className="text-text-primary text-h4 lg:text-body-3">
                   Pickup Service from the airport to your place{' '}
                   <span className="font-bold">
-                    (EXCLUSIVE for those who apply with SkyRise EDU team )
+                    (EXCLUSIVE for those who apply with SKYRISE EDU team )
                   </span>
                 </span>
               </li>
@@ -144,7 +144,7 @@ const AdmissionProcessPage: React.FC = () => {
               (<span className="font-bold text-red-600">REMARK :</span> This
               service is already included in our admission service!{' '}
               <span className="font-bold">
-                EXCLUSIVE for those who apply with SkyRise EDU team
+                EXCLUSIVE for those who apply with SKYRISE EDU team
               </span>{' '}
               )
             </p>

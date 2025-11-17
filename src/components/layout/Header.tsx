@@ -108,7 +108,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
     >
       <div className="flex items-center justify-between px-6 py-5 lg:px-15">
         <Link to="/" className="flex items-center">
-          <img src={SkyRiseLogo} alt="SkyRise Logo" className="h-12 w-auto" />
+          <img src={SkyRiseLogo} alt="SKYRISE Logo" className="h-12 w-auto" />
         </Link>
 
         <nav className="hidden items-center space-x-4 lg:flex">

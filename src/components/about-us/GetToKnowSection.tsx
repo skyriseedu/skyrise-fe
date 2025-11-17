@@ -56,7 +56,7 @@ const GetToKnowSection: React.FC = () => {
         <div className="container mx-auto px-6 lg:px-8">
           <div className="max-w-4xl space-y-8 lg:max-w-none lg:text-left">
             <h2 className="text-h3 lg:text-h2 text-text-primary font-semibold">
-              Get to know SkyRise
+              Get to know SKYRISE
             </h2>
 
             <div className="space-y-6">

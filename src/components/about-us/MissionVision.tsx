@@ -27,7 +27,7 @@ const MissionVision: React.FC<MissionVisionProps> = ({
               <div className="overflow-hidden rounded-2xl">
                 <img
                   src={founderImage}
-                  alt="Skyrise Ed Founder"
+                  alt="SKYRISE Ed Founder"
                   className="h-[212px] w-full object-cover"
                 />
               </div>
@@ -85,7 +85,7 @@ const MissionVision: React.FC<MissionVisionProps> = ({
             <div className="overflow-hidden rounded-2xl shadow-lg">
               <img
                 src={founderImage}
-                alt="Skyrise Ed Founder"
+                alt="SKYRISE Ed Founder"
                 className="h-[250px] w-full object-cover lg:h-[300px]"
               />
             </div>
