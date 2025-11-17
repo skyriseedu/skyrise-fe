@@ -20,6 +20,8 @@ interface Message {
   text: string;
 }
 
+const CONTACT_CARD_THRESHOLD = 5;
+
 const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
   const headingId = 'chatbox-heading';
   const descriptionId = 'chatbox-description';
@@ -27,6 +29,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [showContactCard, setShowContactCard] = React.useState(false);
+  const [uniqueQuestionIds, setUniqueQuestionIds] = React.useState<string[]>([]);
   const messagesEndRef = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const { data: faqsResponse, isPending: isFaqsLoading } = useFaqs(1, 10);
@@ -51,11 +54,14 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleQuestionClick = (
-    conversation: FaqItem,
-    openContactCard = false
-  ) => {
-    setShowContactCard(openContactCard);
+  const handleQuestionClick = (conversation: FaqItem) => {
+    setUniqueQuestionIds((previous) => {
+      if (previous.includes(conversation._id)) {
+        return previous;
+      }
+
+      return [...previous, conversation._id];
+    });
     setMessages((previous) => [
       ...previous,
       {
@@ -71,9 +77,15 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
     ]);
   };
 
-  // const handleContactClick = () => {
-  //   setShowContactCard(true);
-  // };
+  React.useEffect(() => {
+    if (showContactCard) {
+      return;
+    }
+
+    if (uniqueQuestionIds.length >= CONTACT_CARD_THRESHOLD) {
+      setShowContactCard(true);
+    }
+  }, [showContactCard, uniqueQuestionIds.length]);
 
   const handleBookConsultation = () => {
     navigate('/services/consultation');
@@ -242,7 +254,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onClose }) => {
                   {bottomQuestion && (
                     <button
                       type="button"
-                      onClick={() => handleQuestionClick(bottomQuestion, true)}
+                      onClick={() => handleQuestionClick(bottomQuestion)}
                       className="bg-primary/10 hover:bg-primary/20 focus-visible:outline-primary text-text-primary mt-3 w-full cursor-pointer rounded-xl px-6 py-3 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 lg:mt-2 lg:px-6 lg:py-2.5 lg:text-xs xl:mt-2 xl:px-4 xl:py-3"
                     >
                       {bottomQuestion.question}
