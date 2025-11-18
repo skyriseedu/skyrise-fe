@@ -43,7 +43,9 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({
                 : 'hover:cursor-pointer'
             )}
           >
-            <CaretLeft />
+            <CaretLeft
+              className={`${currentIndex === 0 ? 'font-[#85868A]' : 'font-[#323438]'}`}
+            />
           </button>
 
           <button
@@ -59,7 +61,9 @@ const TeamGalleryDesktop: React.FC<TeamGalleryProps> = ({
                 : 'hover:cursor-pointer'
             )}
           >
-            <CaretRight />
+            <CaretRight
+              className={`${currentIndex === maxIndex ? 'font-[#85868A]' : 'font-[#323438]'}`}
+            />
           </button>
 
           <div className="overflow-hidden">
