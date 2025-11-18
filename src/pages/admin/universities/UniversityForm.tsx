@@ -96,7 +96,9 @@ const UniversityForm: React.FC = () => {
   const [formData, setFormData] = useState<UniversityFormData>(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
   const [showRankingDropdown, setShowRankingDropdown] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const rankingDropdownRef = useRef<HTMLDivElement>(null);
+  const firstErrorRef = useRef<HTMLDivElement>(null);
 
   const createUniversityMutation = useCreateUniversity();
   const updateUniversityMutation = useUpdateUniversity();
@@ -173,6 +175,14 @@ const UniversityForm: React.FC = () => {
       ...prev,
       [field]: value,
     }));
+    // Clear error for this field when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
   };
 
   const handleKeyInfoChange = (
@@ -186,6 +196,14 @@ const UniversityForm: React.FC = () => {
         [field]: value,
       },
     }));
+    // Clear error for founded year when user starts typing
+    if (field === 'foundedYear' && errors.foundedYear) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.foundedYear;
+        return newErrors;
+      });
+    }
   };
 
   const handleAddIntake = () => {
@@ -202,6 +220,15 @@ const UniversityForm: React.FC = () => {
         i === index ? { ...intake, [field]: value } : intake
       ),
     }));
+    // Clear error for this intake when user selects a month
+    const errorKey = `intake_${index}`;
+    if (errors[errorKey]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[errorKey];
+        return newErrors;
+      });
+    }
   };
 
   const handleRemoveIntake = (index: number) => {
@@ -293,7 +320,55 @@ const UniversityForm: React.FC = () => {
     }));
   };
 
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    // University name is required
+    if (!formData.universityName.trim()) {
+      newErrors.universityName = 'University name is required';
+    }
+
+    // Founded year validation
+    const currentYear = new Date().getFullYear();
+    if (
+      !formData.keyInformation.foundedYear ||
+      formData.keyInformation.foundedYear === 0
+    ) {
+      newErrors.foundedYear = 'Founded year is required';
+    } else if (formData.keyInformation.foundedYear <= 1800) {
+      newErrors.foundedYear = 'Founded year must be after 1800';
+    } else if (formData.keyInformation.foundedYear > currentYear) {
+      newErrors.foundedYear = `Founded year cannot be greater than ${currentYear}`;
+    }
+
+    // Validate intakes - each must have a month selected
+    formData.intakes.forEach((intake, index) => {
+      if (!intake.month.trim()) {
+        newErrors[`intake_${index}`] = 'Please select a month';
+      }
+    });
+
+    setErrors(newErrors);
+
+    // Scroll to error summary at top of page
+    if (Object.keys(newErrors).length > 0) {
+      setTimeout(() => {
+        if (firstErrorRef.current) {
+          firstErrorRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
+        }
+      }, 100);
+    }
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
     setIsLoading(true);
     try {
       let logoUrl: string | undefined;
@@ -413,6 +488,23 @@ const UniversityForm: React.FC = () => {
           </h1>
 
           <div className="space-y-8">
+            {/* Validation Error Summary */}
+            {Object.keys(errors).length > 0 && (
+              <div
+                ref={firstErrorRef}
+                className="rounded-lg border border-red-300 bg-red-50 p-4"
+              >
+                <h3 className="text-h4 mb-2 font-semibold text-red-800">
+                  Please fix the following errors:
+                </h3>
+                <ul className="list-inside list-disc space-y-1 text-sm text-red-700">
+                  {Object.entries(errors).map(([key, message]) => (
+                    <li key={key}>{message}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {/* Basic Information */}
             <div>
               <label className="text-h3 mb-2 block font-semibold">
@@ -425,8 +517,17 @@ const UniversityForm: React.FC = () => {
                 onChange={(e) =>
                   handleInputChange('universityName', e.target.value)
                 }
-                className="w-full rounded-lg border border-gray-300 px-4 py-2"
+                className={`w-full rounded-lg border px-4 py-2 ${
+                  errors.universityName
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                    : 'border-gray-300'
+                }`}
               />
+              {errors.universityName && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.universityName}
+                </p>
+              )}
             </div>
 
             <div>
@@ -575,8 +676,17 @@ const UniversityForm: React.FC = () => {
                     onChange={(e) =>
                       handleKeyInfoChange('foundedYear', e.target.value)
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                    className={`w-full rounded-lg border px-3 py-2 ${
+                      errors.foundedYear
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                        : 'border-gray-300'
+                    }`}
                   />
+                  {errors.foundedYear && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.foundedYear}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -635,33 +745,41 @@ const UniversityForm: React.FC = () => {
               <div className="space-y-2">
                 {formData.intakes?.map((intake, index) => {
                   const selectedMonths = formData.intakes.map((i) => i.month);
+                  const intakeError = errors[`intake_${index}`];
                   return (
-                    <div key={index} className="flex items-center gap-2">
-                      <label className="flex items-center text-xs text-gray-500">
-                        Month
-                      </label>
-                      <DropdownInput
-                        options={months.map((month) => ({
-                          value: month,
-                          label: month,
-                          disabled:
-                            selectedMonths.includes(month) &&
-                            intake.month !== month,
-                        }))}
-                        value={intake.month}
-                        onChange={(value) =>
-                          handleIntakeChange(index, 'month', value)
-                        }
-                        placeholder="Select Month"
-                        className="w-34"
-                      />
-                      {formData.intakes.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveIntake(index)}
-                        >
-                          <RemoveIcon className="text-text-primary h-5 w-5 hover:text-red-500" />
-                        </button>
+                    <div key={index}>
+                      <div className="flex items-center gap-2">
+                        <label className="flex items-center text-xs text-gray-500">
+                          Month
+                        </label>
+                        <DropdownInput
+                          options={months.map((month) => ({
+                            value: month,
+                            label: month,
+                            disabled:
+                              selectedMonths.includes(month) &&
+                              intake.month !== month,
+                          }))}
+                          value={intake.month}
+                          onChange={(value) =>
+                            handleIntakeChange(index, 'month', value)
+                          }
+                          placeholder="Select Month"
+                          className={`w-34 ${intakeError ? 'border-red-500' : ''}`}
+                        />
+                        {formData.intakes.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveIntake(index)}
+                          >
+                            <RemoveIcon className="text-text-primary h-5 w-5 hover:text-red-500" />
+                          </button>
+                        )}
+                      </div>
+                      {intakeError && (
+                        <p className="mt-1 ml-14 text-sm text-red-600">
+                          {intakeError}
+                        </p>
                       )}
                     </div>
                   );
