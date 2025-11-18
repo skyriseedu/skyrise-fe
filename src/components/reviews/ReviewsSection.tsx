@@ -44,6 +44,13 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
     return [];
   }, [reviews]);
 
+  const shouldAnimate = displayReviews.length >= 4;
+
+  const duplicateCount = React.useMemo(() => {
+    if (!shouldAnimate) return 1; // Don't duplicate if not enough reviews
+    return 3; // Duplicate 3 times for smooth infinite scroll
+  }, [shouldAnimate]);
+
   return (
     <section className="mb-4 w-full overflow-hidden py-2">
       <div className={containerClassName}>
@@ -65,25 +72,26 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
               onTouchEnd={() => setTimeout(() => setIsPaused(false), 3000)}
             >
               <div
-                className={`flex gap-5 ${!isPaused ? 'animate-scroll-reviews' : ''}`}
+                className={`flex gap-5 ${!isPaused && shouldAnimate ? 'animate-scroll-reviews' : ''}`}
               >
-                {[...Array(3)]?.map((_, setIndex) => (
-                  <React.Fragment key={setIndex}>
-                    {displayReviews?.map((review) => (
-                      <div
-                        key={`${review.id}-${setIndex}`}
-                        className="w-[260px] flex-shrink-0 sm:w-[300px] lg:w-[340px]"
-                      >
-                        <ReviewCard
-                          name={review.name}
-                          program={review.program}
-                          testimonial={review.testimonial}
-                          imageUrl={review.imageUrl}
-                        />
-                      </div>
-                    ))}
-                  </React.Fragment>
-                ))}
+                {displayReviews.length > 0 &&
+                  [...Array(duplicateCount)].map((_, setIndex) => (
+                    <React.Fragment key={setIndex}>
+                      {displayReviews.map((review) => (
+                        <div
+                          key={`${review.id}-${setIndex}`}
+                          className="w-[260px] flex-shrink-0 sm:w-[300px] lg:w-[340px]"
+                        >
+                          <ReviewCard
+                            name={review.name}
+                            program={review.program}
+                            testimonial={review.testimonial}
+                            imageUrl={review.imageUrl}
+                          />
+                        </div>
+                      ))}
+                    </React.Fragment>
+                  ))}
               </div>
             </div>
           </div>
