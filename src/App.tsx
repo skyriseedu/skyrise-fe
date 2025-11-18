@@ -29,6 +29,8 @@ import RegisterPage from './pages/auth/RegisterPage';
 import LogoutPage from './pages/auth/LogoutPage';
 import UniversitySetup from './pages/admin/universities/UniversitySetup';
 import UniversityForm from './pages/admin/universities/UniversityForm';
+import ErrorModal from './components/common/ErrorModal';
+import { setErrorNotificationHandler } from './lib/errorNotification';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,6 +44,23 @@ const queryClient = new QueryClient({
 });
 
 const App: React.FC = () => {
+  const [errorModal, setErrorModal] = React.useState({
+    isOpen: false,
+    title: '',
+    message: '',
+  });
+
+  // Set up global error notification handler
+  React.useEffect(() => {
+    setErrorNotificationHandler((title: string, message: string) => {
+      setErrorModal({ isOpen: true, title, message });
+    });
+  }, []);
+
+  const closeErrorModal = () => {
+    setErrorModal({ isOpen: false, title: '', message: '' });
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -136,6 +155,12 @@ const App: React.FC = () => {
               }
             />
           </Routes>
+          <ErrorModal
+            isOpen={errorModal.isOpen}
+            onClose={closeErrorModal}
+            title={errorModal.title}
+            message={errorModal.message}
+          />
         </Router>
       </AuthProvider>
     </QueryClientProvider>

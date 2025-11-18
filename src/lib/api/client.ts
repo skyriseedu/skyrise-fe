@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { showErrorNotification } from '../errorNotification';
 
 const API_BASE_URL =
   import.meta.env.MODE === 'development'
@@ -34,10 +35,20 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => {
     console.log('API called successfully:', response);
+
     return response;
   },
   async (error) => {
     const originalRequest = error.config;
+
+    // Handle 429 errors (Too Many Requests)
+    if (error.response?.status === 429) {
+      showErrorNotification(
+        'Too Many Requests',
+        'You have made too many requests. Please try again later.'
+      );
+      return Promise.reject(error);
+    }
 
     // Handle 401 errors (token expired)
     if (error.response?.status === 401 && !originalRequest._retry) {
