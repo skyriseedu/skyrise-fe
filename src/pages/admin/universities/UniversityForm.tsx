@@ -350,12 +350,16 @@ const UniversityForm: React.FC = () => {
 
     setErrors(newErrors);
 
-    // Scroll to first error
-    if (Object.keys(newErrors).length > 0 && firstErrorRef.current) {
-      firstErrorRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
+    // Scroll to error summary at top of page
+    if (Object.keys(newErrors).length > 0) {
+      setTimeout(() => {
+        if (firstErrorRef.current) {
+          firstErrorRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
+        }
+      }, 100);
     }
 
     return Object.keys(newErrors).length === 0;

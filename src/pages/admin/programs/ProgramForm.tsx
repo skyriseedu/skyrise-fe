@@ -93,8 +93,10 @@ const ProgramForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showRankingDropdown, setShowRankingDropdown] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const rankingDropdownRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
+  const firstErrorRef = useRef<HTMLDivElement>(null);
 
   const createProgramMutation = useCreateProgram();
   const updateProgramMutation = useUpdateProgram();
@@ -210,6 +212,14 @@ const ProgramForm: React.FC = () => {
       ...prev,
       [field]: value,
     }));
+    // Clear error for this field when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
   };
 
   const handleAddIntake = () => {
@@ -309,7 +319,35 @@ const ProgramForm: React.FC = () => {
     }));
   };
 
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    // Program name is required
+    if (!formData.programName.trim()) {
+      newErrors.programName = 'Program name is required';
+    }
+
+    setErrors(newErrors);
+
+    // Scroll to error summary at top of page
+    if (Object.keys(newErrors).length > 0) {
+      setTimeout(() => {
+        if (firstErrorRef.current) {
+          firstErrorRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
+        }
+      }, 100);
+    }
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
     setIsLoading(true);
     try {
       let primaryImage: UploadedImage | undefined;
@@ -420,6 +458,23 @@ const ProgramForm: React.FC = () => {
           </h1>
 
           <div className="space-y-8">
+            {/* Validation Error Summary */}
+            {Object.keys(errors).length > 0 && (
+              <div
+                ref={firstErrorRef}
+                className="rounded-lg border border-red-300 bg-red-50 p-4"
+              >
+                <h3 className="text-h4 mb-2 font-semibold text-red-800">
+                  Please fix the following errors:
+                </h3>
+                <ul className="list-inside list-disc space-y-1 text-sm text-red-700">
+                  {Object.entries(errors).map(([key, message]) => (
+                    <li key={key}>{message}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {/* Basic Information */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
@@ -433,8 +488,17 @@ const ProgramForm: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange('programName', e.target.value)
                   }
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2"
+                  className={`w-full rounded-lg border px-4 py-2 ${
+                    errors.programName
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                      : 'border-gray-300'
+                  }`}
                 />
+                {errors.programName && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.programName}
+                  </p>
+                )}
               </div>
 
               <div>
