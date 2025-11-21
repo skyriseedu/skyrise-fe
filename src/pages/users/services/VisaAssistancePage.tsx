@@ -10,8 +10,9 @@ const VisaAssistancePage: React.FC = () => {
         title="Visa Assistance"
         subtitle=""
         mobilePadding="px-8 "
-        desktopPadding="lg:-ml-20 lg:px-25"
+        desktopPadding="lg:px-15"
         showBackButton={false}
+        useContainer={false}
       />
 
       {/* Hero Section */}

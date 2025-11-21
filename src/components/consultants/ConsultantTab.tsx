@@ -173,7 +173,7 @@ const ConsultantTab: React.FC = () => {
               <div className="text-h2 lg:text-h1 font-semibold text-gray-600">
                 <div>Join an inspiring (RISE) community</div>
               </div>
-              <div className="text-h1 mb-2 font-semibold text-gray-900">
+              <div className="mb-2 text-[48px] font-semibold text-gray-900">
                 {isLoadingConsultantCount ? (
                   <Loading size="md" color="primary" />
                 ) : (
@@ -191,7 +191,7 @@ const ConsultantTab: React.FC = () => {
           {/* Large Screen Layout - 3 columns */}
           <div className="hidden lg:grid lg:grid-cols-3 lg:items-center lg:gap-8">
             <div className="text-center">
-              <div className="text-h1 text-text-primary font-semibold">
+              <div className="text-text-primary text-[84px] font-semibold">
                 {isLoadingConsultantCount ? (
                   <div className="flex justify-center">
                     <Loading size="lg" color="primary" />
