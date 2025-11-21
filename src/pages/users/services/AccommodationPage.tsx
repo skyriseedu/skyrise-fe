@@ -44,8 +44,9 @@ const AdmissionProcessPage: React.FC = () => {
         title="Accommodation & Airport Pick-up"
         subtitle=""
         mobilePadding="px-8"
-        desktopPadding="lg:px-25 lg:-ml-20"
+        desktopPadding="lg:px-15"
         showBackButton={false}
+        useContainer={false}
       />
       <div className="relative w-full">
         <img
