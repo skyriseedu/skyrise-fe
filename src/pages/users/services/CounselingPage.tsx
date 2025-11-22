@@ -44,7 +44,7 @@ const CounselingPage: React.FC = () => {
             Not Sure where to start? Seniors from your dream universities are
             helping to share genuine reviews <br />
             and insightful information for you to start your academic journey in
-            Thailand with clarity and <br />
+            aboard with clarity and <br />
             confidence.
           </p>
 
