@@ -58,7 +58,7 @@ const PreUniversityPage: React.FC = () => {
                 <span className="font-bold">
                   Academic foundation Onsite Programs
                 </span>{' '}
-                ( in Bangkok, Thailand ) such as{' '}
+                 such as{' '}
                 <span className="font-bold">GED, IGCSE, OSSD</span> and other
                 internationally recognized qualifications to help you meet
                 university entry requirements.
@@ -69,9 +69,7 @@ const PreUniversityPage: React.FC = () => {
               <span className="text-text-primary mr-2">•</span>
               <div className="text-text-primary text-body-2 lg:text-body-3">
                 <span className="font-bold">Language programs</span> that also
-                provide ED visa support - ideal for students who are already in
-                Thailand and seeking to continue their studies legally and
-                productively.
+                provide ED visa support - ideal for students who want to go abroad with less financial burden and who are already in aboard, seeking to continue their studies legally and productively.
               </div>
             </li>
 
@@ -79,7 +77,7 @@ const PreUniversityPage: React.FC = () => {
               <span className="text-text-primary mr-2">•</span>
               <div className="text-text-primary text-body-2 lg:text-body-3">
                 <span className="font-bold">Language Available :</span> Thai,
-                English, Japanese, Chinese
+                English, Japanese, Chinese & more
               </div>
             </li>
           </ul>

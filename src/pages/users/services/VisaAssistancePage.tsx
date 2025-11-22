@@ -46,33 +46,29 @@ const VisaAssistancePage: React.FC = () => {
             <li className="flex items-start">
               <span className="text-text-primary mr-2">•</span>
               <span className="text-text-primary text-body-2 lg:text-body-3">
-                <span className="font-bold">3 Nights Hotel Accommodation</span>{' '}
-                - Comfortable and safe stay arranged for you.
+                <span className="font-bold">Hotel Accommodation</span>{' '}
+                - A comfortable and safe stay
               </span>
             </li>
 
             <li className="flex items-start">
               <span className="text-text-primary mr-2">•</span>
               <span className="text-text-primary text-body-2 lg:text-body-3">
-                <span className="font-bold">Visa Fees</span> - Government
-                Immigration visa fee (2,000 THB) included.
+                <span className="font-bold">Visa Fees</span> - Government immigration visa fee
               </span>
             </li>
 
             <li className="flex items-start">
               <span className="text-text-primary mr-2">•</span>
               <span className="text-text-primary text-body-2 lg:text-body-3">
-                <span className="font-bold">Guide Team Assistance</span> - Our
-                experienced team member will accompany you and assist throughout
-                the visa application process.
+                <span className="font-bold">Guide Team Assistance</span> - Team member to assist throughout the visa process
               </span>
             </li>
 
             <li className="flex items-start">
               <span className="text-text-primary mr-2">•</span>
               <span className="text-text-primary text-body-2 lg:text-body-3">
-                <span className="font-bold">Return Train Ticket</span> - From
-                Laos to Thailand for your convenience.
+                <span className="font-bold">Flight Tickets</span> - Optional
               </span>
             </li>
           </ul>
@@ -88,9 +84,8 @@ const VisaAssistancePage: React.FC = () => {
             <li className="flex items-start">
               <span className="text-text-primary mr-2">•</span>
               <span className="text-text-primary text-body-2 lg:text-body-3">
-                Due to current border conditions, we recommend students travel
-                to Laos immigration
-                <span className="font-bold"> by one-way flight.</span>
+                Our team provides comprehensive visa services both in Yangon and in third countries such as Laos (Vientiane); for further details and assistance, you can consult our team to receive the latest updates based on your study destination.
+                <span className="font-bold"></span>
               </span>
             </li>
 
@@ -121,7 +116,7 @@ const VisaAssistancePage: React.FC = () => {
               }}
               className="text-h4 rounded-lg bg-[#DE595B] px-6 py-3 font-semibold text-white transition-colors duration-300 hover:bg-red-700"
             >
-              Contact us today to reserve your spot or get more detail!
+              Contact us today to reserve your spot
             </button>
           </div>
         </div>
