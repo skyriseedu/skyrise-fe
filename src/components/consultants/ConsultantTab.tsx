@@ -40,8 +40,8 @@ const ConsultantTab: React.FC = () => {
 
         <div className="absolute inset-0 mb-6 flex w-full items-end">
           <h1 className="text-h3 lg:text-h2 w-full bg-black/50 py-4 text-center font-semibold text-white">
-            "Calling Students Studying in Thailand. Make an Impact. Inspire the
-            Next Generation."
+            "Calling Students Studying Around the World! Make an Impact. Inspire
+            the Next Generation."
           </h1>
         </div>
       </div>
@@ -53,7 +53,7 @@ const ConsultantTab: React.FC = () => {
               Requirements for applying 'Consultant'
             </h2>
             <div className="lg:text-body-2 text-body-3 mb-4 text-gray-600">
-              Are you currently studying in Thailand, both in private and public
+              Are you currently studying in aboard, both in private and public
               universities? Join the{' '}
               <span className="font-medium text-red-500">
                 SKYRISE Education Team
@@ -72,8 +72,8 @@ const ConsultantTab: React.FC = () => {
             <li className="flex items-start gap-2">
               <span className="mt-1 text-red-500">•</span>
               <span>
-                Current international or local student enrolled in a university
-                or college in Thailand.
+                Current international students who enrolled in a university or
+                college in aboard.
               </span>
             </li>
             <li className="flex items-start gap-2">
@@ -87,14 +87,14 @@ const ConsultantTab: React.FC = () => {
               <span className="mt-1 text-red-500">•</span>
               <span>
                 Strong communication skills and a willingness to share your
-                daily experiences, and campus life honestly.
+                story, experiences, and campus life with honesty.
               </span>
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-1 text-red-500">•</span>
               <span>
                 Reliable and responsible individuals who can commit time
-                (Online) to support younger students.
+                (ONLINE) to support younger students.
               </span>
             </li>
             <li className="flex items-start gap-2">
