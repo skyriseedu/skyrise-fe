@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import AmbassadorCard from './AmbassadorCard';
 import type {
   Ambassador,
@@ -7,12 +7,18 @@ import type {
 import { useConsultants } from '@/queries/consultants';
 import type { Consultant } from '@/types/users/consultant';
 
+const MIN_INDICATOR_WIDTH = 15;
+
 const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
   title = 'Student Ambassadors',
   className = '',
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
+  const dragOffsetRef = useRef(0);
   const [scrollProgress, setScrollProgress] = useState({ width: 30, left: 0 });
+  const [isDragging, setIsDragging] = useState(false);
   const {
     data: consultantsResponse,
     isPending: isConsultantsLoading,
@@ -43,33 +49,131 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
 
   const hasAmbassadors = ambassadors.length > 0;
 
-  useEffect(() => {
-    const handleScroll = () => {
+  const updateIndicatorState = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const scrollWidth = container.scrollWidth;
+    const clientWidth = container.clientWidth;
+    const maxScrollLeft = scrollWidth - clientWidth;
+    const scrollLeft = container.scrollLeft;
+
+    const rawIndicatorWidth =
+      scrollWidth > 0 ? (clientWidth / scrollWidth) * 100 : 100;
+    const indicatorWidth = Math.min(
+      100,
+      Math.max(rawIndicatorWidth, MIN_INDICATOR_WIDTH)
+    );
+    const maxLeft = Math.max(100 - indicatorWidth, 0);
+    const left = maxScrollLeft > 0 ? (scrollLeft / maxScrollLeft) * maxLeft : 0;
+
+    setScrollProgress({ width: indicatorWidth, left });
+  }, []);
+
+  const updateScrollFromPointer = useCallback(
+    (clientX: number, shouldSmooth = false) => {
       const container = scrollContainerRef.current;
-      if (!container) return;
+      const track = trackRef.current;
+      if (!container || !track) return;
 
-      const scrollWidth = container.scrollWidth - container.clientWidth;
-      const scrollLeft = container.scrollLeft;
-      const scrollPercentage =
-        scrollWidth > 0 ? (scrollLeft / scrollWidth) * 100 : 0;
+      const trackRect = track.getBoundingClientRect();
+      const maxScrollLeft = container.scrollWidth - container.clientWidth;
+      if (maxScrollLeft <= 0) {
+        return;
+      }
 
-      const indicatorWidth = 30;
-      const maxLeft = 100 - indicatorWidth;
-      const left = (scrollPercentage / 100) * maxLeft;
+      const indicatorWidthPercent = Math.min(
+        100,
+        Math.max((container.clientWidth / container.scrollWidth) * 100, MIN_INDICATOR_WIDTH)
+      );
+      const indicatorWidthPx = (indicatorWidthPercent / 100) * trackRect.width;
+      const maxIndicatorLeftPx = Math.max(trackRect.width - indicatorWidthPx, 0);
 
-      setScrollProgress({ width: indicatorWidth, left });
+      const desiredLeft = clientX - trackRect.left - dragOffsetRef.current;
+      const clampedIndicatorLeft = Math.min(
+        Math.max(desiredLeft, 0),
+        maxIndicatorLeftPx
+      );
+      const scrollRatio =
+        maxIndicatorLeftPx > 0 ? clampedIndicatorLeft / maxIndicatorLeftPx : 0;
+      const newScrollLeft = scrollRatio * maxScrollLeft;
+
+      container.scrollTo({
+        left: newScrollLeft,
+        behavior: shouldSmooth ? 'smooth' : 'auto',
+      });
+    },
+    []
+  );
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      if (isDragging) return;
+      updateIndicatorState();
     };
 
-    const container = scrollContainerRef.current;
-    container?.addEventListener('scroll', handleScroll);
-
-    // Initial calculation
     handleScroll();
+    container.addEventListener('scroll', handleScroll);
 
     return () => {
-      container?.removeEventListener('scroll', handleScroll);
+      container.removeEventListener('scroll', handleScroll);
     };
-  }, [ambassadors.length]);
+  }, [isDragging, updateIndicatorState, ambassadors.length]);
+
+  useEffect(() => {
+    const handleResize = () => updateIndicatorState();
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, [updateIndicatorState]);
+
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handlePointerMove = (event: PointerEvent) => {
+      event.preventDefault();
+      updateScrollFromPointer(event.clientX);
+    };
+
+    const handlePointerUp = () => setIsDragging(false);
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+  }, [isDragging, updateScrollFromPointer]);
+
+  const handlePointerDown = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      const indicator = indicatorRef.current;
+      if (!indicator) return;
+
+      const indicatorRect = indicator.getBoundingClientRect();
+      const clickedInsideIndicator =
+        event.clientX >= indicatorRect.left && event.clientX <= indicatorRect.right;
+
+      dragOffsetRef.current = clickedInsideIndicator
+        ? event.clientX - indicatorRect.left
+        : indicatorRect.width / 2;
+
+      if (!clickedInsideIndicator) {
+        updateScrollFromPointer(event.clientX, true);
+        return;
+      }
+
+      updateScrollFromPointer(event.clientX);
+      setIsDragging(true);
+    },
+    [updateScrollFromPointer]
+  );
 
   return (
     <section className={`w-full px-2 py-12 lg:py-20 ${className}`}>
@@ -102,7 +206,7 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
           <div className="relative">
             <div
               ref={scrollContainerRef}
-              className="scrollbar-hide overflow-x-auto"
+              className="scrollbar-hide overflow-x-auto scroll-smooth"
             >
               <div className="flex gap-3 px-8">
                 {ambassadors.map((data) => (
@@ -119,8 +223,17 @@ const AmbassadorSection: React.FC<AmbassadorSectionProps> = ({
 
             {/* custom scrollbar indicator - desktop */}
             <div className="mt-6 hidden px-90 lg:block">
-              <div className="bg-secondary relative h-1.5 rounded-full">
+              <div
+                ref={trackRef}
+                onPointerDown={handlePointerDown}
+                className="bg-secondary relative h-1.5 rounded-full cursor-pointer touch-none"
+                role="scrollbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={scrollProgress.left}
+              >
                 <div
+                  ref={indicatorRef}
                   className="bg-primary absolute h-full rounded-full transition-all duration-300"
                   style={{
                     width: `${scrollProgress.width}%`,
