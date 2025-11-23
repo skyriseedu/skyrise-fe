@@ -7,6 +7,7 @@ import Telegram from '../../assets/telegram.svg?react';
 import SkyRiseLogo2 from '../../assets/skyrise-logo-2.svg?react';
 import SuccessModal from '../common/SuccessModal';
 import ConsultantForm from '../common/ApplyConsultantForm';
+import { useTranslation } from 'react-i18next';
 
 const socialLinks = [
   {
@@ -69,6 +70,7 @@ const Footer: React.FC = () => {
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
   const servicesSection = footerNavigation.find((item) => item.hasSubmenu);
   const generalNavigation = footerNavigation.filter((item) => !item.hasSubmenu);
+  const { t } = useTranslation();
 
   const handleFormSuccess = () => {
     setIsOpen(false);
@@ -83,8 +85,7 @@ const Footer: React.FC = () => {
             Contact Us
           </h3>
           <p className="text-body-3 lg:text-body-4 font-regular mb-6 lg:font-normal">
-            Have questions about university? Reach out to SKYRISE Corner – we're
-            here to help you every step of the way!
+            {t('footer.contactUs')}
           </p>
 
           <div className="mb-8 flex flex-col space-y-3">
@@ -107,8 +108,7 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="text-body-3 text-text-primary lg:text-body-4 mb-4 font-normal">
-            Passionate about education? Join SKYRISE Corner as a consultant and
-            help students achieve their university dreams!
+            {t('footer.joinWithUs')}
           </div>
           <button
             className="bg-primary text-h3 hover:bg-primary/80 lg:text-h4 w-full cursor-pointer rounded-lg px-6 py-2 font-medium text-white transition-colors lg:font-bold"
@@ -142,7 +142,7 @@ const Footer: React.FC = () => {
                     <li key={subItem.name}>
                       <Link
                         to={subItem.path}
-                        className="text-h3 lg:text-h3 text-text-primary mb-3 font-normal  hover:text-primary cursor-pointer transition-colors"
+                        className="text-h3 lg:text-h3 text-text-primary hover:text-primary mb-3 cursor-pointer font-normal transition-colors"
                       >
                         {subItem.name}
                       </Link>

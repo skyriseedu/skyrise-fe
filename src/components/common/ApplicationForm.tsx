@@ -18,7 +18,6 @@ interface ConsultationFormProps {
 
 const timeOptions = ['08:00 a.m', '12:00 p.m', '15:00 p.m', '20:00 p.m'];
 const locationOptions = ['Myanmar', 'Thailand'];
-const countryCodeOptions = ['+95', '+66'];
 
 const ConsultationForm: React.FC<ConsultationFormProps> = ({
   onClose,
@@ -26,9 +25,7 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
 }) => {
   const submitApplicationMutation = useSubmitApplication();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [selectedCountryCode, setSelectedCountryCode] = useState('+95');
   const [showCalendar, setShowCalendar] = useState(false);
-  const [phoneInput, setPhoneInput] = useState('');
 
   const initialValues: ApplicationFormValues = {
     name: '',
@@ -137,65 +134,17 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
                 <label className="text-h5 absolute -top-2 left-3 z-10 bg-white px-1 font-semibold text-gray-500">
                   Phone Number
                 </label>
-                <div className="flex rounded-lg border">
-                  <div className="relative border-r">
-                    <button
-                      type="button"
-                      className="flex h-full min-w-[70px] items-center justify-between px-3 py-2 text-left"
-                      onClick={() => {
-                        setShowCalendar(false);
-                        setOpenDropdown(
-                          openDropdown === 'countryCode' ? null : 'countryCode'
-                        );
-                      }}
-                    >
-                      <span className="text-sm">{selectedCountryCode}</span>
-                      {openDropdown === 'countryCode' ? (
-                        <CaretUp className="text-primary ml-1 h-5 w-5" />
-                      ) : (
-                        <CaretDown className="text-primary ml-1 h-5 w-5" />
-                      )}
-                    </button>
-                    {openDropdown === 'countryCode' && (
-                      <div className="absolute top-full left-0 z-50 mt-1 min-w-[100px] rounded-lg border bg-white shadow-lg">
-                        {countryCodeOptions.map((option) => (
-                          <button
-                            key={option}
-                            type="button"
-                            className="w-full px-3 py-2 text-left text-sm first:rounded-t-lg last:rounded-b-lg hover:bg-gray-100"
-                            onClick={() => {
-                              setSelectedCountryCode(option);
-                              setOpenDropdown(null);
-                              // Update phoneNumber with new country code
-                              setFieldValue(
-                                'phoneNumber',
-                                `${option} ${phoneInput}`
-                              );
-                            }}
-                          >
-                            {option}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <input
-                    className={`flex-1 border-0 px-3 py-2 outline-none focus:ring-0 ${
-                      errors.phoneNumber && touched.phoneNumber
-                        ? 'border-red-500'
-                        : ''
-                    }`}
-                    value={phoneInput}
-                    onChange={(e) => {
-                      setPhoneInput(e.target.value);
-                      setFieldValue(
-                        'phoneNumber',
-                        `${selectedCountryCode} ${e.target.value}`
-                      );
-                    }}
-                    required
-                  />
-                </div>
+                <Field
+                  name="phoneNumber"
+                  type="tel"
+                  placeholder="+959123456789"
+                  className={`w-full rounded-lg border px-3 py-2 ${
+                    errors.phoneNumber && touched.phoneNumber
+                      ? 'border-red-500'
+                      : ''
+                  }`}
+                  required
+                />
                 <ErrorMessage
                   name="phoneNumber"
                   component="div"
@@ -378,6 +327,9 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
                 component="div"
                 className="mt-1 text-sm text-red-600"
               />
+            </div>
+            <div className="text-text-secondary mb-4 text-xs">
+              * We will contact you for further more details via email
             </div>
 
             <button

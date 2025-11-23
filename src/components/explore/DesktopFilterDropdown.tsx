@@ -126,7 +126,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                             onChange={() =>
                               handleFilterChange(section.id, option.value)
                             }
-                            className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
+                            className="text-primary focus:ring-primary h-4 w-4 flex-shrink-0 rounded border-gray-300"
                           />
                           <span className="text-body-2 text-text-primary">
                             {option.label}
@@ -181,7 +181,7 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                           onChange={() =>
                             handleFilterChange('tuitionRanges', fee.value)
                           }
-                          className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
+                          className="text-primary focus:ring-primary h-4 w-4 flex-shrink-0 rounded border-gray-300"
                         />
                         <span className="text-body-2 text-text-primary">
                           {fee.label}

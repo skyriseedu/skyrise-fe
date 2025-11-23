@@ -1,8 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import CaretDown from '../../assets/caret-down.svg?react';
-import CaretUp from '../../assets/caret-up.svg?react';
 import closeIcon from '@/assets/close.svg';
 import { useApplyConsultantApplication } from '@/queries';
 import type { ApplyConsultantFormValues } from '@/types/users/forms';
@@ -13,16 +10,10 @@ interface ConsultantFormProps {
   onSuccess?: () => void;
 }
 
-const countryCodeOptions = ['+95', '+66'];
-
 const ConsultantForm: React.FC<ConsultantFormProps> = ({
   onSuccess,
   onClose,
 }) => {
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [selectedCountryCode, setSelectedCountryCode] = useState('+95');
-  const [phoneInput, setPhoneInput] = useState('');
-
   const consultantApplicationMutation = useApplyConsultantApplication();
 
   const initialValues: ApplyConsultantFormValues = {
@@ -36,7 +27,7 @@ const ConsultantForm: React.FC<ConsultantFormProps> = ({
     try {
       const formattedData = {
         ...values,
-        phoneNumber: values.phoneNumber.split(' ').join(''),
+        phoneNumber: values.phoneNumber.replace(/\s+/g, ''),
       };
 
       await consultantApplicationMutation.mutateAsync(formattedData);
@@ -71,7 +62,7 @@ const ConsultantForm: React.FC<ConsultantFormProps> = ({
         validateOnMount
         onSubmit={handleSubmit}
       >
-        {({ setFieldValue, isSubmitting, errors, touched }) => (
+        {({ isSubmitting, errors, touched }) => (
           <Form className="w-full rounded-lg bg-white p-6 shadow-lg">
             <h2 className="text-h3 mb-6 text-center font-semibold">
               Join our teams as a consultant
@@ -127,68 +118,17 @@ const ConsultantForm: React.FC<ConsultantFormProps> = ({
                 <label className="text-h5 absolute -top-2 left-3 z-10 bg-white px-1 font-semibold text-gray-500">
                   Phone Number
                 </label>
-                <div className="flex rounded-lg border">
-                  <div className="relative border-r">
-                    <button
-                      type="button"
-                      className="flex h-full min-w-[70px] items-center justify-between px-3 py-2 text-left"
-                      onClick={() =>
-                        setOpenDropdown(
-                          openDropdown === 'countryCode' ? null : 'countryCode'
-                        )
-                      }
-                    >
-                      <span className="text-sm">{selectedCountryCode}</span>
-                      {openDropdown === 'countryCode' ? (
-                        <CaretUp className="text-primary ml-1 h-5 w-5" />
-                      ) : (
-                        <CaretDown className="text-primary ml-1 h-5 w-5" />
-                      )}
-                    </button>
-                    {openDropdown === 'countryCode' && (
-                      <div className="absolute top-full left-0 z-50 mt-1 min-w-[100px] rounded-lg border bg-white shadow-lg">
-                        {countryCodeOptions.map((option) => (
-                          <button
-                            key={option}
-                            type="button"
-                            className="w-full px-3 py-2 text-left text-sm first:rounded-t-lg last:rounded-b-lg hover:bg-gray-100"
-                            onClick={() => {
-                              setSelectedCountryCode(option);
-                              setOpenDropdown(null);
-                              // Update the phoneNumber with new country code
-                              if (phoneInput) {
-                                setFieldValue(
-                                  'phoneNumber',
-                                  `${option} ${phoneInput}`
-                                );
-                              }
-                            }}
-                          >
-                            {option}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <input
-                    className={`flex-1 border-0 px-3 py-2 outline-none focus:ring-0 ${
-                      errors.phoneNumber && touched.phoneNumber
-                        ? 'border-red-500'
-                        : ''
-                    }`}
-                    value={phoneInput}
-                    onChange={(e) => {
-                      const inputValue = e.target.value;
-                      setPhoneInput(inputValue);
-                      setFieldValue(
-                        'phoneNumber',
-                        `${selectedCountryCode} ${inputValue}`
-                      );
-                    }}
-                    placeholder="Enter phone number"
-                    required
-                  />
-                </div>
+                <Field
+                  name="phoneNumber"
+                  type="tel"
+                  placeholder="+959123456789"
+                  className={`w-full rounded-lg border px-3 py-2 ${
+                    errors.phoneNumber && touched.phoneNumber
+                      ? 'border-red-500'
+                      : ''
+                  }`}
+                  required
+                />
                 <ErrorMessage
                   name="phoneNumber"
                   component="div"
