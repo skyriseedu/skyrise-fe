@@ -328,6 +328,9 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
                 className="mt-1 text-sm text-red-600"
               />
             </div>
+            <div className="text-text-secondary mb-4 text-xs">
+              * We will contact you for further more details via email
+            </div>
 
             <button
               type="submit"

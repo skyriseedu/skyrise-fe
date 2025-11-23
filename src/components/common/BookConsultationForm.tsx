@@ -340,6 +340,10 @@ const ConsultationForm: React.FC<ConsultationFormProps> = ({
               />
             </div>
 
+            <div className="text-text-secondary mb-4 text-xs">
+              * We will contact you for further more details via email
+            </div>
+
             <button
               type="submit"
               className="bg-primary text-h4 hover:bg-primary/90 mb-3 w-full cursor-pointer rounded-lg py-2 font-semibold text-white transition-colors disabled:opacity-50"
