@@ -74,7 +74,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://skyrise-backend-wh9o.onrender.com',
+        target: 'https://be.skyriseedu.com/',
         changeOrigin: true,
         secure: false,
       },
