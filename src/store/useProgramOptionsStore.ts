@@ -14,7 +14,7 @@ interface ProgramOptionsState {
   fetchFilters: () => Promise<void>;
 }
 
-export const useProgramOptionsStore = create<ProgramOptionsState>((set) => ({
+export const useProgramOptionsStore = create<ProgramOptionsState>((set, get) => ({
   degrees: [],
   programs: [],
   fees: [],
@@ -24,6 +24,9 @@ export const useProgramOptionsStore = create<ProgramOptionsState>((set) => ({
   error: null,
   fetched: false,
   fetchFilters: async () => {
+    const { fetched, loading } = get();
+    if (loading || fetched) return;
+
     set({ loading: true, error: null });
     try {
       const res = await programsService.getProgramFilters();
