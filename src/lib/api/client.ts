@@ -33,7 +33,7 @@ apiClient.interceptors.request.use(
 // Response interceptor to handle auth errors
 apiClient.interceptors.response.use(
   (response) => {
-    console.log('API called successfully:', response);
+    // console.log('API called successfully:', response);
 
     return response;
   },
@@ -86,10 +86,10 @@ apiClient.interceptors.response.use(
 
     const message =
       error.response?.data?.message || error.message || 'An error occurred';
-    console.error(
-      `${error.response?.status || 'Network Error'} ${error.config?.url}:`,
-      message
-    );
+    // console.error(
+    //   `${error.response?.status || 'Network Error'} ${error.config?.url}:`,
+    //   message
+    // );
     throw new Error(message);
   }
 );
