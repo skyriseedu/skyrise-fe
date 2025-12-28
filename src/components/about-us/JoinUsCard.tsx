@@ -22,7 +22,7 @@ const JoinUsCard: React.FC = () => {
 
             <div className="flex flex-col items-center justify-center text-center">
               <p className="text-h2 lg:text-h2 text-text-primary leading-snug font-semibold">
-                Studying in Thailand? Join the SKYRISE Education Team! Share
+                Studying around the world? Join the SKYRISE Education Team! Share
                 your journey, support future students, and get rewarded.
               </p>
 
