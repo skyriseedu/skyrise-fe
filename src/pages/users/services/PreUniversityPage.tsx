@@ -1,7 +1,7 @@
 import React from 'react';
 import ServicesShowcase from '@/components/services/consultation/ServicesShowcase';
 import StickyHeader from '@/components/common/StickyHeader';
-import preUniversityCover from '../../../assets/images/pre-university-cover.png';
+import preUniversityCover from '../../../assets/images/Pre-university Programs.png';
 
 const PreUniversityPage: React.FC = () => {
   return (
