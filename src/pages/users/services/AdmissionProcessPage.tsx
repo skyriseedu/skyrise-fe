@@ -4,7 +4,7 @@ import Button from '@/components/common/Button';
 import BookConsultationForm from '@/components/common/BookConsultationForm';
 import ApplicationForm from '@/components/common/ApplicationForm';
 import SuccessModal from '@/components/common/SuccessModal';
-import support from '@/assets/images/admission-process-support.jpeg';
+import support from '@/assets/images/Services Graphics - Admission Process Support.png';
 import StickyHeader from '@/components/common/StickyHeader';
 
 const AdmissionProcessPage: React.FC = () => {

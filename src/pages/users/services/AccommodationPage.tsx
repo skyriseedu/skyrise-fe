@@ -1,5 +1,5 @@
 import ServicesShowcase from '@/components/services/consultation/ServicesShowcase';
-import support from '@/assets/images/services-accommodation-cover.jpeg';
+import support from '@/assets/images/Services Graphics - Accomodation and Airport.png';
 import StickyHeader from '@/components/common/StickyHeader';
 import AccommodationCard from '@/components/services/accommodation-and-airport-pickup/AccommodationCard';
 import BunditApartment from '@/assets/images/bundit-apartment-rangsit.jpeg';
