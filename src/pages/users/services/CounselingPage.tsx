@@ -3,7 +3,7 @@ import ServicesShowcase from '@/components/services/consultation/ServicesShowcas
 import Button from '@/components/common/Button';
 import BookConsultationForm from '@/components/common/BookConsultationForm';
 import SuccessModal from '@/components/common/SuccessModal';
-import consultation from '@/assets/images/consultation.jpg';
+import consultation from '@/assets/images/Consultations.png';
 import { useNavigate } from 'react-router-dom';
 import StickyHeader from '@/components/common/StickyHeader';
 
