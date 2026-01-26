@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import caretDown from '@/assets/caret-down.svg';
+import '@/components/common/TextEditor/QuillContent.css';
 
 interface ProgramStructureProps {
   undergraduateEntryRequirement?: string;
@@ -28,7 +29,7 @@ const ProgramStructure: React.FC<ProgramStructureProps> = ({
           {
             id: 'credit',
             title: 'Total Credit Requirement',
-            content: creditDetails,
+            htmlContent: creditDetails,
           } as AccordionItem,
         ]
       : []),
@@ -46,7 +47,7 @@ const ProgramStructure: React.FC<ProgramStructureProps> = ({
           {
             id: 'career',
             title: 'Career Paths',
-            content: careerPaths,
+            htmlContent: careerPaths,
           } as AccordionItem,
         ]
       : []),
@@ -111,7 +112,7 @@ const ProgramStructure: React.FC<ProgramStructureProps> = ({
                   >
                     {item?.htmlContent ? (
                       <div
-                        className="text-body-3 lg:text-body-3 text-text-secondary"
+                        className="quill-content text-body-3 lg:text-body-3 text-text-secondary"
                         dangerouslySetInnerHTML={{ __html: item?.htmlContent }}
                       />
                     ) : (

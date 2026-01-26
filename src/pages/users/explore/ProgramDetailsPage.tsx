@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 import { useProgramBySlug } from '@/queries';
 import BookConsultationForm from '@/components/common/BookConsultationForm';
 import SuccessModal from '@/components/common/SuccessModal';
+import '@/components/common/TextEditor/QuillContent.css';
 
 const ProgramDetailsPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -122,9 +123,14 @@ const ProgramDetailsPage: React.FC = () => {
               <h2 className="text-h3 lg:text-h2 text-text-primary mb-4 font-semibold lg:mb-6">
                 About Program
               </h2>
-              <p className="text-text-primary text-body-2 lg:text-body-2 leading-relaxed">
-                {data?.data?.about || 'Program description is not available.'}
-              </p>
+              <div
+                className="quill-content text-text-primary text-body-2 lg:text-body-2 leading-relaxed"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    data?.data?.about ||
+                    'Program description is not available.',
+                }}
+              />
             </div>
           </div>
 

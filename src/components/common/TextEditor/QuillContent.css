@@ -1,0 +1,173 @@
+/* Quill Content Renderer Styles */
+.quill-content {
+  font-family: var(--font-family-roboto);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Paragraphs */
+.quill-content p {
+  margin-bottom: 0.5em;
+}
+
+.quill-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Text formatting */
+.quill-content strong {
+  font-weight: 700;
+}
+
+.quill-content em {
+  font-style: italic;
+}
+
+.quill-content u {
+  text-decoration: underline;
+}
+
+/* Font sizes */
+.quill-content .ql-size-small {
+  font-size: 0.75em;
+}
+
+.quill-content .ql-size-large {
+  font-size: 1.5em;
+}
+
+.quill-content .ql-size-huge {
+  font-size: 2em;
+}
+
+/* Fonts */
+.quill-content .ql-font-fustat {
+  font-family: var(--font-family-fustat);
+}
+
+.quill-content .ql-font-roboto {
+  font-family: var(--font-family-roboto);
+}
+
+/* Text alignment */
+.quill-content .ql-align-center {
+  text-align: center;
+}
+
+.quill-content .ql-align-right {
+  text-align: right;
+}
+
+.quill-content .ql-align-justify {
+  text-align: justify;
+}
+
+/* Lists */
+.quill-content ol,
+.quill-content ul {
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+.quill-content ol:last-child,
+.quill-content ul:last-child {
+  margin-bottom: 0;
+}
+
+.quill-content li {
+  margin-bottom: 0.5em;
+  position: relative;
+}
+
+.quill-content li:last-child {
+  margin-bottom: 0;
+}
+
+/* Bullet lists */
+.quill-content li[data-list='bullet'] {
+  list-style-type: none;
+}
+
+.quill-content li[data-list='bullet']::before {
+  content: '•';
+  position: absolute;
+  left: -1.2em;
+  color: currentColor;
+  font-weight: bold;
+}
+
+/* Ordered lists */
+.quill-content li[data-list='ordered'] {
+  list-style-type: none;
+  counter-increment: list-item;
+}
+
+.quill-content ol {
+  counter-reset: list-item;
+}
+
+.quill-content li[data-list='ordered']::before {
+  content: counter(list-item) '.';
+  position: absolute;
+  left: -1.5em;
+  color: currentColor;
+}
+
+/* Hide Quill UI elements (these are for editor only) */
+.quill-content .ql-ui {
+  display: none;
+}
+
+/* Nested lists */
+.quill-content li > ol,
+.quill-content li > ul {
+  margin-top: 0.5em;
+}
+
+/* Links */
+.quill-content a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.quill-content a:hover {
+  text-decoration: none;
+}
+
+/* Code blocks */
+.quill-content pre {
+  background-color: #f5f5f5;
+  padding: 1em;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-bottom: 1em;
+}
+
+.quill-content code {
+  background-color: #f5f5f5;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+/* Blockquotes */
+.quill-content blockquote {
+  border-left: 4px solid var(--color-primary);
+  padding-left: 1em;
+  margin-left: 0;
+  margin-bottom: 1em;
+  color: var(--color-text-secondary);
+}
+
+/* Headings in content */
+.quill-content h1,
+.quill-content h2,
+.quill-content h3,
+.quill-content h4,
+.quill-content h5,
+.quill-content h6 {
+  font-family: var(--font-family-fustat);
+  font-weight: 600;
+  margin-bottom: 0.5em;
+  color: var(--color-text-primary);
+}
