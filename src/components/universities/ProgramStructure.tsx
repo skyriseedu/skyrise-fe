@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import caretDown from '@/assets/caret-down.svg';
 import type { ProgramStructureItem } from '@/types/users/program';
+import '@/components/common/TextEditor/QuillContent.css';
 
 interface ProgramStructureProps {
   engFoundation?: string;
@@ -105,8 +106,8 @@ const ProgramStructure: React.FC<ProgramStructureProps> = ({
                     animate={{ y: 0 }}
                     transition={{ duration: 0.3, delay: 0.1 }}
                   >
-                    <p
-                      className="text-body-3 lg:text-body-3 text-text-secondary"
+                    <div
+                      className="quill-content text-body-3 lg:text-body-3 text-text-secondary"
                       dangerouslySetInnerHTML={{ __html: item.content }}
                     />
                   </motion.div>
