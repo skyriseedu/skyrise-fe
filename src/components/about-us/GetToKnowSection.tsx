@@ -73,7 +73,7 @@ const GetToKnowSection: React.FC = () => {
               <Button
                 size="lg"
                 className="w-full min-w-[300px] sm:w-auto"
-                onClick={() => navigate('/explore')}
+                onClick={() => navigate('/universities-and-consultants?tab=universities')}
               >
                 Search University
               </Button>

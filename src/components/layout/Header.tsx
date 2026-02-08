@@ -106,7 +106,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
     <header
       className={`sticky top-0 z-60 bg-white ${isHomePage ? 'shadow-sm' : ''}`}
     >
-      <div className="flex items-center justify-between px-6 py-5 lg:px-15">
+      <div className="flex items-center justify-between px-4 py-5 lg:px-9">
         <Link to="/" className="flex items-center">
           <img src={SkyRiseLogo} alt="SKYRISE Logo" className="h-12 w-auto" />
         </Link>

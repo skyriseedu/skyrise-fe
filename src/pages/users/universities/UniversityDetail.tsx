@@ -160,19 +160,19 @@ const UniversityDetail: React.FC = () => {
           </h2>
           <div className="w-full">
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
-              <div className="h-auto lg:h-24">
+              <div className="h-auto lg:h-28">
                 <KeyInfoCard
                   label={keyInfo[0].label}
                   value={keyInfo[0].value}
                 />
               </div>
-              <div className="h-auto lg:h-24">
+              <div className="h-auto lg:h-28">
                 <KeyInfoCard
                   label={keyInfo[1].label}
                   value={keyInfo[1].value}
                 />
               </div>
-              <div className="h-auto lg:h-24">
+              <div className="h-auto lg:h-28">
                 <KeyInfoCard
                   label={keyInfo[2].label}
                   value={keyInfo[2].value}
@@ -196,19 +196,19 @@ const UniversityDetail: React.FC = () => {
                 </div>
               </div>
 
-              <div className="h-auto lg:h-24">
+              <div className="h-auto lg:h-28">
                 <KeyInfoCard
                   label={keyInfo[3].label}
                   value={keyInfo[3].value}
                 />
               </div>
-              <div className="h-auto lg:h-24">
+              <div className="h-auto lg:h-28">
                 <KeyInfoCard
                   label={keyInfo[4].label}
                   value={keyInfo[4].value}
                 />
               </div>
-              <div className="h-auto lg:h-24">
+              <div className="h-auto lg:h-28">
                 <KeyInfoCard
                   label={keyInfo[5].label}
                   value={keyInfo[5].value}
