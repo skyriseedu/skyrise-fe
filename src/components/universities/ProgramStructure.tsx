@@ -73,7 +73,7 @@ const ProgramStructure: React.FC<ProgramStructureProps> = ({
           >
             <button
               onClick={() => toggleItem(item.id)}
-              className="flex w-full cursor-pointer items-start bg-white py-4"
+              className="flex w-full cursor-pointer items-start bg-white py-9"
             >
               <div className="flex items-center gap-2">
                 <span className="text-body-2 lg:text-body-2 text-text-primary font-medium">
