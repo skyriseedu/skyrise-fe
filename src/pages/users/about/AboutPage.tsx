@@ -10,7 +10,7 @@ import ReviewsSection from '@/components/reviews/ReviewsSection';
 import StickyHeader from '@/components/common/StickyHeader';
 import JoinUsCard from '@/components/about-us/JoinUsCard';
 import AmbassadorSection from '@/components/about-us/AmbassadorSection';
-import { useTeamMembers } from '@/queries';
+import { useProgramBySlug, useTeamMembers } from '@/queries';
 
 import type { TeamMemberApiItem } from '@/types/users/team';
 
@@ -21,6 +21,8 @@ const AboutPage: React.FC = () => {
     isError: isTeamMembersError,
   } = useTeamMembers(1, 20);
 
+  const { data, isLoading, isError } = useProgramBySlug('');
+  
   const apiTeamMembers = React.useMemo(
     () => teamMembersResponse?.data?.teamMembers ?? [],
     [teamMembersResponse]
@@ -110,6 +112,7 @@ const AboutPage: React.FC = () => {
       <JoinUsCard />
       <AmbassadorSection />
       <ReviewsSection
+        reviews={data?.data?.studentReviews}
         title="Student Success Stories"
         containerClassName="mx-auto max-w-7xl px-6 lg:px-8"
       />
