@@ -21,7 +21,7 @@ const AboutPage: React.FC = () => {
     isError: isTeamMembersError,
   } = useTeamMembers(1, 20);
 
-  const { data, isLoading, isError } = useProgramBySlug('');
+  const { data } = useProgramBySlug('');
   
   const apiTeamMembers = React.useMemo(
     () => teamMembersResponse?.data?.teamMembers ?? [],
