@@ -1,6 +1,6 @@
 import React from 'react';
 import JoinUsCard from './joinUsCard';
-import coverImage from '../../assets/images/consultant-cover.png';
+import coverImage from '../../assets/images/connect shar.png';
 import { useConsultantCount } from '@/queries/consultants';
 import UniversityList from './UniversityList';
 import SuccessModal from '../common/SuccessModal';
