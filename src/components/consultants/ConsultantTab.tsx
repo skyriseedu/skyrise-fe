@@ -13,7 +13,8 @@ const ConsultantTab: React.FC = () => {
     useConsultantCount();
 
   let consultantCount = consultantCountResponse?.data.total || 0;
-  consultantCount -= consultantCount % 10; // Round down to nearest 10
+  // consultantCount -= consultantCount % 10; // Round down to nearest 10
+              // console.log("cpunt",consultantCountResponse)
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
@@ -187,7 +188,6 @@ const ConsultantTab: React.FC = () => {
               SKYRISE, we celebrate students' journeys while empowering others.
             </div>
           </div>
-
           {/* Large Screen Layout - 3 columns */}
           <div className="hidden lg:grid lg:grid-cols-3 lg:items-center lg:gap-8">
             <div className="text-center">
