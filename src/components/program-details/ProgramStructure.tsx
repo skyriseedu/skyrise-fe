@@ -37,7 +37,7 @@ const ProgramStructure: React.FC<ProgramStructureProps> = ({
       ? [
           {
             id: 'requirements',
-            title: 'Undergraduate Entry Requirements',
+            title: 'Entry Requirements',
             htmlContent: undergraduateEntryRequirement,
           } as AccordionItem,
         ]
