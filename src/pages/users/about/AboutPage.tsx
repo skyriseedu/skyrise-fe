@@ -10,7 +10,7 @@ import ReviewsSection from '@/components/reviews/ReviewsSection';
 import StickyHeader from '@/components/common/StickyHeader';
 import JoinUsCard from '@/components/about-us/JoinUsCard';
 import AmbassadorSection from '@/components/about-us/AmbassadorSection';
-import { useProgramBySlug, useTeamMembers } from '@/queries';
+import { usePrograms, useTeamMembers } from '@/queries';
 
 import type { TeamMemberApiItem } from '@/types/users/team';
 
@@ -21,12 +21,20 @@ const AboutPage: React.FC = () => {
     isError: isTeamMembersError,
   } = useTeamMembers(1, 20);
 
-  const { data } = useProgramBySlug('');
-  
+  const { data: programsData } = usePrograms(); // get all, no pagination
+
   const apiTeamMembers = React.useMemo(
     () => teamMembersResponse?.data?.teamMembers ?? [],
     [teamMembersResponse]
   );
+
+  const studentReviews = React.useMemo(() => {
+    return (
+      programsData?.data?.programs.flatMap(
+        (program) => program.studentReviews || []
+      ) || []
+    );
+  }, [programsData]);
 
   const mappedTeamMembers: TeamMember[] = React.useMemo(() => {
     if (!apiTeamMembers.length) {
@@ -34,7 +42,9 @@ const AboutPage: React.FC = () => {
     }
 
     const pinnedMembers = apiTeamMembers.filter((member) => member.pinned);
-    const membersToDisplay = pinnedMembers.length ? pinnedMembers : apiTeamMembers;
+    const membersToDisplay = pinnedMembers.length
+      ? pinnedMembers
+      : apiTeamMembers;
 
     return [...membersToDisplay]
       .sort((memberA, memberB) => memberA.order - memberB.order)
@@ -112,7 +122,7 @@ const AboutPage: React.FC = () => {
       <JoinUsCard />
       <AmbassadorSection />
       <ReviewsSection
-        reviews={data?.data?.studentReviews}
+        reviews={studentReviews}
         title="Student Success Stories"
         containerClassName="mx-auto max-w-7xl px-6 lg:px-8"
       />
