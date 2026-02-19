@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import skyriseVideo from '@/assets/videos/skyrise.mov';
+import skyriseVideo from '@/assets/videos/Skyrise Outro.mp4';
 import facebookWhite from '@/assets/facebook-white.svg';
 import youtubeWhite from '@/assets/youtube-white.svg';
 import messengerWhite from '@/assets/messenger-white.svg';
