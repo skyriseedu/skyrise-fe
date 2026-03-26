@@ -69,7 +69,7 @@ const BlogDetailPage: React.FC = () => {
               'https://placehold.co/800x600?text=Image+Not+Available'
             }
             alt={blog.title}
-            className={`h-full w-full object-cover lg:h-120 ${imageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+            className={`h-55 w-full object-cover lg:h-[450px] ${imageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
             onLoad={handleImageLoad}
             onError={handleImageError}
           />
