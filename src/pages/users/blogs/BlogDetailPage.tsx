@@ -5,6 +5,7 @@ import Loading from '@/components/common/Loading';
 import { ImageSkeleton } from '@/components/ui';
 import ArrowLeft from '@/assets/arrow-left.svg?react';
 import { useBlogBySlug, useCategoryBlogs } from '@/queries/blogs';
+import '@/components/common/TextEditor/QuillContent.css';
 
 const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -80,30 +81,32 @@ const BlogDetailPage: React.FC = () => {
         {/* Show content when blog is loaded */}
         {blog && (
           <>
-            <header className="mt-8 mb-8">
-              <h1 className="lg:text-h1 text-h3 text-text-primary mb-4 font-bold">
-                {blog.title}
-              </h1>
+            <div className="mx-auto max-w-3xl">
+              <header className="mt-8 mb-12 lg:mb-16">
+                <h1 className="lg:text-h1 text-h2 text-text-primary mb-6 leading-tight font-bold">
+                  {blog.title}
+                </h1>
 
-              <div className="text-h5 text-text-secondary mb-6 flex items-center">
-                <span>Posted on </span>
-                <time dateTime={blog.postedDate} className="ml-1">
-                  {new Date(blog.postedDate).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
-              </div>
-            </header>
+                <div className="text-body-2 lg:text-body-1 text-text-secondary flex items-center">
+                  <span>Posted on </span>
+                  <time dateTime={blog.postedDate} className="ml-1">
+                    {new Date(blog.postedDate).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </time>
+                </div>
+              </header>
 
-            <div className="prose prose-lg mb-12 max-w-none">
-              <div className="text-h4 text-text-primary space-y-6 leading-relaxed">
-                {blog.blogText
-                  .split('\n\n')
-                  .map((paragraph: string, index: number) => (
-                    <p key={index}>{paragraph}</p>
-                  ))}
+              <div className="prose prose-lg mb-12 max-w-none">
+                <div className="quill-content text-body-2 lg:text-body-1 text-text-primary leading-relaxed lg:leading-loose">
+                  {blog.blogText ? (
+                    <div dangerouslySetInnerHTML={{ __html: blog.blogText }} />
+                  ) : (
+                    <p>No content available</p>
+                  )}
+                </div>
               </div>
             </div>
           </>
