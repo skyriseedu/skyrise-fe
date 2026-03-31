@@ -1,9 +1,11 @@
 import apiClient from '../client';
 import type {
   BlogsApiResponse,
+  CreateBlogPayload,
   LatestBlogsApiResponse,
   CategoryBlogsApiResponse,
   SingleBlogApiResponse,
+  UpdateBlogParams,
   UseBlogsParams,
 } from '@/types/users/blog';
 
@@ -38,6 +40,29 @@ export const blogService = {
 
   async getBlogBySlug(slug: string): Promise<SingleBlogApiResponse> {
     const response = await apiClient.get(`/blogs/${slug}`);
+    return response.data;
+  },
+
+  async createBlog(payload: CreateBlogPayload): Promise<SingleBlogApiResponse> {
+    const response = await apiClient.post('/blogs', payload);
+    return response.data;
+  },
+
+  async updateBlog({
+    id,
+    payload,
+  }: UpdateBlogParams): Promise<SingleBlogApiResponse> {
+    const response = await apiClient.put(`/blogs/${id}`, payload);
+    return response.data;
+  },
+
+  async deleteBlog(id: string): Promise<{ success: boolean }> {
+    const response = await apiClient.delete(`/blogs/${id}`);
+    return response.data;
+  },
+
+  async bulkDeleteBlogs(ids: string[]): Promise<{ success: boolean }> {
+    const response = await apiClient.post('/blogs/bulk-delete', { ids });
     return response.data;
   },
 };

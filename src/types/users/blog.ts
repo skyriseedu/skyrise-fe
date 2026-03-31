@@ -99,3 +99,17 @@ export interface UseCategoryBlogsReturn {
   error: string | null;
   refetch: () => void;
 }
+
+export interface CreateBlogPayload {
+  title: string;
+  category: Blog['category'];
+  imageUrl?: string;
+  description?: string;
+  blogText: string;
+  status: Blog['status'];
+}
+
+export interface UpdateBlogParams {
+  id: string;
+  payload: Partial<CreateBlogPayload>;
+}

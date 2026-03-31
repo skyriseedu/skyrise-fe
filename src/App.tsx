@@ -9,6 +9,8 @@ import AdminDashboard from './pages/admin/dashboard/AdminDashboard';
 import BookingsPage from './pages/admin/bookings/BookingsPage';
 import ProgramSetup from './pages/admin/programs/ProgramSetup';
 import ProgramForm from './pages/admin/programs/ProgramForm';
+import BlogSetup from './pages/admin/blogs/BlogSetup';
+import BlogForm from './pages/admin/blogs/BlogForm';
 import TeamAndConsultantsPage from './pages/admin/team/TeamAndConsultantsPage';
 import ScrollToTop from './components/common/ScrollToTop';
 import HomePage from './pages/users/home/HomePage';
@@ -135,6 +137,11 @@ const App: React.FC = () => {
                 path="university-setup/edit/:slug"
                 element={<UniversityForm />}
               />
+
+              <Route path="blog-setup" element={<BlogSetup />} />
+              <Route path="blog-setup/create" element={<BlogForm />} />
+              <Route path="blog-setup/edit/:slug" element={<BlogForm />} />
+              <Route path="blog-setup/view/:slug" element={<BlogForm />} />
 
               <Route path="team" element={<TeamAndConsultantsPage />} />
               <Route path="bookings" element={<BookingsPage />} />

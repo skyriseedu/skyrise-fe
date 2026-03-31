@@ -1,7 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { blogService } from '@/lib/api';
 import { blogKeys } from './queryKeys';
-import type { UseBlogsParams } from '@/types/users/blog';
+import type {
+  CreateBlogPayload,
+  UpdateBlogParams,
+  UseBlogsParams,
+} from '@/types/users/blog';
 
 export function useBlogs(params: UseBlogsParams = {}) {
   const { category, page = 1, limit = 5 } = params;
@@ -33,5 +37,50 @@ export function useBlogBySlug(slug: string) {
     queryKey: blogKeys.detail(slug),
     queryFn: () => blogService.getBlogBySlug(slug),
     enabled: !!slug,
+  });
+}
+
+export function useCreateBlog() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateBlogPayload) => blogService.createBlog(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: blogKeys.all });
+    },
+  });
+}
+
+export function useUpdateBlog() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: UpdateBlogParams) => blogService.updateBlog(params),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: blogKeys.all });
+    },
+  });
+}
+
+export function useDeleteBlog() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => blogService.deleteBlog(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: blogKeys.all });
+    },
+  });
+}
+
+export function useBulkDeleteBlogs() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ ids }: { ids: string[] }) =>
+      blogService.bulkDeleteBlogs(ids),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: blogKeys.all });
+    },
   });
 }
