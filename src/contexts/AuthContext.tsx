@@ -123,7 +123,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const refreshToken = async () => {
     try {
-      const response = await authService.refreshToken();
+      const storedRefreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+      if (!storedRefreshToken) {
+        await logout();
+        return;
+      }
+
+      const response = await authService.refreshToken(storedRefreshToken);
 
       if (response.success) {
         const { user, accessToken, refreshToken: newRefreshToken } = response;
