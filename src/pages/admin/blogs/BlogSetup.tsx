@@ -15,6 +15,37 @@ import type { Blog } from '@/types/users/blog';
 
 const FETCH_ALL_LIMIT = 1000;
 
+const formatCategoryLabel = (category: string) =>
+  category
+    .split(' ')
+    .map((word) =>
+      word.length > 0
+        ? `${word.charAt(0).toUpperCase()}${word.slice(1).toLowerCase()}`
+        : word
+    )
+    .join(' ');
+
+const getStatusBadgeClassName = (status: string) => {
+  if (status === 'draft') {
+    return {
+      container: 'bg-yellow-100 text-yellow-800',
+      dot: 'bg-yellow-500',
+    };
+  }
+
+  if (status === 'published') {
+    return {
+      container: 'bg-green-100 text-green-800',
+      dot: 'bg-green-500',
+    };
+  }
+
+  return {
+    container: 'bg-gray-100 text-gray-700',
+    dot: 'bg-gray-500',
+  };
+};
+
 const BlogSetup: React.FC = () => {
   const navigate = useNavigate();
 
@@ -90,7 +121,9 @@ const BlogSetup: React.FC = () => {
     return blogs.filter((blog) => {
       const matchesSearch =
         normalizedSearch.length === 0 ||
-        blog.title.toLowerCase().includes(normalizedSearch);
+        blog.title.toLowerCase().includes(normalizedSearch) ||
+        blog.category.toLowerCase().includes(normalizedSearch) ||
+        blog.status.toLowerCase().includes(normalizedSearch);
 
       const matchesCategory =
         selectedCategories.size === 0 || selectedCategories.has(blog.category);
@@ -303,7 +336,7 @@ const BlogSetup: React.FC = () => {
       key: 'category',
       header: 'Category',
       sortable: false,
-      render: (blog) => blog.category,
+      render: (blog) => formatCategoryLabel(blog.category),
     },
     {
       key: 'postedDate',
@@ -381,7 +414,7 @@ const BlogSetup: React.FC = () => {
                               className="h-5 w-5 rounded border-gray-300 text-red-500 focus:ring-red-500"
                             />
                             <span className="text-sm font-medium text-gray-800">
-                              {category}
+                              {formatCategoryLabel(category)}
                             </span>
                           </label>
                         ))
@@ -411,22 +444,31 @@ const BlogSetup: React.FC = () => {
                       {statusOptions.length === 0 ? (
                         <p className="text-sm text-gray-500">No statuses</p>
                       ) : (
-                        statusOptions.map((status) => (
-                          <label
-                            key={status}
-                            className="mb-2 flex cursor-pointer items-center gap-3 rounded p-2 hover:bg-gray-50"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedStatuses.has(status)}
-                              onChange={() => handleStatusToggle(status)}
-                              className="h-5 w-5 rounded border-gray-300 text-red-500 focus:ring-red-500"
-                            />
-                            <span className="text-sm font-medium text-gray-800">
-                              {status}
-                            </span>
-                          </label>
-                        ))
+                        statusOptions.map((status) => {
+                          const badgeClass = getStatusBadgeClassName(status);
+
+                          return (
+                            <label
+                              key={status}
+                              className="mb-2 flex cursor-pointer items-center gap-3 rounded p-2 hover:bg-gray-50"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedStatuses.has(status)}
+                                onChange={() => handleStatusToggle(status)}
+                                className="h-5 w-5 rounded border-gray-300 text-red-500 focus:ring-red-500"
+                              />
+                              <span
+                                className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${badgeClass.container}`}
+                              >
+                                <span
+                                  className={`h-3 w-3 rounded-full ${badgeClass.dot}`}
+                                ></span>
+                                {formatCategoryLabel(status)}
+                              </span>
+                            </label>
+                          );
+                        })
                       )}
                     </div>
                   </div>

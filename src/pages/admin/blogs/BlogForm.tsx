@@ -35,7 +35,6 @@ const categoryOptions = [
 const statusOptions = [
   { label: 'Draft', value: 'draft' },
   { label: 'Published', value: 'published' },
-  { label: 'Archived', value: 'archived' },
 ];
 
 const BlogForm: React.FC = () => {
@@ -80,7 +79,7 @@ const BlogForm: React.FC = () => {
   const pageTitle = useMemo(() => {
     if (isViewMode) return 'View Blog';
     if (isEditing) return 'Edit Blog';
-    return 'Create Blog';
+    return 'New Blog';
   }, [isEditing, isViewMode]);
 
   const handleInputChange = (
@@ -194,68 +193,70 @@ const BlogForm: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <h2 className="text-h2 font-semibold text-gray-900">{pageTitle}</h2>
-          <p className="mt-1 text-sm text-gray-500">
-            {isViewMode
-              ? 'Review blog details in read-only mode.'
-              : 'Fill in the blog information below.'}
-          </p>
-        </div>
+    <div className="min-h-screen px-6">
+      <div className="">
+        <div className="bg-white p-8">
+          <h1 className="text-h2 mb-4 font-semibold">{pageTitle}</h1>
 
-        <div className="space-y-6 rounded-xl bg-white p-6 shadow-sm">
-          {Object.keys(errors).length > 0 && (
-            <div
-              ref={firstErrorRef}
-              className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
-            >
-              Please fix the highlighted fields before saving.
-            </div>
-          )}
+          <div className="space-y-6">
+            {Object.keys(errors).length > 0 && (
+              <div
+                ref={firstErrorRef}
+                className="rounded-lg border border-red-300 bg-red-50 p-4"
+              >
+                <h3 className="text-h4 mb-2 font-semibold text-red-800">
+                  Please fix the following errors:
+                </h3>
+                <ul className="list-inside list-disc space-y-1 text-sm text-red-700">
+                  {Object.entries(errors).map(([key, message]) => (
+                    <li key={key}>{message}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-gray-700">
-                Blog Title
-              </label>
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => handleInputChange('title', e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3"
-                disabled={isViewMode}
-                placeholder="Enter blog title"
-              />
-              {errors.title && (
-                <p className="mt-1 text-sm text-red-600">{errors.title}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-gray-700">
-                Blog Category
-              </label>
-              {isViewMode ? (
-                <div className="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 text-gray-700">
-                  {categoryOptions.find(
-                    (option) => option.value === formData.category
-                  )?.label || formData.category}
-                </div>
-              ) : (
-                <DropdownInput
-                  options={categoryOptions}
-                  value={formData.category}
-                  onChange={(value) =>
-                    handleInputChange('category', value as Blog['category'])
-                  }
-                  placeholder="Select category"
+            <div className="space-y-6">
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                  Blog Title
+                </label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => handleInputChange('title', e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                  disabled={isViewMode}
+                  placeholder="Enter blog title"
                 />
-              )}
-              {errors.category && (
-                <p className="mt-1 text-sm text-red-600">{errors.category}</p>
-              )}
+                {errors.title && (
+                  <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                  Blog Category
+                </label>
+                {isViewMode ? (
+                  <div className="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 text-gray-700">
+                    {categoryOptions.find(
+                      (option) => option.value === formData.category
+                    )?.label || formData.category}
+                  </div>
+                ) : (
+                  <DropdownInput
+                    options={categoryOptions}
+                    value={formData.category}
+                    onChange={(value) =>
+                      handleInputChange('category', value as Blog['category'])
+                    }
+                    placeholder="Select category"
+                  />
+                )}
+                {errors.category && (
+                  <p className="mt-1 text-sm text-red-600">{errors.category}</p>
+                )}
+              </div>
             </div>
 
             <div>
@@ -279,94 +280,98 @@ const BlogForm: React.FC = () => {
                 />
               )}
             </div>
-          </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-gray-700">
-              Cover Image
-            </label>
-            {isViewMode ? (
-              formData.coverImage ? (
-                <img
-                  src={
-                    typeof formData.coverImage === 'string'
-                      ? formData.coverImage
-                      : URL.createObjectURL(formData.coverImage)
+            <div className="w-full lg:w-1/2">
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                Cover Image
+              </label>
+              {isViewMode ? (
+                formData.coverImage ? (
+                  <img
+                    src={
+                      typeof formData.coverImage === 'string'
+                        ? formData.coverImage
+                        : URL.createObjectURL(formData.coverImage)
+                    }
+                    alt="Blog cover"
+                    className="h-64 w-full rounded-xl border border-gray-200 object-cover"
+                  />
+                ) : (
+                  <div className="rounded-lg border border-gray-200 p-6 text-sm text-gray-500">
+                    No cover image
+                  </div>
+                )
+              ) : (
+                <ImageUpload
+                  image={formData.coverImage}
+                  onImageUpload={(file) =>
+                    handleInputChange('coverImage', file)
                   }
-                  alt="Blog cover"
-                  className="h-64 w-full rounded-xl border border-gray-200 object-cover"
+                  onRemove={() => handleInputChange('coverImage', undefined)}
+                />
+              )}
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                Thumbnail Description
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) =>
+                  handleInputChange('description', e.target.value)
+                }
+                className="min-h-28 w-full rounded-lg border border-gray-300 px-4 py-3"
+                disabled={isViewMode}
+                placeholder="Short description shown on list cards"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                Blog Text
+              </label>
+              {isViewMode ? (
+                <div
+                  className="prose max-w-none rounded-lg border border-gray-200 p-4"
+                  dangerouslySetInnerHTML={{ __html: formData.blogText }}
                 />
               ) : (
-                <div className="rounded-lg border border-gray-200 p-6 text-sm text-gray-500">
-                  No cover image
-                </div>
-              )
-            ) : (
-              <ImageUpload
-                image={formData.coverImage}
-                onImageUpload={(file) => handleInputChange('coverImage', file)}
-                onRemove={() => handleInputChange('coverImage', undefined)}
-              />
-            )}
-          </div>
+                <TextEditor
+                  value={formData.blogText}
+                  onChange={(value) => handleInputChange('blogText', value)}
+                  className="bg-white"
+                />
+              )}
+              {errors.blogText && (
+                <p className="mt-1 text-sm text-red-600">{errors.blogText}</p>
+              )}
+            </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-gray-700">
-              Thumbnail Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              className="min-h-28 w-full rounded-lg border border-gray-300 px-4 py-3"
-              disabled={isViewMode}
-              placeholder="Short description shown on list cards"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-gray-700">
-              Blog Text
-            </label>
-            {isViewMode ? (
-              <div
-                className="prose max-w-none rounded-lg border border-gray-200 p-4"
-                dangerouslySetInnerHTML={{ __html: formData.blogText }}
-              />
-            ) : (
-              <TextEditor
-                value={formData.blogText}
-                onChange={(value) => handleInputChange('blogText', value)}
-                className="bg-white"
-              />
-            )}
-            {errors.blogText && (
-              <p className="mt-1 text-sm text-red-600">{errors.blogText}</p>
-            )}
-          </div>
-
-          <div className="flex items-center justify-end gap-3">
-            <button
-              type="button"
-              onClick={() => navigate('/admin/blog-setup')}
-              className="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-            >
-              {isViewMode ? 'Back' : 'Cancel'}
-            </button>
-
-            {!isViewMode && (
+            <div className="flex items-center justify-end gap-3">
               <button
                 type="button"
-                onClick={handleSave}
-                disabled={isSaving}
-                className="bg-primary rounded-lg px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-60"
+                onClick={() => navigate('/admin/blog-setup')}
+                className="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50"
               >
-                {isSaving
-                  ? 'Saving...'
-                  : isEditing
-                    ? 'Update Blog'
-                    : 'Create Blog'}
+                {isViewMode ? 'Back' : 'Cancel'}
               </button>
-            )}
+
+              {!isViewMode && (
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="bg-primary rounded-lg px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-60"
+                >
+                  {isSaving
+                    ? 'Saving...'
+                    : isEditing
+                      ? 'Update Blog'
+                      : 'New Blog'}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
