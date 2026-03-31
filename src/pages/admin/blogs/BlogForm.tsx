@@ -11,6 +11,7 @@ type BlogFormData = {
   title: string;
   category: Blog['category'];
   coverImage?: string | File;
+  youtubeUrl: string;
   description: string;
   blogText: string;
   status: Blog['status'];
@@ -20,6 +21,7 @@ const initialFormData: BlogFormData = {
   title: '',
   category: 'program',
   coverImage: undefined,
+  youtubeUrl: '',
   description: '',
   blogText: '',
   status: 'draft',
@@ -29,7 +31,7 @@ const categoryOptions = [
   { label: 'Program', value: 'program' },
   { label: 'University', value: 'university' },
   { label: 'Visa', value: 'visa' },
-  { label: 'Student Reviews', value: 'student reviews' },
+  { label: 'Student Reviews', value: 'student-reviews' },
 ];
 
 const statusOptions = [
@@ -47,6 +49,7 @@ const BlogForm: React.FC = () => {
 
   const [formData, setFormData] = useState<BlogFormData>(initialFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [apiError, setApiError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const firstErrorRef = useRef<HTMLDivElement>(null);
 
@@ -70,6 +73,7 @@ const BlogForm: React.FC = () => {
       title: blog.title || '',
       category: blog.category || 'program',
       coverImage: blog.imageUrl || undefined,
+      youtubeUrl: blog.youtubeUrl || '',
       description: blog.description || '',
       blogText: blog.blogText || '',
       status: blog.status || 'draft',
@@ -90,6 +94,10 @@ const BlogForm: React.FC = () => {
       ...prev,
       [field]: value,
     }));
+
+    if (apiError) {
+      setApiError(null);
+    }
 
     if (errors[field]) {
       setErrors((prev) => {
@@ -115,6 +123,9 @@ const BlogForm: React.FC = () => {
       nextErrors.blogText = 'Blog text is required';
     }
 
+    if (apiError) {
+      setApiError(null);
+    }
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
@@ -144,6 +155,7 @@ const BlogForm: React.FC = () => {
     setIsSaving(true);
 
     try {
+      setApiError(null);
       let coverImageUrl: string | undefined;
 
       if (formData.coverImage instanceof File) {
@@ -162,6 +174,7 @@ const BlogForm: React.FC = () => {
         title: formData.title.trim(),
         category: formData.category,
         imageUrl: coverImageUrl,
+        youtubeUrl: formData.youtubeUrl.trim() || undefined,
         description: formData.description.trim() || undefined,
         blogText: formData.blogText,
         status: formData.status,
@@ -178,6 +191,30 @@ const BlogForm: React.FC = () => {
 
       navigate('/admin/blog-setup');
     } catch (error) {
+      const maybeError = error as Error & {
+        responseData?: {
+          message?: string;
+          errors?: Array<{ field?: string; message?: string }>;
+        };
+      };
+
+      const responseData = maybeError.responseData;
+      const message =
+        responseData?.message ||
+        (maybeError.message ? maybeError.message : 'Failed to save blog.');
+
+      const nextErrors: Record<string, string> = {};
+      responseData?.errors?.forEach((entry) => {
+        if (entry.field && entry.message) {
+          nextErrors[entry.field] = entry.message;
+        }
+      });
+
+      if (Object.keys(nextErrors).length > 0) {
+        setErrors((prev) => ({ ...prev, ...nextErrors }));
+      }
+
+      setApiError(message);
       console.error('Failed to save blog:', error);
     } finally {
       setIsSaving(false);
@@ -199,7 +236,7 @@ const BlogForm: React.FC = () => {
           <h1 className="text-h2 mb-4 font-semibold">{pageTitle}</h1>
 
           <div className="space-y-6">
-            {Object.keys(errors).length > 0 && (
+            {(apiError || Object.keys(errors).length > 0) && (
               <div
                 ref={firstErrorRef}
                 className="rounded-lg border border-red-300 bg-red-50 p-4"
@@ -208,6 +245,7 @@ const BlogForm: React.FC = () => {
                   Please fix the following errors:
                 </h3>
                 <ul className="list-inside list-disc space-y-1 text-sm text-red-700">
+                  {apiError && <li>{apiError}</li>}
                   {Object.entries(errors).map(([key, message]) => (
                     <li key={key}>{message}</li>
                   ))}
@@ -310,6 +348,25 @@ const BlogForm: React.FC = () => {
                   onRemove={() => handleInputChange('coverImage', undefined)}
                 />
               )}
+              {errors.imageUrl && (
+                <p className="mt-1 text-sm text-red-600">{errors.imageUrl}</p>
+              )}
+            </div>
+
+            <div className="w-full lg:w-1/2">
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                Link (if any)
+              </label>
+              <input
+                type="text"
+                value={formData.youtubeUrl}
+                onChange={(e) =>
+                  handleInputChange('youtubeUrl', e.target.value)
+                }
+                className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                disabled={isViewMode}
+                placeholder="https://youtube.com/..."
+              />
             </div>
 
             <div>

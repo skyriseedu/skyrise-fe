@@ -90,7 +90,10 @@ apiClient.interceptors.response.use(
     //   `${error.response?.status || 'Network Error'} ${error.config?.url}:`,
     //   message
     // );
-    throw new Error(message);
+    const enhancedError = new Error(message);
+    (enhancedError as Error & { responseData?: unknown }).responseData =
+      error.response?.data;
+    throw enhancedError;
   }
 );
 
