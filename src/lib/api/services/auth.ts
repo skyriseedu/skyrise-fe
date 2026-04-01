@@ -1,4 +1,5 @@
 import apiClient from '../client';
+import axios from 'axios';
 import type {
   LoginCredentials,
   RegisterCredentials,
@@ -16,8 +17,16 @@ export const authService = {
     return response.data;
   },
 
-  async refreshToken(): Promise<AuthResponse> {
-    const response = await apiClient.post('/auth/refresh');
+  async refreshToken(refreshToken: string): Promise<AuthResponse> {
+    const apiBaseUrl =
+      import.meta.env.MODE === 'development'
+        ? '/api/v1'
+        : import.meta.env.VITE_API_BASE_URL ||
+          'https://be.skyriseedu.com/api/v1';
+
+    const response = await axios.post(`${apiBaseUrl}/auth/refresh`, {
+      refreshToken,
+    });
     return response.data;
   },
 

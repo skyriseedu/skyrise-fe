@@ -115,6 +115,18 @@ const AdminLayout: React.FC = () => {
         pattern: /^\/admin\/program-setup\/edit\/.*/,
         title: 'PROGRAM SETUP - EDIT',
       },
+      {
+        pattern: '/admin/blog-setup/create',
+        title: 'BLOG SETUP - CREATE',
+      },
+      {
+        pattern: /^\/admin\/blog-setup\/edit\/.*/,
+        title: 'BLOG SETUP - EDIT',
+      },
+      {
+        pattern: /^\/admin\/blog-setup\/view\/.*/,
+        title: 'BLOG SETUP - VIEW',
+      },
       // Add more custom routes here as needed
       // { pattern: '/admin/university-setup/create', title: 'UNIVERSITY SETUP - CREATE' },
       // { pattern: /^\/admin\/university-setup\/edit\/.*/, title: 'UNIVERSITY SETUP - EDIT' },
@@ -163,6 +175,18 @@ const AdminLayout: React.FC = () => {
       {
         pattern: /^\/admin\/university-setup\/edit\/.*/,
         backTo: '/admin/university-setup',
+      },
+      {
+        pattern: '/admin/blog-setup/create',
+        backTo: '/admin/blog-setup',
+      },
+      {
+        pattern: /^\/admin\/blog-setup\/edit\/.*/,
+        backTo: '/admin/blog-setup',
+      },
+      {
+        pattern: /^\/admin\/blog-setup\/view\/.*/,
+        backTo: '/admin/blog-setup',
       },
     ];
 

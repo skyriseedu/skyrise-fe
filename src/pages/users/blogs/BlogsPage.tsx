@@ -31,9 +31,21 @@ const BlogsPage: React.FC = () => {
     error: latestError,
   } = useLatestBlogs(selectedCategory === 'All Categories' ? 6 : 0); // Get 6 for latest + featured, 0 for categories
 
-  const currentBlogs = useMemo(() => blogsData?.data.blogs || [], [blogsData]);
+  const currentBlogs = useMemo(
+    () =>
+      (blogsData?.data.blogs || []).filter(
+        (blog) => blog.status === 'published'
+      ),
+    [blogsData]
+  );
   const pagination = blogsData?.data.pagination;
-  const latestBlogs = useMemo(() => latestData?.data.blogs || [], [latestData]);
+  const latestBlogs = useMemo(
+    () =>
+      (latestData?.data.blogs || []).filter(
+        (blog) => blog.status === 'published'
+      ),
+    [latestData]
+  );
 
   const latestBlog = useMemo(() => {
     if (selectedCategory === 'All Categories') {

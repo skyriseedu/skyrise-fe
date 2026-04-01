@@ -3,6 +3,7 @@ export interface Blog {
   title: string;
   blogText: string;
   imageUrl?: string;
+  youtubeUrl?: string;
   description?: string;
   category: 'program' | 'university' | 'visa' | 'student reviews';
   status: 'published' | 'draft' | 'archived';
@@ -98,4 +99,19 @@ export interface UseCategoryBlogsReturn {
   isLoading: boolean;
   error: string | null;
   refetch: () => void;
+}
+
+export interface CreateBlogPayload {
+  title: string;
+  category: Blog['category'];
+  imageUrl?: string;
+  youtubeUrl?: string;
+  description?: string;
+  blogText: string;
+  status: Blog['status'];
+}
+
+export interface UpdateBlogParams {
+  id: string;
+  payload: Partial<CreateBlogPayload>;
 }
