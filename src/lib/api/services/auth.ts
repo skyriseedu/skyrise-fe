@@ -18,11 +18,7 @@ export const authService = {
   },
 
   async refreshToken(refreshToken: string): Promise<AuthResponse> {
-    const apiBaseUrl =
-      import.meta.env.MODE === 'development'
-        ? '/api/v1'
-        : import.meta.env.VITE_API_BASE_URL ||
-          'https://be.skyriseedu.com/api/v1';
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
     const response = await axios.post(`${apiBaseUrl}/auth/refresh`, {
       refreshToken,

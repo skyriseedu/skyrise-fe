@@ -97,6 +97,19 @@ const BlogDetailPage: React.FC = () => {
                     })}
                   </time>
                 </div>
+
+                {blog.youtubeUrl && (
+                  <div className="mt-4">
+                    <a
+                      href={blog.youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-body-2 lg:text-body-1 text-primary hover:text-primary/80 underline transition-colors"
+                    >
+                      Watch on YouTube
+                    </a>
+                  </div>
+                )}
               </header>
 
               <div className="prose prose-lg mb-12 max-w-none">

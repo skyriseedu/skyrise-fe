@@ -1,10 +1,7 @@
 import axios from 'axios';
 import { showErrorNotification } from '../errorNotification';
 
-const API_BASE_URL =
-  import.meta.env.MODE === 'development'
-    ? '/api/v1'
-    : import.meta.env.VITE_API_BASE_URL || 'https://be.skyriseedu.com/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
 // axios instance
 const apiClient = axios.create({
