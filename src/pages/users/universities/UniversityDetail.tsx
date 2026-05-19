@@ -104,7 +104,7 @@ const UniversityDetail: React.FC = () => {
                 <img
                   src={university.coverImages.image1}
                   alt={`${university.universityName} campus`}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain bg-white"
                 />
               </div>
 
@@ -113,7 +113,7 @@ const UniversityDetail: React.FC = () => {
                 <img
                   src={university.coverImages.image2}
                   alt={`${university.universityName} campus`}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain bg-white"
                 />
               </div>
             </div>
@@ -125,14 +125,14 @@ const UniversityDetail: React.FC = () => {
               <img
                 src={university.coverImages.image1}
                 alt={`${university.universityName} campus`}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain bg-white"
               />
             </div>
             <div className="relative h-100 flex-1 overflow-hidden">
               <img
                 src={university.coverImages.image2}
                 alt={`${university.universityName} campus`}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain bg-white"
               />
             </div>
           </div>

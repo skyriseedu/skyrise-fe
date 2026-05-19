@@ -96,7 +96,7 @@ const ProgramDetailsPage: React.FC = () => {
                       'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=500&h=500&fit=crop'
                     }
                     alt={data?.data?.programName || 'Program'}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain bg-white"
                   />
                 </div>
 
@@ -113,7 +113,7 @@ const ProgramDetailsPage: React.FC = () => {
                       'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=400&fit=crop'
                     }
                     alt={data?.data?.universityName || 'Program image'}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain bg-white"
                   />
                 </div>
               </div>
