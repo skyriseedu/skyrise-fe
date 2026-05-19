@@ -38,6 +38,9 @@ const BlogDetailPage: React.FC = () => {
     setImageLoading(false);
   };
 
+  const placeholderImage =
+    'https://placehold.co/1660x450?text=Image+Not+Available';
+
   // Handle error or blog not found (but not loading state)
   if (blogError || (!blogLoading && !blog)) {
     return <Navigate to="/blogs" replace />;
@@ -61,16 +64,13 @@ const BlogDetailPage: React.FC = () => {
 
       <div className="relative overflow-hidden">
         {(imageLoading || !blog) && (
-          <ImageSkeleton className="absolute inset-0 h-full w-full lg:h-120" />
+          <ImageSkeleton className="absolute inset-0 aspect-[1660/450] w-full lg:aspect-[1660/450]" />
         )}
         {blog && (
           <img
-            src={
-              blog.imageUrl ||
-              'https://placehold.co/800x600?text=Image+Not+Available'
-            }
+            src={blog.imageUrl || placeholderImage}
             alt={blog.title}
-            className={`h-55 w-full object-cover lg:h-[450px] ${imageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+            className={`block h-auto w-full object-contain ${imageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
             onLoad={handleImageLoad}
             onError={handleImageError}
           />

@@ -31,7 +31,7 @@ const AdmissionProcessPage: React.FC = () => {
         <img
           src={support}
           alt="About us cover 1"
-          className="sm-[70px] h-55 w-full object-cover lg:h-[450px]"
+          className="block h-auto w-full object-contain"
         />
         <div
           className="absolute inset-x-0 bottom-4 py-2 md:py-2 lg:bottom-8 lg:py-2"
