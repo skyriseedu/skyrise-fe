@@ -4,7 +4,7 @@ import DropdownInput from '@/components/common/DropdownInput';
 import { TextEditor } from '@/components/common/TextEditor/TextEditor';
 import ImageUpload from '@/components/program-setup/ImageUpload';
 import {
-  useBlogBySlug,
+  useBlogBySlugAdmin,
   useCreateBlog,
   useUpdateBlog,
 } from '@/queries/blogs';
@@ -61,7 +61,7 @@ const BlogForm: React.FC = () => {
     data: blogData,
     isLoading: isBlogLoading,
     isError: isBlogError,
-  } = useBlogBySlug(slug || '');
+  } = useBlogBySlugAdmin(slug || '');
   const createBlogMutation = useCreateBlog();
   const updateBlogMutation = useUpdateBlog();
   const uploadImagesMutation = useUploadProgramImages();

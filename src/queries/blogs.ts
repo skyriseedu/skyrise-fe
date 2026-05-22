@@ -49,6 +49,14 @@ export function useBlogBySlug(slug: string) {
   });
 }
 
+export function useBlogBySlugAdmin(slug: string) {
+  return useQuery({
+    queryKey: blogKeys.detail(`admin:${slug}`),
+    queryFn: () => blogService.getBlogBySlugAdmin(slug),
+    enabled: !!slug,
+  });
+}
+
 export function useCreateBlog() {
   const queryClient = useQueryClient();
 
