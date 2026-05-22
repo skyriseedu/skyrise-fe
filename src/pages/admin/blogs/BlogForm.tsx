@@ -3,7 +3,11 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import DropdownInput from '@/components/common/DropdownInput';
 import { TextEditor } from '@/components/common/TextEditor/TextEditor';
 import ImageUpload from '@/components/program-setup/ImageUpload';
-import { useBlogBySlug, useCreateBlog, useUpdateBlog } from '@/queries/blogs';
+import {
+  useBlogBySlug,
+  useCreateBlog,
+  useUpdateBlog,
+} from '@/queries/blogs';
 import { useUploadProgramImages } from '@/queries/uploads';
 import type { Blog, CreateBlogPayload } from '@/types/users/blog';
 
@@ -31,7 +35,7 @@ const categoryOptions = [
   { label: 'Program', value: 'program' },
   { label: 'University', value: 'university' },
   { label: 'Visa', value: 'visa' },
-  { label: 'Student Reviews', value: 'student-reviews' },
+  { label: 'Student Reviews', value: 'student reviews' },
 ];
 
 const statusOptions = [
@@ -148,7 +152,9 @@ const BlogForm: React.FC = () => {
       return;
     }
 
-    if (!validateForm()) {
+    const isDraft = formData.status === 'draft';
+
+    if (!isDraft && !validateForm()) {
       return;
     }
 
@@ -156,6 +162,9 @@ const BlogForm: React.FC = () => {
 
     try {
       setApiError(null);
+      if (isDraft) {
+        setErrors({});
+      }
       let coverImageUrl: string | undefined;
 
       if (formData.coverImage instanceof File) {

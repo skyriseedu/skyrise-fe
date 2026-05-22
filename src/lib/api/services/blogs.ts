@@ -26,6 +26,22 @@ export const blogService = {
     return response.data;
   },
 
+  async getBlogsAdmin(params: UseBlogsParams = {}): Promise<BlogsApiResponse> {
+    const { category, page = 1, limit = 1000 } = params;
+
+    const searchParams = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    if (category && category !== 'All Categories') {
+      searchParams.append('category', category);
+    }
+
+    const response = await apiClient.get(`/blogs/admin/all?${searchParams}`);
+    return response.data;
+  },
+
   async getLatestBlogs(limit: number = 3): Promise<LatestBlogsApiResponse> {
     const response = await apiClient.get(`/blogs/latest?limit=${limit}`);
     return response.data;
