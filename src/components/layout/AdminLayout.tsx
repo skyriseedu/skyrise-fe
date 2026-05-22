@@ -274,7 +274,7 @@ const AdminLayout: React.FC = () => {
               {backArrowConfig.shouldShow && (
                 <button
                   onClick={handleBackClick}
-                  className="flex items-center gap-2 text-gray-600 transition-colors hover:text-gray-900"
+                  className="flex items-center gap-2 text-gray-600 transition-colors hover:text-gray-900 cursor-pointer"
                 >
                   <ArrowLeft className="h-5 w-5" />
                 </button>

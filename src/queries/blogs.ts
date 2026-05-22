@@ -16,6 +16,15 @@ export function useBlogs(params: UseBlogsParams = {}) {
   });
 }
 
+export function useBlogsAdmin(params: UseBlogsParams = {}) {
+  const { category, page = 1, limit = 1000 } = params; // no pagination for admin view, fetch all
+
+  return useQuery({
+    queryKey: blogKeys.list({ admin: true, category, page, limit }),
+    queryFn: () => blogService.getBlogsAdmin({ category, page, limit }),
+  });
+}
+
 export function useLatestBlogs(limit: number = 3) {
   return useQuery({
     queryKey: blogKeys.latest(limit),

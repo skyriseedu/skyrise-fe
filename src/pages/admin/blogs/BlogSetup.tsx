@@ -10,7 +10,11 @@ import RemoveIcon from '@/assets/bin.svg?react';
 import EditIcon from '@/assets/edit.svg?react';
 import ViewIcon from '@/assets/view.svg?react';
 import { formatNthDate } from '@/helpers';
-import { useBlogs, useBulkDeleteBlogs, useDeleteBlog } from '@/queries';
+import {
+  useBlogsAdmin,
+  useBulkDeleteBlogs,
+  useDeleteBlog,
+} from '@/queries';
 import type { Blog } from '@/types/users/blog';
 
 const FETCH_ALL_LIMIT = 1000;
@@ -72,7 +76,7 @@ const BlogSetup: React.FC = () => {
     data: blogsData,
     isLoading,
     isError,
-  } = useBlogs({ page: 1, limit: FETCH_ALL_LIMIT });
+  } = useBlogsAdmin({ page: 1, limit: FETCH_ALL_LIMIT });
   const deleteBlogMutation = useDeleteBlog();
   const bulkDeleteBlogsMutation = useBulkDeleteBlogs();
 
