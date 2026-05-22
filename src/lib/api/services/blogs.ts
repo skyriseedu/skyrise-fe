@@ -59,6 +59,11 @@ export const blogService = {
     return response.data;
   },
 
+  async getBlogBySlugAdmin(slug: string): Promise<SingleBlogApiResponse> {
+    const response = await apiClient.get(`/blogs/admin/slug/${slug}`);
+    return response.data;
+  },
+
   async createBlog(payload: CreateBlogPayload): Promise<SingleBlogApiResponse> {
     const response = await apiClient.post('/blogs', payload);
     return response.data;
