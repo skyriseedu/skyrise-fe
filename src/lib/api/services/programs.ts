@@ -27,15 +27,30 @@ export const programsService = {
     return response.data;
   },
 
-  async getProgramFilters(): Promise<ProgramFiltersResponse> {
-    const response = await apiClient.get('/programs/filters');
+  async getProgramFilters(location?: string): Promise<ProgramFiltersResponse> {
+    const searchParams = new URLSearchParams();
+    if (location?.trim()) searchParams.append('location', location.trim());
+
+    const query = searchParams.toString();
+    const response = await apiClient.get(
+      query ? `/programs/filters?${query}` : '/programs/filters'
+    );
     return response.data;
   },
 
   async searchPrograms(
     params: ProgramsSearchParams
   ): Promise<ProgramsApiResponse> {
-    const { page, limit, q, degrees, programs, fees, duration } = params;
+    const {
+      page,
+      limit,
+      q,
+      degrees,
+      programs,
+      location,
+      fees,
+      duration,
+    } = params;
 
     const sp = new URLSearchParams();
 
@@ -52,6 +67,8 @@ export const programsService = {
 
     const progs = toParam(programs);
     if (progs) sp.append('programs', progs);
+
+    if (location?.trim()) sp.append('location', location.trim());
 
     const feeStr = toParam(fees);
     if (feeStr) sp.append('fees', feeStr);

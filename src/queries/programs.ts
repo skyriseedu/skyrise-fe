@@ -34,10 +34,10 @@ export function useProgramsAdmin() {
   });
 }
 
-export function useProgramFilters() {
+export function useProgramFilters(location?: string) {
   return useQuery<ProgramFiltersResponse>({
-    queryKey: programKeys.filters(),
-    queryFn: () => programsService.getProgramFilters(),
+    queryKey: [...programKeys.all, 'filters', { location }] as const,
+    queryFn: () => programsService.getProgramFilters(location),
     staleTime: 60 * 60 * 2000, // 2 hour
   });
 }
@@ -54,7 +54,8 @@ export function useProgramsSearch(
   params: ProgramsSearchParams,
   enabled: boolean
 ) {
-  const { page, limit, q, degrees, programs, fees, duration } = params;
+  const { page, limit, q, degrees, programs, location, fees, duration } =
+    params;
   return useQuery({
     queryKey: programKeys.search({
       page,
@@ -62,6 +63,7 @@ export function useProgramsSearch(
       q,
       degrees,
       programs,
+      location,
       fees,
       duration,
     }),
@@ -72,6 +74,7 @@ export function useProgramsSearch(
         q,
         degrees,
         programs,
+        location,
         fees,
         duration,
       }),

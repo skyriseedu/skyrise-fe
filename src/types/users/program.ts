@@ -15,6 +15,7 @@ export interface ProgramListItem {
   keyInformation?: {
     degree?: string;
     duration?: string;
+    location?: string;
     totalTuitionFees?: string;
     upcomingIntake?: string[];
   };
@@ -48,6 +49,7 @@ export interface ProgramsSearchParams extends UseProgramsParams {
   q?: string;
   degrees?: string | string[];
   programs?: string | string[];
+  location?: string;
   fees?: string | string[];
   duration?: string | string[];
 }

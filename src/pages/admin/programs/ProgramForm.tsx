@@ -17,6 +17,7 @@ import {
   useProgramBySlug,
   useUpdateProgram,
 } from '@/queries/programs';
+import { useProgramOptionsStore } from '@/store/useProgramOptionsStore';
 import { useUploadProgramImages } from '@/queries/uploads';
 import type {
   CreateProgramPayload,
@@ -98,6 +99,14 @@ const ProgramForm: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement>(null);
   const firstErrorRef = useRef<HTMLDivElement>(null);
 
+  const {
+    locations,
+    degrees,
+    durations,
+    fetchFilters,
+    loading: loadingFilterOptions,
+  } = useProgramOptionsStore();
+
   const createProgramMutation = useCreateProgram();
   const updateProgramMutation = useUpdateProgram();
   const uploadProgramImagesMutation = useUploadProgramImages();
@@ -106,6 +115,10 @@ const ProgramForm: React.FC = () => {
   const { data: programData, isLoading: isProgramLoading } = useProgramBySlug(
     slug || ''
   );
+
+  useEffect(() => {
+    fetchFilters();
+  }, [fetchFilters]);
 
   useEffect(() => {
     if (isEditing && programData) {
@@ -706,11 +719,11 @@ const ProgramForm: React.FC = () => {
                     Degree
                   </label>
                   <DropdownInput
-                    options={[
-                      { value: 'Bachelor', label: 'Bachelor' },
-                      { value: 'Master', label: 'Master' },
-                      { value: 'PhD', label: 'Foundation' },
-                    ]}
+                    options={
+                      loadingFilterOptions && degrees.length === 0
+                        ? [{ value: formData.degree, label: 'Loading...' }]
+                        : degrees
+                    }
                     value={formData.degree}
                     onChange={(value) => handleInputChange('degree', value)}
                     placeholder="Select Degree"
@@ -722,16 +735,11 @@ const ProgramForm: React.FC = () => {
                     Duration
                   </label>
                   <DropdownInput
-                    options={[
-                      { value: '1 year', label: '1 year' },
-                      { value: '1.5 years', label: '1.5 years' },
-                      { value: '2 years', label: '2 years' },
-                      { value: '2.5 years', label: '2.5 years' },
-                      { value: '3 years', label: '3 years' },
-                      { value: '3.5 years', label: '3.5 years' },
-                      { value: '4 years', label: '4 years' },
-                      { value: '4.5 years', label: '4.5 years' },
-                    ]}
+                    options={
+                      loadingFilterOptions && durations.length === 0
+                        ? [{ value: formData.duration, label: 'Loading...' }]
+                        : durations
+                    }
                     value={formData.duration}
                     onChange={(value) => handleInputChange('duration', value)}
                     placeholder="Select Duration"
@@ -742,14 +750,15 @@ const ProgramForm: React.FC = () => {
                   <label className="text-h5 mb-1 block text-gray-500">
                     Location
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Location"
-                    value={formData.location}
-                    onChange={(e) =>
-                      handleInputChange('location', e.target.value)
+                  <DropdownInput
+                    options={
+                      loadingFilterOptions && locations.length === 0
+                        ? [{ value: formData.location, label: 'Loading...' }]
+                        : locations
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                    value={formData.location}
+                    onChange={(value) => handleInputChange('location', value)}
+                    placeholder="Select Location"
                   />
                 </div>
 
