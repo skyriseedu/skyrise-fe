@@ -15,20 +15,28 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
   filters: initialFilters,
   onApplyFilters,
 }) => {
-  const { degrees, programs, durations, fees, fetchFilters, fetched, loading } =
-    useProgramOptionsStore();
+  const {
+    locations,
+    degrees,
+    programs,
+    durations,
+    fees,
+    fetchFilters,
+    loading,
+  } = useProgramOptionsStore();
 
   useEffect(() => {
-    if (!fetched && !loading) fetchFilters();
-  }, [fetched, loading, fetchFilters]);
+    fetchFilters(initialFilters.location);
+  }, [fetchFilters, initialFilters.location]);
 
   const dynamicSections: FilterSection[] = useMemo(() => {
     return [
+      { id: 'location', label: 'Location', options: locations },
       { id: 'degrees', label: 'Degrees', options: degrees },
       { id: 'programs', label: 'Programs', options: programs },
       { id: 'duration', label: 'Duration', options: durations },
     ];
-  }, [degrees, programs, durations]);
+  }, [locations, degrees, programs, durations]);
   const [expandedSections, setExpandedSections] = useState<string[]>([
     'degrees',
     'programs',
@@ -41,6 +49,10 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
   useEffect(() => {
     setLocalFilters(initialFilters);
   }, [initialFilters]);
+
+  useEffect(() => {
+    fetchFilters(localFilters.location);
+  }, [fetchFilters, localFilters.location]);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections((prev) =>
@@ -65,6 +77,14 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
         [sectionId]: updatedValues,
       };
     });
+  };
+
+  const handleLocationChange = (value: string) => {
+    setLocalFilters((prev) => ({
+      ...prev,
+      location: value,
+      tuitionRanges: value === prev.location ? prev.tuitionRanges : [],
+    }));
   };
 
   const handleConfirm = () => {
@@ -117,14 +137,19 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                           className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50"
                         >
                           <input
-                            type="checkbox"
+                            type={section.id === 'location' ? 'radio' : 'checkbox'}
+                            name={section.id === 'location' ? 'program-location' : undefined}
                             checked={
-                              (localFilters[section.id] as string[])?.includes(
-                                option.value
-                              ) || false
+                              section.id === 'location'
+                                ? localFilters.location === option.value
+                                : (localFilters[section.id] as string[])?.includes(
+                                    option.value
+                                  ) || false
                             }
                             onChange={() =>
-                              handleFilterChange(section.id, option.value)
+                              section.id === 'location'
+                                ? handleLocationChange(option.value)
+                                : handleFilterChange(section.id, option.value)
                             }
                             className="text-primary focus:ring-primary h-4 w-4 flex-shrink-0 rounded border-gray-300"
                           />
@@ -167,27 +192,37 @@ const DesktopFilterDropdown: React.FC<DesktopFilterDropdownProps> = ({
                   className="overflow-hidden"
                 >
                   <div className="space-y-3 bg-white px-4 pb-4">
-                    {fees.map((fee) => (
-                      <label
-                        key={fee.value}
-                        className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={
-                            localFilters.tuitionRanges?.includes(fee.value) ||
-                            false
-                          }
-                          onChange={() =>
-                            handleFilterChange('tuitionRanges', fee.value)
-                          }
-                          className="text-primary focus:ring-primary h-4 w-4 flex-shrink-0 rounded border-gray-300"
-                        />
-                        <span className="text-body-2 text-text-primary">
-                          {fee.label}
-                        </span>
-                      </label>
-                    ))}
+                    {!localFilters.location ? null : loading ? (
+                      <p className="text-body-2 text-gray-500 px-2 py-1">
+                        Loading fee ranges...
+                      </p>
+                    ) : fees.length > 0 ? (
+                      fees.map((fee) => (
+                        <label
+                          key={fee.value}
+                          className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-50"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={
+                              localFilters.tuitionRanges?.includes(fee.value) ||
+                              false
+                            }
+                            onChange={() =>
+                              handleFilterChange('tuitionRanges', fee.value)
+                            }
+                            className="text-primary focus:ring-primary h-4 w-4 flex-shrink-0 rounded border-gray-300"
+                          />
+                          <span className="text-body-2 text-text-primary">
+                            {fee.label}
+                          </span>
+                        </label>
+                      ))
+                    ) : (
+                      <p className="text-body-2 text-gray-500 px-2 py-1">
+                        No fee ranges available for this location.
+                      </p>
+                    )}
                   </div>
                 </motion.div>
               )}

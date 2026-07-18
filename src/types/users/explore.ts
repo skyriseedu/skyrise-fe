@@ -1,6 +1,7 @@
 export interface ExploreFilters {
   degrees: string[];
   programs: string[];
+  location: string;
   tuitionRanges: string[];
   duration: string[];
 }
@@ -19,6 +20,7 @@ export interface ProgramFiltersResponse {
   success: boolean;
   message?: string;
   data: {
+    locations: FilterOption[];
     degrees: FilterOption[];
     programs: FilterOption[];
     fees: FilterOption[];

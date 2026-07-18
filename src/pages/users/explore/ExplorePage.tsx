@@ -30,22 +30,22 @@ const ExplorePage: React.FC = () => {
   const [filters, setFilters] = useState<ExploreFilters>({
     degrees: [],
     programs: [],
+    location: '',
     tuitionRanges: [],
     duration: [],
   });
   const {
+    locations: locationOpts,
     degrees: degreeOpts,
     programs: programOpts,
     durations: durationOpts,
     fees: feeOpts,
     fetchFilters,
-    fetched,
-    loading: loadingFilters,
   } = useProgramOptionsStore();
 
   useEffect(() => {
-    if (!fetched && !loadingFilters) fetchFilters();
-  }, [fetched, loadingFilters, fetchFilters]);
+    fetchFilters(filters.location);
+  }, [filters.location, fetchFilters]);
   const listQuery = usePrograms({ page: currentPage, limit: ITEMS_PER_PAGE });
 
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -66,6 +66,7 @@ const ExplorePage: React.FC = () => {
     if (filters.degrees.length > 0) count += filters.degrees.length;
     if (filters.programs.length > 0) count += filters.programs.length;
     if (filters.duration.length > 0) count += filters.duration.length;
+    if (filters.location) count += 1;
     if (filters.tuitionRanges.length > 0) count += filters.tuitionRanges.length;
     return count;
   }, [filters]);
@@ -76,6 +77,7 @@ const ExplorePage: React.FC = () => {
     setFilters({
       degrees: [],
       programs: [],
+      location: '',
       tuitionRanges: [],
       duration: [],
     });
@@ -86,13 +88,15 @@ const ExplorePage: React.FC = () => {
     const deg = new Map<string, string>();
     const prog = new Map<string, string>();
     const dur = new Map<string, string>();
+    const loc = new Map<string, string>();
     const fees = new Map<string, string>();
     degreeOpts.forEach((o) => deg.set(o.value, o.label));
     programOpts.forEach((o) => prog.set(o.value, o.label));
     durationOpts.forEach((o) => dur.set(o.value, o.label));
+    locationOpts.forEach((o) => loc.set(o.value, o.label));
     feeOpts.forEach((o) => fees.set(o.value, o.label));
-    return { deg, prog, dur, fees };
-  }, [degreeOpts, programOpts, durationOpts, feeOpts]);
+    return { deg, prog, dur, loc, fees };
+  }, [degreeOpts, programOpts, durationOpts, locationOpts, feeOpts]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -121,6 +125,7 @@ const ExplorePage: React.FC = () => {
             capitalizeFirstLetters(p.replace(/-/g, ' '))
         )
       : undefined;
+    const locationParam = filters.location || undefined;
     const feesParam = filters.tuitionRanges.length
       ? filters.tuitionRanges
       : undefined;
@@ -134,6 +139,7 @@ const ExplorePage: React.FC = () => {
     return {
       degrees: degreesParam,
       programs: programsParam,
+      location: locationParam,
       fees: feesParam,
       duration: durationParam,
       q,
@@ -290,6 +296,11 @@ const ExplorePage: React.FC = () => {
                       {labelMaps.dur.get(duration) || duration}
                     </span>
                   ))}
+                  {filters.location && (
+                    <span className="bg-secondary text-body-5 text-text-primary inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium">
+                      {labelMaps.loc.get(filters.location) || filters.location}
+                    </span>
+                  )}
                   {filters.tuitionRanges.map((range) => (
                     <span
                       key={range}

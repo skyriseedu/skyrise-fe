@@ -81,7 +81,6 @@ const formatRanking = (
   if (typeof ranking === 'string') return ranking;
   const parts: string[] = [];
   if (typeof ranking.number === 'number') parts.push(`#${ranking.number}`);
-  if (ranking.type) parts.push(ranking.type);
   const formatted = parts.join(' ').trim();
   return formatted.length ? formatted : undefined;
 };
@@ -98,11 +97,12 @@ const ProgramCard: React.FC<ProgramCardProps> = ({
   const duration = program.keyInformation?.duration;
   const ranking = program.universityRanking;
   const totalTuitionFees = program.keyInformation?.totalTuitionFees;
+  const location = program.keyInformation?.location?.trim();
   const applicationDeadline = formatApplicationDeadline(
     program.applicationDeadline
   );
   const slug = program.slug;
-  const rankingLabel = 'Thailand Ranking';
+  const rankingLabel = `${location || 'Program'} Ranking`;
   const programInfo = [
     { label: 'Upcoming Intake', value: upcomingIntake },
     { label: 'Duration', value: duration },

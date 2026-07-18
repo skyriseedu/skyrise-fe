@@ -18,25 +18,37 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
   filters: initialFilters,
   onApplyFilters,
 }) => {
-  const { degrees, programs, durations, fees, fetchFilters, fetched, loading } =
-    useProgramOptionsStore();
+  const {
+    locations,
+    degrees,
+    programs,
+    durations,
+    fees,
+    fetchFilters,
+    loading,
+  } = useProgramOptionsStore();
 
   useEffect(() => {
-    if (!fetched && !loading) fetchFilters();
-  }, [fetched, loading, fetchFilters]);
+    fetchFilters(initialFilters.location);
+  }, [fetchFilters, initialFilters.location]);
 
   const filterSections: FilterSection[] = useMemo(() => {
     return [
+      { id: 'location', label: 'Location', options: locations },
       { id: 'degrees', label: 'Degrees', options: degrees },
       { id: 'programs', label: 'Programs', options: programs },
       { id: 'duration', label: 'Duration', options: durations },
     ];
-  }, [degrees, programs, durations]);
+  }, [locations, degrees, programs, durations]);
   const [expandedSections, setExpandedSections] = useState<string[]>([
     'degrees',
   ]);
   const [localFilters, setLocalFilters] =
     useState<ExploreFilters>(initialFilters);
+
+  useEffect(() => {
+    fetchFilters(localFilters.location);
+  }, [fetchFilters, localFilters.location]);
 
   useEffect(() => {
     if (isOpen) {
@@ -73,6 +85,14 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
         [sectionId]: updatedValues,
       };
     });
+  };
+
+  const handleLocationChange = (value: string) => {
+    setLocalFilters((prev) => ({
+      ...prev,
+      location: value,
+      tuitionRanges: value === prev.location ? prev.tuitionRanges : [],
+    }));
   };
 
   const handleConfirm = () => {
@@ -135,14 +155,19 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
                         className="mb-3 flex items-center last:mb-0"
                       >
                         <input
-                          type="checkbox"
+                          type={section.id === 'location' ? 'radio' : 'checkbox'}
+                          name={section.id === 'location' ? 'program-location' : undefined}
                           checked={
-                            (localFilters[section.id] as string[])?.includes(
-                              option.value
-                            ) || false
+                            section.id === 'location'
+                              ? localFilters.location === option.value
+                              : (localFilters[section.id] as string[])?.includes(
+                                  option.value
+                                ) || false
                           }
                           onChange={() =>
-                            handleFilterChange(section.id, option.value)
+                            section.id === 'location'
+                              ? handleLocationChange(option.value)
+                              : handleFilterChange(section.id, option.value)
                           }
                           className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
                         />
@@ -184,26 +209,36 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
                 className="overflow-hidden"
               >
                 <div className="mt-2 rounded-[var(--border-radius-sm)] bg-white p-4">
-                  <div className="space-y-3">
-                    {fees.map((fee) => (
-                      <label key={fee.value} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={
-                            localFilters.tuitionRanges?.includes(fee.value) ||
-                            false
-                          }
-                          onChange={() =>
-                            handleFilterChange('tuitionRanges', fee.value)
-                          }
-                          className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
-                        />
-                        <span className="text-body-2 text-text-primary">
-                          {fee.label}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
+                  {!localFilters.location ? null : loading ? (
+                    <p className="text-body-2 text-gray-500 px-1 py-1">
+                      Loading fee ranges...
+                    </p>
+                  ) : fees.length > 0 ? (
+                    <div className="space-y-3">
+                      {fees.map((fee) => (
+                        <label key={fee.value} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={
+                              localFilters.tuitionRanges?.includes(fee.value) ||
+                              false
+                            }
+                            onChange={() =>
+                              handleFilterChange('tuitionRanges', fee.value)
+                            }
+                            className="text-primary focus:ring-primary mr-3 h-4 w-4 rounded border-gray-300"
+                          />
+                          <span className="text-body-2 text-text-primary">
+                            {fee.label}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-body-2 text-gray-500 px-1 py-1">
+                      No fee ranges available for this location.
+                    </p>
+                  )}
                 </div>
               </motion.div>
             )}
